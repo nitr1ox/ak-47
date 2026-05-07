@@ -739,6 +739,21 @@ kbd { background:#1e1f22; border:1px solid var(--div); border-radius:4px; paddin
   </div>
 </div>
 
+<!-- MODAL VERIFICATION EMAIL INSCRIPTION -->
+<div class="modal-bg" id="verify-modal" style="display:none;">
+  <div class="modal" style="max-width:440px;text-align:center;">
+    <div style="font-size:48px;margin-bottom:12px;">📧</div>
+    <h3>Vérifie ton e-mail</h3>
+    <p style="color:var(--text2);font-size:14px;margin-bottom:20px;">Un code à 6 chiffres a été envoyé à <strong id="verify-email-display"></strong>.<br>Entre-le ci-dessous pour activer ton compte.</p>
+    <div class="form-group">
+      <input type="text" id="verify-code-inp" placeholder="000000" maxlength="6" style="text-align:center;font-size:28px;font-weight:800;letter-spacing:10px;background:#1e1f22;border:1px solid var(--div);border-radius:8px;padding:16px;width:100%;color:var(--text1);outline:none;" oninput="this.value=this.value.replace(/\D/g,'')">
+    </div>
+    <button class="sett-btn" style="width:100%;justify-content:center;font-size:15px;padding:12px;" onclick="doVerifyRegistration()">✅ Activer mon compte</button>
+    <p style="margin-top:16px;font-size:13px;color:var(--muted);">Tu n'as rien reçu ? <a style="color:#00aff4;cursor:pointer;" onclick="resendRegistrationCode()">Renvoyer le code</a></p>
+    <p id="verify-error" style="color:var(--red);font-size:13px;margin-top:8px;display:none;"></p>
+  </div>
+</div>
+
 <!-- ============ APP ============ -->
 <div id="app">
 <div class="app-layout">
@@ -794,12 +809,12 @@ kbd { background:#1e1f22; border:1px solid var(--div); border-radius:4px; paddin
     <div class="ch-cat">
       <div class="ch-cat-hdr"><span>▸</span><span>Informations</span><span class="add-c">+</span></div>
       <div class="ch-item" onclick="switchCh(this,'règlement','📋 Lisez les règles du serveur.')"><span class="ci"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="opacity:.7"><path d="M5.855 20.098a1 1 0 0 1-.98-1.196l.696-3.902H2a1 1 0 1 1 0-2h3.961l.77-4.31H3a1 1 0 0 1 0-2h4.13l.69-3.863a1 1 0 0 1 1.964.35L9.098 7.69h4.004l.69-3.863a1 1 0 1 1 1.965.35l-.688 3.863H18.96a1 1 0 0 1 0 2h-3.268l-.77 4.31H18a1 1 0 0 1 0 2h-3.468l-.695 3.902a1 1 0 0 1-1.964-.35l.695-3.902H8.564l-.695 3.902a1 1 0 0 1-.014.196zm2.905-7.408h4.004l.77-4.31H9.53l-.77 4.31z"/></svg></span><span class="cn">règlement</span></div>
-      <div class="ch-item" onclick="switchCh(this,'annonces','📢 Annonces importantes.')"><span class="ci"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="opacity:.7"><path d="M5.855 20.098a1 1 0 0 1-.98-1.196l.696-3.902H2a1 1 0 1 1 0-2h3.961l.77-4.31H3a1 1 0 0 1 0-2h4.13l.69-3.863a1 1 0 0 1 1.964.35L9.098 7.69h4.004l.69-3.863a1 1 0 1 1 1.965.35l-.688 3.863H18.96a1 1 0 0 1 0 2h-3.268l-.77 4.31H18a1 1 0 0 1 0 2h-3.468l-.695 3.902a1 1 0 0 1-1.964-.35l.695-3.902H8.564l-.695 3.902a1 1 0 0 1-.014.196zm2.905-7.408h4.004l.77-4.31H9.53l-.77 4.31z"/></svg></span><span class="cn">annonces</span><span class="lock-icon">🔒</span><span class="badge">2</span></div>
+      <div class="ch-item" onclick="switchCh(this,'annonces','📢 Annonces importantes.')"><span class="ci"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="opacity:.7"><path d="M5.855 20.098a1 1 0 0 1-.98-1.196l.696-3.902H2a1 1 0 1 1 0-2h3.961l.77-4.31H3a1 1 0 0 1 0-2h4.13l.69-3.863a1 1 0 0 1 1.964.35L9.098 7.69h4.004l.69-3.863a1 1 0 1 1 1.965.35l-.688 3.863H18.96a1 1 0 0 1 0 2h-3.268l-.77 4.31H18a1 1 0 0 1 0 2h-3.468l-.695 3.902a1 1 0 0 1-1.964-.35l.695-3.902H8.564l-.695 3.902a1 1 0 0 1-.014.196zm2.905-7.408h4.004l.77-4.31H9.53l-.77 4.31z"/></svg></span><span class="cn">annonces</span><span class="lock-icon">🔒</span></div>
     </div>
     <div class="ch-cat">
       <div class="ch-cat-hdr"><span>▸</span><span>Général</span><span class="add-c">+</span></div>
       <div class="ch-item active" id="active-ch" onclick="switchCh(this,'général','Bienvenue sur le canal général de AK-47 !')"><span class="ci"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="opacity:.7"><path d="M5.855 20.098a1 1 0 0 1-.98-1.196l.696-3.902H2a1 1 0 1 1 0-2h3.961l.77-4.31H3a1 1 0 0 1 0-2h4.13l.69-3.863a1 1 0 0 1 1.964.35L9.098 7.69h4.004l.69-3.863a1 1 0 1 1 1.965.35l-.688 3.863H18.96a1 1 0 0 1 0 2h-3.268l-.77 4.31H18a1 1 0 0 1 0 2h-3.468l-.695 3.902a1 1 0 0 1-1.964-.35l.695-3.902H8.564l-.695 3.902a1 1 0 0 1-.014.196zm2.905-7.408h4.004l.77-4.31H9.53l-.77 4.31z"/></svg></span><span class="cn">général</span></div>
-      <div class="ch-item" onclick="switchCh(this,'blabla','Un endroit pour tout et rien.')"><span class="ci"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="opacity:.7"><path d="M5.855 20.098a1 1 0 0 1-.98-1.196l.696-3.902H2a1 1 0 1 1 0-2h3.961l.77-4.31H3a1 1 0 0 1 0-2h4.13l.69-3.863a1 1 0 0 1 1.964.35L9.098 7.69h4.004l.69-3.863a1 1 0 1 1 1.965.35l-.688 3.863H18.96a1 1 0 0 1 0 2h-3.268l-.77 4.31H18a1 1 0 0 1 0 2h-3.468l-.695 3.902a1 1 0 0 1-1.964-.35l.695-3.902H8.564l-.695 3.902a1 1 0 0 1-.014.196zm2.905-7.408h4.004l.77-4.31H9.53l-.77 4.31z"/></svg></span><span class="cn">blabla</span><span class="badge">7</span></div>
+      <div class="ch-item" onclick="switchCh(this,'blabla','Un endroit pour tout et rien.')"><span class="ci"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="opacity:.7"><path d="M5.855 20.098a1 1 0 0 1-.98-1.196l.696-3.902H2a1 1 0 1 1 0-2h3.961l.77-4.31H3a1 1 0 0 1 0-2h4.13l.69-3.863a1 1 0 0 1 1.964.35L9.098 7.69h4.004l.69-3.863a1 1 0 1 1 1.965.35l-.688 3.863H18.96a1 1 0 0 1 0 2h-3.268l-.77 4.31H18a1 1 0 0 1 0 2h-3.468l-.695 3.902a1 1 0 0 1-1.964-.35l.695-3.902H8.564l-.695 3.902a1 1 0 0 1-.014.196zm2.905-7.408h4.004l.77-4.31H9.53l-.77 4.31z"/></svg></span><span class="cn">blabla</span></div>
       <div class="ch-item" onclick="switchCh(this,'memes','Postez vos meilleurs memes 💀')"><span class="ci"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="opacity:.7"><path d="M5.855 20.098a1 1 0 0 1-.98-1.196l.696-3.902H2a1 1 0 1 1 0-2h3.961l.77-4.31H3a1 1 0 0 1 0-2h4.13l.69-3.863a1 1 0 0 1 1.964.35L9.098 7.69h4.004l.69-3.863a1 1 0 1 1 1.965.35l-.688 3.863H18.96a1 1 0 0 1 0 2h-3.268l-.77 4.31H18a1 1 0 0 1 0 2h-3.468l-.695 3.902a1 1 0 0 1-1.964-.35l.695-3.902H8.564l-.695 3.902a1 1 0 0 1-.014.196zm2.905-7.408h4.004l.77-4.31H9.53l-.77 4.31z"/></svg></span><span class="cn">memes</span></div>
       <div class="ch-item" onclick="switchCh(this,'flood','Floodez ici !')"><span class="ci"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="opacity:.7"><path d="M5.855 20.098a1 1 0 0 1-.98-1.196l.696-3.902H2a1 1 0 1 1 0-2h3.961l.77-4.31H3a1 1 0 0 1 0-2h4.13l.69-3.863a1 1 0 0 1 1.964.35L9.098 7.69h4.004l.69-3.863a1 1 0 1 1 1.965.35l-.688 3.863H18.96a1 1 0 0 1 0 2h-3.268l-.77 4.31H18a1 1 0 0 1 0 2h-3.468l-.695 3.902a1 1 0 0 1-1.964-.35l.695-3.902H8.564l-.695 3.902a1 1 0 0 1-.014.196zm2.905-7.408h4.004l.77-4.31H9.53l-.77 4.31z"/></svg></span><span class="cn">flood</span></div>
     </div>
@@ -814,10 +829,7 @@ kbd { background:#1e1f22; border:1px solid var(--div); border-radius:4px; paddin
       <div class="ch-item" onclick="joinVoice('Général')"><span class="ci"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="opacity:.7"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></span><span class="cn">Général</span></div>
       <div class="vc-members" id="vc-general"></div>
       <div class="ch-item" onclick="joinVoice('Gaming')"><span class="ci"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="opacity:.7"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></span><span class="cn">Gaming</span></div>
-      <div class="vc-members">
-        <div class="vc-member"><div class="vc-av" style="background:#c41e3a;">A</div><span class="vc-name">Admin_AK</span><span class="vc-icons">🎙️</span></div>
-        <div class="vc-member"><div class="vc-av" style="background:#23a55a;">K</div><span class="vc-name">Kayro</span><span class="vc-icons"><span class="muted-icon">🔇</span></span></div>
-      </div>
+      <div class="vc-members" id="vc-gaming"></div>
       <div class="ch-item" onclick="joinVoice('AFK')"><span class="ci"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="opacity:.7"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></span><span class="cn">AFK</span></div>
     </div>
   </div>
@@ -1587,7 +1599,11 @@ async function apiCall(endpoint, method = 'GET', body = null) {
   if (body) opts.body = JSON.stringify(body);
   const r = await fetch(BACKEND + endpoint, opts);
   const data = await r.json();
-  if (!r.ok) throw new Error(data.error || 'Erreur serveur');
+  if (!r.ok) {
+    const err = new Error(data.error || 'Erreur serveur');
+    err.needsVerification = data.needsVerification || false;
+    throw err;
+  }
   return data;
 }
 
@@ -1651,10 +1667,20 @@ async function doLogin() {
     document.getElementById('login-page').style.display='none';
     document.getElementById('app').style.display='block';
     loadMessages('général');
-    setTimeout(showFriendToast, 3000);
+
   } catch(e) {
-    err.style.display='block';
-    err.textContent = e.message || 'Pseudo ou mot de passe incorrect.';
+    // Si le compte n'est pas encore vérifié, ouvrir le modal de vérification
+    if (e.needsVerification || (e.message && e.message.includes('non activé'))) {
+      _pendingVerifyUsername = document.getElementById('l-email').value.trim();
+      document.getElementById('verify-email-display').textContent = 'ton adresse e-mail';
+      document.getElementById('verify-code-inp').value = '';
+      document.getElementById('verify-error').style.display = 'none';
+      document.getElementById('verify-modal').style.display = 'flex';
+      setTimeout(() => document.getElementById('verify-code-inp').focus(), 100);
+    } else {
+      err.style.display='block';
+      err.textContent = e.message || 'Pseudo ou mot de passe incorrect.';
+    }
   } finally {
     btn.disabled = false; btn.textContent = 'Se connecter';
   }
@@ -1684,14 +1710,39 @@ function applyUserToUI() {
   loadMembers();
   // Mettre à jour la présence
   apiCall('/api/presence', 'PATCH', { status: 'online' }).catch(() => {});
+  // Ping presence toutes les 60 secondes pour rester "en ligne"
+  setInterval(() => {
+    if (JWT_TOKEN) apiCall('/api/presence', 'PATCH', { status: 'online' }).catch(() => {});
+  }, 60000);
   // Rafraîchir les membres toutes les 10 secondes
   setInterval(loadMembers, 10000);
+
+  // Passer offline à la fermeture de la page
+  window.addEventListener('beforeunload', () => {
+    if (JWT_TOKEN) {
+      navigator.sendBeacon(BACKEND + '/api/presence-offline', JSON.stringify({ token: JWT_TOKEN }));
+    }
+  });
 }
 
 async function loadMembers() {
   try {
     const data = await apiCall('/api/members');
-    const members = data.members || [];
+    const now = Date.now();
+    const OFFLINE_THRESHOLD = 2 * 60 * 1000; // 2 minutes sans ping = offline
+
+    const members = (data.members || []).map(m => {
+      // Si lastSeen > 2 min et status != 'dnd', on considère offline
+      if (m.status !== 'dnd' && m.lastSeen && (now - m.lastSeen) > OFFLINE_THRESHOLD) {
+        return { ...m, status: 'offline' };
+      }
+      // Si jamais de lastSeen et status online → offline (comptes anciens)
+      if (!m.lastSeen && m.status === 'online') {
+        return { ...m, status: 'offline' };
+      }
+      return m;
+    });
+
     const online = members.filter(m => m.status === 'online' || m.status === 'idle' || m.status === 'dnd');
     const offline = members.filter(m => !m.status || m.status === 'offline');
 
@@ -1730,12 +1781,15 @@ function showRegister() {
   document.getElementById('reg-modal').style.display='flex';
 }
 
+let _pendingVerifyUsername = '';
+
 async function doRegister() {
   const email = document.getElementById('r-email').value.trim();
   const user = document.getElementById('r-user').value.trim();
   const pw = document.getElementById('r-pw').value;
   const dob = document.getElementById('r-dob').value;
 
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('Adresse e-mail invalide.'); return; }
   if (!user || user.length < 2) { alert('Pseudo trop court (min 2 caractères).'); return; }
   if (!pw || pw.length < 6) { alert('Mot de passe trop court (min 6 caractères).'); return; }
 
@@ -1743,11 +1797,15 @@ async function doRegister() {
   btn.disabled = true; btn.textContent = 'Création...';
 
   try {
-    await apiCall('/api/register', 'POST', { username: user, password: pw });
+    await apiCall('/api/register', 'POST', { username: user, password: pw, email });
     closeModal('reg-modal');
-    // Pré-remplir le login
-    document.getElementById('l-email').value = user;
-    showFlash('✅ Compte créé ! Connecte-toi maintenant 👋');
+    // Afficher le modal de vérification
+    _pendingVerifyUsername = user;
+    document.getElementById('verify-email-display').textContent = email;
+    document.getElementById('verify-code-inp').value = '';
+    document.getElementById('verify-error').style.display = 'none';
+    document.getElementById('verify-modal').style.display = 'flex';
+    setTimeout(() => document.getElementById('verify-code-inp').focus(), 100);
   } catch(e) {
     alert(e.message || 'Erreur lors de la création du compte.');
   } finally {
@@ -1755,8 +1813,43 @@ async function doRegister() {
   }
 }
 
+async function doVerifyRegistration() {
+  const code = document.getElementById('verify-code-inp').value.trim();
+  const errEl = document.getElementById('verify-error');
+  if (!code || code.length !== 6) { errEl.textContent = 'Entre les 6 chiffres du code.'; errEl.style.display='block'; return; }
+  const btn = event.currentTarget;
+  btn.disabled = true; btn.textContent = '⏳ Vérification...';
+  errEl.style.display = 'none';
+  try {
+    const d = await apiCall('/api/email/verify-registration', 'POST', { username: _pendingVerifyUsername, code });
+    // Connecter l'utilisateur directement
+    JWT_TOKEN = d.token;
+    USER_DATA = d.user;
+    localStorage.setItem('ak47_jwt', JWT_TOKEN);
+    localStorage.setItem('ak47_user', JSON.stringify(USER_DATA));
+    document.getElementById('verify-modal').style.display = 'none';
+    showApp();
+    showFlash('✅ Compte activé ! Bienvenue sur AK-47 👋');
+  } catch(e) {
+    errEl.textContent = e.message || 'Code incorrect.';
+    errEl.style.display = 'block';
+    btn.disabled = false; btn.textContent = '✅ Activer mon compte';
+  }
+}
+
+async function resendRegistrationCode() {
+  try {
+    const d = await apiCall('/api/email/resend-registration', 'POST', { username: _pendingVerifyUsername });
+    showFlash('📧 ' + d.message);
+  } catch(e) {
+    showFlash('❌ ' + (e.message || 'Erreur.'));
+  }
+}
+
 // ======== LOGOUT ========
 function doLogout() {
+  // Passer offline avant de déconnecter
+  if (JWT_TOKEN) apiCall('/api/presence', 'PATCH', { status: 'offline' }).catch(() => {});
   JWT_TOKEN = null; USER_DATA = null;
   localStorage.removeItem('ak47_jwt');
   localStorage.removeItem('ak47_user');
@@ -1955,19 +2048,30 @@ async function loadMessages(channel) {
 function startPolling(channel) {
   if (pollingInterval) clearInterval(pollingInterval);
   pollingInterval = setInterval(async () => {
-    if (currentView !== 'server') return;
     try {
-      const data = await apiCall(`/api/messages/${encodeURIComponent(channel)}`);
-      const msgs = data.messages || [];
-      const container = document.getElementById('msgs');
-      // Affiche seulement les nouveaux messages
-      msgs.forEach(m => {
-        if (!document.querySelector(`[data-msg-id="${m.id}"]`)) {
-          renderMessageFromAPI(container, m);
-          if (isNearBottom()) container.scrollTop = container.scrollHeight;
-          else showScrollBadge();
-        }
-      });
+      if (currentView === 'server') {
+        const data = await apiCall(`/api/messages/${encodeURIComponent(channel)}`);
+        const msgs = data.messages || [];
+        const container = document.getElementById('msgs');
+        msgs.forEach(m => {
+          if (!document.querySelector(`[data-msg-id="${m.id}"]`)) {
+            renderMessageFromAPI(container, m);
+            if (isNearBottom()) container.scrollTop = container.scrollHeight;
+            else showScrollBadge();
+          }
+        });
+      } else if (currentView === 'dm' && currentDMUser) {
+        const dmChannel = 'dm_' + [ME.name, currentDMUser].sort().join('_');
+        const data = await apiCall(`/api/messages/${encodeURIComponent(dmChannel)}`);
+        const msgs = data.messages || [];
+        const container = document.getElementById('msgs');
+        msgs.forEach(m => {
+          if (!document.querySelector(`[data-msg-id="${m.id}"]`)) {
+            renderMessageFromAPI(container, m);
+            if (isNearBottom()) container.scrollTop = container.scrollHeight;
+          }
+        });
+      }
     } catch(e) {}
   }, 3000);
 }
@@ -2023,16 +2127,20 @@ async function deleteMsgAPI(msgId, btn) {
   }
 }
 
-function loadDMMessages(user) {
+async function loadDMMessages(user) {
   const container = document.getElementById('msgs');
   container.innerHTML = '';
-  const msgs = dmMessages[user] || [];
   const welcome = document.createElement('div');
   welcome.className = 'ch-welcome';
   welcome.innerHTML = `<div class="welcome-ico" style="font-size:28px;">${user.charAt(0)}</div><h2>@${user}</h2><p>C'est le début de votre conversation privée avec <strong>${user}</strong>.</p>`;
   container.appendChild(welcome);
-  msgs.forEach(m => renderDMMessage(container, m, user));
-  container.scrollTop = container.scrollHeight;
+
+  const dmChannel = 'dm_' + [ME.name, user].sort().join('_');
+  try {
+    const data = await apiCall(`/api/messages/${encodeURIComponent(dmChannel)}`);
+    (data.messages || []).forEach(m => renderMessageFromAPI(container, m));
+    container.scrollTop = container.scrollHeight;
+  } catch(e) {}
 }
 
 function renderMessage(container, m, prepend) {
@@ -2116,12 +2224,17 @@ async function sendMsg() {
   clearTypingIndicator();
 
   if (currentView === 'dm' && currentDMUser) {
-    // DM local pour l'instant
-    const now = new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-    const container = document.getElementById('msgs');
-    const newMsg = { id: 'dm-'+(++msgCount), author: ME.name, color: ME.color, time: now, text: escape(text), them: false };
-    renderDMMessage(container, newMsg, currentDMUser);
-    container.scrollTop = container.scrollHeight;
+    // DM via API — canal séparé dm_userA_userB (trié alphabétiquement)
+    const dmChannel = 'dm_' + [ME.name, currentDMUser].sort().join('_');
+    try {
+      const data = await apiCall(`/api/messages/${encodeURIComponent(dmChannel)}`, 'POST', { text });
+      const container = document.getElementById('msgs');
+      renderMessageFromAPI(container, data);
+      container.scrollTop = container.scrollHeight;
+    } catch(e) {
+      showFlash('❌ ' + (e.message || 'Erreur envoi DM.'));
+      inp.value = text;
+    }
     return;
   }
 
