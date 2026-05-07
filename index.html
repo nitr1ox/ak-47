@@ -579,6 +579,107 @@ kbd { background:#1e1f22; border:1px solid var(--div); border-radius:4px; paddin
 .img-lightbox { position:fixed; inset:0; background:rgba(0,0,0,.9); z-index:9999; display:none; align-items:center; justify-content:center; cursor:zoom-out; }
 .img-lightbox.show { display:flex; }
 .img-lightbox img { max-width:90vw; max-height:90vh; border-radius:8px; object-fit:contain; }
+
+/* ========== BOUTIQUE / SHOP ========== */
+.shop-hero { background:linear-gradient(135deg,#6c2be0 0%,#c41e3a 100%); border-radius:12px; padding:32px; margin-bottom:28px; position:relative; overflow:hidden; }
+.shop-hero::before { content:'💎'; font-size:100px; position:absolute; right:-10px; top:-10px; opacity:.15; }
+.shop-hero h2 { font-size:24px; font-weight:800; margin-bottom:6px; }
+.shop-hero p { color:rgba(255,255,255,.8); font-size:14px; }
+.shop-coins-bar { display:flex; align-items:center; gap:8px; background:#1e1f22; border-radius:8px; padding:12px 16px; margin-bottom:24px; font-size:15px; font-weight:600; }
+.shop-coins-bar .coin-ico { font-size:22px; }
+.shop-coins-bar .coin-val { color:var(--yellow); }
+.shop-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; margin-bottom:32px; }
+.shop-card { background:#2b2d31; border-radius:12px; overflow:hidden; border:2px solid transparent; transition:border-color .15s, transform .15s; cursor:pointer; }
+.shop-card:hover { border-color:var(--accent); transform:translateY(-2px); }
+.shop-card.featured { border-color:#9b59f5; }
+.shop-card-banner { height:80px; display:flex; align-items:center; justify-content:center; font-size:40px; }
+.shop-card-body { padding:14px; }
+.shop-card-title { font-size:15px; font-weight:700; margin-bottom:4px; }
+.shop-card-desc { font-size:12px; color:var(--muted); margin-bottom:12px; line-height:1.4; }
+.shop-card-price { display:flex; align-items:center; gap:6px; font-size:13px; font-weight:700; color:var(--yellow); margin-bottom:10px; }
+.shop-card-price .badge-save { background:rgba(35,165,90,.2); color:var(--green); font-size:10px; padding:2px 6px; border-radius:20px; }
+.shop-buy-btn { width:100%; padding:9px; border:none; border-radius:6px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; transition:background .15s; }
+.shop-buy-btn.purple { background:#9b59f5; color:white; }
+.shop-buy-btn.purple:hover { background:#7c3bde; }
+.shop-buy-btn.gift { background:rgba(240,178,50,.15); color:var(--yellow); border:1px solid rgba(240,178,50,.3); margin-top:6px; }
+.shop-buy-btn.gift:hover { background:rgba(240,178,50,.25); }
+.shop-section-title { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:14px; }
+
+/* ========== EXTRA SETTINGS PANES ========== */
+.lang-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:8px; margin-bottom:24px; }
+.lang-item { padding:10px 14px; border-radius:6px; background:#2b2d31; cursor:pointer; border:2px solid transparent; transition:border-color .15s; font-size:14px; }
+.lang-item:hover { border-color:var(--div); }
+.lang-item.selected { border-color:var(--accent); }
+.lang-item .lang-name { font-weight:600; }
+.lang-item .lang-native { font-size:12px; color:var(--muted); }
+
+.privacy-section { margin-bottom:28px; }
+.privacy-section h3 { font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin-bottom:12px; border-bottom:1px solid var(--div); padding-bottom:8px; }
+
+.security-item { display:flex; align-items:center; gap:14px; background:#2b2d31; border-radius:8px; padding:16px; margin-bottom:10px; }
+.security-item .sec-ico { font-size:28px; flex-shrink:0; }
+.security-item .sec-info { flex:1; }
+.security-item .sec-info h4 { font-size:15px; font-weight:600; margin-bottom:2px; }
+.security-item .sec-info p { font-size:12px; color:var(--muted); line-height:1.4; }
+.security-item .sec-badge { font-size:11px; font-weight:700; padding:3px 8px; border-radius:20px; }
+.sec-badge.on { background:rgba(35,165,90,.15); color:var(--green); }
+.sec-badge.off { background:rgba(242,63,67,.15); color:var(--red); }
+
+.voice-device { background:#2b2d31; border-radius:8px; padding:14px; margin-bottom:10px; }
+.voice-device label { display:block; font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:8px; letter-spacing:.04em; }
+.voice-device select { width:100%; background:#1e1f22; border:1px solid var(--div); border-radius:4px; padding:8px; color:var(--text1); font-size:14px; outline:none; }
+.voice-test-btn { background:var(--active); color:var(--text2); border:none; border-radius:4px; padding:8px 14px; font-size:13px; cursor:pointer; transition:background .1s; }
+.voice-test-btn:hover { background:var(--hover); color:var(--text1); }
+.vol-slider { display:flex; align-items:center; gap:10px; }
+.vol-slider input[type=range] { flex:1; accent-color:var(--accent); }
+.vol-slider span { min-width:32px; text-align:right; font-size:13px; color:var(--muted); }
+
+.a11y-section { margin-bottom:28px; }
+.a11y-section h3 { font-size:14px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin-bottom:12px; border-bottom:1px solid var(--div); padding-bottom:8px; }
+.a11y-slider { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.a11y-slider input[type=range] { flex:1; accent-color:var(--accent); }
+
+/* Premium Upsell */
+.premium-hero { background:linear-gradient(135deg,#6c2be0 0%,#9b59f5 100%); border-radius:12px; padding:32px; text-align:center; margin-bottom:28px; position:relative; overflow:hidden; }
+.premium-hero::before { content:'✨'; font-size:90px; position:absolute; left:-15px; top:-10px; opacity:.12; }
+.premium-hero::after { content:'🚀'; font-size:90px; position:absolute; right:-15px; bottom:-15px; opacity:.12; }
+.premium-hero h2 { font-size:26px; font-weight:800; margin-bottom:8px; }
+.premium-hero p { font-size:14px; opacity:.85; margin-bottom:20px; }
+.premium-plans { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:28px; }
+.premium-plan { background:#2b2d31; border-radius:10px; padding:20px; border:2px solid transparent; position:relative; }
+.premium-plan.recommended { border-color:#9b59f5; }
+.premium-plan .rec-badge { position:absolute; top:-10px; left:50%; transform:translateX(-50%); background:#9b59f5; font-size:10px; font-weight:800; padding:3px 10px; border-radius:20px; white-space:nowrap; }
+.premium-plan h3 { font-size:16px; font-weight:700; margin-bottom:4px; }
+.premium-plan .plan-price { font-size:28px; font-weight:800; color:#9b59f5; margin:8px 0; }
+.premium-plan .plan-price span { font-size:14px; font-weight:400; color:var(--muted); }
+.premium-plan ul { list-style:none; margin:12px 0; }
+.premium-plan ul li { font-size:13px; color:var(--text2); padding:3px 0; }
+.premium-plan ul li::before { content:'✓ '; color:var(--green); font-weight:700; }
+.premium-perks { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.perk-card { background:#2b2d31; border-radius:8px; padding:16px; text-align:center; }
+.perk-card .perk-ico { font-size:30px; margin-bottom:8px; }
+.perk-card h4 { font-size:13px; font-weight:700; margin-bottom:4px; }
+.perk-card p { font-size:11px; color:var(--muted); }
+
+/* Boosts */
+.boost-hero { background:linear-gradient(135deg,#ff73fa,#9b59f5); border-radius:12px; padding:28px; margin-bottom:24px; position:relative; overflow:hidden; }
+.boost-hero::after { content:'🚀'; font-size:80px; position:absolute; right:10px; top:10px; opacity:.2; }
+.boost-hero h2 { font-size:22px; font-weight:800; margin-bottom:4px; }
+.boost-hero p { font-size:13px; opacity:.85; }
+.boost-prog { background:#2b2d31; border-radius:10px; padding:20px; margin-bottom:20px; }
+.boost-level { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.boost-level .bl-current { font-size:18px; font-weight:800; }
+.boost-level .bl-next { font-size:13px; color:var(--muted); }
+.boost-bar-outer { height:8px; background:#1e1f22; border-radius:4px; margin-bottom:8px; }
+.boost-bar-inner { height:100%; background:linear-gradient(90deg,#ff73fa,#9b59f5); border-radius:4px; width:43%; }
+.boost-count { font-size:12px; color:var(--muted); }
+.boost-perks-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; }
+.boost-perk { background:#2b2d31; border-radius:8px; padding:14px; display:flex; gap:10px; align-items:flex-start; }
+.boost-perk .bp-ico { font-size:22px; flex-shrink:0; }
+.boost-perk h4 { font-size:13px; font-weight:700; margin-bottom:2px; }
+.boost-perk p { font-size:11px; color:var(--muted); }
+.boost-cta { background:linear-gradient(90deg,#ff73fa,#9b59f5); border:none; border-radius:8px; color:white; font-size:15px; font-weight:700; padding:14px 28px; cursor:pointer; width:100%; font-family:inherit; transition:opacity .15s; }
+.boost-cta:hover { opacity:.88; }
 </style>
 </head>
 <body>
@@ -907,22 +1008,23 @@ kbd { background:#1e1f22; border:1px solid var(--div); border-radius:4px; paddin
   <div class="settings-layout">
     <div class="settings-nav">
       <div class="nav-section">Mon compte</div>
-      <div class="nav-item active" id="nav-my-account" onclick="showSettingsPane('my-account')"><span class="nav-ico">👤</span>Mon compte</div>
+      <div class="nav-item" onclick="showSettingsPane('my-account')" id="nav-my-account"><span class="nav-ico">👤</span>Mon compte</div>
       <div class="nav-item" onclick="showSettingsPane('profile')"><span class="nav-ico">🎨</span>Profil</div>
-      <div class="nav-item" onclick=""><span class="nav-ico">🔒</span>Confidentialité</div>
-      <div class="nav-item" onclick=""><span class="nav-ico">🔐</span>Sécurité</div>
+      <div class="nav-item" onclick="showSettingsPane('privacy')"><span class="nav-ico">🔒</span>Confidentialité</div>
+      <div class="nav-item" onclick="showSettingsPane('security')"><span class="nav-ico">🔐</span>Sécurité</div>
       <div class="nav-div"></div>
       <div class="nav-section">Paramètres de l'app</div>
       <div class="nav-item" id="nav-notifications" onclick="showSettingsPane('notifications')"><span class="nav-ico">🔔</span>Notifications</div>
       <div class="nav-item" id="nav-appearance" onclick="showSettingsPane('appearance')"><span class="nav-ico">🎨</span>Apparence</div>
       <div class="nav-item" onclick="showSettingsPane('keybinds')"><span class="nav-ico">⌨️</span>Raccourcis</div>
-      <div class="nav-item" onclick=""><span class="nav-ico">🌐</span>Langue</div>
-      <div class="nav-item" onclick=""><span class="nav-ico">🎙️</span>Voix et vidéo</div>
-      <div class="nav-item" onclick=""><span class="nav-ico">♿</span>Accessibilité</div>
+      <div class="nav-item" onclick="showSettingsPane('language')"><span class="nav-ico">🌐</span>Langue</div>
+      <div class="nav-item" onclick="showSettingsPane('voice')"><span class="nav-ico">🎙️</span>Voix et vidéo</div>
+      <div class="nav-item" onclick="showSettingsPane('accessibility')"><span class="nav-ico">♿</span>Accessibilité</div>
       <div class="nav-div"></div>
       <div class="nav-section">Premium</div>
-      <div class="nav-item" onclick=""><span class="nav-ico">💎</span>AK-47 Premium</div>
-      <div class="nav-item" onclick=""><span class="nav-ico">🚀</span>Boosts</div>
+      <div class="nav-item" onclick="showSettingsPane('premium')"><span class="nav-ico">💎</span>AK-47 Premium</div>
+      <div class="nav-item" onclick="showSettingsPane('boosts')"><span class="nav-ico">🚀</span>Boosts</div>
+      <div class="nav-item" onclick="showSettingsPane('shop')"><span class="nav-ico">🛍️</span>Boutique</div>
       <div class="nav-div"></div>
       <div class="nav-item" onclick="confirmLogout()" style="color:var(--red);"><span class="nav-ico">🚪</span>Se déconnecter</div>
     </div>
@@ -942,19 +1044,23 @@ kbd { background:#1e1f22; border:1px solid var(--div); border-radius:4px; paddin
         </div>
         <div class="sett-field"><label>Nom d'utilisateur</label><input type="text" id="s-username" value="Visiteur"></div>
         <div class="sett-field">
-          <label>E-mail <span id="s-email-badge" style="font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700;margin-left:6px;background:rgba(242,63,67,.15);color:var(--red);">Non vérifié</span></label>
+          <label>E-mail <span id="email-verified-badge" style="display:none;background:#23a55a;color:white;font-size:10px;padding:1px 6px;border-radius:10px;font-weight:700;">✓ Vérifié</span></label>
           <div style="display:flex;gap:8px;align-items:center;">
             <input type="email" id="s-email" placeholder="ton@email.fr" style="flex:1;">
-            <button class="sett-btn" id="s-email-verify-btn" onclick="sendEmailVerification()" style="white-space:nowrap;flex-shrink:0;">Envoyer le code</button>
-          </div>
-          <div id="s-email-code-wrap" style="display:none;margin-top:10px;display:none;">
-            <div style="display:flex;gap:8px;align-items:center;">
-              <input type="text" id="s-email-code" placeholder="Code à 6 chiffres" maxlength="6" style="flex:1;letter-spacing:6px;font-size:18px;font-weight:700;text-align:center;">
-              <button class="sett-btn" onclick="verifyEmailCode()" style="white-space:nowrap;flex-shrink:0;">Vérifier</button>
-            </div>
-            <p style="font-size:12px;color:var(--muted);margin-top:6px;">📧 Un code a été envoyé à ton adresse. Il expire dans 15 minutes.</p>
+            <button class="sett-btn" style="white-space:nowrap;flex-shrink:0;" onclick="sendEmailVerification()">📧 Vérifier</button>
           </div>
         </div>
+        <div id="email-code-section" style="display:none;">
+          <div class="sett-field">
+            <label>Code de vérification (reçu par mail)</label>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="text" id="s-email-code" placeholder="123456" maxlength="6" style="flex:1;letter-spacing:6px;font-size:18px;font-weight:700;">
+              <button class="sett-btn" style="white-space:nowrap;flex-shrink:0;background:#23a55a;" onclick="verifyEmailCode()">✅ Confirmer</button>
+            </div>
+          </div>
+          <p style="font-size:12px;color:var(--muted);margin-top:-12px;margin-bottom:16px;">Entre le code à 6 chiffres reçu dans ta boîte mail (vérifie aussi les spams). Valable 15 minutes.</p>
+        </div>
+        <div class="sett-field"><label>Numéro de téléphone</label><input type="text" placeholder="Ajouter un numéro de téléphone"></div>
         <div style="display:flex; gap:10px; margin-bottom:32px;">
           <button class="sett-btn" onclick="saveAccount()">Sauvegarder</button>
           <button class="sett-btn ghost">Annuler</button>
@@ -1061,6 +1167,281 @@ kbd { background:#1e1f22; border:1px solid var(--div); border-radius:4px; paddin
             <tr><td>Modifier dernier message</td><td><kbd>↑</kbd></td></tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- LANGUAGE -->
+      <div class="settings-pane" id="pane-language" style="display:none;">
+        <h2>Langue</h2>
+        <p style="color:var(--muted);font-size:14px;margin-bottom:20px;">Choisis la langue d'affichage de l'interface.</p>
+        <div class="lang-grid">
+          <div class="lang-item selected" onclick="selectLang(this,'fr')"><div class="lang-name">🇫🇷 Français</div><div class="lang-native">Français</div></div>
+          <div class="lang-item" onclick="selectLang(this,'en')"><div class="lang-name">🇬🇧 Anglais</div><div class="lang-native">English</div></div>
+          <div class="lang-item" onclick="selectLang(this,'es')"><div class="lang-name">🇪🇸 Espagnol</div><div class="lang-native">Español</div></div>
+          <div class="lang-item" onclick="selectLang(this,'de')"><div class="lang-name">🇩🇪 Allemand</div><div class="lang-native">Deutsch</div></div>
+          <div class="lang-item" onclick="selectLang(this,'it')"><div class="lang-name">🇮🇹 Italien</div><div class="lang-native">Italiano</div></div>
+          <div class="lang-item" onclick="selectLang(this,'pt')"><div class="lang-name">🇵🇹 Portugais</div><div class="lang-native">Português</div></div>
+          <div class="lang-item" onclick="selectLang(this,'ru')"><div class="lang-name">🇷🇺 Russe</div><div class="lang-native">Русский</div></div>
+          <div class="lang-item" onclick="selectLang(this,'ja')"><div class="lang-name">🇯🇵 Japonais</div><div class="lang-native">日本語</div></div>
+          <div class="lang-item" onclick="selectLang(this,'zh')"><div class="lang-name">🇨🇳 Chinois</div><div class="lang-native">中文</div></div>
+          <div class="lang-item" onclick="selectLang(this,'ar')"><div class="lang-name">🇸🇦 Arabe</div><div class="lang-native">العربية</div></div>
+          <div class="lang-item" onclick="selectLang(this,'ko')"><div class="lang-name">🇰🇷 Coréen</div><div class="lang-native">한국어</div></div>
+          <div class="lang-item" onclick="selectLang(this,'nl')"><div class="lang-name">🇳🇱 Néerlandais</div><div class="lang-native">Nederlands</div></div>
+        </div>
+        <button class="sett-btn" onclick="showFlash('✅ Langue sauvegardée !')">Sauvegarder</button>
+      </div>
+
+      <!-- PRIVACY -->
+      <div class="settings-pane" id="pane-privacy" style="display:none;">
+        <h2>Confidentialité &amp; Sécurité</h2>
+        <div class="privacy-section">
+          <h3>Messages directs</h3>
+          <div class="sett-row"><div class="sr-info"><h4>Autoriser les messages directs des membres du serveur</h4><p>Permet aux membres de t'envoyer un DM sans être amis</p></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+          <div class="sett-row"><div class="sr-info"><h4>Autoriser les demandes d'amis des membres</h4><p>Les membres peuvent t'envoyer une demande d'ami</p></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+        </div>
+        <div class="privacy-section">
+          <h3>Visibilité du profil</h3>
+          <div class="sett-row"><div class="sr-info"><h4>Afficher le statut d'activité</h4><p>Partage ton jeu ou activité en cours avec les autres membres</p></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+          <div class="sett-row"><div class="sr-info"><h4>Afficher le statut en ligne</h4><p>Les membres peuvent voir si tu es en ligne</p></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+        </div>
+        <div class="privacy-section">
+          <h3>Contenu</h3>
+          <div class="sett-row"><div class="sr-info"><h4>Filtrage du contenu explicite</h4><p>Analyser et filtrer automatiquement les médias explicites</p></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+          <div class="sett-row"><div class="sr-info"><h4>Messages de serveurs non vérifiés</h4><p>Filtrer les médias dans les serveurs sans filtre actif</p></div><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+        </div>
+        <div class="privacy-section">
+          <h3>Données</h3>
+          <div class="sett-row"><div class="sr-info"><h4>Personnalisation basée sur l'activité</h4><p>Améliore les recommandations selon ton usage</p></div><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+          <div class="sett-row"><div class="sr-info"><h4>Télécharger mes données</h4><p>Exporte toutes tes données personnelles</p></div><button class="sett-btn ghost" onclick="showFlash('📦 Demande envoyée. Tu recevras un lien par e-mail.')">Demander</button></div>
+        </div>
+      </div>
+
+      <!-- SECURITY -->
+      <div class="settings-pane" id="pane-security" style="display:none;">
+        <h2>Sécurité</h2>
+        <div class="security-item">
+          <div class="sec-ico">🔐</div>
+          <div class="sec-info"><h4>Authentification à deux facteurs (2FA)</h4><p>Ajoute une couche de protection supplémentaire à ton compte. Une application d'authentification est requise.</p></div>
+          <span class="sec-badge off">Non activé</span>
+        </div>
+        <div class="security-item">
+          <div class="sec-ico">📱</div>
+          <div class="sec-info"><h4>Numéro de téléphone vérifié</h4><p>Un numéro vérifié permet de récupérer ton compte et renforce la sécurité.</p></div>
+          <span class="sec-badge off">Non lié</span>
+        </div>
+        <div class="security-item">
+          <div class="sec-ico">📧</div>
+          <div class="sec-info"><h4>E-mail vérifié</h4><p>Adresse e-mail liée au compte et vérifiée.</p></div>
+          <span class="sec-badge on">Vérifié</span>
+        </div>
+        <div class="security-item">
+          <div class="sec-ico">🗝️</div>
+          <div class="sec-info"><h4>Codes de secours</h4><p>Génère des codes d'urgence pour accéder à ton compte si tu perds ton 2FA.</p></div>
+          <button class="sett-btn ghost" onclick="showFlash('🗝️ Fonctionnalité disponible après activation du 2FA.')">Générer</button>
+        </div>
+        <h3 style="font-size:15px;font-weight:700;margin:24px 0 12px;">Sessions actives</h3>
+        <div class="security-item">
+          <div class="sec-ico">💻</div>
+          <div class="sec-info"><h4>Session actuelle</h4><p>Navigateur Web · France · Active maintenant</p></div>
+          <span class="sec-badge on">Actuelle</span>
+        </div>
+        <div style="margin-top:16px;">
+          <button class="sett-btn danger" onclick="showFlash('✅ Toutes les autres sessions ont été déconnectées.')">Déconnecter toutes les autres sessions</button>
+        </div>
+      </div>
+
+      <!-- VOICE & VIDEO -->
+      <div class="settings-pane" id="pane-voice" style="display:none;">
+        <h2>Voix et vidéo</h2>
+        <div class="voice-device"><label>Périphérique d'entrée (Microphone)</label>
+          <select><option>Microphone par défaut</option><option>Microphone intégré</option><option>Casque USB</option></select>
+        </div>
+        <div class="voice-device"><label>Périphérique de sortie (Haut-parleurs)</label>
+          <select><option>Sortie audio par défaut</option><option>Haut-parleurs intégrés</option><option>Casque USB</option></select>
+        </div>
+        <div class="voice-device"><label>Caméra</label>
+          <select><option>Caméra par défaut</option><option>Webcam intégrée</option></select>
+        </div>
+        <div class="voice-device">
+          <label>Volume d'entrée</label>
+          <div class="vol-slider"><span>🎙️</span><input type="range" min="0" max="200" value="100" oninput="this.nextElementSibling.textContent=this.value+'%'"><span>100%</span></div>
+        </div>
+        <div class="voice-device">
+          <label>Volume de sortie</label>
+          <div class="vol-slider"><span>🔊</span><input type="range" min="0" max="200" value="100" oninput="this.nextElementSibling.textContent=this.value+'%'"><span>100%</span></div>
+        </div>
+        <div style="display:flex;gap:8px;margin:12px 0;">
+          <button class="voice-test-btn" onclick="showFlash('🎙️ Test du micro en cours...')">🎙️ Tester le micro</button>
+          <button class="voice-test-btn" onclick="showFlash('🔊 Test audio joué !')">🔊 Tester l'audio</button>
+        </div>
+        <h3 style="font-size:14px;font-weight:700;margin:20px 0 12px;">Options avancées</h3>
+        <div class="sett-row"><div class="sr-info"><h4>Suppression du bruit</h4><p>Filtrer les bruits de fond lors des appels vocaux</p></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+        <div class="sett-row"><div class="sr-info"><h4>Annulation d'écho</h4><p>Empêche que ta voix soit réentendue en écho</p></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+        <div class="sett-row"><div class="sr-info"><h4>Mode Push to Talk</h4><p>Maintiens une touche enfoncée pour parler</p></div><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+        <div class="sett-row"><div class="sr-info"><h4>Qualité vidéo HD</h4><p>Nécessite une bonne connexion internet et AK Premium</p></div><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+      </div>
+
+      <!-- ACCESSIBILITY -->
+      <div class="settings-pane" id="pane-accessibility" style="display:none;">
+        <h2>Accessibilité</h2>
+        <div class="a11y-section">
+          <h3>Affichage</h3>
+          <div class="sett-row"><div class="sr-info"><h4>Contraste élevé</h4><p>Augmente le contraste de l'interface pour une meilleure lisibilité</p></div><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+          <div class="sett-row"><div class="sr-info"><h4>Réduire les animations</h4><p>Désactive les transitions et animations de l'interface</p></div><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+          <div class="sett-row"><div class="sr-info"><h4>Mode daltonien</h4><p>Adapte les couleurs pour les personnes daltoniennes</p></div>
+            <select style="background:#1e1f22;border:1px solid var(--div);border-radius:4px;padding:6px 10px;color:var(--text1);font-size:13px;outline:none;">
+              <option>Désactivé</option><option>Protanopie (rouge)</option><option>Deutéranopie (vert)</option><option>Tritanopie (bleu)</option>
+            </select>
+          </div>
+        </div>
+        <div class="a11y-section">
+          <h3>Taille et lisibilité</h3>
+          <div class="voice-device"><label>Taille des emoji</label>
+            <div class="a11y-slider"><span style="font-size:12px;">😀</span><input type="range" min="16" max="48" value="28" oninput="this.nextElementSibling.textContent=this.value+'px'"><span style="font-size:20px;">😀</span><span>28px</span></div>
+          </div>
+          <div class="voice-device"><label>Espacement des messages</label>
+            <div class="a11y-slider"><span style="font-size:12px;color:var(--muted);">Compact</span><input type="range" min="1" max="3" value="2" step="1"><span style="font-size:12px;color:var(--muted);">Spacieux</span></div>
+          </div>
+        </div>
+        <div class="a11y-section">
+          <h3>Interactions</h3>
+          <div class="sett-row"><div class="sr-info"><h4>Navigation clavier visible</h4><p>Afficher les indicateurs de focus lors de la navigation clavier</p></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+          <div class="sett-row"><div class="sr-info"><h4>Lecteur d'écran (mode accessibilité)</h4><p>Optimise l'interface pour les technologies d'assistance</p></div><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+          <div class="sett-row"><div class="sr-info"><h4>Alertes sonores pour les notifications</h4><p>Joue un son distinct selon le type de notification</p></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+        </div>
+      </div>
+
+      <!-- PREMIUM UPSELL -->
+      <div class="settings-pane" id="pane-premium" style="display:none;">
+        <div class="premium-hero">
+          <h2>✨ AK-47 Premium</h2>
+          <p>Enrichis ton expérience avec des avantages exclusifs</p>
+          <button class="sett-btn" style="background:white;color:#6c2be0;font-weight:800;font-size:15px;padding:12px 28px;" onclick="showSettingsPane('shop')">🛍️ Obtenir Premium</button>
+        </div>
+        <div class="premium-plans">
+          <div class="premium-plan">
+            <h3>🥈 Premium Basic</h3>
+            <div class="plan-price">500 <span>coins / mois</span></div>
+            <ul>
+              <li>Emoji animés personnalisés</li>
+              <li>Avatar animé</li>
+              <li>Badge Premium</li>
+              <li>Bannière de profil</li>
+              <li>100 Mo uploads</li>
+            </ul>
+            <button class="sett-btn" style="width:100%;" onclick="showSettingsPane('shop')">Choisir</button>
+          </div>
+          <div class="premium-plan recommended">
+            <div class="rec-badge">🔥 POPULAIRE</div>
+            <h3>💎 Premium Pro</h3>
+            <div class="plan-price">1400 <span>coins / 3 mois</span></div>
+            <ul>
+              <li>Tout de Basic +</li>
+              <li>Effets de profil animés</li>
+              <li>Plaques nominatives</li>
+              <li>Sons personnalisés</li>
+              <li>500 Mo uploads</li>
+              <li>Thèmes exclusifs</li>
+            </ul>
+            <button class="sett-btn" style="width:100%;background:#9b59f5;" onclick="showSettingsPane('shop')">Choisir</button>
+          </div>
+        </div>
+        <div class="shop-section-title">Ce que tu obtiens</div>
+        <div class="premium-perks">
+          <div class="perk-card"><div class="perk-ico">🎨</div><h4>Avatar animé</h4><p>Utilise un GIF comme photo de profil</p></div>
+          <div class="perk-card"><div class="perk-ico">😂</div><h4>Emoji Premium</h4><p>Accès aux emoji animés exclusifs</p></div>
+          <div class="perk-card"><div class="perk-ico">📁</div><h4>Uploads XXL</h4><p>Envoie des fichiers jusqu'à 500 Mo</p></div>
+          <div class="perk-card"><div class="perk-ico">🏷️</div><h4>Badge Premium</h4><p>Badge visible sur ton profil</p></div>
+          <div class="perk-card"><div class="perk-ico">🎭</div><h4>Effets profil</h4><p>Animations autour de ton avatar</p></div>
+          <div class="perk-card"><div class="perk-ico">🚀</div><h4>2 Boosts offerts</h4><p>Booste tes serveurs favoris</p></div>
+        </div>
+      </div>
+
+      <!-- BOOSTS -->
+      <div class="settings-pane" id="pane-boosts" style="display:none;">
+        <div class="boost-hero">
+          <h2>Boosts de serveur</h2>
+          <p>Améliore ton serveur favoris avec des boosts !</p>
+        </div>
+        <div class="boost-prog">
+          <div class="boost-level">
+            <div class="bl-current">⚔️ AK-47 · Niveau 1</div>
+            <div class="bl-next">Niveau 2 à 7 boosts</div>
+          </div>
+          <div class="boost-bar-outer"><div class="boost-bar-inner"></div></div>
+          <div class="boost-count">3 / 7 boosts · <strong>4 boosts</strong> manquants pour le niveau 2</div>
+        </div>
+        <div class="shop-section-title">Avantages débloqués</div>
+        <div class="boost-perks-grid">
+          <div class="boost-perk"><div class="bp-ico">🎵</div><div><h4>Audio 128kbps</h4><p>Meilleure qualité vocale</p></div></div>
+          <div class="boost-perk"><div class="bp-ico">🖼️</div><div><h4>Emoji animés</h4><p>50 emojis animés</p></div></div>
+          <div class="boost-perk"><div class="bp-ico">📌</div><div><h4>Icône de serveur animée</h4><p>GIF pour l'icône du serveur</p></div></div>
+          <div class="boost-perk" style="opacity:.45;"><div class="bp-ico">🔒</div><div><h4>Niveau 2 requis</h4><p>Canal vocal 256kbps</p></div></div>
+          <div class="boost-perk" style="opacity:.45;"><div class="bp-ico">🌐</div><div><h4>Niveau 2 requis</h4><p>URL de serveur personnalisée</p></div></div>
+          <div class="boost-perk" style="opacity:.45;"><div class="bp-ico">🎨</div><div><h4>Niveau 3 requis</h4><p>Bannière de serveur animée</p></div></div>
+        </div>
+        <button class="boost-cta" onclick="showFlash('🚀 Fonctionnalité bientôt disponible !')">🚀 Booster AK-47</button>
+      </div>
+
+      <!-- BOUTIQUE / SHOP -->
+      <div class="settings-pane" id="pane-shop" style="display:none;">
+        <div class="shop-hero">
+          <h2>🛍️ Boutique AK-47</h2>
+          <p>Dépense tes coins pour débloquer des avantages exclusifs</p>
+        </div>
+        <div class="shop-coins-bar">
+          <span class="coin-ico">🪙</span>
+          <span>Mes coins :&nbsp;</span><span class="coin-val" id="shop-coins-display">—</span>
+          <span style="color:var(--muted);font-size:12px;margin-left:auto;">Les coins sont gagnés en étant actif sur le serveur</span>
+        </div>
+
+        <div class="shop-section-title">💎 AK-47 Premium</div>
+        <div class="shop-grid">
+          <!-- 1 mois -->
+          <div class="shop-card">
+            <div class="shop-card-banner" style="background:linear-gradient(135deg,#4752c4,#5865f2);">💎</div>
+            <div class="shop-card-body">
+              <div class="shop-card-title">Premium — 1 mois</div>
+              <div class="shop-card-desc">Avatar animé, emoji exclusifs, badge Premium et plus.</div>
+              <div class="shop-card-price">🪙 500 coins</div>
+              <button class="shop-buy-btn purple" onclick="shopBuyNitro(1,500)">Acheter pour moi</button>
+              <button class="shop-buy-btn gift" onclick="shopGiftNitro(1,500)">🎁 Offrir à un ami</button>
+            </div>
+          </div>
+          <!-- 3 mois -->
+          <div class="shop-card featured">
+            <div class="shop-card-banner" style="background:linear-gradient(135deg,#6c2be0,#9b59f5);">💎✨</div>
+            <div class="shop-card-body">
+              <div class="shop-card-title">Premium — 3 mois</div>
+              <div class="shop-card-desc">Meilleur rapport qualité-prix. Économise 100 coins vs mensuel.</div>
+              <div class="shop-card-price">🪙 1400 coins <span class="badge-save">-7%</span></div>
+              <button class="shop-buy-btn purple" onclick="shopBuyNitro(3,1400)">Acheter pour moi</button>
+              <button class="shop-buy-btn gift" onclick="shopGiftNitro(3,1400)">🎁 Offrir à un ami</button>
+            </div>
+          </div>
+          <!-- 12 mois -->
+          <div class="shop-card">
+            <div class="shop-card-banner" style="background:linear-gradient(135deg,#c41e3a,#ff6b6b);">👑</div>
+            <div class="shop-card-body">
+              <div class="shop-card-title">Premium — 12 mois</div>
+              <div class="shop-card-desc">Un an complet de Premium. La meilleure offre du serveur !</div>
+              <div class="shop-card-price">🪙 5000 coins <span class="badge-save">-17%</span></div>
+              <button class="shop-buy-btn purple" onclick="shopBuyNitro(12,5000)">Acheter pour moi</button>
+              <button class="shop-buy-btn gift" onclick="shopGiftNitro(12,5000)">🎁 Offrir à un ami</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="shop-section-title" style="margin-top:8px;">📦 Packs de coins (bientôt)</div>
+        <div class="shop-grid">
+          <div class="shop-card" style="opacity:.6;cursor:default;">
+            <div class="shop-card-banner" style="background:#2b2d31;">🪙</div>
+            <div class="shop-card-body"><div class="shop-card-title">Pack Starter — 500 coins</div><div class="shop-card-desc">Idéal pour un premier achat.</div><div class="shop-card-price" style="color:var(--muted);">Bientôt disponible</div></div>
+          </div>
+          <div class="shop-card" style="opacity:.6;cursor:default;">
+            <div class="shop-card-banner" style="background:#2b2d31;">🪙🪙</div>
+            <div class="shop-card-body"><div class="shop-card-title">Pack Pro — 2000 coins</div><div class="shop-card-desc">Pour les membres actifs du serveur.</div><div class="shop-card-price" style="color:var(--muted);">Bientôt disponible</div></div>
+          </div>
+        </div>
       </div>
 
     </div><!-- end settings-content -->
@@ -1287,6 +1668,13 @@ function applyUserToUI() {
   document.getElementById('s-pname').textContent = n;
   document.getElementById('s-username').value = n;
   document.getElementById('s-email').value = USER_DATA?.email || '';
+  if (USER_DATA?.emailVerified) {
+    document.getElementById('email-verified-badge').style.display = 'inline';
+    document.getElementById('s-email').readOnly = true;
+  } else {
+    document.getElementById('email-verified-badge').style.display = 'none';
+    document.getElementById('s-email').readOnly = false;
+  }
   const avEls = document.querySelectorAll('.u-av, #my-av');
   avEls.forEach(el => { el.style.background = c; const t = el.querySelector('span:first-child') || el; if(t.nodeType === 3 || t === el) el.childNodes[0] && (el.childNodes[0].textContent = ME.initial); });
   if (ME.role === 'admin') {
@@ -1380,62 +1768,6 @@ function doLogout() {
   closeSettings();
 }
 
-// ======== EMAIL VERIFICATION ========
-async function sendEmailVerification() {
-  const email = document.getElementById('s-email')?.value?.trim();
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    showFlash('❌ Entre une adresse e-mail valide.'); return;
-  }
-  const btn = document.getElementById('s-email-verify-btn');
-  btn.disabled = true; btn.textContent = 'Envoi...';
-  try {
-    const d = await apiCall('/api/email/send-verification', 'POST', { email });
-    showFlash('📧 ' + d.message);
-    // Afficher le champ code
-    const wrap = document.getElementById('s-email-code-wrap');
-    if (wrap) { wrap.style.display = 'block'; document.getElementById('s-email-code').focus(); }
-    btn.textContent = 'Renvoyer';
-  } catch(e) {
-    showFlash('❌ ' + (e.message || 'Erreur.'));
-    btn.textContent = 'Envoyer le code';
-  } finally {
-    btn.disabled = false;
-  }
-}
-
-async function verifyEmailCode() {
-  const code = document.getElementById('s-email-code')?.value?.trim();
-  if (!code || code.length !== 6) { showFlash('❌ Le code fait 6 chiffres.'); return; }
-  try {
-    const d = await apiCall('/api/email/verify', 'POST', { code });
-    showFlash('✅ ' + d.message);
-    // Mettre à jour le badge
-    const badge = document.getElementById('s-email-badge');
-    if (badge) { badge.textContent = 'Vérifié ✓'; badge.style.background = 'rgba(35,165,90,.15)'; badge.style.color = 'var(--green)'; }
-    // Cacher le champ code
-    const wrap = document.getElementById('s-email-code-wrap');
-    if (wrap) wrap.style.display = 'none';
-    // Mettre à jour USER_DATA local
-    if (USER_DATA) { USER_DATA.email = d.email; USER_DATA.emailVerified = true; localStorage.setItem('ak47_user', JSON.stringify(USER_DATA)); }
-  } catch(e) {
-    showFlash('❌ ' + (e.message || 'Code incorrect.'));
-  }
-}
-
-// Synchronise le badge e-mail à l'ouverture des settings
-function syncEmailBadge() {
-  const badge = document.getElementById('s-email-badge');
-  const emailInp = document.getElementById('s-email');
-  if (!badge || !emailInp) return;
-  const verified = USER_DATA?.emailVerified;
-  if (verified) {
-    badge.textContent = 'Vérifié ✓'; badge.style.background = 'rgba(35,165,90,.15)'; badge.style.color = 'var(--green)';
-    if (USER_DATA?.email) emailInp.value = USER_DATA.email;
-  } else {
-    badge.textContent = 'Non vérifié'; badge.style.background = 'rgba(242,63,67,.15)'; badge.style.color = 'var(--red)';
-  }
-}
-
 // ======== CHANGER MDP (settings) ========
 async function changePassword() {
   const old = document.getElementById('s-old-pw')?.value;
@@ -1462,6 +1794,59 @@ async function claimNitroCode() {
   } catch(e) {
     showFlash('❌ ' + (e.message || 'Code invalide.'));
   }
+}
+
+// ======== SHOP FUNCTIONS ========
+function updateShopCoinsDisplay() {
+  const el = document.getElementById('shop-coins-display');
+  if (el) el.textContent = (ME.coins || 0).toLocaleString('fr-FR') + ' coins';
+}
+
+async function shopBuyNitro(months, price) {
+  if ((ME.coins || 0) < price) {
+    showFlash(`❌ Coins insuffisants ! Il te faut ${price} coins (tu as ${ME.coins || 0}).`);
+    return;
+  }
+  const labels = { 1: '1 mois', 3: '3 mois', 12: '12 mois' };
+  if (!confirm(`Acheter AK-47 Premium ${labels[months]} pour ${price} coins ?`)) return;
+  try {
+    const d = await apiCall('/api/shop/buy-nitro', 'POST', { months });
+    ME.nitro = true;
+    ME.coins = d.newCoins;
+    USER_DATA.coins = d.newCoins;
+    localStorage.setItem('ak47_user', JSON.stringify(USER_DATA));
+    updateShopCoinsDisplay();
+    showFlash('💎 ' + d.message);
+  } catch(e) {
+    showFlash('❌ ' + (e.message || 'Erreur.'));
+  }
+}
+
+async function shopGiftNitro(months, price) {
+  if ((ME.coins || 0) < price) {
+    showFlash(`❌ Coins insuffisants ! Il te faut ${price} coins (tu as ${ME.coins || 0}).`);
+    return;
+  }
+  const target = prompt('✉️ Pseudo du destinataire (exactement) :');
+  if (!target) return;
+  const labels = { 1: '1 mois', 3: '3 mois', 12: '12 mois' };
+  if (!confirm(`Offrir AK-47 Premium ${labels[months]} à ${target} pour ${price} coins ?`)) return;
+  try {
+    const d = await apiCall('/api/shop/gift-nitro', 'POST', { targetUsername: target, months });
+    ME.coins = d.newCoins;
+    USER_DATA.coins = d.newCoins;
+    localStorage.setItem('ak47_user', JSON.stringify(USER_DATA));
+    updateShopCoinsDisplay();
+    showFlash('🎁 ' + d.message);
+  } catch(e) {
+    showFlash('❌ ' + (e.message || 'Erreur.'));
+  }
+}
+
+// ======== LANGUAGE SELECTOR ========
+function selectLang(el, code) {
+  document.querySelectorAll('.lang-item').forEach(i => i.classList.remove('selected'));
+  el.classList.add('selected');
 }
 
 // ======== ADMIN PANEL ========
@@ -1939,7 +2324,6 @@ function openSettings(pane) {
   // Afficher panel admin si role admin
   const ap = document.getElementById('admin-panel');
   if (ap) ap.style.display = ME.role === 'admin' ? 'block' : 'none';
-  syncEmailBadge();
 }
 function closeSettings() {
   document.getElementById('settings-page').style.display='none';
@@ -1951,6 +2335,8 @@ function showSettingsPane(id) {
   if (pane) pane.style.display='block';
   const nav = document.getElementById('nav-'+id);
   if (nav) nav.classList.add('active');
+  // Refresh coins display when entering shop
+  if (id === 'shop') updateShopCoinsDisplay();
 }
 function saveAccount() {
   const newName = document.getElementById('s-username').value.trim();
@@ -1960,6 +2346,55 @@ function saveAccount() {
   document.getElementById('u-name2').textContent = newName;
   document.getElementById('s-pname').textContent = newName;
   showFlash('✅ Profil sauvegardé ! (affichage local uniquement)');
+}
+
+// ======== EMAIL VERIFICATION ========
+async function sendEmailVerification() {
+  const email = document.getElementById('s-email').value.trim();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showFlash('❌ Adresse e-mail invalide.'); return;
+  }
+  const btn = event.currentTarget;
+  btn.disabled = true;
+  btn.textContent = '⏳ Envoi…';
+  try {
+    const d = await apiCall('/api/email/send-verification', 'POST', { email });
+    showFlash('📧 ' + d.message);
+    document.getElementById('email-code-section').style.display = 'block';
+    document.getElementById('s-email-code').focus();
+    // Cooldown 60s
+    let t = 60;
+    const iv = setInterval(() => {
+      btn.textContent = `⏳ Renvoyer (${t}s)`;
+      if (--t < 0) { clearInterval(iv); btn.disabled = false; btn.textContent = '📧 Vérifier'; }
+    }, 1000);
+  } catch(e) {
+    showFlash('❌ ' + e.message);
+    btn.disabled = false;
+    btn.textContent = '📧 Vérifier';
+  }
+}
+
+async function verifyEmailCode() {
+  const code = document.getElementById('s-email-code').value.trim();
+  if (!code || code.length !== 6) { showFlash('❌ Entre les 6 chiffres du code.'); return; }
+  const btn = event.currentTarget;
+  btn.disabled = true;
+  btn.textContent = '⏳…';
+  try {
+    const d = await apiCall('/api/email/verify', 'POST', { code });
+    showFlash('✅ ' + d.message);
+    document.getElementById('email-code-section').style.display = 'none';
+    document.getElementById('s-email').value = d.email;
+    document.getElementById('s-email').readOnly = true;
+    document.getElementById('email-verified-badge').style.display = 'inline';
+    // Update local user data
+    if (USER_DATA) { USER_DATA.email = d.email; USER_DATA.emailVerified = true; localStorage.setItem('ak47_user', JSON.stringify(USER_DATA)); }
+  } catch(e) {
+    showFlash('❌ ' + e.message);
+    btn.disabled = false;
+    btn.textContent = '✅ Confirmer';
+  }
 }
 function selectTheme(el, theme) {
   document.querySelectorAll('.theme-card').forEach(c=>c.classList.remove('selected'));
