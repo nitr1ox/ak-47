@@ -5,8 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AK-47 — En développement</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange: #ff3c00;
+      --orange2: #ff8800;
+      --discord: #5865F2;
+      --green: #23a55a;
+      --red: #c41e3a;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
       background: #0a0a0a;
@@ -18,10 +27,11 @@
       justify-content: center;
       overflow: hidden;
     }
+
+    /* Grid animé */
     body::before {
       content: '';
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background-image:
         linear-gradient(rgba(255,60,0,0.05) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,60,0,0.05) 1px, transparent 1px);
@@ -33,21 +43,25 @@
       0%   { background-position: 0 0; }
       100% { background-position: 40px 40px; }
     }
+
+    /* Orbs */
     .orb { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; }
-    .orb-1 { width: 500px; height: 500px; background: #ff3c00; top: -150px; left: -150px; opacity: 0.18; animation: pulse 6s ease-in-out infinite alternate; }
-    .orb-2 { width: 400px; height: 400px; background: #ff8800; bottom: -100px; right: -100px; opacity: 0.15; animation: pulse 8s ease-in-out infinite alternate-reverse; }
+    .orb-1 { width: 500px; height: 500px; background: var(--orange); top: -150px; left: -150px; opacity: 0.18; animation: pulse 6s ease-in-out infinite alternate; }
+    .orb-2 { width: 400px; height: 400px; background: var(--orange2); bottom: -100px; right: -100px; opacity: 0.15; animation: pulse 8s ease-in-out infinite alternate-reverse; }
     @keyframes pulse {
       from { transform: scale(1); opacity: 0.15; }
       to   { transform: scale(1.2); opacity: 0.25; }
     }
+
+    /* Container */
     .container {
-      position: relative;
-      z-index: 10;
+      position: relative; z-index: 10;
       text-align: center;
       padding: 2rem 1.5rem;
-      max-width: 560px;
-      width: 100%;
+      max-width: 560px; width: 100%;
     }
+
+    /* Badge */
     .badge {
       display: inline-block;
       background: rgba(255,60,0,0.15);
@@ -58,137 +72,141 @@
       padding: 0.35rem 1rem; border-radius: 999px;
       margin-bottom: 2rem;
     }
+
+    /* Logo */
     .logo {
-      font-size: 5rem; font-weight: 700;
+      font-size: 5rem; font-weight: 800;
       letter-spacing: -0.04em; line-height: 1;
       background: linear-gradient(135deg, #fff 30%, #ff6030 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text; margin-bottom: 1.5rem;
     }
-    h1 { font-size: 1.15rem; font-weight: 400; color: rgba(255,255,255,0.55); line-height: 1.7; margin-bottom: 2.5rem; }
-    h1 strong { color: rgba(255,255,255,0.9); font-weight: 600; }
-    .separator { width: 40px; height: 2px; background: linear-gradient(90deg, #ff3c00, #ff8800); margin: 0 auto 2.5rem; border-radius: 2px; }
 
-    /* ── Member counter card ── */
-    .members-card {
+    h1 {
+      font-size: 1.1rem; font-weight: 400;
+      color: rgba(255,255,255,0.5); line-height: 1.7;
+      margin-bottom: 2.5rem;
+    }
+    h1 strong { color: rgba(255,255,255,0.9); font-weight: 600; }
+
+    .separator {
+      width: 40px; height: 2px;
+      background: linear-gradient(90deg, var(--orange), var(--orange2));
+      margin: 0 auto 2.5rem; border-radius: 2px;
+    }
+
+    /* ── Stats grid ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .stat-card {
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.08);
       border-radius: 12px;
-      padding: 1.2rem 1.5rem;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 1.2rem;
-      text-align: left;
-      position: relative;
-      overflow: hidden;
-      transition: border-color 0.3s;
-    }
-    .members-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(88,101,242,0.06), transparent);
-      pointer-events: none;
-    }
-    .members-card:hover { border-color: rgba(88,101,242,0.3); }
-    .members-icon {
-      width: 44px; height: 44px;
-      background: rgba(88,101,242,0.12);
-      border: 1px solid rgba(88,101,242,0.25);
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      font-size: 1.25rem;
-    }
-    .members-info { flex: 1; }
-    .members-label {
-      font-size: 0.68rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: rgba(255,255,255,0.3);
-      margin-bottom: 0.3rem;
-    }
-    .members-count {
-      font-size: 1.65rem;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      color: #fff;
-      line-height: 1;
-      display: flex;
-      align-items: baseline;
-      gap: 0.45rem;
-    }
-    .count-num {
-      background: linear-gradient(135deg, #fff 30%, #7289da 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .count-unit {
-      font-size: 0.78rem;
-      font-weight: 500;
-      color: rgba(255,255,255,0.3);
-      -webkit-text-fill-color: rgba(255,255,255,0.3);
-    }
-    .members-online {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      margin-top: 0.35rem;
-      font-size: 0.73rem;
-      color: rgba(255,255,255,0.35);
-    }
-    .online-dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: #23a55a;
-      animation: blink 2s ease-in-out infinite;
-      flex-shrink: 0;
-    }
-    .online-count { color: #23a55a; font-weight: 600; }
-
-    .members-meta {
+      padding: 1rem 0.75rem;
       display: flex;
       flex-direction: column;
-      align-items: flex-end;
-      gap: 0.3rem;
-      flex-shrink: 0;
+      align-items: center;
+      gap: 0.4rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.2s;
+      cursor: default;
     }
-    .refresh-icon {
-      font-size: 1rem;
-      color: rgba(255,255,255,0.2);
-      cursor: pointer;
-      transition: color 0.2s;
-      user-select: none;
+    .stat-card:hover { border-color: rgba(255,255,255,0.15); transform: translateY(-1px); }
+    .stat-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--card-glow, transparent);
+      pointer-events: none;
+      opacity: 0.06;
     }
-    .refresh-icon:hover { color: rgba(255,255,255,0.5); }
-    .refresh-icon.spinning { animation: spin 0.6s linear; }
-    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    .refresh-time {
-      font-size: 0.62rem;
-      color: rgba(255,255,255,0.18);
-      letter-spacing: 0.03em;
+
+    .stat-card.members  { --card-glow: linear-gradient(135deg, #5865f2, transparent); }
+    .stat-card.online   { --card-glow: linear-gradient(135deg, #23a55a, transparent); }
+    .stat-card.visitors { --card-glow: linear-gradient(135deg, #ff8800, transparent); }
+
+    .stat-card:hover.members  { border-color: rgba(88,101,242,0.35); }
+    .stat-card:hover.online   { border-color: rgba(35,165,90,0.35); }
+    .stat-card:hover.visitors { border-color: rgba(255,136,0,0.35); }
+
+    .stat-icon {
+      font-size: 1.3rem;
+      line-height: 1;
     }
+
+    .stat-value {
+      font-size: 1.55rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+    .stat-card.members  .stat-value { background: linear-gradient(135deg,#fff 40%,#7289da); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .stat-card.online   .stat-value { background: linear-gradient(135deg,#fff 40%,#23a55a); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .stat-card.visitors .stat-value { background: linear-gradient(135deg,#fff 40%,#ff8800); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+    .stat-label {
+      font-size: 0.63rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.28);
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .stat-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      position: absolute;
+      top: 8px; right: 8px;
+    }
+    .stat-card.members  .stat-dot { background: #5865f2; animation: blink 2.5s ease-in-out infinite; }
+    .stat-card.online   .stat-dot { background: #23a55a; animation: blink 1.8s ease-in-out infinite; }
+    .stat-card.visitors .stat-dot { background: #ff8800; animation: blink 3s ease-in-out infinite; }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
 
     @keyframes countPop {
       0%   { transform: scale(1); }
-      40%  { transform: scale(1.1); }
+      40%  { transform: scale(1.12); }
       100% { transform: scale(1); }
     }
-    .count-pop { animation: countPop 0.35s ease; }
+    .pop { animation: countPop 0.35s ease; }
+
+    /* ── Refresh bar ── */
+    .refresh-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      font-size: 0.68rem;
+      color: rgba(255,255,255,0.18);
+    }
+    .refresh-btn {
+      background: none; border: none; cursor: pointer;
+      color: rgba(255,255,255,0.2); font-size: 0.85rem;
+      transition: color 0.2s; padding: 0 2px;
+      line-height: 1;
+    }
+    .refresh-btn:hover { color: rgba(255,255,255,0.5); }
+    .refresh-btn.spinning { animation: spin 0.6s linear; }
+    @keyframes spin { from{transform:rotate(0)} to{transform:rotate(360deg)} }
 
     /* ── Status bar ── */
     .status-bar {
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 12px; padding: 1.2rem 1.5rem;
+      border-radius: 12px; padding: 1.1rem 1.5rem;
       display: flex; align-items: center; gap: 1rem; text-align: left;
       margin-bottom: 1.5rem;
     }
-    .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #ff8800; flex-shrink: 0; animation: blink 1.5s ease-in-out infinite; }
-    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .status-dot-anim { width: 10px; height: 10px; border-radius: 50%; background: #ff8800; flex-shrink: 0; animation: blink 1.5s ease-in-out infinite; }
     .status-text { font-size: 0.85rem; color: rgba(255,255,255,0.5); }
     .status-text strong { display: block; color: rgba(255,255,255,0.85); font-weight: 600; margin-bottom: 0.1rem; }
 
@@ -196,69 +214,78 @@
     .socials { display: flex; justify-content: center; gap: 0.75rem; margin-bottom: 0.5rem; }
     .social-btn {
       display: inline-flex; align-items: center; gap: 0.6rem;
-      padding: 0.65rem 1.25rem; border-radius: 10px;
+      padding: 0.65rem 1.3rem; border-radius: 10px;
       font-size: 0.85rem; font-weight: 600; text-decoration: none;
-      transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
       cursor: pointer;
     }
-    .social-btn:hover { transform: translateY(-2px); opacity: 0.9; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+    .social-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
     .social-btn:active { transform: translateY(0); }
-    .discord-btn { background: #5865F2; color: #fff; border: 1px solid rgba(255,255,255,0.1); }
+    .discord-btn { background: var(--discord); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
 
-    .footer { margin-top: 2.5rem; font-size: 0.72rem; color: rgba(255,255,255,0.2); letter-spacing: 0.05em; }
+    .footer { margin-top: 2.5rem; font-size: 0.72rem; color: rgba(255,255,255,0.18); letter-spacing: 0.05em; }
 
+    /* ── Mobile ── */
     @media (max-width: 480px) {
       .orb-1 { width: 300px; height: 300px; top: -80px; left: -80px; }
       .orb-2 { width: 250px; height: 250px; bottom: -60px; right: -60px; }
-      .container { padding: 2rem 1.25rem; }
-      .badge { font-size: 0.65rem; letter-spacing: 0.15em; margin-bottom: 1.5rem; }
+      .container { padding: 2rem 1.1rem; }
+      .badge { font-size: 0.65rem; margin-bottom: 1.5rem; }
       .logo { font-size: 3.5rem; margin-bottom: 1.25rem; }
-      h1 { font-size: 1rem; margin-bottom: 2rem; }
+      h1 { font-size: 0.98rem; margin-bottom: 2rem; }
       .separator { margin-bottom: 2rem; }
-      .members-card { padding: 1rem 1.25rem; gap: 0.9rem; }
-      .members-count { font-size: 1.35rem; }
-      .status-bar { padding: 1rem 1.25rem; gap: 0.85rem; }
-      .status-text { font-size: 0.8rem; }
-      .footer { margin-top: 2rem; font-size: 0.68rem; }
+      .stat-value { font-size: 1.3rem; }
+      .stat-label { font-size: 0.58rem; }
+      .stats-grid { gap: 0.5rem; }
+      .stat-card { padding: 0.85rem 0.5rem; }
+      .status-bar { padding: 0.9rem 1.1rem; }
     }
     @media (max-width: 360px) {
       .logo { font-size: 3rem; }
-      h1 { font-size: 0.95rem; }
+      h1 { font-size: 0.92rem; }
+      .stat-value { font-size: 1.15rem; }
     }
   </style>
 </head>
 <body>
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
-  <div class="container">
 
+  <div class="container">
     <div class="badge">⚙&nbsp; En cours de développement</div>
     <div class="logo">AK-47</div>
     <div class="separator"></div>
     <h1>Le site est en dev.<br><strong>Revenez bientôt</strong>, quelque chose de grand arrive.</h1>
 
-    <!-- Live member counter -->
-    <div class="members-card">
-      <div class="members-icon">👥</div>
-      <div class="members-info">
-        <div class="members-label">Membres inscrits</div>
-        <div class="members-count">
-          <span class="count-num" id="total-count">—</span>
-          <span class="count-unit">membres</span>
-        </div>
-        <div class="members-online">
-          <div class="online-dot"></div>
-          <span class="online-count" id="online-count">—</span>&nbsp;en ligne maintenant
-        </div>
+    <!-- 3 compteurs live -->
+    <div class="stats-grid">
+      <div class="stat-card members">
+        <div class="stat-dot"></div>
+        <div class="stat-icon">👥</div>
+        <div class="stat-value" id="count-members">—</div>
+        <div class="stat-label">Membres<br>inscrits</div>
       </div>
-      <div class="members-meta">
-        <span class="refresh-icon" id="refresh-icon" onclick="fetchMembers()" title="Actualiser">↻</span>
-        <span class="refresh-time" id="refresh-time">—</span>
+      <div class="stat-card online">
+        <div class="stat-dot"></div>
+        <div class="stat-icon">🟢</div>
+        <div class="stat-value" id="count-online">—</div>
+        <div class="stat-label">En ligne<br>maintenant</div>
+      </div>
+      <div class="stat-card visitors">
+        <div class="stat-dot"></div>
+        <div class="stat-icon">👁️</div>
+        <div class="stat-value" id="count-visitors">—</div>
+        <div class="stat-label">Visites<br>sur la page</div>
       </div>
     </div>
 
+    <div class="refresh-bar">
+      <button class="refresh-btn" id="refresh-btn" onclick="fetchStats()" title="Actualiser">↻</button>
+      <span>Mise à jour toutes les 30s &nbsp;·&nbsp; <span id="last-update">—</span></span>
+    </div>
+
     <div class="status-bar">
-      <div class="status-dot"></div>
+      <div class="status-dot-anim"></div>
       <div class="status-text">
         <strong>Travaux en cours</strong>
         Je bosse sur le site.
@@ -279,71 +306,82 @@
 
   <script>
     const BACKEND = 'https://ak47-backend.onrender.com';
-    let previousTotal = null;
+    let prev = { members: null, online: null, visitors: null };
 
-    function animateCount(el, from, to, duration = 900) {
-      if (from === to) return;
+    // ── Anime un chiffre de from → to ──────────────────────────────────────
+    function animateNum(el, from, to, ms = 800) {
+      if (from === to) { el.textContent = to.toLocaleString('fr-FR'); return; }
       const start = performance.now();
-      function update(now) {
-        const elapsed = now - start;
-        const progress = Math.min(elapsed / duration, 1);
-        const ease = 1 - Math.pow(1 - progress, 3);
-        const value = Math.round(from + (to - from) * ease);
-        el.textContent = value.toLocaleString('fr-FR');
-        if (progress < 1) requestAnimationFrame(update);
+      (function tick(now) {
+        const p = Math.min((now - start) / ms, 1);
+        const ease = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(from + (to - from) * ease).toLocaleString('fr-FR');
+        if (p < 1) requestAnimationFrame(tick);
         else el.textContent = to.toLocaleString('fr-FR');
-      }
-      requestAnimationFrame(update);
+      })(start);
     }
 
-    async function fetchMembers() {
-      const icon = document.getElementById('refresh-icon');
-      icon.classList.add('spinning');
-      document.getElementById('refresh-time').textContent = '…';
+    function setCount(id, newVal, prevVal) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const from = prevVal !== null ? prevVal : 0;
+      if (prevVal !== null && prevVal !== newVal) {
+        el.classList.remove('pop');
+        void el.offsetWidth; // force reflow
+        el.classList.add('pop');
+        setTimeout(() => el.classList.remove('pop'), 400);
+      }
+      animateNum(el, from, newVal);
+    }
+
+    async function fetchStats() {
+      const btn = document.getElementById('refresh-btn');
+      btn.classList.add('spinning');
 
       try {
-        const res = await fetch(BACKEND + '/api/members');
+        const res = await fetch(BACKEND + '/api/stats');
         if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
+        const d = await res.json();
 
-        const members = data.members || [];
-        const total = members.length;
-        const now = Date.now();
-        const OFFLINE_THRESHOLD = 2 * 60 * 1000;
-        const online = members.filter(m =>
-          (m.status === 'online' || m.status === 'idle' || m.status === 'dnd') &&
-          m.lastSeen && (now - m.lastSeen) < OFFLINE_THRESHOLD
-        ).length;
+        setCount('count-members',  d.total    || 0, prev.members);
+        setCount('count-online',   d.online   || 0, prev.online);
+        setCount('count-visitors', d.visitors || 0, prev.visitors);
 
-        const totalEl = document.getElementById('total-count');
-        const onlineEl = document.getElementById('online-count');
+        prev.members  = d.total    || 0;
+        prev.online   = d.online   || 0;
+        prev.visitors = d.visitors || 0;
 
-        if (previousTotal !== null && previousTotal !== total) {
-          totalEl.closest('.members-count').classList.add('count-pop');
-          setTimeout(() => totalEl.closest('.members-count').classList.remove('count-pop'), 400);
-        }
+        const now = new Date();
+        document.getElementById('last-update').textContent =
+          now.getHours().toString().padStart(2,'0') + ':' +
+          now.getMinutes().toString().padStart(2,'0') + ':' +
+          now.getSeconds().toString().padStart(2,'0');
 
-        animateCount(totalEl, previousTotal !== null ? previousTotal : 0, total);
-        previousTotal = total;
-        onlineEl.textContent = online.toLocaleString('fr-FR');
-
-        // Update timestamp
-        const h = new Date().getHours().toString().padStart(2,'0');
-        const m2 = new Date().getMinutes().toString().padStart(2,'0');
-        document.getElementById('refresh-time').textContent = h + ':' + m2;
-
-      } catch (e) {
-        document.getElementById('total-count').textContent = '—';
-        document.getElementById('online-count').textContent = '—';
-        document.getElementById('refresh-time').textContent = 'erreur';
+      } catch(e) {
+        ['count-members','count-online','count-visitors'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el && el.textContent === '—') el.textContent = '—';
+        });
+        document.getElementById('last-update').textContent = 'erreur';
       } finally {
-        setTimeout(() => icon.classList.remove('spinning'), 600);
+        setTimeout(() => btn.classList.remove('spinning'), 500);
       }
     }
 
-    // Fetch on load, then every 30s
-    fetchMembers();
-    setInterval(fetchMembers, 30000);
+    // ── Comptabilise la visite (1 appel par session) ───────────────────────
+    async function trackVisit() {
+      try {
+        // sessionStorage pour ne compter qu'une fois par onglet
+        if (sessionStorage.getItem('ak47_visited')) return;
+        await fetch(BACKEND + '/api/visitor', { method: 'POST' });
+        sessionStorage.setItem('ak47_visited', '1');
+      } catch(e) {}
+    }
+
+    // Init
+    trackVisit();
+    fetchStats();
+    setInterval(fetchStats, 30000);
   </script>
 </body>
 </html>
