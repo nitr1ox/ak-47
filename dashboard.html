@@ -34,11 +34,6 @@
     .save-bar-btn:hover { background: var(--gray-900); }
     .save-bar-btn:disabled { background: var(--gray-300); cursor: not-allowed; }
 
-    .add-link-form { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; align-items: end; margin-top: 12px; }
-    .add-link-form input { padding: 9px 12px; border: 1px solid var(--gray-200); border-radius: 6px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; }
-    .add-link-form input:focus { border-color: var(--black); }
-    .add-link-btn { padding: 9px 16px; background: var(--black); color: var(--white); border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
-
     .profile-url-bar { display: flex; align-items: center; gap: 8px; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 7px; padding: 10px 14px; margin-bottom: 20px; }
     .profile-url-text { font-size: 13px; color: var(--gray-600); flex: 1; }
     .profile-url-text strong { color: var(--black); }
@@ -50,6 +45,53 @@
 
     .toast { position: fixed; bottom: 24px; right: 24px; background: var(--black); color: var(--white); padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 500; z-index: 999; opacity: 0; transform: translateY(8px); transition: all .2s; pointer-events: none; }
     .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── SOCIAL PICKER ── */
+    .add-link-tabs { display: flex; gap: 4px; margin-bottom: 16px; }
+    .add-link-tab { padding: 6px 14px; font-size: 12px; font-weight: 600; border: 1px solid var(--gray-200); border-radius: 6px; cursor: pointer; background: var(--white); color: var(--gray-500); transition: all .15s; }
+    .add-link-tab.active { background: var(--black); color: var(--white); border-color: var(--black); }
+
+    .social-picker { display: none; }
+    .social-picker.active { display: block; }
+    .manual-form { display: none; }
+    .manual-form.active { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; align-items: end; }
+    .manual-form input { padding: 9px 12px; border: 1px solid var(--gray-200); border-radius: 6px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; }
+    .manual-form input:focus { border-color: var(--black); }
+    .add-link-btn { padding: 9px 16px; background: var(--black); color: var(--white); border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+
+    .social-grid { display: grid; grid-template-columns: repeat(auto-fill, 52px); gap: 8px; margin-bottom: 14px; }
+    .social-btn {
+      width: 52px; height: 52px; border-radius: 12px;
+      background: #1a1a1a; border: 1.5px solid #2a2a2a;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      cursor: pointer; transition: all .15s; position: relative;
+      padding: 0;
+    }
+    .social-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,.15); border-color: #444; }
+    .social-btn img { width: 26px; height: 26px; object-fit: contain; border-radius: 4px; }
+    .social-btn .social-label { font-size: 8px; color: #888; margin-top: 2px; text-align: center; line-height: 1; max-width: 48px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .social-custom-btn {
+      width: auto; min-width: 52px; padding: 0 10px;
+      height: 52px; border-radius: 12px;
+      background: #1a1a1a; border: 1.5px dashed #444;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      cursor: pointer; transition: all .15s; gap: 2px;
+    }
+    .social-custom-btn:hover { border-color: #888; transform: translateY(-2px); }
+    .social-custom-btn span:first-child { font-size: 16px; color: #888; }
+    .social-custom-btn span:last-child { font-size: 8px; color: #666; }
+
+    /* Social input popup */
+    .social-input-row { display: none; align-items: center; gap: 8px; padding: 12px; background: #111; border: 1px solid #2a2a2a; border-radius: 8px; margin-bottom: 10px; }
+    .social-input-row.active { display: flex; }
+    .social-input-row img { width: 28px; height: 28px; border-radius: 6px; flex-shrink: 0; }
+    .social-input-row input { flex: 1; padding: 8px 10px; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; color: #fff; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; }
+    .social-input-row input:focus { border-color: #555; }
+    .social-input-row input::placeholder { color: #555; }
+    .social-input-row button { padding: 8px 14px; background: var(--white); color: var(--black); border: none; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .social-input-close { background: none; border: none; color: #555; cursor: pointer; font-size: 18px; line-height: 1; padding: 0 4px; }
+    .social-input-close:hover { color: #fff; }
   </style>
 </head>
 <body>
@@ -177,18 +219,40 @@
       <div class="section-card">
         <div class="section-card-title">Vos liens <span id="linkCount" style="font-size:11px;color:var(--gray-400);font-weight:400;"></span></div>
         <div class="links-list" id="linksList"></div>
-        <div class="add-link-form" id="addLinkForm">
-          <div>
-            <label style="font-size:11px;font-weight:600;color:var(--gray-500);display:block;margin-bottom:4px;">Titre</label>
-            <input type="text" id="newLinkTitle" placeholder="ex. Twitch" maxlength="60"/>
+
+        <!-- Onglets Réseaux sociaux / Manuel -->
+        <div style="margin-top:16px;">
+          <div class="add-link-tabs">
+            <button class="add-link-tab active" onclick="switchAddTab('social')">Réseaux sociaux</button>
+            <button class="add-link-tab" onclick="switchAddTab('manual')">URL personnalisée</button>
           </div>
-          <div>
-            <label style="font-size:11px;font-weight:600;color:var(--gray-500);display:block;margin-bottom:4px;">URL</label>
-            <input type="text" id="newLinkUrl" placeholder="https://..." maxlength="500"/>
+
+          <!-- Social picker -->
+          <div class="social-picker active" id="socialPicker">
+            <div class="social-input-row" id="socialInputRow">
+              <img id="socialInputIcon" src="" alt=""/>
+              <input type="text" id="socialInputUrl" placeholder="Entrez votre URL ou pseudo"/>
+              <button onclick="confirmSocialLink()">Ajouter</button>
+              <button class="social-input-close" onclick="closeSocialInput()">✕</button>
+            </div>
+            <div class="social-grid" id="socialGrid"></div>
           </div>
-          <button class="add-link-btn" onclick="addLink()">+ Ajouter</button>
+
+          <!-- Manuel -->
+          <div class="manual-form" id="manualForm">
+            <div>
+              <label style="font-size:11px;font-weight:600;color:var(--gray-500);display:block;margin-bottom:4px;">Titre</label>
+              <input type="text" id="newLinkTitle" placeholder="ex. Mon site" maxlength="60"/>
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:600;color:var(--gray-500);display:block;margin-bottom:4px;">URL</label>
+              <input type="text" id="newLinkUrl" placeholder="https://..." maxlength="500"/>
+            </div>
+            <button class="add-link-btn" onclick="addLink()">+ Ajouter</button>
+          </div>
         </div>
       </div>
+
       <div style="display:flex;justify-content:flex-end;margin-top:8px;">
         <button class="save-bar-btn" id="saveLinksBtn" onclick="saveLinks()">Sauvegarder les liens</button>
       </div>
@@ -235,16 +299,137 @@ let userData = null;
 let analyticsData = null;
 let pendingLinks = null;
 
+// ── RÉSEAUX SOCIAUX ──
+const SOCIALS = [
+  { id:'snapchat',   label:'Snapchat',   color:'#FFFC00', icon:'https://cdn.simpleicons.org/snapchat/FFFC00',    base:'https://snapchat.com/add/',       placeholder:'Ton pseudo Snapchat' },
+  { id:'youtube',    label:'YouTube',    color:'#FF0000', icon:'https://cdn.simpleicons.org/youtube/FF0000',      base:'https://youtube.com/@',           placeholder:'@ta-chaine' },
+  { id:'discord',    label:'Discord',    color:'#5865F2', icon:'https://cdn.simpleicons.org/discord/5865F2',      base:'https://discord.gg/',             placeholder:'Lien invitation ou pseudo' },
+  { id:'spotify',    label:'Spotify',    color:'#1DB954', icon:'https://cdn.simpleicons.org/spotify/1DB954',      base:'https://open.spotify.com/user/',  placeholder:'URL Spotify complète' },
+  { id:'instagram',  label:'Instagram',  color:'#E1306C', icon:'https://cdn.simpleicons.org/instagram/E1306C',    base:'https://instagram.com/',          placeholder:'Ton pseudo Instagram' },
+  { id:'x',          label:'X',          color:'#ffffff', icon:'https://cdn.simpleicons.org/x/ffffff',            base:'https://x.com/',                  placeholder:'Ton pseudo X' },
+  { id:'tiktok',     label:'TikTok',     color:'#ffffff', icon:'https://cdn.simpleicons.org/tiktok/ffffff',       base:'https://tiktok.com/@',            placeholder:'Ton pseudo TikTok' },
+  { id:'telegram',   label:'Telegram',   color:'#2CA5E0', icon:'https://cdn.simpleicons.org/telegram/2CA5E0',    base:'https://t.me/',                   placeholder:'Ton pseudo Telegram' },
+  { id:'soundcloud', label:'SoundCloud', color:'#FF5500', icon:'https://cdn.simpleicons.org/soundcloud/FF5500',  base:'https://soundcloud.com/',         placeholder:'Ton pseudo SoundCloud' },
+  { id:'paypal',     label:'PayPal',     color:'#00457C', icon:'https://cdn.simpleicons.org/paypal/00457C',      base:'https://paypal.me/',              placeholder:'Ton lien PayPal.me' },
+  { id:'github',     label:'GitHub',     color:'#ffffff', icon:'https://cdn.simpleicons.org/github/ffffff',       base:'https://github.com/',             placeholder:'Ton pseudo GitHub' },
+  { id:'roblox',     label:'Roblox',     color:'#ffffff', icon:'https://cdn.simpleicons.org/roblox/ffffff',       base:'https://roblox.com/users/',       placeholder:'URL profil Roblox' },
+  { id:'cashapp',    label:'Cash App',   color:'#00D54B', icon:'https://cdn.simpleicons.org/cashapp/00D54B',      base:'https://cash.app/$',              placeholder:'Ton $cashtag' },
+  { id:'venmo',      label:'Venmo',      color:'#3D95CE', icon:'https://cdn.simpleicons.org/venmo/3D95CE',        base:'https://venmo.com/',              placeholder:'Ton pseudo Venmo' },
+  { id:'playstation',label:'PS',         color:'#003087', icon:'https://cdn.simpleicons.org/playstation/003087', base:'https://psnprofiles.com/',         placeholder:'Ton pseudo PSN' },
+  { id:'xbox',       label:'Xbox',       color:'#107C10', icon:'https://cdn.simpleicons.org/xbox/107C10',         base:'https://account.xbox.com/fr-FR/Profile?gamertag=', placeholder:'Ton gamertag Xbox' },
+  { id:'applemusic', label:'Apple Music',color:'#FC3C44', icon:'https://cdn.simpleicons.org/applemusic/FC3C44',  base:'https://music.apple.com/',        placeholder:'URL Apple Music' },
+  { id:'gitlab',     label:'GitLab',     color:'#FC6D26', icon:'https://cdn.simpleicons.org/gitlab/FC6D26',       base:'https://gitlab.com/',             placeholder:'Ton pseudo GitLab' },
+  { id:'twitch',     label:'Twitch',     color:'#9146FF', icon:'https://cdn.simpleicons.org/twitch/9146FF',       base:'https://twitch.tv/',              placeholder:'Ton pseudo Twitch' },
+  { id:'reddit',     label:'Reddit',     color:'#FF4500', icon:'https://cdn.simpleicons.org/reddit/FF4500',       base:'https://reddit.com/u/',           placeholder:'Ton pseudo Reddit' },
+  { id:'vk',         label:'VK',         color:'#4C75A3', icon:'https://cdn.simpleicons.org/vk/4C75A3',           base:'https://vk.com/',                 placeholder:'Ton pseudo VK' },
+  { id:'letterboxd', label:'Letterboxd', color:'#00C030', icon:'https://cdn.simpleicons.org/letterboxd/00C030',  base:'https://letterboxd.com/',         placeholder:'Ton pseudo Letterboxd' },
+  { id:'bluesky',    label:'Bluesky',    color:'#0085FF', icon:'https://cdn.simpleicons.org/bluesky/0085FF',      base:'https://bsky.app/profile/',       placeholder:'Ton handle Bluesky' },
+  { id:'notion',     label:'Notion',     color:'#ffffff', icon:'https://cdn.simpleicons.org/notion/ffffff',       base:'https://notion.so/',              placeholder:'URL Notion' },
+  { id:'onlyfans',   label:'OnlyFans',   color:'#00AFF0', icon:'https://cdn.simpleicons.org/onlyfans/00AFF0',    base:'https://onlyfans.com/',           placeholder:'Ton pseudo OnlyFans' },
+  { id:'linkedin',   label:'LinkedIn',   color:'#0A66C2', icon:'https://cdn.simpleicons.org/linkedin/0A66C2',    base:'https://linkedin.com/in/',        placeholder:'Ton pseudo LinkedIn' },
+  { id:'steam',      label:'Steam',      color:'#ffffff', icon:'https://cdn.simpleicons.org/steam/ffffff',        base:'https://steamcommunity.com/id/', placeholder:'Ton pseudo Steam' },
+  { id:'kick',       label:'Kick',       color:'#53FC18', icon:'https://cdn.simpleicons.org/kick/53FC18',         base:'https://kick.com/',               placeholder:'Ton pseudo Kick' },
+  { id:'pinterest',  label:'Pinterest',  color:'#E60023', icon:'https://cdn.simpleicons.org/pinterest/E60023',   base:'https://pinterest.com/',          placeholder:'Ton pseudo Pinterest' },
+  { id:'lastfm',     label:'Last.fm',    color:'#D51007', icon:'https://cdn.simpleicons.org/lastdotfm/D51007',   base:'https://last.fm/user/',           placeholder:'Ton pseudo Last.fm' },
+  { id:'vsco',       label:'VSCO',       color:'#ffffff', icon:'https://cdn.simpleicons.org/vsco/ffffff',         base:'https://vsco.co/',                placeholder:'Ton pseudo VSCO' },
+  { id:'buymeacoffee',label:'Buy Me a Coffee',color:'#FFDD00',icon:'https://cdn.simpleicons.org/buymeacoffee/FFDD00',base:'https://buymeacoffee.com/', placeholder:'Ton pseudo BMC' },
+  { id:'kofi',       label:'Ko-fi',      color:'#FF5E5B', icon:'https://cdn.simpleicons.org/kofi/FF5E5B',         base:'https://ko-fi.com/',              placeholder:'Ton pseudo Ko-fi' },
+  { id:'facebook',   label:'Facebook',   color:'#1877F2', icon:'https://cdn.simpleicons.org/facebook/1877F2',    base:'https://facebook.com/',           placeholder:'Ton pseudo Facebook' },
+  { id:'threads',    label:'Threads',    color:'#ffffff', icon:'https://cdn.simpleicons.org/threads/ffffff',      base:'https://threads.net/@',           placeholder:'Ton pseudo Threads' },
+  { id:'patreon',    label:'Patreon',    color:'#FF424D', icon:'https://cdn.simpleicons.org/patreon/FF424D',      base:'https://patreon.com/',            placeholder:'Ton pseudo Patreon' },
+  { id:'signal',     label:'Signal',     color:'#3A76F0', icon:'https://cdn.simpleicons.org/signal/3A76F0',       base:'https://signal.me/#p/',           placeholder:'Ton lien Signal' },
+  { id:'bitcoin',    label:'Bitcoin',    color:'#F7931A', icon:'https://cdn.simpleicons.org/bitcoin/F7931A',      base:'',                                placeholder:'Ton adresse Bitcoin' },
+  { id:'ethereum',   label:'Ethereum',   color:'#627EEA', icon:'https://cdn.simpleicons.org/ethereum/627EEA',    base:'',                                placeholder:'Ton adresse Ethereum' },
+  { id:'litecoin',   label:'Litecoin',   color:'#A6A9AA', icon:'https://cdn.simpleicons.org/litecoin/A6A9AA',    base:'',                                placeholder:'Ton adresse Litecoin' },
+  { id:'hive',       label:'Hive',       color:'#E31337', icon:'https://cdn.simpleicons.org/hive/E31337',         base:'https://hive.blog/@',             placeholder:'Ton pseudo Hive' },
+  { id:'ripple',     label:'XRP',        color:'#346AA9', icon:'https://cdn.simpleicons.org/xrp/346AA9',          base:'',                                placeholder:'Ton adresse XRP' },
+  { id:'monero',     label:'Monero',     color:'#FF6600', icon:'https://cdn.simpleicons.org/monero/FF6600',       base:'',                                placeholder:'Ton adresse Monero' },
+  { id:'email',      label:'E-mail',     color:'#ffffff', icon:'https://cdn.simpleicons.org/gmail/ffffff',        base:'mailto:',                         placeholder:'ton@email.com' },
+];
+
+let activeSocial = null;
+
+function buildSocialGrid() {
+  const grid = document.getElementById('socialGrid');
+  grid.innerHTML = SOCIALS.map(s => `
+    <button class="social-btn" onclick="openSocialInput('${s.id}')" title="${s.label}">
+      <img src="${s.icon}" alt="${s.label}" onerror="this.style.display='none'"/>
+      <span class="social-label">${s.label}</span>
+    </button>
+  `).join('') + `
+    <button class="social-custom-btn" onclick="switchAddTab('manual')" title="URL personnalisée">
+      <span>🔗</span>
+      <span>Custom</span>
+    </button>
+  `;
+}
+
+function openSocialInput(id) {
+  activeSocial = SOCIALS.find(s => s.id === id);
+  if (!activeSocial) return;
+  const row = document.getElementById('socialInputRow');
+  const icon = document.getElementById('socialInputIcon');
+  const input = document.getElementById('socialInputUrl');
+  icon.src = activeSocial.icon;
+  icon.alt = activeSocial.label;
+  input.placeholder = activeSocial.placeholder;
+  input.value = '';
+  row.classList.add('active');
+  input.focus();
+}
+
+function closeSocialInput() {
+  document.getElementById('socialInputRow').classList.remove('active');
+  activeSocial = null;
+}
+
+function confirmSocialLink() {
+  if (!activeSocial) return;
+  const raw = document.getElementById('socialInputUrl').value.trim();
+  if (!raw) return;
+
+  let url = raw;
+  // Si c'est déjà une URL complète, on la garde
+  if (!raw.startsWith('http://') && !raw.startsWith('https://') && !raw.startsWith('mailto:')) {
+    url = activeSocial.base + raw;
+  }
+
+  const title = activeSocial.label;
+  if (pendingLinks.length >= 20) return showAlert('linksAlert', 'Maximum 20 liens');
+
+  pendingLinks.push({ title, url });
+  closeSocialInput();
+  el('linksAlert').innerHTML = '';
+  renderLinks(); updatePreview();
+}
+
+function switchAddTab(tab) {
+  document.querySelectorAll('.add-link-tab').forEach((t,i) => {
+    t.classList.toggle('active', (i===0 && tab==='social') || (i===1 && tab==='manual'));
+  });
+  document.getElementById('socialPicker').classList.toggle('active', tab === 'social');
+  document.getElementById('manualForm').classList.toggle('active', tab === 'manual');
+  if (tab === 'social') closeSocialInput();
+}
+
 // ── INIT ──
 document.addEventListener('DOMContentLoaded', async () => {
+  buildSocialGrid();
   document.getElementById('navUsername').textContent = username;
   const profileUrl = window.location.origin + '/' + username;
   document.getElementById('profileUrlText').textContent = profileUrl;
   document.getElementById('profileViewBtn').href = profileUrl;
   document.getElementById('profileViewBtn2').href = profileUrl;
   document.getElementById('overviewDate').textContent = new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-
   await Promise.all([loadUser(), loadAnalytics()]);
+});
+
+// Entrée clavier dans le champ social
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    if (document.activeElement.id === 'socialInputUrl') confirmSocialLink();
+    if (document.activeElement.id === 'newLinkUrl') addLink();
+  }
 });
 
 async function loadUser() {
@@ -277,7 +462,6 @@ function renderStats() {
   ['sv-7d','av-7d'].forEach(id => el(id).textContent = fmt(d.views_7d));
   el('sv-clicks').textContent = fmt(d.total_clicks);
   el('av-30d').textContent = fmt(d.views_30d);
-  // Chart dates
   if (d.daily?.length) {
     el('chartDateStart').textContent = fmtDate(d.daily[0].day);
     el('chartDateEnd').textContent = fmtDate(d.daily[d.daily.length-1].day);
@@ -375,7 +559,7 @@ function addLink() {
   const title = el('newLinkTitle').value.trim();
   const url = el('newLinkUrl').value.trim();
   if (!title) return showAlert('linksAlert', 'Le titre est requis');
-  if (!url) return showAlert('linksAlert', 'L\'URL est requise');
+  if (!url) return showAlert('linksAlert', "L'URL est requise");
   if (pendingLinks.length >= 20) return showAlert('linksAlert', 'Maximum 20 liens');
   let finalUrl = url;
   if (!url.startsWith('http://') && !url.startsWith('https://')) finalUrl = 'https://' + url;
@@ -429,9 +613,6 @@ function switchTab(name) {
 // ── LIVE PREVIEW SYNC ──
 ['displayName','bio','avatarColor'].forEach(id => {
   el(id)?.addEventListener('input', updatePreview);
-});
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && document.activeElement.id === 'newLinkUrl') addLink();
 });
 
 // ── UTILS ──

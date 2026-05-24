@@ -46,8 +46,9 @@
     } else if (token && username) {
       localStorage.setItem('token', token);
       localStorage.setItem('username', username);
+      const isNew = params.get('new') === '1';
       document.getElementById('msg').textContent = 'Connecté ! Redirection...';
-      setTimeout(() => window.location.href = '/dashboard', 800);
+      setTimeout(() => window.location.href = isNew ? '/setup' : '/dashboard', 800);
     } else {
       window.location.href = '/login';
     }
