@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ak-47.fr — Connexion...</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #fafafa; font-family: 'Inter', sans-serif;
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 16px;
+    }
+    .spinner {
+      width: 32px; height: 32px;
+      border: 2px solid #e4e4e7; border-top-color: #000;
+      border-radius: 50%; animation: spin .6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    p { font-size: 14px; color: #71717a; }
+    .error { color: #ef4444; font-size: 14px; text-align: center; }
+    a { color: #000; font-weight: 600; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="spinner" id="spinner"></div>
+  <p id="msg">Connexion en cours...</p>
+  <div id="errorBox" style="display:none">
+    <p class="error" id="errorMsg"></p>
+    <br/>
+    <a href="/login">← Retour à la connexion</a>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const token    = params.get('token');
+    const username = params.get('username');
+    const error    = params.get('error');
+
+    if (error) {
+      document.getElementById('spinner').style.display = 'none';
+      document.getElementById('msg').style.display = 'none';
+      document.getElementById('errorMsg').textContent = decodeURIComponent(error);
+      document.getElementById('errorBox').style.display = 'block';
+    } else if (token && username) {
+      localStorage.setItem('token', token);
+      localStorage.setItem('username', username);
+      document.getElementById('msg').textContent = 'Connecté ! Redirection...';
+      setTimeout(() => window.location.href = '/dashboard', 800);
+    } else {
+      window.location.href = '/login';
+    }
+  </script>
+</body>
+</html>

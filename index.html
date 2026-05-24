@@ -1,603 +1,625 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AK-47 — En développement</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ak-47.fr — Votre identité en ligne</title>
+  <meta name="description" content="La plateforme link-in-bio la plus propre et rapide. Centralisez votre présence en ligne."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --orange: #ff3c00;
-      --orange2: #ff8800;
-      --discord: #5865F2;
-      --green: #23a55a;
-      --red: #c41e3a;
+      --black:   #000;
+      --white:   #fff;
+      --gray-50:  #fafafa;
+      --gray-100: #f4f4f5;
+      --gray-200: #e4e4e7;
+      --gray-400: #a1a1aa;
+      --gray-500: #71717a;
+      --gray-700: #3f3f46;
+      --gray-900: #18181b;
+      --radius: 8px;
     }
+
+    html { scroll-behavior: smooth; }
 
     body {
+      background: var(--white);
+      color: var(--gray-900);
       font-family: 'Inter', sans-serif;
-      background: #0a0a0a;
-      color: #fff;
-      min-height: 100vh;
-      min-height: 100dvh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
     }
 
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background-image:
-        linear-gradient(rgba(255,60,0,0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,60,0,0.05) 1px, transparent 1px);
-      background-size: 40px 40px;
-      animation: gridMove 20s linear infinite;
-      pointer-events: none;
-    }
-    @keyframes gridMove {
-      0%   { background-position: 0 0; }
-      100% { background-position: 40px 40px; }
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--gray-200);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px; height: 56px;
     }
 
-    .orb { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; }
-    .orb-1 { width: 500px; height: 500px; background: var(--orange); top: -150px; left: -150px; opacity: 0.18; animation: pulse 6s ease-in-out infinite alternate; }
-    .orb-2 { width: 400px; height: 400px; background: var(--orange2); bottom: -100px; right: -100px; opacity: 0.15; animation: pulse 8s ease-in-out infinite alternate-reverse; }
-    @keyframes pulse {
-      from { transform: scale(1); opacity: 0.15; }
-      to   { transform: scale(1.2); opacity: 0.25; }
+    .nav-brand {
+      font-size: 16px; font-weight: 700;
+      letter-spacing: -0.3px; color: var(--black);
+      text-decoration: none;
     }
+    .nav-brand span { color: var(--gray-500); font-weight: 400; }
 
-    .container {
-      position: relative; z-index: 10;
+    .nav-links {
+      display: flex; align-items: center; gap: 24px; list-style: none;
+    }
+    .nav-links a {
+      font-size: 13px; color: var(--gray-500);
+      text-decoration: none; font-weight: 500;
+      transition: color .15s;
+    }
+    .nav-links a:hover { color: var(--black); }
+
+    .nav-actions { display: flex; gap: 8px; }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center;
+      padding: 7px 16px; border-radius: var(--radius);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      text-decoration: none; border: none; transition: all .15s;
+      letter-spacing: -0.1px;
+    }
+    .btn-ghost {
+      background: transparent; color: var(--gray-700);
+      border: 1px solid var(--gray-200);
+    }
+    .btn-ghost:hover { background: var(--gray-100); border-color: var(--gray-300); }
+    .btn-solid {
+      background: var(--black); color: var(--white);
+    }
+    .btn-solid:hover { background: var(--gray-900); }
+    .btn-lg { padding: 11px 24px; font-size: 14px; border-radius: 9px; }
+
+    /* ── HERO ── */
+    .hero {
+      max-width: 760px; margin: 0 auto;
+      padding: 100px 24px 80px;
       text-align: center;
-      padding: 2rem 1.5rem;
-      max-width: 560px; width: 100%;
     }
 
-    .badge {
-      display: inline-block;
-      background: rgba(255,60,0,0.15);
-      border: 1px solid rgba(255,60,0,0.4);
-      color: #ff6030;
-      font-size: 0.7rem; font-weight: 600;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      padding: 0.35rem 1rem; border-radius: 999px;
-      margin-bottom: 2rem;
+    .hero-kicker {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--gray-100); border: 1px solid var(--gray-200);
+      border-radius: 20px; padding: 4px 12px;
+      font-size: 12px; font-weight: 500; color: var(--gray-700);
+      margin-bottom: 28px;
     }
-
-    .logo {
-      font-size: 5rem; font-weight: 800;
-      letter-spacing: -0.04em; line-height: 1;
-      background: linear-gradient(135deg, #fff 30%, #ff6030 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text; margin-bottom: 1.5rem;
-    }
+    .hero-kicker-dot { width: 5px; height: 5px; background: var(--black); border-radius: 50%; }
 
     h1 {
-      font-size: 1.1rem; font-weight: 400;
-      color: rgba(255,255,255,0.5); line-height: 1.7;
-      margin-bottom: 2.5rem;
+      font-size: clamp(40px, 7vw, 72px);
+      font-weight: 700;
+      letter-spacing: -2.5px;
+      line-height: 1.05;
+      color: var(--black);
+      margin-bottom: 20px;
     }
-    h1 strong { color: rgba(255,255,255,0.9); font-weight: 600; }
+    h1 em { font-style: normal; color: var(--gray-500); }
 
-    .separator {
-      width: 40px; height: 2px;
-      background: linear-gradient(90deg, var(--orange), var(--orange2));
-      margin: 0 auto 2.5rem; border-radius: 2px;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
+    .hero-sub {
+      font-size: 17px; color: var(--gray-500);
+      max-width: 480px; margin: 0 auto 36px;
+      line-height: 1.65; font-weight: 400;
     }
 
-    .stat-card {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 12px;
-      padding: 1rem 0.75rem;
-      display: flex; flex-direction: column;
-      align-items: center; gap: 0.4rem;
-      position: relative; overflow: hidden;
-      transition: border-color 0.3s, transform 0.2s;
-      cursor: default;
-    }
-    .stat-card:hover { border-color: rgba(255,255,255,0.15); transform: translateY(-1px); }
-    .stat-card::before {
-      content: ''; position: absolute; inset: 0;
-      background: var(--card-glow, transparent);
-      pointer-events: none; opacity: 0.06;
+    .hero-cta {
+      display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
+      margin-bottom: 56px;
     }
 
-    .stat-card.hype     { --card-glow: linear-gradient(135deg, #ff3c00, transparent); }
-    .stat-card.online   { --card-glow: linear-gradient(135deg, #23a55a, transparent); }
-    .stat-card.visitors { --card-glow: linear-gradient(135deg, #ff8800, transparent); }
-
-    .stat-card:hover.hype     { border-color: rgba(255,60,0,0.4); }
-    .stat-card:hover.online   { border-color: rgba(35,165,90,0.35); }
-    .stat-card:hover.visitors { border-color: rgba(255,136,0,0.35); }
-
-    .stat-icon { font-size: 1.3rem; line-height: 1; }
-
-    .stat-value {
-      font-size: 1.55rem; font-weight: 800;
-      letter-spacing: -0.04em; line-height: 1;
+    .hero-claim {
+      display: flex;
+      background: var(--gray-100); border: 1px solid var(--gray-200);
+      border-radius: 9px; overflow: hidden;
+      max-width: 420px; width: 100%;
     }
-    .stat-card.hype     .stat-value { background: linear-gradient(135deg,#fff 40%,#ff6030); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-    .stat-card.online   .stat-value { background: linear-gradient(135deg,#fff 40%,#23a55a); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-    .stat-card.visitors .stat-value { background: linear-gradient(135deg,#fff 40%,#ff8800); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-
-    .stat-label {
-      font-size: 0.63rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.1em;
-      color: rgba(255,255,255,0.28); text-align: center; line-height: 1.3;
+    .hero-claim-prefix {
+      padding: 0 12px; background: var(--white);
+      border-right: 1px solid var(--gray-200);
+      display: flex; align-items: center;
+      font-size: 13px; color: var(--gray-500);
+      white-space: nowrap; flex-shrink: 0;
     }
-
-    .stat-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      position: absolute; top: 8px; right: 8px;
+    .hero-claim-input {
+      flex: 1; background: transparent; border: none;
+      padding: 11px 12px; color: var(--black); font-size: 13px;
+      font-family: 'Inter', sans-serif; outline: none;
     }
-    .stat-card.hype     .stat-dot { background: #ff4400; animation: blink 2s ease-in-out infinite; }
-    .stat-card.online   .stat-dot { background: #23a55a; animation: blink 1.8s ease-in-out infinite; }
-    .stat-card.visitors .stat-dot { background: #ff8800; animation: blink 3s ease-in-out infinite; }
-
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
-
-    @keyframes countPop {
-      0%   { transform: scale(1); }
-      40%  { transform: scale(1.12); }
-      100% { transform: scale(1); }
+    .hero-claim-input::placeholder { color: var(--gray-400); }
+    .hero-claim-btn {
+      padding: 0 16px; background: var(--black); border: none;
+      color: var(--white); font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: background .15s; white-space: nowrap;
     }
-    .pop { animation: countPop 0.35s ease; }
+    .hero-claim-btn:hover { background: var(--gray-900); }
 
-    .refresh-bar {
+    /* ── MOCKUP ── */
+    .hero-mockup {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 32px rgba(0,0,0,.06), 0 32px 64px rgba(0,0,0,.06);
+      max-width: 700px; margin: 0 auto;
+    }
+    .mockup-bar {
+      display: flex; align-items: center; gap: 6px;
+      padding: 10px 14px; background: var(--gray-50);
+      border-bottom: 1px solid var(--gray-200);
+    }
+    .mockup-dot { width: 9px; height: 9px; border-radius: 50%; }
+    .mockup-dot.r { background: #ff5f56; }
+    .mockup-dot.y { background: #ffbd2e; }
+    .mockup-dot.g { background: #27c93f; }
+    .mockup-url {
+      flex: 1; margin-left: 10px;
+      background: var(--white); border: 1px solid var(--gray-200);
+      border-radius: 5px; padding: 3px 10px;
+      font-size: 11px; color: var(--gray-400);
+      max-width: 240px;
+    }
+    .mockup-body {
+      display: grid; grid-template-columns: 200px 1fr;
+    }
+    .mockup-sidebar {
+      border-right: 1px solid var(--gray-200);
+      padding: 18px 12px; background: var(--gray-50);
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .ms-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 10px; border-radius: 6px;
+      font-size: 12px; color: var(--gray-500); cursor: default;
+    }
+    .ms-item.active { background: var(--white); color: var(--black); font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+    .ms-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gray-300); flex-shrink: 0; }
+    .ms-item.active .ms-dot { background: var(--black); }
+
+    .mockup-main { padding: 22px; display: flex; flex-direction: column; gap: 14px; }
+    .mm-profile { display: flex; align-items: center; gap: 12px; }
+    .mm-avatar {
+      width: 46px; height: 46px; border-radius: 50%;
+      background: var(--black); color: var(--white);
       display: flex; align-items: center; justify-content: center;
-      gap: 0.5rem; margin-bottom: 1rem;
-      font-size: 0.68rem; color: rgba(255,255,255,0.18);
+      font-size: 16px; font-weight: 700; flex-shrink: 0;
     }
-    .refresh-btn {
-      background: none; border: none; cursor: pointer;
-      color: rgba(255,255,255,0.2); font-size: 0.85rem;
-      transition: color 0.2s; padding: 0 2px; line-height: 1;
+    .mm-name { font-size: 14px; font-weight: 700; }
+    .mm-handle { font-size: 11px; color: var(--gray-400); }
+    .mm-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+    .mm-stat {
+      background: var(--gray-50); border: 1px solid var(--gray-200);
+      border-radius: 7px; padding: 10px;
     }
-    .refresh-btn:hover { color: rgba(255,255,255,0.5); }
-    .refresh-btn.spinning { animation: spin 0.6s linear; }
-    @keyframes spin { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+    .mm-stat-val { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+    .mm-stat-label { font-size: 10px; color: var(--gray-400); margin-top: 1px; }
+    .mm-links { display: flex; flex-direction: column; gap: 6px; }
+    .mm-link {
+      height: 34px; background: var(--gray-50); border: 1px solid var(--gray-200);
+      border-radius: 6px; display: flex; align-items: center; padding: 0 12px; gap: 8px;
+      font-size: 11px; color: var(--gray-500);
+    }
+    .mm-link-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--black); }
 
-    .status-bar {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 12px; padding: 1.1rem 1.5rem;
-      display: flex; align-items: center; gap: 1rem; text-align: left;
-      margin-bottom: 1.5rem;
+    /* ── STATS ── */
+    .stats {
+      border-top: 1px solid var(--gray-200);
+      border-bottom: 1px solid var(--gray-200);
+      background: var(--gray-50);
+      padding: 48px 24px;
     }
-    .status-dot-anim { width: 10px; height: 10px; border-radius: 50%; background: #ff8800; flex-shrink: 0; animation: blink 1.5s ease-in-out infinite; }
-    .status-text { font-size: 0.85rem; color: rgba(255,255,255,0.5); }
-    .status-text strong { display: block; color: rgba(255,255,255,0.85); font-weight: 600; margin-bottom: 0.1rem; }
-
-    .socials { display: flex; justify-content: center; gap: 0.75rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
-    .social-btn {
-      display: inline-flex; align-items: center; gap: 0.6rem;
-      padding: 0.65rem 1.3rem; border-radius: 10px;
-      font-size: 0.85rem; font-weight: 600; text-decoration: none;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      cursor: pointer;
+    .stats-inner {
+      max-width: 860px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 1px;
+      background: var(--gray-200); border-radius: 10px; overflow: hidden;
+      border: 1px solid var(--gray-200);
     }
-    .social-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
-    .social-btn:active { transform: translateY(0); }
-    .discord-btn { background: var(--discord); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
-
-    /* ── HYPE button ── */
-    .hype-btn {
-      background: linear-gradient(135deg, var(--orange), var(--orange2));
-      color: #fff; border: none;
-      font-family: 'Inter', sans-serif;
-      font-size: 1rem; font-weight: 800;
-      padding: 0.75rem 2rem;
-      letter-spacing: 0.05em;
-      position: relative; overflow: hidden;
+    .stat-cell {
+      background: var(--white); padding: 28px 20px; text-align: center;
     }
-    .hype-btn::before {
-      content: ''; position: absolute; inset: 0;
-      background: rgba(255,255,255,0);
-      transition: background 0.2s;
+    .stat-num { font-size: 36px; font-weight: 700; letter-spacing: -1.5px; }
+    .stat-label { font-size: 12px; color: var(--gray-400); margin-top: 4px; text-transform: uppercase; letter-spacing: .5px; }
+
+    /* ── FEATURES ── */
+    .features { max-width: 1000px; margin: 0 auto; padding: 80px 24px; }
+    .section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray-400); margin-bottom: 12px; }
+    .section-title { font-size: clamp(28px,4vw,44px); font-weight: 700; letter-spacing: -1.5px; margin-bottom: 12px; }
+    .section-sub { font-size: 15px; color: var(--gray-500); max-width: 440px; margin-bottom: 48px; }
+
+    .features-grid {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 1px; background: var(--gray-200);
+      border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden;
     }
-    .hype-btn:hover { box-shadow: 0 8px 32px rgba(255,60,0,0.5) !important; }
-    .hype-btn:hover::before { background: rgba(255,255,255,0.1); }
-    .hype-btn.done {
-      background: rgba(35,165,90,0.15) !important;
-      color: #23a55a !important;
-      border: 1px solid rgba(35,165,90,0.3) !important;
-      cursor: default !important;
-      transform: none !important;
-      box-shadow: none !important;
+    .feature-card {
+      background: var(--white); padding: 28px 24px;
+      transition: background .15s;
     }
-    .hype-btn:disabled { opacity: 0.5; cursor: default; transform: none !important; box-shadow: none !important; }
-
-    /* ── MODAL ── */
-    .modal-overlay {
-      position: fixed; inset: 0; z-index: 100;
-      background: rgba(0,0,0,0.75);
-      backdrop-filter: blur(8px);
-      display: flex; align-items: center; justify-content: center;
-      padding: 1rem;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.25s ease;
+    .feature-card:hover { background: var(--gray-50); }
+    .feature-icon {
+      width: 36px; height: 36px; border-radius: 7px;
+      background: var(--black); display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
     }
-    .modal-overlay.visible { opacity: 1; pointer-events: all; }
+    .feature-icon svg { width: 18px; height: 18px; stroke: var(--white); fill: none; stroke-width: 2; }
+    .feature-title { font-weight: 600; font-size: 14px; margin-bottom: 6px; letter-spacing: -0.2px; }
+    .feature-desc { font-size: 13px; color: var(--gray-500); line-height: 1.6; }
 
-    .modal {
-      background: #111113;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 20px;
-      padding: 2rem 1.75rem;
-      max-width: 400px; width: 100%;
-      text-align: center;
-      transform: translateY(20px) scale(0.97);
-      transition: transform 0.25s ease;
-      position: relative;
+    /* ── PRICING ── */
+    .pricing-section { background: var(--gray-50); border-top: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); }
+    .pricing-inner { max-width: 680px; margin: 0 auto; padding: 80px 24px; }
+    .pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .price-card {
+      background: var(--white); border: 1px solid var(--gray-200);
+      border-radius: 10px; padding: 28px 24px; position: relative;
+      transition: border-color .15s;
     }
-    .modal-overlay.visible .modal { transform: translateY(0) scale(1); }
-
-    .modal-close {
-      position: absolute; top: 1rem; right: 1rem;
-      background: none; border: none; cursor: pointer;
-      color: rgba(255,255,255,0.3); font-size: 1.2rem;
-      line-height: 1; transition: color 0.2s;
+    .price-card:hover { border-color: var(--gray-400); }
+    .price-card.pro { border-color: var(--black); }
+    .pro-badge {
+      position: absolute; top: -11px; left: 20px;
+      background: var(--black); color: var(--white);
+      font-size: 10px; font-weight: 700; letter-spacing: .8px;
+      text-transform: uppercase; padding: 2px 10px; border-radius: 20px;
     }
-    .modal-close:hover { color: rgba(255,255,255,0.7); }
+    .price-name { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-500); margin-bottom: 8px; }
+    .price-amount { font-size: 36px; font-weight: 700; letter-spacing: -1.5px; margin-bottom: 4px; }
+    .price-amount span { font-size: 14px; font-weight: 400; color: var(--gray-400); letter-spacing: 0; }
+    .price-desc { font-size: 13px; color: var(--gray-500); margin-bottom: 20px; }
+    .price-features { list-style: none; display: flex; flex-direction: column; gap: 9px; margin-bottom: 24px; }
+    .price-features li { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--gray-700); }
+    .price-features li::before { content: ''; width: 5px; height: 5px; background: var(--black); border-radius: 50%; flex-shrink: 0; }
+    .btn-price-free { width: 100%; padding: 10px; background: var(--gray-100); border: 1px solid var(--gray-200); border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--black); transition: background .15s; text-decoration: none; display: block; text-align: center; }
+    .btn-price-free:hover { background: var(--gray-200); }
+    .btn-price-pro { width: 100%; padding: 10px; background: var(--black); border: none; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--white); transition: background .15s; text-decoration: none; display: block; text-align: center; }
+    .btn-price-pro:hover { background: var(--gray-900); }
 
-    .modal-icon { font-size: 2.8rem; margin-bottom: 0.75rem; }
-
-    .modal-title {
-      font-size: 1.3rem; font-weight: 800; margin-bottom: 0.5rem;
-      background: linear-gradient(135deg, #fff 40%, #ff6030);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
+    /* ── FAQ ── */
+    .faq-section { max-width: 680px; margin: 0 auto; padding: 80px 24px; }
+    .faq-list { border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; }
+    .faq-item { border-bottom: 1px solid var(--gray-200); }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-q {
+      width: 100%; text-align: left; background: none; border: none;
+      padding: 18px 20px; color: var(--black); font-size: 14px; font-weight: 500;
+      cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+      gap: 16px; transition: background .15s; font-family: 'Inter', sans-serif;
     }
+    .faq-q:hover { background: var(--gray-50); }
+    .faq-arrow { width: 16px; height: 16px; stroke: var(--gray-400); flex-shrink: 0; transition: transform .2s; }
+    .faq-item.open .faq-arrow { transform: rotate(180deg); stroke: var(--black); }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+    .faq-item.open .faq-a { max-height: 200px; }
+    .faq-a-inner { padding: 0 20px 18px; color: var(--gray-500); font-size: 14px; line-height: 1.7; }
 
-    .modal-sub {
-      font-size: 0.85rem; color: rgba(255,255,255,0.45);
-      line-height: 1.6; margin-bottom: 1.25rem;
+    /* ── CTA BOTTOM ── */
+    .cta-bottom {
+      background: var(--black); padding: 80px 24px; text-align: center;
     }
-    .modal-sub strong { color: rgba(255,255,255,0.75); }
-
-    .og-preview {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      background: linear-gradient(135deg, rgba(255,136,0,0.1), rgba(255,60,0,0.1));
-      border: 1px solid rgba(255,136,0,0.25);
-      border-radius: 10px; padding: 0.55rem 1rem;
-      margin-bottom: 1.25rem;
-      font-size: 0.78rem; font-weight: 600;
-      color: #ff9933;
+    .cta-bottom h2 { font-size: clamp(28px,5vw,52px); font-weight: 700; letter-spacing: -2px; color: var(--white); margin-bottom: 12px; }
+    .cta-bottom p { color: rgba(255,255,255,.5); margin-bottom: 32px; font-size: 15px; }
+    .cta-claim {
+      max-width: 400px; margin: 0 auto;
+      display: flex; background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 9px; overflow: hidden;
     }
-    .og-badge-tag {
-      background: linear-gradient(135deg, #ff8800, #ff3c00);
-      color: #fff; border-radius: 5px;
-      padding: 0.15rem 0.5rem; font-size: 0.7rem; font-weight: 800;
-      letter-spacing: 0.05em;
+    .cta-claim-prefix { padding: 0 12px; border-right: 1px solid rgba(255,255,255,.1); display: flex; align-items: center; font-size: 13px; color: rgba(255,255,255,.4); white-space: nowrap; }
+    .cta-claim-input { flex: 1; background: transparent; border: none; padding: 12px; color: var(--white); font-size: 13px; font-family: 'Inter',sans-serif; outline: none; }
+    .cta-claim-input::placeholder { color: rgba(255,255,255,.25); }
+    .cta-claim-btn { padding: 0 18px; background: var(--white); border: none; color: var(--black); font-size: 13px; font-weight: 700; cursor: pointer; transition: background .15s; }
+    .cta-claim-btn:hover { background: var(--gray-100); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--white); border-top: 1px solid var(--gray-200);
+      padding: 48px 32px 32px;
     }
-
-    .email-input {
-      width: 100%; background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 10px; padding: 0.75rem 1rem;
-      color: #fff; font-size: 0.9rem; font-family: 'Inter', sans-serif;
-      outline: none; transition: border-color 0.2s;
-      margin-bottom: 0.5rem;
+    .footer-top {
+      display: grid; grid-template-columns: 240px repeat(4,1fr); gap: 32px; margin-bottom: 40px;
     }
-    .email-input::placeholder { color: rgba(255,255,255,0.25); }
-    .email-input:focus { border-color: rgba(255,100,48,0.5); }
+    .footer-brand-name { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+    .footer-brand-name span { color: var(--gray-400); font-weight: 400; }
+    .footer-tagline { font-size: 13px; color: var(--gray-400); margin-bottom: 16px; line-height: 1.6; }
+    .footer-col-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-900); margin-bottom: 12px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .footer-col ul a { font-size: 13px; color: var(--gray-500); text-decoration: none; transition: color .15s; }
+    .footer-col ul a:hover { color: var(--black); }
+    .footer-bottom { border-top: 1px solid var(--gray-200); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .footer-copy { font-size: 12px; color: var(--gray-400); }
+    .footer-status { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--gray-500); text-decoration: none; }
+    .status-dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; }
 
-    .email-hint {
-      font-size: 0.72rem; color: rgba(255,255,255,0.22);
-      margin-bottom: 1.2rem; text-align: left; padding-left: 2px;
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .mockup-sidebar { display: none; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .stats-inner { grid-template-columns: repeat(2,1fr); }
+      .footer-top { grid-template-columns: 1fr 1fr; }
     }
-
-    .modal-submit {
-      width: 100%;
-      background: linear-gradient(135deg, var(--orange), var(--orange2));
-      color: #fff; border: none; border-radius: 10px;
-      padding: 0.8rem; font-size: 0.95rem; font-weight: 700;
-      font-family: 'Inter', sans-serif; cursor: pointer;
-      transition: opacity 0.2s, transform 0.15s;
-      margin-bottom: 0.75rem;
-    }
-    .modal-submit:hover { opacity: 0.9; transform: translateY(-1px); }
-    .modal-submit:active { transform: translateY(0); }
-    .modal-submit:disabled { opacity: 0.5; cursor: default; transform: none; }
-
-    .modal-skip {
-      background: none; border: none; cursor: pointer;
-      color: rgba(255,255,255,0.25); font-size: 0.8rem;
-      font-family: 'Inter', sans-serif; transition: color 0.2s;
-    }
-    .modal-skip:hover { color: rgba(255,255,255,0.5); }
-
-    .modal-success { display: none; }
-    .modal.success-mode .modal-form { display: none; }
-    .modal.success-mode .modal-success { display: block; }
-
-    .success-icon { font-size: 3rem; margin-bottom: 0.75rem; }
-    .success-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 0.5rem; color: #23a55a; }
-    .success-sub { font-size: 0.85rem; color: rgba(255,255,255,0.4); line-height: 1.6; }
-
-    .footer { margin-top: 2.5rem; font-size: 0.72rem; color: rgba(255,255,255,0.18); letter-spacing: 0.05em; }
-
-    @media (max-width: 480px) {
-      .orb-1 { width: 300px; height: 300px; top: -80px; left: -80px; }
-      .orb-2 { width: 250px; height: 250px; bottom: -60px; right: -60px; }
-      .container { padding: 2rem 1.1rem; }
-      .badge { font-size: 0.65rem; margin-bottom: 1.5rem; }
-      .logo { font-size: 3.5rem; margin-bottom: 1.25rem; }
-      h1 { font-size: 0.98rem; margin-bottom: 2rem; }
-      .separator { margin-bottom: 2rem; }
-      .stat-value { font-size: 1.3rem; }
-      .stat-label { font-size: 0.58rem; }
-      .stats-grid { gap: 0.5rem; }
-      .stat-card { padding: 0.85rem 0.5rem; }
-      .status-bar { padding: 0.9rem 1.1rem; }
-      .modal { padding: 1.5rem 1.25rem; }
-    }
-    @media (max-width: 360px) {
-      .logo { font-size: 3rem; }
-      h1 { font-size: 0.92rem; }
-      .stat-value { font-size: 1.15rem; }
+    @media (max-width: 640px) {
+      nav { padding: 0 16px; }
+      .nav-links { display: none; }
+      .features-grid { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
 
-  <!-- ── MODAL ── -->
-  <div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
-    <div class="modal" id="modal">
-      <button class="modal-close" onclick="closeModal()">✕</button>
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-brand">ak-47<span>.fr</span></a>
+  <ul class="nav-links">
+    <li><a href="#features">Fonctionnalités</a></li>
+    <li><a href="#pricing">Tarifs</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="/leaderboard">Classement</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="/login" class="btn btn-ghost">Connexion</a>
+    <a href="/register" class="btn btn-solid">S'inscrire</a>
+  </div>
+</nav>
 
-      <div class="modal-form">
-        <div class="modal-icon">🔥</div>
-        <div class="modal-title">Tu es dans la HYPE !</div>
-        <div class="modal-sub">
-          Laisse ton email pour recevoir un accès avant tout le monde et obtenir le badge <strong>OG</strong> au lancement.
-        </div>
-
-        <div class="og-preview">
-          <span class="og-badge-tag">OG</span>
-          Badge exclusif — premiers membres uniquement
-        </div>
-
-        <input class="email-input" type="email" id="email-input"
-          placeholder="ton@email.com" autocomplete="email" />
-        <div class="email-hint">✌️ Optionnel — on te spam pas, promis.</div>
-
-        <button class="modal-submit" id="modal-submit-btn" onclick="submitHype(false)">
-          🚀 Rejoindre la liste OG
-        </button>
-        <button class="modal-skip" onclick="submitHype(true)">
-          Non merci, juste ajouter mon hype
-        </button>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-kicker"><span class="hero-kicker-dot"></span> Hébergement de fichiers inclus</div>
+  <h1>Votre identité<br><em>en un seul lien.</em></h1>
+  <p class="hero-sub">ak-47.fr est la plateforme link-in-bio la plus propre et rapide. Partagez tout ce que vous faites depuis une seule page.</p>
+  <div class="hero-cta">
+    <div class="hero-claim">
+      <div class="hero-claim-prefix">ak-47.fr/</div>
+      <input class="hero-claim-input" type="text" placeholder="votre-pseudo" id="claimInput"/>
+      <button class="hero-claim-btn" onclick="claim()">Réserver →</button>
+    </div>
+  </div>
+  <div class="hero-mockup">
+    <div class="mockup-bar">
+      <div class="mockup-dot r"></div>
+      <div class="mockup-dot y"></div>
+      <div class="mockup-dot g"></div>
+      <div class="mockup-url">ak-47.fr/dashboard</div>
+    </div>
+    <div class="mockup-body">
+      <div class="mockup-sidebar">
+        <div class="ms-item active"><span class="ms-dot"></span> Vue d'ensemble</div>
+        <div class="ms-item"><span class="ms-dot"></span> Mon profil</div>
+        <div class="ms-item"><span class="ms-dot"></span> Liens</div>
+        <div class="ms-item"><span class="ms-dot"></span> Analytics</div>
+        <div class="ms-item"><span class="ms-dot"></span> Apparence</div>
+        <div class="ms-item"><span class="ms-dot"></span> Paramètres</div>
       </div>
-
-      <div class="modal-success">
-        <div class="success-icon">✅</div>
-        <div class="success-title">HYPE enregistrée !</div>
-        <div class="success-sub" id="success-msg">
-          Tu fais partie des premiers. On se retrouve au lancement.
+      <div class="mockup-main">
+        <div class="mm-profile">
+          <div class="mm-avatar">AK</div>
+          <div>
+            <div class="mm-name">ak-47.fr/votre-pseudo</div>
+            <div class="mm-handle">Profil actif · Plan gratuit</div>
+          </div>
+        </div>
+        <div class="mm-stats">
+          <div class="mm-stat"><div class="mm-stat-val">12.4K</div><div class="mm-stat-label">Vues profil</div></div>
+          <div class="mm-stat"><div class="mm-stat-val">847</div><div class="mm-stat-label">Clics liens</div></div>
+          <div class="mm-stat"><div class="mm-stat-val">94%</div><div class="mm-stat-label">Taux de clic</div></div>
+        </div>
+        <div class="mm-links">
+          <div class="mm-link"><span class="mm-link-dot"></span>Twitch — twitch.tv/votre-pseudo</div>
+          <div class="mm-link"><span class="mm-link-dot"></span>Discord — discord.gg/votre-serveur</div>
+          <div class="mm-link"><span class="mm-link-dot"></span>Instagram — @votre-pseudo</div>
         </div>
       </div>
     </div>
   </div>
+</section>
 
-  <div class="container">
-    <div class="badge">⚙&nbsp; En cours de développement</div>
-    <div class="logo">AK-47</div>
-    <div class="separator"></div>
-    <h1>Le site est en dev.<br><strong>Revenez bientôt</strong>, quelque chose de grand arrive.</h1>
-
-    <div class="stats-grid">
-      <div class="stat-card hype">
-        <div class="stat-dot"></div>
-        <div class="stat-icon">🔥</div>
-        <div class="stat-value" id="count-hype">—</div>
-        <div class="stat-label">Hype<br>total</div>
-      </div>
-      <div class="stat-card online">
-        <div class="stat-dot"></div>
-        <div class="stat-icon">🟢</div>
-        <div class="stat-value" id="count-online">—</div>
-        <div class="stat-label">En ligne<br>maintenant</div>
-      </div>
-      <div class="stat-card visitors">
-        <div class="stat-dot"></div>
-        <div class="stat-icon">👁️</div>
-        <div class="stat-value" id="count-visitors">—</div>
-        <div class="stat-label">Visites<br>sur la page</div>
-      </div>
-    </div>
-
-    <div class="refresh-bar">
-      <button class="refresh-btn" id="refresh-btn" onclick="fetchStats()" title="Actualiser">↻</button>
-      <span>Mise à jour toutes les 30s &nbsp;·&nbsp; <span id="last-update">—</span></span>
-    </div>
-
-    <div class="status-bar">
-      <div class="status-dot-anim"></div>
-      <div class="status-text">
-        <strong>Travaux en cours</strong>
-        Je bosse sur le site.
-      </div>
-    </div>
-
-    <div class="socials">
-      <button class="social-btn hype-btn" id="hype-btn" onclick="openHypeModal()">
-        🔥 HYPE
-      </button>
-      <a href="https://discord.gg/mH4raEhSgH" target="_blank" rel="noopener noreferrer" class="social-btn discord-btn">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.033.055a19.875 19.875 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
-        </svg>
-        Rejoindre le Discord
-      </a>
-    </div>
-
-    <div class="footer">© 2026 AK-47 &nbsp;·&nbsp; ak-47.fr</div>
+<!-- STATS -->
+<div class="stats">
+  <div class="stats-inner">
+    <div class="stat-cell"><div class="stat-num">1.8M+</div><div class="stat-label">Utilisateurs</div></div>
+    <div class="stat-cell"><div class="stat-num">70M+</div><div class="stat-label">Vues profil</div></div>
+    <div class="stat-cell"><div class="stat-num">610K+</div><div class="stat-label">Fichiers hébergés</div></div>
+    <div class="stat-cell"><div class="stat-num">49K+</div><div class="stat-label">Membres premium</div></div>
   </div>
+</div>
 
-  <script>
-    const BACKEND = 'https://ak47-backend.onrender.com';
-    let prev = { hype: null, online: null, visitors: null };
+<!-- FEATURES -->
+<div id="features" class="features">
+  <div class="section-label">Fonctionnalités</div>
+  <h2 class="section-title">Tout ce dont vous avez besoin.</h2>
+  <p class="section-sub">Une plateforme complète pour centraliser votre présence en ligne, sans compromis.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+      <div class="feature-title">Profil personnalisable</div>
+      <div class="feature-desc">Couleurs, polices, mises en page. Exprimez votre identité avec une liberté totale.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></div>
+      <div class="feature-title">Liens illimités</div>
+      <div class="feature-desc">Ajoutez tous vos réseaux, sites et projets. Aucune limite même en version gratuite.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <div class="feature-title">Analytics en temps réel</div>
+      <div class="feature-desc">Suivez vos vues et clics quotidiens avec des graphiques clairs et précis.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <div class="feature-title">Hébergement de fichiers</div>
+      <div class="feature-desc">Uploadez et partagez images et vidéos directement depuis votre profil.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div class="feature-title">Sécurisé & privé</div>
+      <div class="feature-desc">Connexions chiffrées, authentification JWT. Vos données vous appartiennent.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
+      <div class="feature-title">SEO & Métadonnées</div>
+      <div class="feature-desc">Optimisez votre profil pour les moteurs de recherche et les aperçus réseaux sociaux.</div>
+    </div>
+  </div>
+</div>
 
-    function animateNum(el, from, to, ms = 800) {
-      if (from === to) { el.textContent = to.toLocaleString('fr-FR'); return; }
-      const start = performance.now();
-      (function tick(now) {
-        const p = Math.min((now - start) / ms, 1);
-        const ease = 1 - Math.pow(1 - p, 3);
-        el.textContent = Math.round(from + (to - from) * ease).toLocaleString('fr-FR');
-        if (p < 1) requestAnimationFrame(tick);
-        else el.textContent = to.toLocaleString('fr-FR');
-      })(start);
-    }
+<!-- PRICING -->
+<div id="pricing" class="pricing-section">
+  <div class="pricing-inner">
+    <div class="section-label">Tarifs</div>
+    <h2 class="section-title">Simple et transparent.</h2>
+    <p class="section-sub">Commencez gratuitement. Passez au pro quand vous en avez besoin.</p>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-name">Gratuit</div>
+        <div class="price-amount">0€ <span>/ à vie</span></div>
+        <div class="price-desc">Pour démarrer et tester la plateforme.</div>
+        <ul class="price-features">
+          <li>Profil personnalisable</li>
+          <li>Liens illimités</li>
+          <li>Analytics de base</li>
+          <li>Effets de profil basiques</li>
+        </ul>
+        <a href="/register" class="btn-price-free">Commencer gratuitement</a>
+      </div>
+      <div class="price-card pro">
+        <div class="pro-badge">Plus populaire</div>
+        <div class="price-name">Premium</div>
+        <div class="price-amount">7,99€ <span>/ à vie</span></div>
+        <div class="price-desc">Paiement unique. Pour toujours.</div>
+        <ul class="price-features">
+          <li>Badge exclusif ✦</li>
+          <li>Layouts avancés</li>
+          <li>Polices personnalisées</li>
+          <li>Analytics complets</li>
+          <li>Effets & animations</li>
+          <li>Métadonnées & SEO</li>
+        </ul>
+        <a href="/register" class="btn-price-pro">Obtenir Premium</a>
+      </div>
+    </div>
+  </div>
+</div>
 
-    function setCount(id, newVal, prevVal) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const from = prevVal !== null ? prevVal : 0;
-      if (prevVal !== null && prevVal !== newVal) {
-        el.classList.remove('pop');
-        void el.offsetWidth;
-        el.classList.add('pop');
-        setTimeout(() => el.classList.remove('pop'), 400);
-      }
-      animateNum(el, from, newVal);
-    }
+<!-- FAQ -->
+<div id="faq" class="faq-section">
+  <div class="section-label">FAQ</div>
+  <h2 class="section-title">Questions fréquentes.</h2>
+  <p class="section-sub" style="margin-bottom:32px;">Tout ce que vous devez savoir sur ak-47.fr.</p>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Qu'est-ce que ak-47.fr ?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="faq-a"><div class="faq-a-inner">Une plateforme link-in-bio qui regroupe tous vos réseaux sociaux, sites et projets sur une seule page élégante. Plus rapide et plus propre que Linktree, avec analytics et hébergement de fichiers intégrés.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">C'est vraiment gratuit ?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="faq-a"><div class="faq-a-inner">Oui, complètement gratuit. Le plan Premium est un paiement unique à vie pour débloquer les fonctionnalités avancées.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Combien de temps pour configurer ?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="faq-a"><div class="faq-a-inner">Moins d'une minute. Inscrivez-vous, choisissez votre pseudo, ajoutez vos liens et partagez. C'est tout.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Mes données sont-elles sécurisées ?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="faq-a"><div class="faq-a-inner">Absolument. Authentification JWT, mots de passe chiffrés avec bcrypt, rate limiting contre les attaques. Vos données ne sont jamais revendues.</div></div>
+    </div>
+  </div>
+</div>
 
-    async function fetchStats() {
-      const btn = document.getElementById('refresh-btn');
-      btn.classList.add('spinning');
-      try {
-        const res = await fetch(BACKEND + '/api/stats');
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const d = await res.json();
-        setCount('count-hype',     d.interested || 0, prev.hype);
-        setCount('count-online',   d.online     || 0, prev.online);
-        setCount('count-visitors', d.visitors   || 0, prev.visitors);
-        prev.hype     = d.interested || 0;
-        prev.online   = d.online     || 0;
-        prev.visitors = d.visitors   || 0;
-        const now = new Date();
-        document.getElementById('last-update').textContent =
-          now.getHours().toString().padStart(2,'0') + ':' +
-          now.getMinutes().toString().padStart(2,'0') + ':' +
-          now.getSeconds().toString().padStart(2,'0');
-      } catch(e) {
-        document.getElementById('last-update').textContent = 'erreur';
-      } finally {
-        setTimeout(() => btn.classList.remove('spinning'), 500);
-      }
-    }
+<!-- CTA BOTTOM -->
+<div class="cta-bottom">
+  <h2>Commencez maintenant.</h2>
+  <p>Rejoignez plus de 1 800 000 créateurs sur ak-47.fr.</p>
+  <div class="cta-claim">
+    <div class="cta-claim-prefix">ak-47.fr/</div>
+    <input class="cta-claim-input" type="text" placeholder="votre-pseudo" id="ctaInput"/>
+    <button class="cta-claim-btn" onclick="claimCta()">→</button>
+  </div>
+</div>
 
-    async function trackVisit() {
-      try {
-        if (sessionStorage.getItem('ak47_visited')) return;
-        await fetch(BACKEND + '/api/visitor', { method: 'POST' });
-        sessionStorage.setItem('ak47_visited', '1');
-      } catch(e) {}
-    }
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-brand-name">ak-47<span>.fr</span></div>
+      <p class="footer-tagline">La plateforme link-in-bio la plus propre, rapide et personnalisable.</p>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Général</div>
+      <ul>
+        <li><a href="/login">Connexion</a></li>
+        <li><a href="/register">S'inscrire</a></li>
+        <li><a href="#pricing">Tarifs</a></li>
+        <li><a href="/leaderboard">Classement</a></li>
+        <li><a href="/status">Statut</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Ressources</div>
+      <ul>
+        <li><a href="#">Centre d'aide</a></li>
+        <li><a href="#">Changelog</a></li>
+        <li><a href="#">Discord</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Contact</div>
+      <ul>
+        <li><a href="mailto:support@ak-47.fr">Support</a></li>
+        <li><a href="mailto:business@ak-47.fr">Business</a></li>
+        <li><a href="mailto:legal@ak-47.fr">Légal</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Légal</div>
+      <ul>
+        <li><a href="/terms">Conditions d'utilisation</a></li>
+        <li><a href="/privacy">Confidentialité</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2026 ak-47.fr — Tous droits réservés.</span>
+    <a href="/status" class="footer-status"><span class="status-dot"></span>Tous les systèmes opérationnels</a>
+  </div>
+</footer>
 
-    // ── Modal ──────────────────────────────────────────────────────────────
-    function openHypeModal() {
-      const btn = document.getElementById('hype-btn');
-      if (btn.classList.contains('done')) return;
-      document.getElementById('modal-overlay').classList.add('visible');
-      setTimeout(() => document.getElementById('email-input')?.focus(), 300);
-    }
-
-    function closeModal() {
-      document.getElementById('modal-overlay').classList.remove('visible');
-    }
-
-    function handleOverlayClick(e) {
-      if (e.target === document.getElementById('modal-overlay')) closeModal();
-    }
-
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeModal();
-    });
-
-    // Valider avec Entrée
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('email-input').addEventListener('keydown', e => {
-        if (e.key === 'Enter') submitHype(false);
-      });
-    });
-
-    async function submitHype(skipEmail) {
-      const submitBtn = document.getElementById('modal-submit-btn');
-      submitBtn.disabled = true;
-      submitBtn.textContent = '⏳ Envoi…';
-
-      const emailVal = skipEmail ? '' : (document.getElementById('email-input').value.trim());
-
-      if (emailVal && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = '🚀 Rejoindre la liste OG';
-        const input = document.getElementById('email-input');
-        input.style.borderColor = 'rgba(255,60,0,0.7)';
-        input.value = '';
-        input.placeholder = 'Email invalide, réessaie…';
-        setTimeout(() => { input.style.borderColor = ''; input.placeholder = 'ton@email.com'; }, 2500);
-        return;
-      }
-
-      try {
-        await fetch(BACKEND + '/api/interested', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: emailVal || null })
-        });
-
-        sessionStorage.setItem('ak47_hyped', '1');
-
-        const modal = document.getElementById('modal');
-        modal.classList.add('success-mode');
-
-        const msg = document.getElementById('success-msg');
-        if (emailVal) {
-          msg.innerHTML = `On t'enverra un mail à <strong style="color:rgba(255,255,255,0.7)">${emailVal}</strong> au lancement avec ton badge <span style="background:linear-gradient(135deg,#ff8800,#ff3c00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800">OG</span>. 🏆`;
-        } else {
-          msg.textContent = 'Tu fais partie des premiers. On se retrouve au lancement.';
-        }
-
-        const hypeBtn = document.getElementById('hype-btn');
-        hypeBtn.classList.add('done');
-        hypeBtn.textContent = '✅ HYPE !';
-
-        await fetchStats();
-        setTimeout(closeModal, 3500);
-
-      } catch(e) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = '🚀 Rejoindre la liste OG';
-      }
-    }
-
-    // ── Init ──────────────────────────────────────────────────────────────
-    trackVisit();
-    fetchStats();
-    setInterval(fetchStats, 30000);
-
-    if (sessionStorage.getItem('ak47_hyped')) {
-      const btn = document.getElementById('hype-btn');
-      if (btn) { btn.classList.add('done'); btn.textContent = '✅ HYPE !'; }
-    }
-  </script>
+<script>
+  function claim() {
+    const v = document.getElementById('claimInput').value.trim();
+    window.location.href = '/register' + (v ? '?claim=' + encodeURIComponent(v) : '');
+  }
+  function claimCta() {
+    const v = document.getElementById('ctaInput').value.trim();
+    window.location.href = '/register' + (v ? '?claim=' + encodeURIComponent(v) : '');
+  }
+  ['claimInput','ctaInput'].forEach(id => {
+    document.getElementById(id)?.addEventListener('keydown', e => { if (e.key === 'Enter') id === 'claimInput' ? claim() : claimCta(); });
+  });
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const open = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!open) item.classList.add('open');
+  }
+  // Reveal on scroll
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity='1'; e.target.style.transform='translateY(0)'; } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.feature-card,.price-card,.stat-cell').forEach(el => {
+    el.style.opacity='0'; el.style.transform='translateY(12px)'; el.style.transition='opacity .4s ease, transform .4s ease';
+    obs.observe(el);
+  });
+</script>
 </body>
 </html>

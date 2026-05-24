@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ak-47.fr — Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/style.css"/>
+  <style>
+    .tab-bar { display: flex; gap: 2px; border-bottom: 1px solid var(--gray-200); margin-bottom: 28px; }
+    .tab { padding: 8px 16px; font-size: 13px; font-weight: 500; color: var(--gray-500); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .15s; }
+    .tab:hover { color: var(--black); }
+    .tab.active { color: var(--black); border-bottom-color: var(--black); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .section-card { border: 1px solid var(--gray-200); border-radius: 9px; padding: 20px; margin-bottom: 16px; }
+    .section-card-title { font-size: 13px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .form-group label { font-size: 12px; font-weight: 600; color: var(--gray-700); }
+    .form-group input, .form-group textarea {
+      background: var(--white); border: 1px solid var(--gray-200);
+      border-radius: var(--radius); padding: 9px 12px; color: var(--black);
+      font-size: 13px; font-family: 'Inter', sans-serif; outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--black); box-shadow: 0 0 0 3px rgba(0,0,0,.06); }
+
+    .save-bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; margin-top: 16px; }
+    .save-bar-msg { font-size: 13px; color: var(--gray-500); }
+    .save-bar-btn { padding: 8px 20px; background: var(--black); color: var(--white); border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s; }
+    .save-bar-btn:hover { background: var(--gray-900); }
+    .save-bar-btn:disabled { background: var(--gray-300); cursor: not-allowed; }
+
+    .add-link-form { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; align-items: end; margin-top: 12px; }
+    .add-link-form input { padding: 9px 12px; border: 1px solid var(--gray-200); border-radius: 6px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; }
+    .add-link-form input:focus { border-color: var(--black); }
+    .add-link-btn { padding: 9px 16px; background: var(--black); color: var(--white); border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+
+    .profile-url-bar { display: flex; align-items: center; gap: 8px; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 7px; padding: 10px 14px; margin-bottom: 20px; }
+    .profile-url-text { font-size: 13px; color: var(--gray-600); flex: 1; }
+    .profile-url-text strong { color: var(--black); }
+    .copy-btn { padding: 5px 12px; background: var(--white); border: 1px solid var(--gray-200); border-radius: 5px; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--gray-700); transition: all .15s; }
+    .copy-btn:hover { background: var(--gray-100); }
+
+    .empty-state { text-align: center; padding: 32px 20px; color: var(--gray-400); font-size: 13px; }
+    .empty-state svg { width: 36px; height: 36px; margin: 0 auto 10px; display: block; stroke: var(--gray-300); fill: none; }
+
+    .toast { position: fixed; bottom: 24px; right: 24px; background: var(--black); color: var(--white); padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 500; z-index: 999; opacity: 0; transform: translateY(8px); transition: all .2s; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="dash-nav">
+  <a href="/" class="dash-nav-brand">ak-47<span>.fr</span></a>
+  <div class="dash-nav-right">
+    <span class="dash-nav-user">Bonjour, <strong id="navUsername">—</strong></span>
+    <a id="profileViewBtn" href="#" target="_blank" class="dash-btn-sm">Voir mon profil ↗</a>
+    <button class="dash-btn-sm logout" onclick="logout()">Déconnexion</button>
+  </div>
+</nav>
+
+<!-- LAYOUT -->
+<div class="dash-layout">
+  <!-- SIDEBAR -->
+  <aside class="dash-sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Navigation</div>
+      <a class="sidebar-item active" onclick="switchTab('overview')" href="#">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Vue d'ensemble
+      </a>
+      <a class="sidebar-item" onclick="switchTab('profile')" href="#">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Mon profil
+      </a>
+      <a class="sidebar-item" onclick="switchTab('links')" href="#">
+        <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+        Liens
+      </a>
+      <a class="sidebar-item" onclick="switchTab('analytics')" href="#">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Analytics
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="dash-main">
+
+    <!-- ── OVERVIEW TAB ── -->
+    <div class="tab-content active" id="tab-overview">
+      <div class="dash-title">Vue d'ensemble</div>
+      <div class="dash-subtitle" id="overviewDate">Chargement...</div>
+
+      <div class="profile-url-bar">
+        <span class="profile-url-text">Votre profil : <strong id="profileUrlText">—</strong></span>
+        <button class="copy-btn" onclick="copyUrl()">Copier</button>
+        <a id="profileViewBtn2" href="#" target="_blank" class="copy-btn">Voir ↗</a>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-card-val" id="sv-total">—</div><div class="stat-card-label">Vues totales</div></div>
+        <div class="stat-card"><div class="stat-card-val" id="sv-today">—</div><div class="stat-card-label">Vues aujourd'hui</div></div>
+        <div class="stat-card"><div class="stat-card-val" id="sv-7d">—</div><div class="stat-card-label">Vues 7 jours</div></div>
+        <div class="stat-card"><div class="stat-card-val" id="sv-clicks">—</div><div class="stat-card-label">Clics sur liens</div></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-title">Vues profil — 30 derniers jours</div>
+        <div class="chart-bars" id="chartBars"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-title">Liens les plus cliqués</div>
+        <div id="topLinksContainer"><div class="empty-state">Aucun clic enregistré pour l'instant.</div></div>
+      </div>
+    </div>
+
+    <!-- ── PROFILE TAB ── -->
+    <div class="tab-content" id="tab-profile">
+      <div class="dash-title">Mon profil</div>
+      <div class="dash-subtitle">Personnalisez les informations affichées sur votre page publique.</div>
+      <div id="profileAlert"></div>
+
+      <div style="display:grid;grid-template-columns:1fr 300px;gap:20px;">
+        <div>
+          <div class="section-card">
+            <div class="section-card-title">Informations</div>
+            <div class="form-group">
+              <label>Nom affiché</label>
+              <input type="text" id="displayName" placeholder="Votre nom" maxlength="50"/>
+            </div>
+            <div class="form-group">
+              <label>Biographie</label>
+              <textarea id="bio" placeholder="Décrivez-vous en quelques mots..." maxlength="200"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Couleur d'avatar</label>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <input type="color" id="avatarColor" style="width:40px;height:36px;padding:2px;border:1px solid var(--gray-200);border-radius:6px;cursor:pointer;"/>
+                <span style="font-size:12px;color:var(--gray-500);">Couleur de fond de votre avatar</span>
+              </div>
+            </div>
+          </div>
+          <div class="save-bar">
+            <span class="save-bar-msg">Les modifications sont visibles immédiatement.</span>
+            <button class="save-bar-btn" id="saveProfileBtn" onclick="saveProfile()">Sauvegarder</button>
+          </div>
+        </div>
+        <div>
+          <div class="section-card">
+            <div class="section-card-title">Aperçu</div>
+            <div class="profile-preview">
+              <div class="preview-header">
+                <div class="preview-avatar" id="previewAvatar">?</div>
+                <div class="preview-name" id="previewName">—</div>
+                <div class="preview-bio" id="previewBio"></div>
+              </div>
+              <div class="preview-links" id="previewLinks"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── LINKS TAB ── -->
+    <div class="tab-content" id="tab-links">
+      <div class="dash-title">Liens</div>
+      <div class="dash-subtitle">Ajoutez et organisez les liens affichés sur votre profil.</div>
+      <div id="linksAlert"></div>
+
+      <div class="section-card">
+        <div class="section-card-title">Vos liens <span id="linkCount" style="font-size:11px;color:var(--gray-400);font-weight:400;"></span></div>
+        <div class="links-list" id="linksList"></div>
+        <div class="add-link-form" id="addLinkForm">
+          <div>
+            <label style="font-size:11px;font-weight:600;color:var(--gray-500);display:block;margin-bottom:4px;">Titre</label>
+            <input type="text" id="newLinkTitle" placeholder="ex. Twitch" maxlength="60"/>
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:600;color:var(--gray-500);display:block;margin-bottom:4px;">URL</label>
+            <input type="text" id="newLinkUrl" placeholder="https://..." maxlength="500"/>
+          </div>
+          <button class="add-link-btn" onclick="addLink()">+ Ajouter</button>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:8px;">
+        <button class="save-bar-btn" id="saveLinksBtn" onclick="saveLinks()">Sauvegarder les liens</button>
+      </div>
+    </div>
+
+    <!-- ── ANALYTICS TAB ── -->
+    <div class="tab-content" id="tab-analytics">
+      <div class="dash-title">Analytics</div>
+      <div class="dash-subtitle">Analysez les performances de votre profil.</div>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-card-val" id="av-total">—</div><div class="stat-card-label">Vues totales</div></div>
+        <div class="stat-card"><div class="stat-card-val" id="av-30d">—</div><div class="stat-card-label">Vues 30 jours</div></div>
+        <div class="stat-card"><div class="stat-card-val" id="av-7d">—</div><div class="stat-card-label">Vues 7 jours</div></div>
+        <div class="stat-card"><div class="stat-card-val" id="av-today">—</div><div class="stat-card-label">Vues aujourd'hui</div></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-title">Vues par jour — 30 derniers jours</div>
+        <div class="chart-bars" id="analyticsChart" style="height:100px;"></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gray-400);margin-top:6px;">
+          <span id="chartDateStart"></span><span id="chartDateEnd"></span>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-title">Liens les plus cliqués</div>
+        <div id="analyticsTopLinks"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '';
+const token = localStorage.getItem('token');
+const username = localStorage.getItem('username');
+if (!token) window.location.href = '/login';
+
+let userData = null;
+let analyticsData = null;
+let pendingLinks = null;
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', async () => {
+  document.getElementById('navUsername').textContent = username;
+  const profileUrl = window.location.origin + '/' + username;
+  document.getElementById('profileUrlText').textContent = profileUrl;
+  document.getElementById('profileViewBtn').href = profileUrl;
+  document.getElementById('profileViewBtn2').href = profileUrl;
+  document.getElementById('overviewDate').textContent = new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+  await Promise.all([loadUser(), loadAnalytics()]);
+});
+
+async function loadUser() {
+  try {
+    const r = await fetch(API + '/api/user/me', { headers: { Authorization: 'Bearer ' + token } });
+    if (r.status === 401) { logout(); return; }
+    userData = await r.json();
+    pendingLinks = [...(userData.links || [])];
+    renderProfile();
+    renderLinks();
+  } catch { showToast('Erreur de chargement du profil'); }
+}
+
+async function loadAnalytics() {
+  try {
+    const r = await fetch(API + '/api/analytics', { headers: { Authorization: 'Bearer ' + token } });
+    analyticsData = await r.json();
+    renderStats();
+    renderChart('chartBars', analyticsData.daily, 80);
+    renderChart('analyticsChart', analyticsData.daily, 100);
+    renderTopLinks();
+  } catch {}
+}
+
+// ── RENDER ──
+function renderStats() {
+  const d = analyticsData;
+  ['sv-total','av-total'].forEach(id => el(id).textContent = fmt(d.total_views));
+  ['sv-today','av-today'].forEach(id => el(id).textContent = fmt(d.views_today));
+  ['sv-7d','av-7d'].forEach(id => el(id).textContent = fmt(d.views_7d));
+  el('sv-clicks').textContent = fmt(d.total_clicks);
+  el('av-30d').textContent = fmt(d.views_30d);
+  // Chart dates
+  if (d.daily?.length) {
+    el('chartDateStart').textContent = fmtDate(d.daily[0].day);
+    el('chartDateEnd').textContent = fmtDate(d.daily[d.daily.length-1].day);
+  }
+}
+
+function renderChart(containerId, daily, height) {
+  const container = el(containerId);
+  if (!daily?.length) { container.innerHTML = '<div class="empty-state">Pas encore de données.</div>'; return; }
+  const max = Math.max(...daily.map(d => d.views), 1);
+  container.style.height = height + 'px';
+  container.innerHTML = daily.map(d => {
+    const pct = Math.max((d.views / max) * 100, d.views > 0 ? 4 : 1);
+    return `<div class="chart-bar" style="height:${pct}%" title="${fmtDate(d.day)} : ${d.views} vue(s)"></div>`;
+  }).join('');
+}
+
+function renderTopLinks() {
+  const data = analyticsData;
+  ['topLinksContainer','analyticsTopLinks'].forEach(id => {
+    const container = el(id);
+    if (!data.top_links?.length) { container.innerHTML = '<div class="empty-state">Aucun clic enregistré.</div>'; return; }
+    container.innerHTML = `<table class="table"><thead><tr><th>Lien</th><th>URL</th><th>Clics</th></tr></thead><tbody>
+      ${data.top_links.map(l => `<tr><td><strong>${esc(l.link_title||'—')}</strong></td><td style="color:var(--gray-400);font-size:12px;">${esc(l.link_url.slice(0,40))}${l.link_url.length>40?'…':''}</td><td><strong>${l.clicks}</strong></td></tr>`).join('')}
+    </tbody></table>`;
+  });
+}
+
+function renderProfile() {
+  if (!userData) return;
+  el('displayName').value = userData.display_name || '';
+  el('bio').value = userData.bio || '';
+  el('avatarColor').value = userData.avatar_color || '#000000';
+  updatePreview();
+}
+
+function updatePreview() {
+  const name = el('displayName').value || username;
+  const bio = el('bio').value;
+  const color = el('avatarColor').value;
+  const av = el('previewAvatar');
+  av.style.background = color;
+  av.style.color = isLight(color) ? '#000' : '#fff';
+  av.textContent = name.charAt(0).toUpperCase();
+  el('previewName').textContent = name;
+  el('previewBio').textContent = bio;
+  const linksHtml = (pendingLinks||[]).map(l =>
+    `<a class="preview-link" href="${esc(l.url)}" target="_blank"><span class="preview-link-dot"></span>${esc(l.title)}</a>`
+  ).join('');
+  el('previewLinks').innerHTML = linksHtml || '<div style="padding:12px;font-size:13px;color:var(--gray-400);text-align:center">Aucun lien ajouté</div>';
+}
+
+function renderLinks() {
+  const list = el('linksList');
+  el('linkCount').textContent = `(${pendingLinks.length}/20)`;
+  if (!pendingLinks.length) {
+    list.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>Aucun lien. Ajoutez-en un ci-dessous.</div>';
+    return;
+  }
+  list.innerHTML = pendingLinks.map((l,i) => `
+    <div class="link-item">
+      <span class="link-item-drag">⠿</span>
+      <div class="link-item-info">
+        <div class="link-item-title">${esc(l.title)}</div>
+        <div class="link-item-url">${esc(l.url)}</div>
+      </div>
+      <div class="link-item-actions">
+        <button class="link-action-btn delete" onclick="removeLink(${i})" title="Supprimer">
+          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg>
+        </button>
+      </div>
+    </div>`).join('');
+}
+
+// ── ACTIONS ──
+async function saveProfile() {
+  const btn = el('saveProfileBtn');
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    const r = await fetch(API + '/api/user/me', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ display_name: el('displayName').value, bio: el('bio').value, avatar_color: el('avatarColor').value })
+    });
+    const data = await r.json();
+    if (!r.ok) { el('profileAlert').innerHTML = `<div class="alert alert-error">${data.error}</div>`; return; }
+    userData = data;
+    el('profileAlert').innerHTML = '';
+    showToast('Profil sauvegardé ✓');
+  } catch { showToast('Erreur réseau'); }
+  finally { btn.disabled = false; btn.textContent = 'Sauvegarder'; }
+}
+
+function addLink() {
+  const title = el('newLinkTitle').value.trim();
+  const url = el('newLinkUrl').value.trim();
+  if (!title) return showAlert('linksAlert', 'Le titre est requis');
+  if (!url) return showAlert('linksAlert', 'L\'URL est requise');
+  if (pendingLinks.length >= 20) return showAlert('linksAlert', 'Maximum 20 liens');
+  let finalUrl = url;
+  if (!url.startsWith('http://') && !url.startsWith('https://')) finalUrl = 'https://' + url;
+  pendingLinks.push({ title, url: finalUrl });
+  el('newLinkTitle').value = ''; el('newLinkUrl').value = '';
+  el('linksAlert').innerHTML = '';
+  renderLinks(); updatePreview();
+}
+
+function removeLink(i) {
+  pendingLinks.splice(i, 1);
+  renderLinks(); updatePreview();
+}
+
+async function saveLinks() {
+  const btn = el('saveLinksBtn');
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    const r = await fetch(API + '/api/user/me', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ links: pendingLinks })
+    });
+    const data = await r.json();
+    if (!r.ok) { showAlert('linksAlert', data.error); return; }
+    userData = data; pendingLinks = [...data.links];
+    showToast('Liens sauvegardés ✓');
+  } catch { showToast('Erreur réseau'); }
+  finally { btn.disabled = false; btn.textContent = 'Sauvegarder les liens'; }
+}
+
+function copyUrl() {
+  const url = window.location.origin + '/' + username;
+  navigator.clipboard.writeText(url).then(() => showToast('URL copiée ✓'));
+}
+
+function logout() {
+  localStorage.removeItem('token'); localStorage.removeItem('username');
+  window.location.href = '/login';
+}
+
+// ── TABS ──
+function switchTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(t => t.classList.remove('active'));
+  el('tab-' + name).classList.add('active');
+  document.querySelectorAll('.sidebar-item').forEach(t => { if (t.getAttribute('onclick')?.includes(name)) t.classList.add('active'); });
+  if (name === 'profile' || name === 'links') updatePreview();
+}
+
+// ── LIVE PREVIEW SYNC ──
+['displayName','bio','avatarColor'].forEach(id => {
+  el(id)?.addEventListener('input', updatePreview);
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.activeElement.id === 'newLinkUrl') addLink();
+});
+
+// ── UTILS ──
+function el(id) { return document.getElementById(id); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmt(n) { return n >= 1000 ? (n/1000).toFixed(1).replace('.0','') + 'K' : String(n||0); }
+function fmtDate(d) { return new Date(d).toLocaleDateString('fr-FR',{day:'numeric',month:'short'}); }
+function isLight(hex) { const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16); return (0.299*r+0.587*g+0.114*b) > 128; }
+function showToast(msg) {
+  const t = el('toast'); t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+function showAlert(containerId, msg) {
+  el(containerId).innerHTML = `<div class="alert alert-error">${msg}</div>`;
+}
+</script>
+</body>
+</html>
