@@ -11,31 +11,112 @@
     .snav-brand { font-size:16px;font-weight:700;letter-spacing:-.3px;color:var(--black);text-decoration:none; }
     .snav-brand span { color:var(--gray-400);font-weight:400; }
     .snav a.back { font-size:13px;color:var(--gray-500);text-decoration:none; }
+    .snav a.back:hover { color:var(--black); }
     .page { max-width:640px;margin:0 auto;padding:56px 24px; }
     h1 { font-size:clamp(28px,4vw,44px);font-weight:700;letter-spacing:-1.5px;margin-bottom:8px; }
-    .overall { display:inline-flex;align-items:center;gap:8px;background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;border-radius:30px;padding:8px 18px;font-size:13px;font-weight:600;margin-bottom:36px; }
-    .overall-dot { width:7px;height:7px;border-radius:50%;background:#22c55e;animation:pulse 1.5s ease infinite; }
+    .overall { display:inline-flex;align-items:center;gap:8px;border-radius:30px;padding:8px 18px;font-size:13px;font-weight:600;margin-bottom:36px; }
+    .overall.ok { background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d; }
+    .overall.checking { background:var(--gray-100);border:1px solid var(--gray-200);color:var(--gray-500); }
+    .overall-dot { width:7px;height:7px;border-radius:50%; }
+    .overall.ok .overall-dot { background:#22c55e;animation:pulse 1.5s ease infinite; }
+    .overall.checking .overall-dot { background:var(--gray-400); }
     @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
-    .services { border:1px solid var(--gray-200);border-radius:10px;overflow:hidden; }
+    .services { border:1px solid var(--gray-200);border-radius:10px;overflow:hidden;margin-bottom:32px; }
     .srv-row { display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--gray-100); }
     .srv-row:last-child { border-bottom:none; }
     .srv-name { font-size:13px;font-weight:500; }
-    .srv-uptime { font-size:11px;color:var(--gray-400);margin-top:2px; }
+    .srv-sub { font-size:11px;color:var(--gray-400);margin-top:2px; }
     .badge-up { background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600; }
+    .badge-checking { background:var(--gray-100);color:var(--gray-500);border:1px solid var(--gray-200);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600; }
+    .badge-down { background:#fef2f2;color:#dc2626;border:1px solid #fecaca;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600; }
+    .last-check { font-size:12px;color:var(--gray-400);text-align:right; }
   </style>
 </head>
 <body>
-<nav class="snav"><a href="/" class="snav-brand">ak-47<span>.fr</span></a><a href="/" class="back">← Retour</a></nav>
+<nav class="snav">
+  <a href="/" class="snav-brand">ak-47<span>.fr</span></a>
+  <a href="/" class="back">← Retour</a>
+</nav>
 <div class="page">
   <h1>Statut des systèmes</h1>
-  <div class="overall"><span class="overall-dot"></span>Tous les systèmes opérationnels</div>
+  <div class="overall checking" id="overall"><span class="overall-dot"></span><span id="overall-text">Vérification…</span></div>
   <div class="services">
-    <div class="srv-row"><div><div class="srv-name">Profils & Pages</div><div class="srv-uptime">99.98% uptime</div></div><span class="badge-up">Opérationnel</span></div>
-    <div class="srv-row"><div><div class="srv-name">API</div><div class="srv-uptime">99.99% uptime</div></div><span class="badge-up">Opérationnel</span></div>
-    <div class="srv-row"><div><div class="srv-name">Authentification</div><div class="srv-uptime">99.97% uptime</div></div><span class="badge-up">Opérationnel</span></div>
-    <div class="srv-row"><div><div class="srv-name">Analytics</div><div class="srv-uptime">99.91% uptime</div></div><span class="badge-up">Opérationnel</span></div>
-    <div class="srv-row"><div><div class="srv-name">Hébergement de fichiers</div><div class="srv-uptime">99.95% uptime</div></div><span class="badge-up">Opérationnel</span></div>
+    <div class="srv-row">
+      <div><div class="srv-name">API</div><div class="srv-sub" id="api-sub">Vérification en cours…</div></div>
+      <span class="badge-checking" id="api-badge">…</span>
+    </div>
+    <div class="srv-row">
+      <div><div class="srv-name">Profils & Pages</div><div class="srv-sub">Serving frontend statique</div></div>
+      <span class="badge-up">Opérationnel</span>
+    </div>
+    <div class="srv-row">
+      <div><div class="srv-name">Base de données (Firebase)</div><div class="srv-sub" id="db-sub">Vérification en cours…</div></div>
+      <span class="badge-checking" id="db-badge">…</span>
+    </div>
+    <div class="srv-row">
+      <div><div class="srv-name">Authentification (JWT)</div><div class="srv-sub">Tokens 30 jours</div></div>
+      <span class="badge-up">Opérationnel</span>
+    </div>
   </div>
+  <p class="last-check" id="last-check"></p>
 </div>
+<script>
+  async function checkStatus() {
+    const now = new Date().toLocaleTimeString('fr-FR');
+    document.getElementById('last-check').textContent = 'Dernière vérification : ' + now;
+
+    // Check API health
+    try {
+      const t0 = Date.now();
+      const r = await fetch('/api/health');
+      const ms = Date.now() - t0;
+      if (r.ok) {
+        document.getElementById('api-badge').className = 'badge-up';
+        document.getElementById('api-badge').textContent = 'Opérationnel';
+        document.getElementById('api-sub').textContent = 'Réponse en ' + ms + ' ms';
+      } else {
+        throw new Error('non-ok');
+      }
+    } catch {
+      document.getElementById('api-badge').className = 'badge-down';
+      document.getElementById('api-badge').textContent = 'Indisponible';
+      document.getElementById('api-sub').textContent = 'Aucune réponse';
+    }
+
+    // Check DB by hitting a lightweight public endpoint
+    try {
+      const t0 = Date.now();
+      const r = await fetch('/api/stats');
+      const ms = Date.now() - t0;
+      if (r.ok) {
+        document.getElementById('db-badge').className = 'badge-up';
+        document.getElementById('db-badge').textContent = 'Opérationnel';
+        document.getElementById('db-sub').textContent = 'Réponse en ' + ms + ' ms';
+      } else {
+        throw new Error('non-ok');
+      }
+    } catch {
+      document.getElementById('db-badge').className = 'badge-down';
+      document.getElementById('db-badge').textContent = 'Indisponible';
+      document.getElementById('db-sub').textContent = 'Aucune réponse';
+    }
+
+    // Update overall status
+    const allUp = ['api-badge', 'db-badge'].every(id =>
+      document.getElementById(id).className === 'badge-up'
+    );
+    const overall = document.getElementById('overall');
+    if (allUp) {
+      overall.className = 'overall ok';
+      document.getElementById('overall-text').textContent = 'Tous les systèmes sont opérationnels';
+    } else {
+      overall.className = 'overall checking';
+      document.getElementById('overall-text').textContent = 'Certains systèmes sont indisponibles';
+    }
+  }
+
+  checkStatus();
+  setInterval(checkStatus, 30000); // refresh every 30s
+</script>
 </body>
 </html>

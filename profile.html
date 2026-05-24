@@ -33,7 +33,7 @@
     .profile-name { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
     .profile-bio { font-size: 14px; color: var(--gray-500); line-height: 1.5; max-width: 320px; margin: 0 auto; }
     .profile-handle { font-size: 12px; color: var(--gray-400); margin-top: 6px; }
-    .plan-badge { display: inline-block; background: var(--black); color: var(--white); font-size: 10px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; padding: 2px 8px; border-radius: 20px; margin-top: 8px; }
+    /* plan-badge removed — platform is fully free */
 
     .profile-links { display: flex; flex-direction: column; gap: 10px; }
     .profile-link {
@@ -119,10 +119,6 @@ async function loadProfile() {
     document.getElementById('pName').textContent = user.display_name || user.username;
     document.getElementById('pBio').textContent = user.bio || '';
     document.getElementById('pHandle').textContent = 'ak-47.fr/' + user.username;
-
-    if (user.plan === 'premium') {
-      document.getElementById('pBadge').innerHTML = '<span class="plan-badge">✦ Premium</span>';
-    }
 
     const links = user.links || [];
     const linksContainer = document.getElementById('pLinks');

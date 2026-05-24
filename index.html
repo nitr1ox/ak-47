@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>ak-47.fr — Votre identité en ligne</title>
-  <meta name="description" content="La plateforme link-in-bio la plus propre et rapide. Centralisez votre présence en ligne."/>
+  <meta name="description" content="La plateforme link-in-bio propre et rapide. Centralisez votre présence en ligne."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
@@ -196,7 +196,7 @@
     }
     .mm-name { font-size: 14px; font-weight: 700; }
     .mm-handle { font-size: 11px; color: var(--gray-400); }
-    .mm-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+    .mm-stats { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; }
     .mm-stat {
       background: var(--gray-50); border: 1px solid var(--gray-200);
       border-radius: 7px; padding: 10px;
@@ -219,8 +219,8 @@
       padding: 48px 24px;
     }
     .stats-inner {
-      max-width: 860px; margin: 0 auto;
-      display: grid; grid-template-columns: repeat(4,1fr); gap: 1px;
+      max-width: 560px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(2,1fr); gap: 1px;
       background: var(--gray-200); border-radius: 10px; overflow: hidden;
       border: 1px solid var(--gray-200);
     }
@@ -254,35 +254,6 @@
     .feature-icon svg { width: 18px; height: 18px; stroke: var(--white); fill: none; stroke-width: 2; }
     .feature-title { font-weight: 600; font-size: 14px; margin-bottom: 6px; letter-spacing: -0.2px; }
     .feature-desc { font-size: 13px; color: var(--gray-500); line-height: 1.6; }
-
-    /* ── PRICING ── */
-    .pricing-section { background: var(--gray-50); border-top: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); }
-    .pricing-inner { max-width: 680px; margin: 0 auto; padding: 80px 24px; }
-    .pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .price-card {
-      background: var(--white); border: 1px solid var(--gray-200);
-      border-radius: 10px; padding: 28px 24px; position: relative;
-      transition: border-color .15s;
-    }
-    .price-card:hover { border-color: var(--gray-400); }
-    .price-card.pro { border-color: var(--black); }
-    .pro-badge {
-      position: absolute; top: -11px; left: 20px;
-      background: var(--black); color: var(--white);
-      font-size: 10px; font-weight: 700; letter-spacing: .8px;
-      text-transform: uppercase; padding: 2px 10px; border-radius: 20px;
-    }
-    .price-name { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-500); margin-bottom: 8px; }
-    .price-amount { font-size: 36px; font-weight: 700; letter-spacing: -1.5px; margin-bottom: 4px; }
-    .price-amount span { font-size: 14px; font-weight: 400; color: var(--gray-400); letter-spacing: 0; }
-    .price-desc { font-size: 13px; color: var(--gray-500); margin-bottom: 20px; }
-    .price-features { list-style: none; display: flex; flex-direction: column; gap: 9px; margin-bottom: 24px; }
-    .price-features li { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--gray-700); }
-    .price-features li::before { content: ''; width: 5px; height: 5px; background: var(--black); border-radius: 50%; flex-shrink: 0; }
-    .btn-price-free { width: 100%; padding: 10px; background: var(--gray-100); border: 1px solid var(--gray-200); border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--black); transition: background .15s; text-decoration: none; display: block; text-align: center; }
-    .btn-price-free:hover { background: var(--gray-200); }
-    .btn-price-pro { width: 100%; padding: 10px; background: var(--black); border: none; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--white); transition: background .15s; text-decoration: none; display: block; text-align: center; }
-    .btn-price-pro:hover { background: var(--gray-900); }
 
     /* ── FAQ ── */
     .faq-section { max-width: 680px; margin: 0 auto; padding: 80px 24px; }
@@ -326,7 +297,7 @@
       padding: 48px 32px 32px;
     }
     .footer-top {
-      display: grid; grid-template-columns: 240px repeat(4,1fr); gap: 32px; margin-bottom: 40px;
+      display: grid; grid-template-columns: 240px repeat(3,1fr); gap: 32px; margin-bottom: 40px;
     }
     .footer-brand-name { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
     .footer-brand-name span { color: var(--gray-400); font-weight: 400; }
@@ -344,15 +315,14 @@
     @media (max-width: 900px) {
       .mockup-sidebar { display: none; }
       .features-grid { grid-template-columns: 1fr 1fr; }
-      .stats-inner { grid-template-columns: repeat(2,1fr); }
       .footer-top { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 640px) {
       nav { padding: 0 16px; }
       .nav-links { display: none; }
       .features-grid { grid-template-columns: 1fr; }
-      .pricing-grid { grid-template-columns: 1fr; }
       .footer-top { grid-template-columns: 1fr; }
+      .stats-inner { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -363,7 +333,6 @@
   <a href="/" class="nav-brand">ak-47<span>.fr</span></a>
   <ul class="nav-links">
     <li><a href="#features">Fonctionnalités</a></li>
-    <li><a href="#pricing">Tarifs</a></li>
     <li><a href="#faq">FAQ</a></li>
     <li><a href="/leaderboard">Classement</a></li>
   </ul>
@@ -375,9 +344,9 @@
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-kicker"><span class="hero-kicker-dot"></span> Hébergement de fichiers inclus</div>
+  <div class="hero-kicker"><span class="hero-kicker-dot"></span> 100% gratuit, pour toujours</div>
   <h1>Votre identité<br><em>en un seul lien.</em></h1>
-  <p class="hero-sub">ak-47.fr est la plateforme link-in-bio la plus propre et rapide. Partagez tout ce que vous faites depuis une seule page.</p>
+  <p class="hero-sub">ak-47.fr est la plateforme link-in-bio propre et rapide. Partagez tout ce que vous faites depuis une seule page.</p>
   <div class="hero-cta">
     <div class="hero-claim">
       <div class="hero-claim-prefix">ak-47.fr/</div>
@@ -399,20 +368,18 @@
         <div class="ms-item"><span class="ms-dot"></span> Liens</div>
         <div class="ms-item"><span class="ms-dot"></span> Analytics</div>
         <div class="ms-item"><span class="ms-dot"></span> Apparence</div>
-        <div class="ms-item"><span class="ms-dot"></span> Paramètres</div>
       </div>
       <div class="mockup-main">
         <div class="mm-profile">
           <div class="mm-avatar">AK</div>
           <div>
             <div class="mm-name">ak-47.fr/votre-pseudo</div>
-            <div class="mm-handle">Profil actif · Plan gratuit</div>
+            <div class="mm-handle">Profil actif · Gratuit</div>
           </div>
         </div>
         <div class="mm-stats">
-          <div class="mm-stat"><div class="mm-stat-val">12.4K</div><div class="mm-stat-label">Vues profil</div></div>
-          <div class="mm-stat"><div class="mm-stat-val">847</div><div class="mm-stat-label">Clics liens</div></div>
-          <div class="mm-stat"><div class="mm-stat-val">94%</div><div class="mm-stat-label">Taux de clic</div></div>
+          <div class="mm-stat"><div class="mm-stat-val" id="mock-views">—</div><div class="mm-stat-label">Vues profil</div></div>
+          <div class="mm-stat"><div class="mm-stat-val" id="mock-clicks">—</div><div class="mm-stat-label">Clics liens</div></div>
         </div>
         <div class="mm-links">
           <div class="mm-link"><span class="mm-link-dot"></span>Twitch — twitch.tv/votre-pseudo</div>
@@ -424,13 +391,11 @@
   </div>
 </section>
 
-<!-- STATS -->
+<!-- STATS (dynamiques) -->
 <div class="stats">
   <div class="stats-inner">
-    <div class="stat-cell"><div class="stat-num">1.8M+</div><div class="stat-label">Utilisateurs</div></div>
-    <div class="stat-cell"><div class="stat-num">70M+</div><div class="stat-label">Vues profil</div></div>
-    <div class="stat-cell"><div class="stat-num">610K+</div><div class="stat-label">Fichiers hébergés</div></div>
-    <div class="stat-cell"><div class="stat-num">49K+</div><div class="stat-label">Membres premium</div></div>
+    <div class="stat-cell"><div class="stat-num" id="stat-users">…</div><div class="stat-label">Membres inscrits</div></div>
+    <div class="stat-cell"><div class="stat-num">100%</div><div class="stat-label">Gratuit</div></div>
   </div>
 </div>
 
@@ -438,17 +403,17 @@
 <div id="features" class="features">
   <div class="section-label">Fonctionnalités</div>
   <h2 class="section-title">Tout ce dont vous avez besoin.</h2>
-  <p class="section-sub">Une plateforme complète pour centraliser votre présence en ligne, sans compromis.</p>
+  <p class="section-sub">Une plateforme complète pour centraliser votre présence en ligne, sans compromis ni abonnement.</p>
   <div class="features-grid">
     <div class="feature-card">
       <div class="feature-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
       <div class="feature-title">Profil personnalisable</div>
-      <div class="feature-desc">Couleurs, polices, mises en page. Exprimez votre identité avec une liberté totale.</div>
+      <div class="feature-desc">Couleur d'avatar, bio, nom d'affichage. Exprimez votre identité simplement.</div>
     </div>
     <div class="feature-card">
       <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></div>
       <div class="feature-title">Liens illimités</div>
-      <div class="feature-desc">Ajoutez tous vos réseaux, sites et projets. Aucune limite même en version gratuite.</div>
+      <div class="feature-desc">Ajoutez tous vos réseaux, sites et projets. Aucune limite, aucun paywall.</div>
     </div>
     <div class="feature-card">
       <div class="feature-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
@@ -456,57 +421,19 @@
       <div class="feature-desc">Suivez vos vues et clics quotidiens avec des graphiques clairs et précis.</div>
     </div>
     <div class="feature-card">
-      <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-      <div class="feature-title">Hébergement de fichiers</div>
-      <div class="feature-desc">Uploadez et partagez images et vidéos directement depuis votre profil.</div>
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <div class="feature-title">Connexion Google & Discord</div>
+      <div class="feature-desc">Inscription et connexion en un clic via Google ou Discord, sans mot de passe.</div>
     </div>
     <div class="feature-card">
       <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
       <div class="feature-title">Sécurisé & privé</div>
-      <div class="feature-desc">Connexions chiffrées, authentification JWT. Vos données vous appartiennent.</div>
+      <div class="feature-desc">Connexions chiffrées, authentification JWT, mots de passe hashés avec bcrypt.</div>
     </div>
     <div class="feature-card">
-      <div class="feature-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
-      <div class="feature-title">SEO & Métadonnées</div>
-      <div class="feature-desc">Optimisez votre profil pour les moteurs de recherche et les aperçus réseaux sociaux.</div>
-    </div>
-  </div>
-</div>
-
-<!-- PRICING -->
-<div id="pricing" class="pricing-section">
-  <div class="pricing-inner">
-    <div class="section-label">Tarifs</div>
-    <h2 class="section-title">Simple et transparent.</h2>
-    <p class="section-sub">Commencez gratuitement. Passez au pro quand vous en avez besoin.</p>
-    <div class="pricing-grid">
-      <div class="price-card">
-        <div class="price-name">Gratuit</div>
-        <div class="price-amount">0€ <span>/ à vie</span></div>
-        <div class="price-desc">Pour démarrer et tester la plateforme.</div>
-        <ul class="price-features">
-          <li>Profil personnalisable</li>
-          <li>Liens illimités</li>
-          <li>Analytics de base</li>
-          <li>Effets de profil basiques</li>
-        </ul>
-        <a href="/register" class="btn-price-free">Commencer gratuitement</a>
-      </div>
-      <div class="price-card pro">
-        <div class="pro-badge">Plus populaire</div>
-        <div class="price-name">Premium</div>
-        <div class="price-amount">7,99€ <span>/ à vie</span></div>
-        <div class="price-desc">Paiement unique. Pour toujours.</div>
-        <ul class="price-features">
-          <li>Badge exclusif ✦</li>
-          <li>Layouts avancés</li>
-          <li>Polices personnalisées</li>
-          <li>Analytics complets</li>
-          <li>Effets & animations</li>
-          <li>Métadonnées & SEO</li>
-        </ul>
-        <a href="/register" class="btn-price-pro">Obtenir Premium</a>
-      </div>
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+      <div class="feature-title">Classement public</div>
+      <div class="feature-desc">Découvrez les profils les plus populaires de la plateforme en temps réel.</div>
     </div>
   </div>
 </div>
@@ -519,11 +446,11 @@
   <div class="faq-list">
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)">Qu'est-ce que ak-47.fr ?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
-      <div class="faq-a"><div class="faq-a-inner">Une plateforme link-in-bio qui regroupe tous vos réseaux sociaux, sites et projets sur une seule page élégante. Plus rapide et plus propre que Linktree, avec analytics et hébergement de fichiers intégrés.</div></div>
+      <div class="faq-a"><div class="faq-a-inner">Une plateforme link-in-bio qui regroupe tous vos réseaux sociaux, sites et projets sur une seule page. Créez votre profil à l'adresse ak-47.fr/votre-pseudo et partagez-le partout.</div></div>
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)">C'est vraiment gratuit ?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
-      <div class="faq-a"><div class="faq-a-inner">Oui, complètement gratuit. Le plan Premium est un paiement unique à vie pour débloquer les fonctionnalités avancées.</div></div>
+      <div class="faq-a"><div class="faq-a-inner">Oui, entièrement et définitivement gratuit. Il n'y a pas de plan payant, pas de limite de liens, pas de fonctionnalité cachée derrière un abonnement.</div></div>
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)">Combien de temps pour configurer ?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
@@ -531,7 +458,7 @@
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)">Mes données sont-elles sécurisées ?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
-      <div class="faq-a"><div class="faq-a-inner">Absolument. Authentification JWT, mots de passe chiffrés avec bcrypt, rate limiting contre les attaques. Vos données ne sont jamais revendues.</div></div>
+      <div class="faq-a"><div class="faq-a-inner">Absolument. Authentification JWT, mots de passe chiffrés avec bcrypt, base de données Firebase. Vos données ne sont jamais revendues.</div></div>
     </div>
   </div>
 </div>
@@ -539,7 +466,7 @@
 <!-- CTA BOTTOM -->
 <div class="cta-bottom">
   <h2>Commencez maintenant.</h2>
-  <p>Rejoignez plus de 1 800 000 créateurs sur ak-47.fr.</p>
+  <p>Rejoignez la communauté ak-47.fr. Gratuit, pour toujours.</p>
   <div class="cta-claim">
     <div class="cta-claim-prefix">ak-47.fr/</div>
     <input class="cta-claim-input" type="text" placeholder="votre-pseudo" id="ctaInput"/>
@@ -552,31 +479,21 @@
   <div class="footer-top">
     <div>
       <div class="footer-brand-name">ak-47<span>.fr</span></div>
-      <p class="footer-tagline">La plateforme link-in-bio la plus propre, rapide et personnalisable.</p>
+      <p class="footer-tagline">La plateforme link-in-bio propre, rapide et 100% gratuite.</p>
     </div>
     <div class="footer-col">
       <div class="footer-col-title">Général</div>
       <ul>
         <li><a href="/login">Connexion</a></li>
         <li><a href="/register">S'inscrire</a></li>
-        <li><a href="#pricing">Tarifs</a></li>
         <li><a href="/leaderboard">Classement</a></li>
         <li><a href="/status">Statut</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <div class="footer-col-title">Ressources</div>
-      <ul>
-        <li><a href="#">Centre d'aide</a></li>
-        <li><a href="#">Changelog</a></li>
-        <li><a href="#">Discord</a></li>
       </ul>
     </div>
     <div class="footer-col">
       <div class="footer-col-title">Contact</div>
       <ul>
         <li><a href="mailto:support@ak-47.fr">Support</a></li>
-        <li><a href="mailto:business@ak-47.fr">Business</a></li>
         <li><a href="mailto:legal@ak-47.fr">Légal</a></li>
       </ul>
     </div>
@@ -590,11 +507,20 @@
   </div>
   <div class="footer-bottom">
     <span class="footer-copy">© 2026 ak-47.fr — Tous droits réservés.</span>
-    <a href="/status" class="footer-status"><span class="status-dot"></span>Tous les systèmes opérationnels</a>
+    <a href="/status" class="footer-status"><span class="status-dot"></span>Statut des systèmes</a>
   </div>
 </footer>
 
 <script>
+  // Load real user count
+  fetch('/api/stats')
+    .then(r => r.json())
+    .then(d => {
+      document.getElementById('stat-users').textContent =
+        d.total_users > 0 ? d.total_users.toLocaleString('fr-FR') + '+' : '0';
+    })
+    .catch(() => { document.getElementById('stat-users').textContent = '—'; });
+
   function claim() {
     const v = document.getElementById('claimInput').value.trim();
     window.location.href = '/register' + (v ? '?claim=' + encodeURIComponent(v) : '');
@@ -612,11 +538,10 @@
     document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
     if (!open) item.classList.add('open');
   }
-  // Reveal on scroll
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity='1'; e.target.style.transform='translateY(0)'; } });
   }, { threshold: 0.08 });
-  document.querySelectorAll('.feature-card,.price-card,.stat-cell').forEach(el => {
+  document.querySelectorAll('.feature-card,.stat-cell').forEach(el => {
     el.style.opacity='0'; el.style.transform='translateY(12px)'; el.style.transition='opacity .4s ease, transform .4s ease';
     obs.observe(el);
   });
