@@ -5,6 +5,7 @@
   <title>ak-47.fr — Connexion</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="/style.css"/>
+  <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
   <style>
     .oauth-btn {
       display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -53,6 +54,7 @@
       <label for="password">Mot de passe</label>
       <input type="password" id="password" placeholder="••••••••" autocomplete="current-password"/>
     </div>
+    <div class="h-captcha" data-sitekey="VOTRE_HCAPTCHA_SITEKEY" style="margin-bottom:12px;"></div>
     <button class="btn btn-primary" id="submitBtn" onclick="doLogin()">Se connecter</button>
     <div class="form-footer" style="margin-top:10px;"><a href="/recovery">Mot de passe oublié ?</a></div>
     <div class="divider"></div>
@@ -74,9 +76,11 @@
     btn.disabled = true;
     btn.innerHTML = '<span class="loading-spinner"></span>';
     try {
+      const captchaToken = hcaptcha.getResponse();
+      if (!captchaToken) return showAlert('Veuillez compléter le captcha');
       const r = await fetch('https://ak47-backend.onrender.com/api/auth/login', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ login, password })
+        body: JSON.stringify({ login, password, 'h-captcha-response': captchaToken })
       });
       const data = await r.json();
       if (!r.ok) { showAlert(data.error || 'Erreur'); return; }

@@ -5,6 +5,7 @@
   <title>ak-47.fr — S'inscrire</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="/style.css"/>
+  <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
   <style>
     .oauth-btn {
       display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -59,6 +60,7 @@
       <label>Mot de passe</label>
       <input type="password" id="password" placeholder="Minimum 8 caractères" autocomplete="new-password"/>
     </div>
+    <div class="h-captcha" data-sitekey="VOTRE_HCAPTCHA_SITEKEY" style="margin-bottom:12px;"></div>
     <button class="btn btn-primary" id="submitBtn" onclick="doRegister()">Créer mon profil</button>
     <p style="font-size:11px;color:var(--gray-400);text-align:center;margin-top:10px;line-height:1.5;">
       En créant un compte, vous acceptez nos <a href="/terms" style="color:var(--gray-700)">Conditions</a> et notre <a href="/privacy" style="color:var(--gray-700)">Politique de confidentialité</a>.
@@ -81,9 +83,11 @@
     if (password.length < 8) return showAlert('Mot de passe : 8 caractères minimum');
     btn.disabled = true; btn.innerHTML = '<span class="loading-spinner"></span>';
     try {
+      const captchaToken = hcaptcha.getResponse();
+      if (!captchaToken) return showAlert('Veuillez compléter le captcha');
       const r = await fetch('https://ak47-backend.onrender.com/api/auth/register', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password })
+        body: JSON.stringify({ username, email, password, 'h-captcha-response': captchaToken })
       });
       const data = await r.json();
       if (!r.ok) { showAlert(data.error || 'Erreur'); return; }
