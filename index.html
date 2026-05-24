@@ -513,7 +513,7 @@
 
 <script>
   // Load real user count
-  fetch('/api/stats')
+  fetch('https://ak47-backend.onrender.com/api/stats')
     .then(r => r.json())
     .then(d => {
       document.getElementById('stat-users').textContent =

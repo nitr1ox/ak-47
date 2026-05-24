@@ -68,7 +68,7 @@
     // Check API health
     try {
       const t0 = Date.now();
-      const r = await fetch('/api/health');
+      const r = await fetch('https://ak47-backend.onrender.com/api/health');
       const ms = Date.now() - t0;
       if (r.ok) {
         document.getElementById('api-badge').className = 'badge-up';
@@ -86,7 +86,7 @@
     // Check DB by hitting a lightweight public endpoint
     try {
       const t0 = Date.now();
-      const r = await fetch('/api/stats');
+      const r = await fetch('https://ak47-backend.onrender.com/api/stats');
       const ms = Date.now() - t0;
       if (r.ok) {
         document.getElementById('db-badge').className = 'badge-up';

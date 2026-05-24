@@ -54,7 +54,7 @@
   const rankClass = r => r===1?'gold':r===2?'silver':r===3?'bronze':'';
   const rankIcon  = r => r===1?'🥇':r===2?'🥈':r===3?'🥉':r;
 
-  fetch('/api/leaderboard')
+  fetch('https://ak47-backend.onrender.com/api/leaderboard')
     .then(r => r.json())
     .then(users => {
       if (!users.length) {
