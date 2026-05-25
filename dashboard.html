@@ -1224,6 +1224,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('profileViewBtn2').href = profileUrl;
   document.getElementById('overviewDate').textContent = new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   await Promise.all([loadUser(), loadAnalytics()]);
+  if (!analyticsData) setTimeout(async () => { if (!analyticsData) { await loadAnalytics(); } }, 3000);
+  if (!analyticsData) setTimeout(async () => { if (!analyticsData) { await loadAnalytics(); } }, 8000);
 
   const params = new URLSearchParams(window.location.search);
   const linked = params.get('linked');
