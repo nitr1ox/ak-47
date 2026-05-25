@@ -601,6 +601,53 @@
             <button class="media-remove-btn" id="bgPersoRemove" style="display:none" onclick="removePersoMedia(event,'bg')">✕ Supprimer</button>
           </div>
         </div>
+
+        <div style="margin-top:16px;">
+          <label style="font-size:12px;font-weight:600;color:var(--gray-700);display:block;margin-bottom:6px;">Opacité du fond</label>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <input type="range" id="bgOpacityRange" min="0" max="100" value="100"
+              style="flex:1;accent-color:#000;"
+              oninput="el('bgOpacityVal').textContent=this.value+'%';pendingPerso.bg_opacity=this.value/100;"/>
+            <span id="bgOpacityVal" style="font-size:12px;color:var(--gray-500);min-width:36px;">100%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-title">Couleurs du texte</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Personnalisez la couleur du nom, de la bio et des textes de votre profil public.</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <input type="color" id="profileTextColor" value="#18181b"
+            style="width:44px;height:38px;padding:2px;border:1px solid var(--gray-200);border-radius:6px;cursor:pointer;"
+            oninput="pendingPerso.text_color=this.value;el('profileTextColorHex').textContent=this.value;"/>
+          <span id="profileTextColorHex" style="font-size:13px;color:var(--gray-500);">#18181b</span>
+          <span style="font-size:12px;color:var(--gray-400);">— Nom &amp; bio</span>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-title">Fond de la card profil</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Couleur et opacité du bloc blanc qui contient votre avatar, nom, bio et liens.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group">
+            <label>Couleur de fond</label>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <input type="color" id="cardBgColor" value="#ffffff"
+                style="width:36px;height:32px;padding:2px;border:1px solid var(--gray-200);border-radius:5px;cursor:pointer;"
+                oninput="pendingPerso.card_bg=this.value;el('cardBgColorHex').textContent=this.value;"/>
+              <span id="cardBgColorHex" style="font-size:12px;color:var(--gray-500);">#ffffff</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Opacité de la card</label>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <input type="range" id="cardOpacityRange" min="0" max="100" value="100"
+                style="flex:1;accent-color:#000;"
+                oninput="el('cardOpacityVal').textContent=this.value+'%';pendingPerso.card_opacity=this.value/100;"/>
+              <span id="cardOpacityVal" style="font-size:12px;color:var(--gray-500);min-width:36px;">100%</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="section-card">
@@ -1552,6 +1599,10 @@ let pendingPerso = {
   profile_font: null,
   bg_type: null,
   bg_value: null,
+  bg_opacity: null,
+  text_color: null,
+  card_bg: null,
+  card_opacity: null,
   banner_url: null,
   bg_url: null,
   spotify_url: null,
@@ -1621,6 +1672,25 @@ function loadPersoUI() {
   }
 
   if (userData.spotify_url) el('spotifyUrlInput').value = userData.spotify_url;
+
+  // Opacité du fond
+  const bgOpacity = userData.bg_opacity !== undefined ? userData.bg_opacity : 1;
+  el('bgOpacityRange').value = Math.round(bgOpacity * 100);
+  el('bgOpacityVal').textContent = Math.round(bgOpacity * 100) + '%';
+
+  // Couleur du texte profil
+  if (userData.text_color) {
+    el('profileTextColor').value = userData.text_color;
+    el('profileTextColorHex').textContent = userData.text_color;
+  }
+
+  // Fond de la card
+  const cardBg = userData.card_bg || '#ffffff';
+  el('cardBgColor').value = cardBg;
+  el('cardBgColorHex').textContent = cardBg;
+  const cardOpacity = userData.card_opacity !== undefined ? userData.card_opacity : 1;
+  el('cardOpacityRange').value = Math.round(cardOpacity * 100);
+  el('cardOpacityVal').textContent = Math.round(cardOpacity * 100) + '%';
 }
 
 function switchBgTab(tab) {
@@ -1745,6 +1815,7 @@ async function savePerso() {
     pendingPerso = {
       avatar_shape: null, link_layout: null, link_btn_style: null,
       profile_font: null, bg_type: null, bg_value: null,
+      bg_opacity: null, text_color: null, card_bg: null, card_opacity: null,
       banner_url: null, bg_url: null, social_links: null, spotify_url: null,
     };
     el('persoAlert').innerHTML = '';

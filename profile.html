@@ -11,6 +11,8 @@
       --gray-200:#e4e4e7; --gray-400:#a1a1aa; --gray-500:#71717a; --gray-900:#18181b;
       --link-bg: var(--white); --link-color: var(--black);
       --link-border: var(--gray-200); --link-radius: 10px;
+      --profile-text-color: var(--gray-900);
+      --card-bg: transparent;
     }
     body { background: var(--gray-50); font-family: 'Inter', sans-serif; min-height: 100vh; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
 
@@ -31,7 +33,7 @@
     }
 
     #profile { display: none; flex-direction: column; align-items: center; padding: 0 20px 80px; min-height: 100vh; }
-    .profile-card { width: 100%; max-width: 480px; }
+    .profile-card { width: 100%; max-width: 480px; background: var(--card-bg); border-radius: 16px; padding: 8px; }
 
     .profile-top { text-align: center; margin-bottom: 28px; padding-top: 20px; }
 
@@ -47,8 +49,8 @@
     .profile-avatar.shape-square   { border-radius: 6px; }
     .profile-avatar-img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; display: block; }
 
-    .profile-name { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
-    .profile-bio  { font-size: 14px; color: var(--gray-500); line-height: 1.5; max-width: 320px; margin: 0 auto; }
+    .profile-name { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; color: var(--profile-text-color); }
+    .profile-bio  { font-size: 14px; color: var(--profile-text-color); opacity: 0.7; line-height: 1.5; max-width: 320px; margin: 0 auto; }
     .profile-handle { font-size: 12px; color: var(--gray-400); margin-top: 6px; }
     .profile-views  { font-size: 11px; color: var(--gray-400); margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 4px; }
     .profile-views svg { width: 12px; height: 12px; stroke: var(--gray-400); fill: none; flex-shrink: 0; }
@@ -130,6 +132,94 @@
     }
 
     #audioPlayer { display: none; }
+
+    /* ── Click to Enter Overlay ── */
+    #enterOverlay {
+      position: fixed; inset: 0; z-index: 99999;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: #000;
+      transition: opacity .6s ease, visibility .6s ease;
+    }
+    #enterOverlay.hidden {
+      opacity: 0; visibility: hidden; pointer-events: none;
+    }
+    #enterOverlay .enter-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, #1a1a1a 0%, #000 70%);
+    }
+    #enterOverlay .enter-particles {
+      position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+    }
+    #enterOverlay .enter-particles span {
+      position: absolute; width: 2px; height: 2px;
+      background: rgba(255,255,255,.4); border-radius: 50%;
+      animation: floatUp linear infinite;
+    }
+    @keyframes floatUp {
+      0%   { transform: translateY(0) scale(1);   opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 1; }
+      100% { transform: translateY(-100vh) scale(0); opacity: 0; }
+    }
+    #enterOverlay .enter-content {
+      position: relative; z-index: 2;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 32px;
+      text-align: center; padding: 32px;
+    }
+    #enterOverlay .enter-logo {
+      font-size: 13px; font-weight: 600; letter-spacing: 3px;
+      text-transform: uppercase; color: rgba(255,255,255,.3);
+    }
+    #enterOverlay .enter-pulse {
+      width: 80px; height: 80px; position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #enterOverlay .enter-pulse::before,
+    #enterOverlay .enter-pulse::after {
+      content: ''; position: absolute; inset: 0;
+      border-radius: 50%; border: 1px solid rgba(255,255,255,.2);
+      animation: pulseRing 2s ease-out infinite;
+    }
+    #enterOverlay .enter-pulse::after { animation-delay: 1s; }
+    @keyframes pulseRing {
+      0%   { transform: scale(.8); opacity: 1; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+    #enterOverlay .enter-icon {
+      width: 80px; height: 80px; border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,.15);
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,.05);
+      font-size: 28px;
+      position: relative; z-index: 1;
+    }
+    #enterBtn {
+      position: relative; overflow: hidden;
+      background: transparent;
+      border: 1.5px solid rgba(255,255,255,.25);
+      color: #fff; font-family: inherit;
+      font-size: 13px; font-weight: 600;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 16px 48px; border-radius: 100px;
+      cursor: pointer; transition: border-color .25s, background .25s;
+    }
+    #enterBtn::before {
+      content: ''; position: absolute; inset: 0;
+      background: rgba(255,255,255,.06);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .3s ease;
+    }
+    #enterBtn:hover { border-color: rgba(255,255,255,.6); }
+    #enterBtn:hover::before { transform: scaleX(1); }
+    #enterBtn:active { transform: scale(.97); }
+    .enter-hint {
+      font-size: 11px; color: rgba(255,255,255,.2);
+      letter-spacing: 1px; text-transform: uppercase;
+      animation: blink 2.5s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:.2} 50%{opacity:.7} }
 
     /* ── Music Player Flottant ── */
     .music-player {
@@ -300,6 +390,20 @@
   </style>
 </head>
 <body>
+
+<!-- ── Click to Enter Overlay ── -->
+<div id="enterOverlay">
+  <div class="enter-bg"></div>
+  <div class="enter-particles" id="enterParticles"></div>
+  <div class="enter-content">
+    <div class="enter-logo">ak-47.fr</div>
+    <div class="enter-pulse">
+      <div class="enter-icon">🎵</div>
+    </div>
+    <button id="enterBtn" onclick="enterSite()">Entrer</button>
+    <div class="enter-hint">Cliquez pour continuer</div>
+  </div>
+</div>
 
 <div id="profileBg"></div>
 <audio id="audioPlayer" loop></audio>
@@ -523,13 +627,53 @@ async function loadProfile() {
 
     const bgType  = user.bg_type  || 'color';
     const bgValue = user.bg_value || '#fafafa';
+    const bgOpacity = user.bg_opacity !== undefined ? user.bg_opacity : 1;
     if (bgType === 'color') {
       document.body.style.background = bgValue;
-    } else if (bgType === 'gradient') {
+      document.body.style.opacity = '';
+      // apply opacity via a pseudo-overlay using a dedicated div
+      const bgDiv = document.getElementById('profileBg');
+      bgDiv.style.background = bgValue;
+      bgDiv.style.opacity = bgOpacity;
+      bgDiv.style.backgroundImage = '';
       document.body.style.background = bgValue;
+      // For color/gradient, tint body directly with rgba
+      if (bgOpacity < 1) {
+        // Parse hex to rgba
+        const hex = bgValue.replace('#','');
+        const r = parseInt(hex.slice(0,2),16), g = parseInt(hex.slice(2,4),16), b = parseInt(hex.slice(4,6),16);
+        document.body.style.background = `rgba(${r},${g},${b},${bgOpacity})`;
+      } else {
+        document.body.style.background = bgValue;
+      }
+    } else if (bgType === 'gradient') {
+      if (bgOpacity < 1) {
+        const bgDiv = document.getElementById('profileBg');
+        bgDiv.style.background = bgValue;
+        bgDiv.style.opacity = bgOpacity;
+        bgDiv.style.backgroundImage = '';
+        document.body.style.background = 'transparent';
+      } else {
+        document.body.style.background = bgValue;
+      }
     } else if (bgType === 'image' && user.bg_url) {
       const bg = document.getElementById('profileBg');
       bg.style.backgroundImage = `url(${JSON.stringify(user.bg_url)})`;
+      bg.style.opacity = bgOpacity;
+    }
+
+    // Couleur du texte profil
+    if (user.text_color) {
+      document.documentElement.style.setProperty('--profile-text-color', user.text_color);
+    }
+
+    // Fond de la card profil
+    if (user.card_bg || user.card_opacity !== undefined) {
+      const cardBg = user.card_bg || '#ffffff';
+      const cardOpacity = user.card_opacity !== undefined ? user.card_opacity : 1;
+      const hex = cardBg.replace('#','');
+      const r = parseInt(hex.slice(0,2),16), g = parseInt(hex.slice(2,4),16), b = parseInt(hex.slice(4,6),16);
+      document.documentElement.style.setProperty('--card-bg', `rgba(${r},${g},${b},${cardOpacity})`);
     }
 
     if (user.banner_url) {
@@ -607,14 +751,12 @@ async function loadProfile() {
         player.currentTime = ((e.clientX - rect.left) / rect.width) * player.duration;
       });
 
-      // Autoplay + animation d'entrée
-      player.play().then(() => {
-        document.getElementById('mpPlayIcon').innerHTML = '<path d="M6 19h4V5H6zm8-14v14h4V5z"/>';
-        audioPlaying = true;
-      }).catch(() => { audioPlaying = false; });
-
-      // Animation slide-up après un court délai
-      setTimeout(() => bar.classList.add('shown'), 600);
+      // Autoplay différé : attend que l'utilisateur clique "Entrer"
+      _profileReady = true;
+      if (_enterDone) {
+        startMusicNow();
+      }
+      // (si l'overlay est encore visible, startMusicNow() sera appelé par enterSite())
     }
 
     document.getElementById('pName').textContent = user.display_name || user.username;
@@ -887,6 +1029,46 @@ function trackClick(username, url, title) {
 
 function escHtml(s)  { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function escAttr(s)  { return String(s).replace(/"/g,'&quot;'); }
+
+// ── Click to Enter ──
+(function initEnterOverlay() {
+  // Génère des particules flottantes
+  const container = document.getElementById('enterParticles');
+  for (let i = 0; i < 35; i++) {
+    const s = document.createElement('span');
+    s.style.left  = Math.random() * 100 + '%';
+    s.style.bottom = '-4px';
+    s.style.width  = (Math.random() * 2 + 1) + 'px';
+    s.style.height = s.style.width;
+    s.style.animationDuration  = (Math.random() * 8 + 6) + 's';
+    s.style.animationDelay     = (Math.random() * 8) + 's';
+    s.style.opacity = Math.random() * 0.5 + 0.1;
+    container.appendChild(s);
+  }
+})();
+
+let _profileReady = false;
+let _enterDone    = false;
+
+function enterSite() {
+  const overlay = document.getElementById('enterOverlay');
+  overlay.classList.add('hidden');
+  _enterDone = true;
+  // Si le profil est déjà chargé, lance la musique maintenant
+  if (_profileReady) startMusicNow();
+}
+
+function startMusicNow() {
+  const player = document.getElementById('audioPlayer');
+  if (!player || !player.src) return;
+  player.play().then(() => {
+    const icon = document.getElementById('mpPlayIcon');
+    if (icon) icon.innerHTML = '<path d="M6 19h4V5H6zm8-14v14h4V5z"/>';
+    audioPlaying = true;
+  }).catch(() => { audioPlaying = false; });
+  const bar = document.getElementById('audioBar');
+  if (bar) setTimeout(() => bar.classList.add('shown'), 600);
+}
 
 loadProfile();
 </script>
