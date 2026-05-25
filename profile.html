@@ -99,6 +99,8 @@
     }
     .profile-link:hover { filter: brightness(.93); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.08); }
     .profile-link-arrow { opacity: .5; font-size: 16px; }
+    .profile-link-icon { width: 20px; height: 20px; border-radius: 4px; object-fit: contain; flex-shrink: 0; margin-right: 2px; }
+    .profile-link-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
 
     /* ── LIENS : GRID ── */
     .profile-links.layout-grid {
@@ -235,6 +237,63 @@ const SOCIAL_META = {
   reddit:     { emoji: '🤖', label: 'Reddit',        base: 'https://reddit.com/u/' },
   steam:      { emoji: '🎲', label: 'Steam',         base: 'https://steamcommunity.com/id/' },
 };
+
+// Détecte l'icône simpleicons à partir d'une URL
+function getLinkIcon(url) {
+  if (!url) return null;
+  const u = url.toLowerCase();
+  const map = [
+    ['discord.gg',        'https://cdn.simpleicons.org/discord/5865F2'],
+    ['discord.com',       'https://cdn.simpleicons.org/discord/5865F2'],
+    ['instagram.com',     'https://cdn.simpleicons.org/instagram/E1306C'],
+    ['tiktok.com',        'https://cdn.simpleicons.org/tiktok/ffffff'],
+    ['youtube.com',       'https://cdn.simpleicons.org/youtube/FF0000'],
+    ['youtu.be',          'https://cdn.simpleicons.org/youtube/FF0000'],
+    ['twitch.tv',         'https://cdn.simpleicons.org/twitch/9146FF'],
+    ['github.com',        'https://cdn.simpleicons.org/github/ffffff'],
+    ['x.com',             'https://cdn.simpleicons.org/x/ffffff'],
+    ['twitter.com',       'https://cdn.simpleicons.org/x/ffffff'],
+    ['snapchat.com',      'https://cdn.simpleicons.org/snapchat/FFFC00'],
+    ['linkedin.com',      'https://cdn.simpleicons.org/linkedin/0A66C2'],
+    ['steamcommunity.com','https://cdn.simpleicons.org/steam/ffffff'],
+    ['steam',             'https://cdn.simpleicons.org/steam/ffffff'],
+    ['reddit.com',        'https://cdn.simpleicons.org/reddit/FF4500'],
+    ['spotify.com',       'https://cdn.simpleicons.org/spotify/1DB954'],
+    ['t.me',              'https://cdn.simpleicons.org/telegram/2CA5E0'],
+    ['telegram.me',       'https://cdn.simpleicons.org/telegram/2CA5E0'],
+    ['soundcloud.com',    'https://cdn.simpleicons.org/soundcloud/FF5500'],
+    ['paypal.me',         'https://cdn.simpleicons.org/paypal/00457C'],
+    ['paypal.com',        'https://cdn.simpleicons.org/paypal/00457C'],
+    ['roblox.com',        'https://cdn.simpleicons.org/roblox/ffffff'],
+    ['kick.com',          'https://cdn.simpleicons.org/kick/53FC18'],
+    ['pinterest.com',     'https://cdn.simpleicons.org/pinterest/E60023'],
+    ['last.fm',           'https://cdn.simpleicons.org/lastdotfm/D51007'],
+    ['bsky.app',          'https://cdn.simpleicons.org/bluesky/0085FF'],
+    ['threads.net',       'https://cdn.simpleicons.org/threads/ffffff'],
+    ['notion.so',         'https://cdn.simpleicons.org/notion/ffffff'],
+    ['onlyfans.com',      'https://cdn.simpleicons.org/onlyfans/00AFF0'],
+    ['patreon.com',       'https://cdn.simpleicons.org/patreon/FF424D'],
+    ['buymeacoffee.com',  'https://cdn.simpleicons.org/buymeacoffee/FFDD00'],
+    ['ko-fi.com',         'https://cdn.simpleicons.org/kofi/FF5E5B'],
+    ['facebook.com',      'https://cdn.simpleicons.org/facebook/1877F2'],
+    ['fb.com',            'https://cdn.simpleicons.org/facebook/1877F2'],
+    ['gitlab.com',        'https://cdn.simpleicons.org/gitlab/FC6D26'],
+    ['letterboxd.com',    'https://cdn.simpleicons.org/letterboxd/00C030'],
+    ['vk.com',            'https://cdn.simpleicons.org/vk/4C75A3'],
+    ['psnprofiles.com',   'https://cdn.simpleicons.org/playstation/003087'],
+    ['playstation.com',   'https://cdn.simpleicons.org/playstation/003087'],
+    ['music.apple.com',   'https://cdn.simpleicons.org/applemusic/FC3C44'],
+    ['vsco.co',           'https://cdn.simpleicons.org/vsco/ffffff'],
+    ['signal.me',         'https://cdn.simpleicons.org/signal/3A76F0'],
+    ['cash.app',          'https://cdn.simpleicons.org/cashapp/00D54B'],
+    ['venmo.com',         'https://cdn.simpleicons.org/venmo/3D95CE'],
+    ['mailto:',           'https://cdn.simpleicons.org/gmail/ffffff'],
+  ];
+  for (const [key, icon] of map) {
+    if (u.includes(key)) return icon;
+  }
+  return null;
+}
 
 async function loadProfile() {
   if (!username || STATIC.includes(username)) return;
@@ -404,12 +463,16 @@ async function loadProfile() {
 
     const links = user.links || [];
     if (links.length) {
-      linksContainer.innerHTML = links.map(l => `
+      linksContainer.innerHTML = links.map(l => {
+        const icon = getLinkIcon(l.url);
+        const iconHtml = icon ? `<img class="profile-link-icon" src="${icon}" alt="" onerror="this.style.display='none'"/>` : '';
+        return `
         <a class="profile-link" href="${escAttr(l.url)}" target="_blank" rel="noopener"
           onclick="trackClick(${JSON.stringify(user.username)}, ${JSON.stringify(l.url)}, ${JSON.stringify(l.title)})">
-          ${escHtml(l.title)}
+          <span class="profile-link-left">${iconHtml}<span>${escHtml(l.title)}</span></span>
           <span class="profile-link-arrow">↗</span>
-        </a>`).join('');
+        </a>`;
+      }).join('');
     } else {
       linksContainer.innerHTML = '<p style="text-align:center;color:var(--gray-400);font-size:13px;padding:20px;">Aucun lien pour l\'instant.</p>';
     }

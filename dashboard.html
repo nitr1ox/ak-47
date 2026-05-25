@@ -256,6 +256,42 @@
           </div>
         </div>
       </div>
+
+      <!-- ── COMPTES CONNECTÉS ── -->
+      <div class="section-card" style="margin-top:20px;">
+        <div class="section-card-title">Comptes connectés</div>
+        <p style="font-size:13px;color:var(--gray-500);margin-bottom:16px;">Liez vos comptes tiers pour activer les badges, la synchronisation des rôles Discord et la connexion rapide.</p>
+
+        <!-- Discord -->
+        <div id="connectedDiscordRow" style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--gray-200);border-radius:9px;margin-bottom:10px;">
+          <img src="https://cdn.simpleicons.org/discord/5865F2" alt="Discord" style="width:28px;height:28px;flex-shrink:0;"/>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:600;">Discord</div>
+            <div id="discordStatus" style="font-size:12px;color:var(--gray-400);margin-top:2px;">Non connecté</div>
+          </div>
+          <button id="discordConnectBtn" onclick="connectDiscord()" style="padding:7px 16px;border-radius:8px;border:none;background:#5865F2;color:#fff;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">
+            Connecter
+          </button>
+          <button id="discordDisconnectBtn" onclick="disconnectDiscord()" style="display:none;padding:7px 16px;border-radius:8px;border:1px solid var(--gray-200);background:var(--white);color:var(--gray-600);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">
+            Délier
+          </button>
+        </div>
+
+        <!-- Google -->
+        <div style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--gray-200);border-radius:9px;">
+          <img src="https://cdn.simpleicons.org/google/4285F4" alt="Google" style="width:28px;height:28px;flex-shrink:0;"/>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:600;">Google</div>
+            <div id="googleStatus" style="font-size:12px;color:var(--gray-400);margin-top:2px;">Non connecté</div>
+          </div>
+          <button id="googleConnectBtn" onclick="connectGoogle()" style="padding:7px 16px;border-radius:8px;border:none;background:#4285F4;color:#fff;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">
+            Connecter
+          </button>
+          <button id="googleDisconnectBtn" onclick="disconnectGoogle()" style="display:none;padding:7px 16px;border-radius:8px;border:1px solid var(--gray-200);background:var(--white);color:var(--gray-600);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">
+            Délier
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- ── LINKS TAB ── -->
@@ -268,26 +304,9 @@
         <div class="section-card-title">Vos liens <span id="linkCount" style="font-size:11px;color:var(--gray-400);font-weight:400;"></span></div>
         <div class="links-list" id="linksList"></div>
 
-        <!-- Onglets Réseaux sociaux / Manuel -->
+        <!-- Ajouter un lien -->
         <div style="margin-top:16px;">
-          <div class="add-link-tabs">
-            <button class="add-link-tab active" onclick="switchAddTab('social')">Réseaux sociaux</button>
-            <button class="add-link-tab" onclick="switchAddTab('manual')">URL personnalisée</button>
-          </div>
-
-          <!-- Social picker -->
-          <div class="social-picker active" id="socialPicker">
-            <div class="social-input-row" id="socialInputRow">
-              <img id="socialInputIcon" src="" alt=""/>
-              <input type="text" id="socialInputUrl" placeholder="Entrez votre URL ou pseudo"/>
-              <button onclick="confirmSocialLink()">Ajouter</button>
-              <button class="social-input-close" onclick="closeSocialInput()">✕</button>
-            </div>
-            <div class="social-grid" id="socialGrid"></div>
-          </div>
-
-          <!-- Manuel -->
-          <div class="manual-form" id="manualForm">
+          <div class="manual-form active" id="manualForm">
             <div>
               <label style="font-size:11px;font-weight:600;color:var(--gray-500);display:block;margin-bottom:4px;">Titre</label>
               <input type="text" id="newLinkTitle" placeholder="ex. Mon site" maxlength="60"/>
@@ -638,13 +657,6 @@
         <div id="fontPreviewText" style="margin-top:10px;font-size:16px;color:var(--gray-900);">Voici un aperçu de votre texte de profil.</div>
       </div>
 
-      <!-- RÉSEAUX SOCIAUX -->
-      <div class="section-card">
-        <div class="section-card-title">Réseaux sociaux</div>
-        <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Ajoutez vos profils sociaux pour afficher des icônes sur votre page.</div>
-        <div id="socialLinksForm" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"></div>
-      </div>
-
       <!-- SPOTIFY -->
       <div class="section-card">
         <div class="section-card-title">Spotify</div>
@@ -726,72 +738,72 @@ const SOCIALS = [
 
 let activeSocial = null;
 
-function buildSocialGrid() {
-  const grid = document.getElementById('socialGrid');
-  grid.innerHTML = SOCIALS.map(s => `
-    <button class="social-btn" onclick="openSocialInput('${s.id}')" title="${s.label}">
-      <img src="${s.icon}" alt="${s.label}" onerror="this.style.display='none'"/>
-      <span class="social-label">${s.label}</span>
-    </button>
-  `).join('') + `
-    <button class="social-custom-btn" onclick="switchAddTab('manual')" title="URL personnalisée">
-      <span>🔗</span>
-      <span>Custom</span>
-    </button>
-  `;
-}
-
-function openSocialInput(id) {
-  activeSocial = SOCIALS.find(s => s.id === id);
-  if (!activeSocial) return;
-  const row = document.getElementById('socialInputRow');
-  const icon = document.getElementById('socialInputIcon');
-  const input = document.getElementById('socialInputUrl');
-  icon.src = activeSocial.icon;
-  icon.alt = activeSocial.label;
-  input.placeholder = activeSocial.placeholder;
-  input.value = '';
-  row.classList.add('active');
-  input.focus();
-}
-
-function closeSocialInput() {
-  document.getElementById('socialInputRow').classList.remove('active');
-  activeSocial = null;
-}
-
-function confirmSocialLink() {
-  if (!activeSocial) return;
-  const raw = document.getElementById('socialInputUrl').value.trim();
-  if (!raw) return;
-
-  let url = raw;
-  // Si c'est déjà une URL complète, on la garde
-  if (!raw.startsWith('http://') && !raw.startsWith('https://') && !raw.startsWith('mailto:')) {
-    url = activeSocial.base + raw;
+// ── DÉTECTION D'ICÔNE PAR URL ──
+function getLinkIcon(url) {
+  if (!url) return null;
+  const u = url.toLowerCase();
+  const map = [
+    ['discord.gg', 'https://cdn.simpleicons.org/discord/5865F2'],
+    ['discord.com', 'https://cdn.simpleicons.org/discord/5865F2'],
+    ['instagram.com', 'https://cdn.simpleicons.org/instagram/E1306C'],
+    ['tiktok.com', 'https://cdn.simpleicons.org/tiktok/ffffff'],
+    ['youtube.com', 'https://cdn.simpleicons.org/youtube/FF0000'],
+    ['youtu.be', 'https://cdn.simpleicons.org/youtube/FF0000'],
+    ['twitch.tv', 'https://cdn.simpleicons.org/twitch/9146FF'],
+    ['github.com', 'https://cdn.simpleicons.org/github/ffffff'],
+    ['x.com', 'https://cdn.simpleicons.org/x/ffffff'],
+    ['twitter.com', 'https://cdn.simpleicons.org/x/ffffff'],
+    ['snapchat.com', 'https://cdn.simpleicons.org/snapchat/FFFC00'],
+    ['linkedin.com', 'https://cdn.simpleicons.org/linkedin/0A66C2'],
+    ['steam', 'https://cdn.simpleicons.org/steam/ffffff'],
+    ['steamcommunity.com', 'https://cdn.simpleicons.org/steam/ffffff'],
+    ['reddit.com', 'https://cdn.simpleicons.org/reddit/FF4500'],
+    ['spotify.com', 'https://cdn.simpleicons.org/spotify/1DB954'],
+    ['telegram.me', 'https://cdn.simpleicons.org/telegram/2CA5E0'],
+    ['t.me', 'https://cdn.simpleicons.org/telegram/2CA5E0'],
+    ['soundcloud.com', 'https://cdn.simpleicons.org/soundcloud/FF5500'],
+    ['paypal.me', 'https://cdn.simpleicons.org/paypal/00457C'],
+    ['paypal.com', 'https://cdn.simpleicons.org/paypal/00457C'],
+    ['roblox.com', 'https://cdn.simpleicons.org/roblox/ffffff'],
+    ['kick.com', 'https://cdn.simpleicons.org/kick/53FC18'],
+    ['pinterest.com', 'https://cdn.simpleicons.org/pinterest/E60023'],
+    ['last.fm', 'https://cdn.simpleicons.org/lastdotfm/D51007'],
+    ['bluesky', 'https://cdn.simpleicons.org/bluesky/0085FF'],
+    ['bsky.app', 'https://cdn.simpleicons.org/bluesky/0085FF'],
+    ['threads.net', 'https://cdn.simpleicons.org/threads/ffffff'],
+    ['notion.so', 'https://cdn.simpleicons.org/notion/ffffff'],
+    ['onlyfans.com', 'https://cdn.simpleicons.org/onlyfans/00AFF0'],
+    ['patreon.com', 'https://cdn.simpleicons.org/patreon/FF424D'],
+    ['buymeacoffee.com', 'https://cdn.simpleicons.org/buymeacoffee/FFDD00'],
+    ['ko-fi.com', 'https://cdn.simpleicons.org/kofi/FF5E5B'],
+    ['facebook.com', 'https://cdn.simpleicons.org/facebook/1877F2'],
+    ['fb.com', 'https://cdn.simpleicons.org/facebook/1877F2'],
+    ['gitlab.com', 'https://cdn.simpleicons.org/gitlab/FC6D26'],
+    ['letterboxd.com', 'https://cdn.simpleicons.org/letterboxd/00C030'],
+    ['vk.com', 'https://cdn.simpleicons.org/vk/4C75A3'],
+    ['xbox.com', 'https://cdn.simpleicons.org/xbox/107C10'],
+    ['xboxlive.com', 'https://cdn.simpleicons.org/xbox/107C10'],
+    ['psnprofiles.com', 'https://cdn.simpleicons.org/playstation/003087'],
+    ['playstation.com', 'https://cdn.simpleicons.org/playstation/003087'],
+    ['music.apple.com', 'https://cdn.simpleicons.org/applemusic/FC3C44'],
+    ['vsco.co', 'https://cdn.simpleicons.org/vsco/ffffff'],
+    ['signal.me', 'https://cdn.simpleicons.org/signal/3A76F0'],
+    ['cashapp.com', 'https://cdn.simpleicons.org/cashapp/00D54B'],
+    ['cash.app', 'https://cdn.simpleicons.org/cashapp/00D54B'],
+    ['venmo.com', 'https://cdn.simpleicons.org/venmo/3D95CE'],
+    ['bitcoin', 'https://cdn.simpleicons.org/bitcoin/F7931A'],
+    ['ethereum', 'https://cdn.simpleicons.org/ethereum/627EEA'],
+    ['mailto:', 'https://cdn.simpleicons.org/gmail/ffffff'],
+  ];
+  for (const [key, icon] of map) {
+    if (u.includes(key)) return icon;
   }
-
-  const title = activeSocial.label;
-  if (pendingLinks.length >= 20) return showAlert('linksAlert', 'Maximum 20 liens');
-
-  pendingLinks.push({ title, url });
-  closeSocialInput();
-  el('linksAlert').innerHTML = '';
-  renderLinks(); updatePreview();
+  return null;
 }
 
-function switchAddTab(tab) {
-  document.querySelectorAll('.add-link-tab').forEach((t,i) => {
-    t.classList.toggle('active', (i===0 && tab==='social') || (i===1 && tab==='manual'));
-  });
-  document.getElementById('socialPicker').classList.toggle('active', tab === 'social');
-  document.getElementById('manualForm').classList.toggle('active', tab === 'manual');
-  if (tab === 'social') closeSocialInput();
-}
 
 // ── INIT ──
 document.addEventListener('DOMContentLoaded', async () => {
-  buildSocialGrid();
   document.getElementById('navUsername').textContent = username;
   const profileUrl = window.location.origin + '/' + username;
   document.getElementById('profileUrlText').textContent = profileUrl;
@@ -799,12 +811,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('profileViewBtn2').href = profileUrl;
   document.getElementById('overviewDate').textContent = new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   await Promise.all([loadUser(), loadAnalytics()]);
+
+  // Détection retour OAuth liaison
+  const params = new URLSearchParams(window.location.search);
+  const linked = params.get('linked');
+  if (linked === 'discord') {
+    showToast('✅ Compte Discord lié avec succès !');
+    switchTab('profile');
+    history.replaceState({}, '', window.location.pathname);
+  } else if (linked === 'google') {
+    showToast('✅ Compte Google lié avec succès !');
+    switchTab('profile');
+    history.replaceState({}, '', window.location.pathname);
+  }
 });
 
 // Entrée clavier dans le champ social
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter') {
-    if (document.activeElement.id === 'socialInputUrl') confirmSocialLink();
     if (document.activeElement.id === 'newLinkUrl') addLink();
   }
 });
@@ -827,6 +851,7 @@ async function loadUser() {
     loadMediasUI();
     loadPersoUI();
     renderBadges();
+    renderConnectedAccounts();
     // Afficher lien admin si discord_id admin
     const ADMIN_DISCORD_IDS = ['866613427852804136'];
     if (userData.discord_id && ADMIN_DISCORD_IDS.includes(userData.discord_id)) {
@@ -935,6 +960,85 @@ async function toggleBadge(index) {
   } catch { showToast('Erreur réseau'); }
 }
 
+// ── COMPTES CONNECTÉS ──
+function renderConnectedAccounts() {
+  // Discord
+  const discordStatus = document.getElementById('discordStatus');
+  const discordConnectBtn = document.getElementById('discordConnectBtn');
+  const discordDisconnectBtn = document.getElementById('discordDisconnectBtn');
+  if (userData.discord_id) {
+    if (discordStatus) discordStatus.innerHTML = `<span style="color:#5865F2;font-weight:600;">✓ Connecté</span>${userData.discord_username ? ' · ' + userData.discord_username : ''}`;
+    if (discordConnectBtn) discordConnectBtn.style.display = 'none';
+    if (discordDisconnectBtn) discordDisconnectBtn.style.display = 'inline-block';
+  } else {
+    if (discordStatus) discordStatus.textContent = 'Non connecté';
+    if (discordConnectBtn) discordConnectBtn.style.display = 'inline-block';
+    if (discordDisconnectBtn) discordDisconnectBtn.style.display = 'none';
+  }
+
+  // Google
+  const googleStatus = document.getElementById('googleStatus');
+  const googleConnectBtn = document.getElementById('googleConnectBtn');
+  const googleDisconnectBtn = document.getElementById('googleDisconnectBtn');
+  if (userData.google_id) {
+    if (googleStatus) googleStatus.innerHTML = `<span style="color:#4285F4;font-weight:600;">✓ Connecté</span>${userData.email ? ' · ' + userData.email : ''}`;
+    if (googleConnectBtn) googleConnectBtn.style.display = 'none';
+    if (googleDisconnectBtn) googleDisconnectBtn.style.display = 'inline-block';
+  } else {
+    if (googleStatus) googleStatus.textContent = 'Non connecté';
+    if (googleConnectBtn) googleConnectBtn.style.display = 'inline-block';
+    if (googleDisconnectBtn) googleDisconnectBtn.style.display = 'none';
+  }
+}
+
+function connectDiscord() {
+  // Redirige vers l'OAuth Discord en passant un paramètre link=1 pour lier le compte
+  // (le backend peut utiliser le token JWT stocké pour associer sans recréer un compte)
+  const linkToken = encodeURIComponent(token);
+  window.location.href = `${API}/api/auth/discord?link=1&jwt=${linkToken}`;
+}
+
+function connectGoogle() {
+  const linkToken = encodeURIComponent(token);
+  window.location.href = `${API}/api/auth/google?link=1&jwt=${linkToken}`;
+}
+
+async function disconnectDiscord() {
+  if (!confirm('Délier votre compte Discord ? Vos badges Discord seront supprimés.')) return;
+  try {
+    const r = await fetch(API + '/api/user/unlink/discord', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    if (r.ok) {
+      userData.discord_id = null;
+      userData.discord_badges = '[]';
+      renderConnectedAccounts();
+      renderBadges();
+      showToast('Compte Discord délié ✓');
+    } else {
+      showToast('Erreur lors de la déconnexion');
+    }
+  } catch { showToast('Erreur réseau'); }
+}
+
+async function disconnectGoogle() {
+  if (!confirm('Délier votre compte Google ?')) return;
+  try {
+    const r = await fetch(API + '/api/user/unlink/google', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    if (r.ok) {
+      userData.google_id = null;
+      renderConnectedAccounts();
+      showToast('Compte Google délié ✓');
+    } else {
+      showToast('Erreur lors de la déconnexion');
+    }
+  } catch { showToast('Erreur réseau'); }
+}
+
 async function syncDiscord() {
   const btn = document.getElementById('syncDiscordBtn');
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Synchronisation…'; }
@@ -988,9 +1092,15 @@ function renderLinks() {
     list.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>Aucun lien. Ajoutez-en un ci-dessous.</div>';
     return;
   }
-  list.innerHTML = pendingLinks.map((l,i) => `
+  list.innerHTML = pendingLinks.map((l,i) => {
+    const icon = getLinkIcon(l.url);
+    const iconHtml = icon
+      ? `<img src="${icon}" alt="" style="width:22px;height:22px;border-radius:5px;object-fit:contain;flex-shrink:0;" onerror="this.style.display='none'"/>`
+      : `<span style="width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🔗</span>`;
+    return `
     <div class="link-item">
       <span class="link-item-drag">⠿</span>
+      ${iconHtml}
       <div class="link-item-info">
         <div class="link-item-title">${esc(l.title)}</div>
         <div class="link-item-url">${esc(l.url)}</div>
@@ -1000,7 +1110,8 @@ function renderLinks() {
           <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg>
         </button>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 // ── ACTIONS ──
@@ -1257,21 +1368,7 @@ let pendingPerso = {
   bg_value: null,
   banner_url: null,
   bg_url: null,   // only used when bg_type=image
-  social_links: null,
   spotify_url: null,
-};
-
-const SOCIAL_META_DASH = {
-  twitter:   { label: 'X / Twitter',  placeholder: 'votre_pseudo' },
-  instagram: { label: 'Instagram',    placeholder: 'votre_pseudo' },
-  tiktok:    { label: 'TikTok',       placeholder: 'votre_pseudo' },
-  youtube:   { label: 'YouTube',      placeholder: '@votre_chaine' },
-  twitch:    { label: 'Twitch',       placeholder: 'votre_pseudo' },
-  github:    { label: 'GitHub',       placeholder: 'votre_pseudo' },
-  discord:   { label: 'Discord',      placeholder: 'Lien d\'invitation' },
-  snapchat:  { label: 'Snapchat',     placeholder: 'votre_pseudo' },
-  linkedin:  { label: 'LinkedIn',     placeholder: 'votre_profil' },
-  steam:     { label: 'Steam',        placeholder: 'votre_pseudo' },
 };
 
 const GRADIENT_PRESETS = [
@@ -1300,17 +1397,6 @@ function initPersoTab() {
     presetsEl.appendChild(btn);
   });
 
-  // Social links form
-  const form = el('socialLinksForm');
-  Object.entries(SOCIAL_META_DASH).forEach(([key, meta]) => {
-    const div = document.createElement('div');
-    div.className = 'form-group';
-    div.innerHTML = `<label>${meta.label}</label>
-      <input type="text" id="social_${key}" placeholder="${meta.placeholder}"
-        style="width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;font-family:inherit;outline:none;"
-        oninput="updateSocialLinks()"/>`;
-    form.appendChild(div);
-  });
 }
 
 function loadPersoUI() {
@@ -1353,13 +1439,6 @@ function loadPersoUI() {
     el('bannerRemove').style.display = 'inline';
   }
 
-  // Social links
-  let socials = {}; try { socials = JSON.parse(userData.social_links || '{}'); } catch {}
-  Object.keys(SOCIAL_META_DASH).forEach(key => {
-    const inp = el('social_' + key);
-    if (inp && socials[key]) inp.value = socials[key];
-  });
-
   // Spotify
   if (userData.spotify_url) el('spotifyUrlInput').value = userData.spotify_url;
 }
@@ -1401,15 +1480,6 @@ function updateBtnStylePreview() {
   prev.style.color         = txt;
   prev.style.border        = `1px solid ${brd}`;
   prev.style.borderRadius  = rad;
-}
-
-function updateSocialLinks() {
-  const socials = {};
-  Object.keys(SOCIAL_META_DASH).forEach(key => {
-    const val = (el('social_' + key)?.value || '').trim();
-    if (val) socials[key] = val;
-  });
-  pendingPerso.social_links = JSON.stringify(socials);
 }
 
 async function handlePersoMedia(type, input) {
