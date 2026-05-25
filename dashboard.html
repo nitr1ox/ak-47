@@ -1097,6 +1097,8 @@
 
 <script>
 const API = 'https://ak47-backend.onrender.com';
+// Wake-up ping pour réveiller Render dès l'arrivée sur la page
+fetch(API + '/api/health').catch(() => {});
 const token = localStorage.getItem('token');
 const username = localStorage.getItem('username');
 if (!token) window.location.href = '/login';
@@ -1224,8 +1226,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('profileViewBtn2').href = profileUrl;
   document.getElementById('overviewDate').textContent = new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   await Promise.all([loadUser(), loadAnalytics()]);
-  if (!analyticsData) setTimeout(async () => { if (!analyticsData) { await loadAnalytics(); } }, 3000);
-  if (!analyticsData) setTimeout(async () => { if (!analyticsData) { await loadAnalytics(); } }, 8000);
 
   const params = new URLSearchParams(window.location.search);
   const linked = params.get('linked');
@@ -1274,15 +1274,24 @@ async function loadUser() {
   } catch { showToast('Erreur de chargement du profil'); }
 }
 
+let _analyticsRetries = 0;
 async function loadAnalytics() {
   try {
     const r = await fetch(API + '/api/analytics', { headers: { Authorization: 'Bearer ' + token } });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
     analyticsData = await r.json();
+    _analyticsRetries = 0;
     renderStats();
     renderChart('chartBars', analyticsData.daily, 80);
     renderChart('analyticsChart', analyticsData.daily, 100);
     renderTopLinks();
-  } catch {}
+  } catch(e) {
+    console.warn('[analytics] echec (' + e.message + ')' + (_analyticsRetries < 5 ? ', retry dans 8s...' : ', abandon.'));
+    if (_analyticsRetries < 5) {
+      _analyticsRetries++;
+      setTimeout(loadAnalytics, 8000);
+    }
+  }
 }
 
 function renderStats() {
