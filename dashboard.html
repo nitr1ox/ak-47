@@ -1223,7 +1223,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('navUsername').textContent = username;
   const profileUrl = window.location.origin + '/' + username;
   document.getElementById('profileViewBtn').href = profileUrl;
-  document.getElementById('profileViewBtn2').href = profileUrl;
+  const btn2 = document.getElementById('profileViewBtn2'); if (btn2) btn2.href = profileUrl;
   document.getElementById('overviewDate').textContent = new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   await Promise.all([loadUser(), loadAnalytics()]);
 
