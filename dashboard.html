@@ -1097,7 +1097,6 @@
 
 <script>
 const API = 'https://ak47-backend.onrender.com';
-// Wake-up ping pour réveiller Render dès l'arrivée sur la page
 fetch(API + '/api/health').catch(() => {});
 const token = localStorage.getItem('token');
 const username = localStorage.getItem('username');
@@ -1774,8 +1773,6 @@ function triggerUpload(inputId) {
   document.getElementById(inputId).click();
 }
 
-// ─── MÉDIAS : nouveau système ─────────────────────────────────────────────────
-
 function toggleMblock(id) {
   const block = document.getElementById('mblock-' + id);
   if (block) block.classList.toggle('open');
@@ -1799,8 +1796,6 @@ function selectAudioSrc2(val) {
     if (meta) meta.style.display = 'block';
   }
 }
-
-// Alias legacy (perso tab uses old toggleAudioManager)
 function toggleAudioManager() {}
 function selectAudioSrc(val) { selectAudioSrc2(val); }
 
@@ -1859,14 +1854,10 @@ function removeMedia2(type) {
     setMblockStatus('audio', false, 'Désactivé');
   }
 }
-
-// Legacy alias pour l'ancien code
 function removeMedia(e, type) {
   if (e && e.stopPropagation) e.stopPropagation();
   removeMedia2(type);
 }
-
-// Compresse une image via canvas. maxW/maxH = dimensions max. quality = 0-1 JPEG.
 function compressImage(file, maxW, maxH, quality) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -1883,7 +1874,6 @@ function compressImage(file, maxW, maxH, quality) {
         canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
         let result = canvas.toDataURL('image/jpeg', quality);
-        // Si encore trop lourd (>3.5MB base64), recompresser à qualité réduite
         if (result.length > 3.5 * 1024 * 1024) result = canvas.toDataURL('image/jpeg', 0.72);
         if (result.length > 3.5 * 1024 * 1024) result = canvas.toDataURL('image/jpeg', 0.55);
         resolve(result);
@@ -2079,8 +2069,6 @@ function loadMediasUI() {
     const rem = el('audioCoverRemove');
     if (rem) rem.style.display = 'inline';
   }
-
-  // Ouvrir le premier bloc actif automatiquement
   ['avatar','bg','audio','cursor'].forEach(id => {
     const status = document.getElementById('mstatus-' + id);
     if (status && status.classList.contains('active')) {
@@ -2219,33 +2207,22 @@ function loadPersoUI() {
   }
 
   if (userData.spotify_url) el('spotifyUrlInput').value = userData.spotify_url;
-
-  // Opacité du fond
   const bgOpacity = userData.bg_opacity !== undefined ? userData.bg_opacity : 1;
   el('bgOpacityRange').value = Math.round(bgOpacity * 100);
   el('bgOpacityVal').textContent = Math.round(bgOpacity * 100) + '%';
-
-  // Couleur du texte profil
   if (userData.text_color) {
     el('profileTextColor').value = userData.text_color;
     el('profileTextColorHex').textContent = userData.text_color;
   }
-
-  // Fond de la card
   const cardBg = userData.card_bg || '#ffffff';
   el('cardBgColor').value = cardBg;
   el('cardBgColorHex').textContent = cardBg;
   const cardOpacity = userData.card_opacity !== undefined ? userData.card_opacity : 1;
   el('cardOpacityRange').value = Math.round(cardOpacity * 100);
   el('cardOpacityVal').textContent = Math.round(cardOpacity * 100) + '%';
-
-  // Présence Discord
-  // Localisation
   if (el('persoLocation')) el('persoLocation').value = userData.location || '';
 
   el('discordPresenceToggle').checked = !!userData.discord_presence;
-
-  // Effet de fond
   const bgEffect = userData.bg_effect || 'none';
   el('bgEffectSelect').value = bgEffect;
   el('bgEffectColorRow').style.display = bgEffect !== 'none' ? 'flex' : 'none';
@@ -2253,43 +2230,28 @@ function loadPersoUI() {
     el('bgEffectColorPicker').value = userData.bg_effect_color;
     el('bgEffectColorHex').textContent = userData.bg_effect_color;
   }
-
-  // Couleur d'accent
   if (userData.accent_color) {
     el('accentColorPicker').value = userData.accent_color;
     el('accentColorHex').textContent = userData.accent_color;
   }
-
-  // Flou du profil
   const blur = userData.profile_blur !== undefined ? userData.profile_blur : 0;
   el('profileBlurRange').value = blur;
   el('profileBlurVal').textContent = blur + 'px';
-
-  // Effet pseudo
   el('usernameEffectSelect').value = userData.username_effect || 'none';
-
-  // Cibles glow
   const glowTargets = userData.glow_targets ? userData.glow_targets.split(',') : [];
   document.querySelectorAll('#tab-perso input[type=checkbox][value]').forEach(cb => {
     if (['avatar','username','card','links','badges'].includes(cb.value)) {
       cb.checked = glowTargets.includes(cb.value);
     }
   });
-
-  // Couleur des icônes
   if (userData.icon_color) {
     el('iconColorPicker').value = userData.icon_color;
     el('iconColorHex').textContent = userData.icon_color;
   }
-  // Icônes monochrome
   el('monochromeIconsToggle').checked = !!userData.monochrome_icons;
-  // Titre animé
   el('animatedTitleToggle').checked = !!userData.animated_title;
-  // Inverser les blocs
   el('invertBlocksToggle').checked = !!userData.invert_blocks;
-  // Avatar Discord auto
   el('useDiscordAvatarToggle').checked = !!userData.use_discord_avatar;
-  // Décoration d'avatar
   el('avatarDecorationSelect').value = userData.avatar_decoration || 'none';
 }
 
@@ -2335,17 +2297,14 @@ function updateBtnStylePreview() {
 async function handlePersoMedia(type, input) {
   const file = input.files[0];
   if (!file) return;
-  // Limite souple côté client — compression canvas avant envoi
   const hardMax = 200 * 1024 * 1024; // 200 MB max absolu
   if (file.size > hardMax) { showToast('Fichier trop lourd (max 200MB)'); return; }
 
   let data;
   if (type === 'bg') {
-    // Compresse le fond de page : max 2560×1440, qualité 0.85
     try { data = await compressImage(file, 2560, 1440, 0.85); }
     catch { showToast('Impossible de lire cette image.'); return; }
   } else if (type === 'banner') {
-    // Compresse la bannière : max 1200×400, qualité 0.88
     try { data = await compressImage(file, 1200, 400, 0.88); }
     catch { showToast('Impossible de lire cette image.'); return; }
   } else {
@@ -2433,7 +2392,6 @@ async function savePerso() {
     const data = await r.json();
     if (!r.ok) { showAlert('persoAlert', data.error || 'Erreur'); return; }
     userData = data;
-    // Sync location to profile tab if changed
     if (body.location !== undefined && el('location')) el('location').value = data.location || '';
     pendingPerso = {
       avatar_shape: null, link_layout: null, link_btn_style: null,

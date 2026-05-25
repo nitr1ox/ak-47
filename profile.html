@@ -405,6 +405,7 @@
 </div>
 
 <div id="profileBg"></div>
+<video id="profileBgVideo" muted loop playsinline style="position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;display:none;pointer-events:none;"></video>
 <audio id="audioPlayer" loop></audio>
 
 <div id="loading">
@@ -656,9 +657,20 @@ async function loadProfile() {
         document.body.style.background = bgValue;
       }
     } else if (bgType === 'image' && user.bg_url) {
-      const bg = document.getElementById('profileBg');
-      bg.style.backgroundImage = `url(${JSON.stringify(user.bg_url)})`;
-      bg.style.opacity = bgOpacity;
+      const isVideo = user.bg_url.startsWith('data:video') || user.bg_url.endsWith('.mp4');
+      if (isVideo) {
+        const vid = document.getElementById('profileBgVideo');
+        vid.src = user.bg_url;
+        vid.style.opacity = bgOpacity;
+        vid.style.display = 'block';
+        vid.play();
+        const bg = document.getElementById('profileBg');
+        bg.style.backgroundImage = '';
+      } else {
+        const bg = document.getElementById('profileBg');
+        bg.style.backgroundImage = `url(${JSON.stringify(user.bg_url)})`;
+        bg.style.opacity = bgOpacity;
+      }
     }
 
     
@@ -969,56 +981,35 @@ async function loadProfile() {
     } else {
       linksContainer.innerHTML = '<p style="text-align:center;color:var(--gray-400);font-size:13px;padding:20px;">Aucun lien pour l\'instant.</p>';
     }
-
-
-    // ══════════════════════════════════════════════
-    // PARAMÈTRES AVANCÉS DE PERSONNALISATION
-    // ══════════════════════════════════════════════
-
-    // 1. LOCALISATION
     if (user.location) {
       const locEl = document.createElement('div');
       locEl.style.cssText = 'font-size:12px;color:var(--profile-text-color);opacity:0.5;margin-top:4px;';
       locEl.textContent = '📍 ' + user.location;
       document.getElementById('pHandle').insertAdjacentElement('afterend', locEl);
     }
-
-    // 2. COULEUR D'ACCENT — variable CSS globale
     const accentColor = user.accent_color || '#6366f1';
     document.documentElement.style.setProperty('--accent', accentColor);
-
-    // 3. COULEUR DES ICÔNES SOCIAUX (colorisation via URL simpleicons)
     if (user.icon_color) {
       const iconHex = user.icon_color.replace('#', '');
       document.querySelectorAll('.social-icon-link img').forEach(img => {
         const src = img.src || img.getAttribute('src') || '';
         if (src.includes('simpleicons.org')) {
-          // L'URL simpleicons est de type: cdn.simpleicons.org/NOM/COULEUR
-          // On remplace ou ajoute la couleur
           img.src = src.replace(/(cdn\.simpleicons\.org\/[^/?#]+)(\/[0-9a-fA-F]{3,8})?/, '$1/' + iconHex);
         }
       });
     }
-
-    // 4. ICÔNES MONOCHROME
     if (user.monochrome_icons) {
       document.querySelectorAll('.social-icon-link img, .profile-link-icon').forEach(img => {
         img.style.filter = 'grayscale(1)';
       });
     }
-
-    // 5. FLOU DE LA CARD
     if (user.profile_blur && user.profile_blur > 0) {
       document.querySelector('.profile-card').style.backdropFilter = `blur(${user.profile_blur}px)`;
       document.querySelector('.profile-card').style.webkitBackdropFilter = `blur(${user.profile_blur}px)`;
     }
-
-    // 6. INVERSER LES BLOCS
     if (user.invert_blocks) {
       document.querySelector('.profile-card').style.filter = 'invert(1) hue-rotate(180deg)';
     }
-
-    // 7. TITRE ANIMÉ (onglet navigateur)
     if (user.animated_title) {
       const baseTitle = document.title;
       let i = 0, dir = 1;
@@ -1036,8 +1027,6 @@ async function loadProfile() {
       }
       tickTitle();
     }
-
-    // 8. EFFET SUR LE PSEUDO
     const nameEl = document.getElementById('pName');
     const usernameEffect = user.username_effect || 'none';
     if (usernameEffect !== 'none' && nameEl) {
@@ -1079,8 +1068,6 @@ async function loadProfile() {
       }
       document.head.appendChild(styleTag);
     }
-
-    // 9. GLOW TARGETS
     const glowTargets = [];
     try { glowTargets.push(...(user.glow_targets || '').split(',').map(s=>s.trim()).filter(Boolean)); } catch {}
     if (glowTargets.length) {
@@ -1097,8 +1084,6 @@ async function loadProfile() {
       glowStyle.textContent = css;
       document.head.appendChild(glowStyle);
     }
-
-    // 10. DÉCORATION D'AVATAR
     const avatarDeco = user.avatar_decoration || 'none';
     if (avatarDeco !== 'none') {
       const decoStyle = document.createElement('style');
@@ -1124,8 +1109,6 @@ async function loadProfile() {
       }
       document.head.appendChild(decoStyle);
     }
-
-    // 11. USE_DISCORD_AVATAR comme avatar principal
     if (user.use_discord_avatar) {
       try {
         let oauth = {}; try { oauth = JSON.parse(user.oauth_meta || '{}'); } catch {}
@@ -1144,24 +1127,16 @@ async function loadProfile() {
         }
       } catch(e) {}
     }
-
-    // 12. MASQUER CARTE DISCORD si discord_presence = false
     if (user.discord_presence === false || user.discord_presence === 0) {
       const dcCard = document.getElementById('discordCard');
       if (dcCard) dcCard.style.display = 'none';
     }
-
-    // 13. VARIABLE CSS --accent-color (alias de --accent) et --icon-color
     document.documentElement.style.setProperty('--accent-color', accentColor);
     if (user.icon_color) {
       document.documentElement.style.setProperty('--icon-color', user.icon_color);
     }
-
-    // 14. EFFET DE FOND (particules / flocons / pluie / confettis / bulles / étoiles / aurora / nuit / ancienne TV)
     const bgEffect = user.bg_effect || 'none';
     const bgEffectColor = user.bg_effect_color || '#ffffff';
-
-    // Ancienne TV : overlay CSS pur, pas de canvas
     if (bgEffect === 'oldtv') {
       const tvStyle = document.createElement('style');
       tvStyle.textContent = `
@@ -1197,8 +1172,6 @@ async function loadProfile() {
         return `${r},${g},${b}`;
       }
       const rgb = hexToRgb(bgEffectColor);
-
-      // ── AURORA ──────────────────────────────────────────────────────────────
       if (bgEffect === 'aurora') {
         let t = 0;
         const auroraColors = ['#00ffd0','#7f5af0','#2cb67d','#00b4d8','#48cae4'];
@@ -1228,8 +1201,6 @@ async function loadProfile() {
           requestAnimationFrame(drawAurora);
         }
         drawAurora();
-
-      // ── NUIT ÉTOILÉE ────────────────────────────────────────────────────────
       } else if (bgEffect === 'night') {
         const stars = Array.from({length: 180}, () => ({
           x: Math.random() * window.innerWidth,
@@ -1251,7 +1222,6 @@ async function loadProfile() {
             ctx.beginPath();
             ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
             ctx.fill();
-            // halo doux sur les grosses étoiles
             if (s.r > 1.2) {
               const g = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r * 4);
               g.addColorStop(0, 'rgba(200,220,255,0.35)');
@@ -1266,8 +1236,6 @@ async function loadProfile() {
           requestAnimationFrame(drawNight);
         }
         drawNight();
-
-      // ── PLUIE ───────────────────────────────────────────────────────────────
       } else if (bgEffect === 'rain') {
         const drops = Array.from({length: 120}, () => ({
           x: Math.random() * window.innerWidth,
@@ -1296,8 +1264,6 @@ async function loadProfile() {
           requestAnimationFrame(drawRain);
         }
         drawRain();
-
-      // ── FLOCONS (détaillés) ─────────────────────────────────────────────────
       } else if (bgEffect === 'snow') {
         const flakes = Array.from({length: 70}, () => ({
           x: Math.random() * window.innerWidth,
@@ -1347,8 +1313,6 @@ async function loadProfile() {
           requestAnimationFrame(drawSnow);
         }
         drawSnow();
-
-      // ── EFFETS PARTICULE GÉNÉRIQUES ─────────────────────────────────────────
       } else {
         const COUNT = bgEffect === 'confetti' ? 80 : 60;
         const particles = Array.from({length: COUNT}, () => ({
