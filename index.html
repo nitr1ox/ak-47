@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
+<head><script>(function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>ak-47.fr — Votre identité en ligne</title>
@@ -315,6 +315,11 @@
       .footer-top { grid-template-columns: 1fr; }
       .stats-inner { grid-template-columns: 1fr; }
     }
+  
+    [data-theme="dark"] { --black:#fff;--white:#0a0a0a;--gray-50:#111113;--gray-100:#1a1a1e;--gray-200:#2a2a2f;--gray-300:#3a3a40;--gray-400:#71717a;--gray-500:#a1a1aa;--gray-700:#d4d4d8;--gray-900:#fafafa; }
+    [data-theme="dark"] nav { background: rgba(10,10,10,.95) !important; border-color: #2a2a2f !important; }
+    [data-theme="dark"] .hero-kicker { background: #1a1a1e !important; border-color: #2a2a2f !important; }
+
   </style>
 </head>
 <body>
@@ -529,6 +534,20 @@
     el.style.opacity='0'; el.style.transform='translateY(12px)'; el.style.transition='opacity .4s ease, transform .4s ease';
     obs.observe(el);
   });
+</script>
+<script>
+function toggleTheme(){
+  var cur=document.documentElement.getAttribute("data-theme")||"light";
+  var next=cur==="dark"?"light":"dark";
+  document.documentElement.setAttribute("data-theme",next);
+  localStorage.setItem("theme",next);
+  var btn=document.getElementById("themeToggle");
+  if(btn) btn.textContent=next==="dark"?"☀️":"🌙";
+}
+document.addEventListener("DOMContentLoaded",function(){
+  var btn=document.getElementById("themeToggle");
+  if(btn){var cur=document.documentElement.getAttribute("data-theme")||"light";btn.textContent=cur==="dark"?"☀️":"🌙";}
+});
 </script>
 </body>
 </html>

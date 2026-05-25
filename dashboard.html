@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
+<head><script>(function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>ak-47.fr — Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -192,6 +192,7 @@
   <div class="dash-nav-right">
     <span class="dash-nav-user">Bonjour, <strong id="navUsername">—</strong></span>
     <a id="profileViewBtn" href="#" target="_blank" class="dash-btn-sm">Voir mon profil ↗</a>
+    <button id="themeToggle" class="dash-btn-sm" onclick="toggleTheme()" title="Changer de thème" style="font-size:15px;padding:5px 10px;line-height:1;">🌙</button>
     <button class="dash-btn-sm logout" onclick="logout()">Déconnexion</button>
   </div>
 </nav>
@@ -415,10 +416,11 @@
         <div>
           <div class="section-card-title" style="font-size:13px;font-weight:600;margin-bottom:8px;">Arrière-plan</div>
           <div class="media-upload-box has-media" id="bgBox" onclick="triggerUpload('bgFile')">
-            <input type="file" id="bgFile" accept="image/*" onchange="handleMedia('bg', this)" onclick="event.stopPropagation()"/>
+            <input type="file" id="bgFile" accept="image/*,video/mp4" onchange="handleMedia('bg', this)" onclick="event.stopPropagation()"/>
             <img class="media-preview-img" id="bgPreview" alt="Aperçu arrière-plan"/>
+            <video class="media-preview-img" id="bgVideoPreview" muted loop playsinline style="display:none;height:80px;width:100%;object-fit:cover;border-radius:6px;margin-bottom:8px;"></video>
             <div class="media-upload-icon" id="bgIcon">🖼️</div>
-            <div class="media-upload-label" id="bgLabel">Cliquez pour téléverser (toute taille — compressé auto)</div>
+            <div class="media-upload-label" id="bgLabel">Image ou vidéo MP4 (compressé auto pour les images)</div>
             <div class="media-upload-name" id="bgName"></div>
             <button class="media-remove-btn" id="bgRemove" style="display:none" onclick="removeMedia(event,'bg')">✕ Supprimer</button>
           </div>
@@ -532,6 +534,19 @@
       <div class="dash-title">Personnalisation</div>
       <div class="dash-subtitle">Personnalisez l'apparence de votre page publique en profondeur.</div>
       <div id="persoAlert"></div>
+
+      <div class="section-card">
+        <div class="section-card-title">Localisation</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:10px;">Ville ou pays affiché sur votre profil public.</div>
+        <div class="form-group" style="margin-bottom:0;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:16px;">📍</span>
+            <input type="text" id="persoLocation" placeholder="Ex : Paris, France" maxlength="100"
+              style="flex:1;max-width:320px;padding:9px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;font-family:inherit;outline:none;"
+              oninput="pendingPerso.location=this.value"/>
+          </div>
+        </div>
+      </div>
 
       <div class="section-card">
         <div class="section-card-title">Bannière de profil</div>
@@ -817,16 +832,19 @@
             <input type="checkbox" value="avatar" style="accent-color:#000;" onchange="updateGlowTargets()"/> Avatar
           </label>
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
-            <input type="checkbox" value="username" style="accent-color:#000;" onchange="updateGlowTargets()"/> Pseudo
+            <input type="checkbox" id="glowUsername" value="username" style="accent-color:#000;" onchange="updateGlowTargets()"/> Pseudo (username)
           </label>
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
-            <input type="checkbox" value="card" style="accent-color:#000;" onchange="updateGlowTargets()"/> Card de profil
+            <input type="checkbox" id="glowNetworks" value="networks" style="accent-color:#000;" onchange="updateGlowTargets()"/> Réseaux sociaux
           </label>
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
-            <input type="checkbox" value="links" style="accent-color:#000;" onchange="updateGlowTargets()"/> Liens
+            <input type="checkbox" id="glowBadges" value="badges" style="accent-color:#000;" onchange="updateGlowTargets()"/> Badges
           </label>
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
-            <input type="checkbox" value="badges" style="accent-color:#000;" onchange="updateGlowTargets()"/> Badges
+            <input type="checkbox" id="glowCard" value="card" style="accent-color:#000;" onchange="updateGlowTargets()"/> Card de profil
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+            <input type="checkbox" id="glowLinks" value="links" style="accent-color:#000;" onchange="updateGlowTargets()"/> Liens
           </label>
         </div>
       </div>
@@ -1615,6 +1633,11 @@ async function handleMedia(type, input) {
 
   // Pas de limite côté client pour les images bg — on compresse
   const hardLimits = { avatar: 20, bg: 200, cursor: 10, audio: 30 };
+  // Pour les vidéos mp4 bg, on applique une limite séparée de 50MB
+  if (file.type === 'video/mp4' && file.size > 50 * 1024 * 1024) {
+    showAlert('mediasAlert', 'Vidéo trop lourde (max 50 Mo)');
+    input.value = ''; return;
+  }
   if (file.size > hardLimits[type] * 1024 * 1024) {
     showAlert('mediasAlert', `Fichier trop lourd (max ${hardLimits[type]}MB)`);
     input.value = '';
@@ -1623,9 +1646,20 @@ async function handleMedia(type, input) {
 
   let data;
   if (type === 'bg') {
-    // Compression bg : max 2560x1440, qualité 0.85
-    try { data = await compressImage(file, 2560, 1440, 0.85); }
-    catch { showAlert('mediasAlert', 'Impossible de lire cette image.'); return; }
+    if (file.type === 'video/mp4') {
+      // Vidéo MP4 : lecture directe en base64
+      try {
+        data = await new Promise((res, rej) => {
+          const r = new FileReader();
+          r.onload = e => res(e.target.result); r.onerror = rej;
+          r.readAsDataURL(file);
+        });
+      } catch { showAlert('mediasAlert', 'Impossible de lire cette vidéo.'); return; }
+    } else {
+      // Compression bg : max 2560x1440, qualité 0.85
+      try { data = await compressImage(file, 2560, 1440, 0.85); }
+      catch { showAlert('mediasAlert', 'Impossible de lire cette image.'); return; }
+    }
   } else if (type === 'avatar') {
     try { data = await compressImage(file, 400, 400, 0.90); }
     catch { showAlert('mediasAlert', 'Impossible de lire cette image.'); return; }
@@ -1641,8 +1675,15 @@ async function handleMedia(type, input) {
   pendingMedias[type + '_url'] = data;
 
   if (type === 'bg') {
-    const img = el('bgPreview');
-    img.src = data; img.style.display = 'block';
+    if (file.type === 'video/mp4') {
+      el('bgPreview').style.display = 'none'; el('bgPreview').src = '';
+      const vid = el('bgVideoPreview');
+      vid.src = data; vid.style.display = 'block'; vid.play();
+    } else {
+      el('bgVideoPreview').style.display = 'none'; el('bgVideoPreview').src = '';
+      const img = el('bgPreview');
+      img.src = data; img.style.display = 'block';
+    }
     el('bgIcon').style.display = 'none';
     el('bgLabel').textContent = file.name;
     el('bgRemove').style.display = 'inline';
@@ -1673,8 +1714,9 @@ function removeMedia(e, type) {
 
   if (type === 'bg') {
     el('bgPreview').style.display = 'none'; el('bgPreview').src = '';
+    el('bgVideoPreview').style.display = 'none'; el('bgVideoPreview').src = '';
     el('bgIcon').style.display = 'block';
-    el('bgLabel').textContent = 'Cliquez pour téléverser un fichier';
+    el('bgLabel').textContent = 'Image ou vidéo MP4 (compressé auto pour les images)';
     el('bgRemove').style.display = 'none';
   } else if (type === 'avatar') {
     el('avatarPreview').style.display = 'none'; el('avatarPreview').src = '';
@@ -1728,7 +1770,14 @@ function removeAudioCover(e) {
 function loadMediasUI() {
   if (!userData) return;
   if (userData.bg_url) {
-    el('bgPreview').src = userData.bg_url; el('bgPreview').style.display = 'block';
+    if (userData.bg_url.includes('data:video/mp4') || userData.bg_url.endsWith('.mp4')) {
+      const vid = el('bgVideoPreview');
+      vid.src = userData.bg_url; vid.style.display = 'block'; vid.play();
+      el('bgPreview').style.display = 'none';
+    } else {
+      el('bgPreview').src = userData.bg_url; el('bgPreview').style.display = 'block';
+      el('bgVideoPreview').style.display = 'none';
+    }
     el('bgIcon').style.display = 'none'; el('bgLabel').textContent = 'Arrière-plan actuel';
     el('bgRemove').style.display = 'inline';
   }
@@ -1805,6 +1854,7 @@ let pendingPerso = {
   banner_url: null,
   bg_url: null,
   spotify_url: null,
+  location: null,
   discord_presence: null,
   bg_effect: null,
   bg_effect_color: null,
@@ -1905,6 +1955,9 @@ function loadPersoUI() {
   el('cardOpacityVal').textContent = Math.round(cardOpacity * 100) + '%';
 
   // Présence Discord
+  // Localisation
+  if (el('persoLocation')) el('persoLocation').value = userData.location || '';
+
   el('discordPresenceToggle').checked = !!userData.discord_presence;
 
   // Effet de fond
@@ -2069,7 +2122,7 @@ async function importDiscordAvatar() {
 
 function updateGlowTargets() {
   const checked = [...document.querySelectorAll('#tab-perso input[type=checkbox][value]')]
-    .filter(cb => ['avatar','username','card','links','badges'].includes(cb.value) && cb.checked)
+    .filter(cb => ['avatar','username','networks','card','links','badges'].includes(cb.value) && cb.checked)
     .map(cb => cb.value);
   pendingPerso.glow_targets = checked.join(',');
 }
@@ -2095,12 +2148,14 @@ async function savePerso() {
     const data = await r.json();
     if (!r.ok) { showAlert('persoAlert', data.error || 'Erreur'); return; }
     userData = data;
+    // Sync location to profile tab if changed
+    if (body.location !== undefined && el('location')) el('location').value = data.location || '';
     pendingPerso = {
       avatar_shape: null, link_layout: null, link_btn_style: null,
       profile_font: null, bg_type: null, bg_value: null,
       bg_opacity: null, text_color: null, card_bg: null, card_opacity: null,
       banner_url: null, bg_url: null, social_links: null, spotify_url: null,
-      discord_presence: null, bg_effect: null, bg_effect_color: null,
+      location: null, discord_presence: null, bg_effect: null, bg_effect_color: null,
       profile_blur: null, username_effect: null, glow_targets: null, accent_color: null,
       icon_color: null, monochrome_icons: null, animated_title: null,
       invert_blocks: null, use_discord_avatar: null, avatar_decoration: null,
@@ -2142,5 +2197,19 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
   </div>
 </div>
+<script>
+function toggleTheme(){
+  var cur=document.documentElement.getAttribute("data-theme")||"light";
+  var next=cur==="dark"?"light":"dark";
+  document.documentElement.setAttribute("data-theme",next);
+  localStorage.setItem("theme",next);
+  var btn=document.getElementById("themeToggle");
+  if(btn) btn.textContent=next==="dark"?"☀️":"🌙";
+}
+document.addEventListener("DOMContentLoaded",function(){
+  var btn=document.getElementById("themeToggle");
+  if(btn){var cur=document.documentElement.getAttribute("data-theme")||"light";btn.textContent=cur==="dark"?"☀️":"🌙";}
+});
+</script>
 </body>
 </html>

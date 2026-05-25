@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
+<head><script>(function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>ak-47.fr — S'inscrire</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -115,6 +115,20 @@
       document.getElementById('userCount').textContent = 'des milliers d\'';
     }
   })();
+</script>
+<script>
+function toggleTheme(){
+  var cur=document.documentElement.getAttribute("data-theme")||"light";
+  var next=cur==="dark"?"light":"dark";
+  document.documentElement.setAttribute("data-theme",next);
+  localStorage.setItem("theme",next);
+  var btn=document.getElementById("themeToggle");
+  if(btn) btn.textContent=next==="dark"?"☀️":"🌙";
+}
+document.addEventListener("DOMContentLoaded",function(){
+  var btn=document.getElementById("themeToggle");
+  if(btn){var cur=document.documentElement.getAttribute("data-theme")||"light";btn.textContent=cur==="dark"?"☀️":"🌙";}
+});
 </script>
 </body>
 </html>

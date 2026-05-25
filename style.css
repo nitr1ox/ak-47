@@ -152,3 +152,41 @@ input.error { border-color: var(--red); }
   .dash-main { padding: 16px; }
   .card { padding: 24px 20px; }
 }
+
+/* ── DARK MODE ── */
+[data-theme="dark"] {
+  --black: #fff;
+  --white: #0a0a0a;
+  --gray-50: #111113;
+  --gray-100: #1a1a1e;
+  --gray-200: #2a2a2f;
+  --gray-300: #3a3a40;
+  --gray-400: #71717a;
+  --gray-500: #a1a1aa;
+  --gray-700: #d4d4d8;
+  --gray-900: #fafafa;
+}
+[data-theme="dark"] .dash-nav {
+  background: rgba(10,10,10,.92);
+}
+[data-theme="dark"] .alert-error { background: #2a1010; border-color: #7f1d1d; color: #fca5a5; }
+[data-theme="dark"] .alert-success { background: #0f2a1a; border-color: #14532d; color: #86efac; }
+[data-theme="dark"] input[type=text],
+[data-theme="dark"] input[type=email],
+[data-theme="dark"] input[type=password] {
+  background: var(--gray-100);
+  color: var(--gray-900);
+}
+[data-theme="dark"] .input-row { background: var(--gray-100); }
+[data-theme="dark"] .input-prefix { background: var(--gray-200); }
+
+/* Theme toggle button */
+.theme-toggle {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 6px; border: 1px solid var(--gray-200);
+  background: var(--white); cursor: pointer;
+  color: var(--gray-700); font-size: 15px;
+  transition: all .15s; flex-shrink: 0;
+}
+.theme-toggle:hover { background: var(--gray-100); }
