@@ -30,7 +30,7 @@
   <a href="/" class="logo-link">ak-47<span>.fr</span></a>
   <div class="card">
     <h1>Créer un compte</h1>
-    <p class="subtitle">Rejoignez 1 800 000+ utilisateurs sur ak-47.fr</p>
+    <p class="subtitle">Rejoignez <span id="userCount">...</span> utilisateurs sur ak-47.fr</p>
 
     <!-- OAuth buttons -->
     <a href="https://ak47-backend.onrender.com/api/auth/google" class="oauth-btn">
@@ -101,6 +101,21 @@
   function showAlert(msg) {
     document.getElementById('alert').innerHTML = `<div class="alert alert-error">${msg}</div>`;
   }
+</script>
+
+<script>
+  (async () => {
+    try {
+      const r = await fetch('https://ak47-backend.onrender.com/api/stats');
+      const d = await r.json();
+      const n = d.total_users || 0;
+      // Format : 1 234
+      document.getElementById('userCount').textContent =
+        n.toLocaleString('fr-FR') + '+';
+    } catch {
+      document.getElementById('userCount').textContent = 'des milliers d\'';
+    }
+  })();
 </script>
 </body>
 </html>
