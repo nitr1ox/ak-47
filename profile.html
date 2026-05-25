@@ -24,7 +24,6 @@
     #notFound p { color: var(--gray-500); margin-bottom: 24px; }
     #notFound a { color: var(--black); font-weight: 600; text-decoration: none; font-size: 14px; }
 
-    /* ── BANNIÈRE ── */
     #profileBanner {
       display: none; width: 100%; max-width: 480px;
       height: 120px; object-fit: cover;
@@ -36,7 +35,6 @@
 
     .profile-top { text-align: center; margin-bottom: 28px; padding-top: 20px; }
 
-    /* ── AVATAR ── */
     .profile-avatar {
       width: 80px; height: 80px; border-radius: 50%;
       margin: 0 auto 14px;
@@ -55,7 +53,6 @@
     .profile-views  { font-size: 11px; color: var(--gray-400); margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 4px; }
     .profile-views svg { width: 12px; height: 12px; stroke: var(--gray-400); fill: none; flex-shrink: 0; }
 
-    /* ── RÉSEAUX SOCIAUX ── */
     .social-row {
       display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
       margin: 12px 0 4px;
@@ -70,7 +67,6 @@
     .social-icon-link:hover { transform: translateY(-2px); background: rgba(0,0,0,.12); }
     .social-icon-link img { width: 18px; height: 18px; border-radius: 3px; }
 
-    /* ── SPOTIFY WIDGET ── */
     .spotify-widget {
       display: none; align-items: center; gap: 10px;
       background: #1DB954; border-radius: 12px;
@@ -86,7 +82,6 @@
     .spotify-widget-label { font-size: 10px; opacity: .8; }
     .spotify-widget-name  { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-    /* ── LIENS : LIST (défaut) ── */
     .profile-links { display: flex; flex-direction: column; gap: 10px; }
 
     .profile-link {
@@ -102,7 +97,6 @@
     .profile-link-icon { width: 20px; height: 20px; border-radius: 4px; object-fit: contain; flex-shrink: 0; margin-right: 2px; }
     .profile-link-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
 
-    /* ── LIENS : GRID ── */
     .profile-links.layout-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -114,7 +108,6 @@
     }
     .profile-links.layout-grid .profile-link-arrow { display: none; }
 
-    /* ── LIENS : BUTTONS ── */
     .profile-links.layout-buttons {
       display: flex; flex-direction: row; flex-wrap: wrap;
       gap: 8px; justify-content: center;
@@ -129,7 +122,6 @@
     .profile-footer a { font-size: 12px; color: var(--gray-400); text-decoration: none; font-weight: 500; transition: color .15s; }
     .profile-footer a:hover { color: var(--black); }
 
-    /* ── FOND ── */
     #profileBg {
       position: fixed; inset: 0; z-index: -1;
       background-size: cover; background-position: center;
@@ -148,7 +140,6 @@
     .audio-bar-icon { font-size: 14px; }
     .audio-bar-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-    /* ── BADGES ── */
     .badges-row { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 10px 0 4px; }
     .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; border: 1px solid rgba(0,0,0,.08); }
     .badge-discord { background: #5865F2; color: #fff; border-color: #5865F2; }
@@ -175,7 +166,7 @@
 </div>
 
 <div id="profile">
-  <!-- bannière -->
+
   <img id="profileBanner" alt="bannière"/>
 
   <div class="profile-card">
@@ -189,9 +180,9 @@
         <svg viewBox="0 0 24 24" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         <span id="pViewsCount"></span>
       </div>
-      <!-- réseaux sociaux -->
+
       <div class="social-row" id="pSocials"></div>
-      <!-- Spotify widget -->
+
       <a class="spotify-widget" id="spotifyWidget" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
         <div class="spotify-widget-text">
@@ -221,7 +212,6 @@ if (!username || STATIC.includes(username)) {
   document.getElementById('loading').style.display = 'none';
 }
 
-// ── Icônes réseaux sociaux ───────────────────────────────
 const SOCIAL_META = {
   twitter:    { emoji: '𝕏',  label: 'X / Twitter',  base: 'https://x.com/' },
   instagram:  { emoji: '📸', label: 'Instagram',     base: 'https://instagram.com/' },
@@ -238,7 +228,6 @@ const SOCIAL_META = {
   steam:      { emoji: '🎲', label: 'Steam',         base: 'https://steamcommunity.com/id/' },
 };
 
-// Détecte l'icône simpleicons à partir d'une URL
 function getLinkIcon(url) {
   if (!url) return null;
   const u = url.toLowerCase();
@@ -321,15 +310,13 @@ async function loadProfile() {
     const user = await r.json();
     document.title = (user.display_name || user.username) + ' — ak-47.fr';
 
-    // ── Police ──────────────────────────────────────────
     const font = user.profile_font || 'Inter';
     if (font !== 'Inter') {
       const link = document.getElementById('profileFont');
-      link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}:wght@400;500;600;700&display=swap`;
+      link.href = `https:
       document.body.style.fontFamily = `'${font}', sans-serif`;
     }
 
-    // ── Fond ────────────────────────────────────────────
     const bgType  = user.bg_type  || 'color';
     const bgValue = user.bg_value || '#fafafa';
     if (bgType === 'color') {
@@ -341,7 +328,6 @@ async function loadProfile() {
       bg.style.backgroundImage = `url(${JSON.stringify(user.bg_url)})`;
     }
 
-    // ── Bannière ─────────────────────────────────────────
     if (user.banner_url) {
       const banner = document.getElementById('profileBanner');
       banner.src = user.banner_url;
@@ -349,7 +335,6 @@ async function loadProfile() {
       document.getElementById('profile').style.paddingTop = '0';
     }
 
-    // ── Avatar ───────────────────────────────────────────
     const avContainer = document.getElementById('pAvatar');
     const shape = user.avatar_shape || 'circle';
     if (shape === 'rounded') avContainer.classList.add('shape-rounded');
@@ -375,12 +360,10 @@ async function loadProfile() {
       avContainer.textContent = (user.display_name || user.username).charAt(0).toUpperCase();
     }
 
-    // ── Curseur ──────────────────────────────────────────
     if (user.cursor_url) {
       document.body.style.cursor = `url(${JSON.stringify(user.cursor_url)}), auto`;
     }
 
-    // ── Audio ────────────────────────────────────────────
     if (user.audio_url) {
       const player = document.getElementById('audioPlayer');
       player.src = user.audio_url;
@@ -391,11 +374,9 @@ async function loadProfile() {
       });
     }
 
-    // ── Textes ───────────────────────────────────────────
     document.getElementById('pName').textContent = user.display_name || user.username;
     document.getElementById('pBio').textContent  = user.bio || '';
 
-    // ── Badges ───────────────────────────────────────────
     const badgesRow = document.getElementById('pBadges');
     let badges = []; try { badges = JSON.parse(user.discord_badges || '[]'); } catch {}
     let hidden = []; try { hidden = JSON.parse(user.hidden_badges  || '[]'); } catch {}
@@ -416,7 +397,6 @@ async function loadProfile() {
       badgesRow.appendChild(span);
     });
 
-    // ── Handle + vues ────────────────────────────────────
     document.getElementById('pHandle').textContent = 'ak-47.fr/' + user.username;
     if (user.total_views > 0) {
       const views = user.total_views;
@@ -425,7 +405,6 @@ async function loadProfile() {
       document.getElementById('pViews').style.display = 'flex';
     }
 
-    // ── Réseaux sociaux ──────────────────────────────────
     let socials = {}; try { socials = JSON.parse(user.social_links || '{}'); } catch {}
     const socialsRow = document.getElementById('pSocials');
     Object.entries(socials).forEach(([key, value]) => {
@@ -441,21 +420,18 @@ async function loadProfile() {
       socialsRow.appendChild(a);
     });
 
-    // ── Spotify ──────────────────────────────────────────
     if (user.spotify_url) {
       const w = document.getElementById('spotifyWidget');
       w.href = user.spotify_url;
       w.classList.add('visible');
     }
 
-    // ── Style des boutons ────────────────────────────────
     let btnStyle = {}; try { btnStyle = JSON.parse(user.link_btn_style || '{}'); } catch {}
     if (btnStyle.bg)           document.documentElement.style.setProperty('--link-bg',     btnStyle.bg);
     if (btnStyle.color)        document.documentElement.style.setProperty('--link-color',  btnStyle.color);
     if (btnStyle.border)       document.documentElement.style.setProperty('--link-border', btnStyle.border);
     if (btnStyle.borderRadius) document.documentElement.style.setProperty('--link-radius', btnStyle.borderRadius);
 
-    // ── Disposition des liens ────────────────────────────
     const layout = user.link_layout || 'list';
     const linksContainer = document.getElementById('pLinks');
     if (layout === 'grid')    linksContainer.classList.add('layout-grid');

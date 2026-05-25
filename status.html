@@ -65,7 +65,6 @@
     const now = new Date().toLocaleTimeString('fr-FR');
     document.getElementById('last-check').textContent = 'Dernière vérification : ' + now;
 
-    // Check API health
     try {
       const t0 = Date.now();
       const r = await fetch('https://ak47-backend.onrender.com/api/health');
@@ -83,7 +82,6 @@
       document.getElementById('api-sub').textContent = 'Aucune réponse';
     }
 
-    // Check DB by hitting a lightweight public endpoint
     try {
       const t0 = Date.now();
       const r = await fetch('https://ak47-backend.onrender.com/api/stats');
@@ -101,7 +99,6 @@
       document.getElementById('db-sub').textContent = 'Aucune réponse';
     }
 
-    // Update overall status
     const allUp = ['api-badge', 'db-badge'].every(id =>
       document.getElementById(id).className === 'badge-up'
     );
@@ -116,7 +113,7 @@
   }
 
   checkStatus();
-  setInterval(checkStatus, 30000); // refresh every 30s
+  setInterval(checkStatus, 30000);
 </script>
 </body>
 </html>

@@ -16,7 +16,6 @@
     }
     body { font-family: 'Inter', sans-serif; background: var(--gray-50); color: var(--gray-900); min-height: 100vh; }
 
-    /* NAV */
     .nav { background: var(--black); color: var(--white); padding: 0 28px; height: 52px; display: flex; align-items: center; justify-content: space-between; }
     .nav-logo { font-weight: 700; font-size: 16px; letter-spacing: -.5px; }
     .nav-logo span { color: var(--gray-400); }
@@ -24,12 +23,10 @@
     .nav-right a { color: var(--gray-400); text-decoration: none; }
     .nav-right a:hover { color: var(--white); }
 
-    /* LAYOUT */
     .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
     .page-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
     .page-sub { font-size: 13px; color: var(--gray-400); margin-bottom: 28px; }
 
-    /* STATS CARDS */
     .stats-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 28px; }
     .stat-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: 10px; padding: 16px; }
     .stat-label { font-size: 11px; color: var(--gray-400); font-weight: 500; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
@@ -38,12 +35,10 @@
     .stat-value.green { color: var(--green); }
     .stat-value.blue { color: var(--blue); }
 
-    /* TABS */
     .tabs { display: flex; gap: 2px; background: var(--gray-100); border-radius: 8px; padding: 3px; width: fit-content; margin-bottom: 20px; }
     .tab-btn { padding: 6px 18px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; background: none; color: var(--gray-500); transition: all .15s; }
     .tab-btn.active { background: var(--white); color: var(--black); box-shadow: 0 1px 3px rgba(0,0,0,.1); }
 
-    /* TABLE */
     .table-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; }
     .table-header { padding: 16px 20px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
     .table-title { font-size: 14px; font-weight: 600; }
@@ -97,7 +92,6 @@
   <div class="page-title">Panel Admin</div>
   <div class="page-sub">Vue d'ensemble de ak-47.fr</div>
 
-  <!-- STATS -->
   <div class="stats-grid" id="statsGrid">
     <div class="stat-card"><div class="stat-label">Total users</div><div class="stat-value" id="s-total">—</div></div>
     <div class="stat-card"><div class="stat-label">Users aujourd'hui</div><div class="stat-value green" id="s-today">—</div></div>
@@ -107,8 +101,6 @@
     <div class="stat-card"><div class="stat-label">Erreurs /24h</div><div class="stat-value red" id="s-err">—</div></div>
   </div>
 
-
-  <!-- FORCE JOIN -->
   <div class="guild-card">
     <div class="section-title">🚀 Faire rejoindre le serveur</div>
     <div class="section-desc">Sélectionne un serveur et force tous les membres Discord du site à le rejoindre.</div>
@@ -121,13 +113,11 @@
     <div class="result-box" id="forceJoinResult"></div>
   </div>
 
-  <!-- TABS -->
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('logs')">Logs</button>
     <button class="tab-btn" onclick="switchTab('users')">Utilisateurs</button>
   </div>
 
-  <!-- LOGS TAB -->
   <div id="tab-logs">
     <div class="table-card">
       <div class="table-header">
@@ -147,7 +137,6 @@
     </div>
   </div>
 
-  <!-- USERS TAB -->
   <div id="tab-users" style="display:none">
     <div class="table-card">
       <div class="table-header">
@@ -296,7 +285,7 @@ async function loadGuilds() {
       opt.textContent = g.name;
       sel.appendChild(opt);
     });
-    // Pré-sélectionner le serveur principal
+
     const main = guilds.find(g => g.id === '1484873435224997898');
     if (main) sel.value = main.id;
     document.getElementById('forceJoinBtn').disabled = false;

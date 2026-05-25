@@ -45,22 +45,20 @@
       document.getElementById('errorBox').style.display = 'block';
     }
 
-    // FIX 8 — erreur transmise depuis /login?error= ou depuis le callback
     if (error) {
       showError(decodeURIComponent(error));
     } else if (token) {
-      // FIX 2 & 10 — on vérifie le token via /api/user/me avant de stocker quoi que ce soit
+
       (async () => {
         try {
           const r = await fetch(API + '/api/user/me', {
             headers: { Authorization: 'Bearer ' + token }
           });
-          // FIX 10 — détecte un token expiré ou invalide proprement
+
           if (r.status === 401) { showError('Session expirée, reconnecte-toi.'); return; }
           if (!r.ok) { showError('Erreur de connexion, réessaie.'); return; }
           const data = await r.json();
 
-          // FIX 6 — username toujours synchronisé depuis la BDD, jamais depuis l'URL
           localStorage.setItem('token', token);
           localStorage.setItem('username', data.username);
 

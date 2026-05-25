@@ -36,7 +36,7 @@
     if (val.length < 2) { status.textContent = ''; return; }
     checkTimeout = setTimeout(async () => {
       try {
-        const r = await fetch(`https://ak47-backend.onrender.com/api/user/check-username?username=${encodeURIComponent(val)}`);
+        const r = await fetch(`https:
         const data = await r.json();
         if (data.available) {
           status.style.color = '#16a34a';
@@ -64,7 +64,7 @@
       const data = await r.json();
       if (!r.ok) { showAlert(data.error || 'Erreur'); return; }
       localStorage.setItem('username', data.username);
-      if (data.token) localStorage.setItem('token', data.token); // FIX 1 — nouveau JWT avec username à jour
+      if (data.token) localStorage.setItem('token', data.token);
       window.location.href = '/dashboard';
     } catch { showAlert('Erreur réseau'); }
     finally { btn.disabled = false; btn.innerHTML = 'Confirmer mon pseudo'; }

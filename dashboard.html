@@ -46,54 +46,109 @@
     .toast { position: fixed; bottom: 24px; right: 24px; background: var(--black); color: var(--white); padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 500; z-index: 999; opacity: 0; transform: translateY(8px); transition: all .2s; pointer-events: none; }
     .toast.show { opacity: 1; transform: translateY(0); }
 
-    /* ── SOCIAL PICKER ── */
-    .add-link-tabs { display: flex; gap: 4px; margin-bottom: 16px; }
-    .add-link-tab { padding: 6px 14px; font-size: 12px; font-weight: 600; border: 1px solid var(--gray-200); border-radius: 6px; cursor: pointer; background: var(--white); color: var(--gray-500); transition: all .15s; }
-    .add-link-tab.active { background: var(--black); color: var(--white); border-color: var(--black); }
+    .add-link-open-btn { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--black); color: var(--white); border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s; }
+    .add-link-open-btn:hover { background: #222; }
+    .add-link-open-btn svg { width: 16px; height: 16px; }
 
-    .social-picker { display: none; }
-    .social-picker.active { display: block; }
-    .manual-form { display: none; }
-    .manual-form.active { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; align-items: end; }
-    .manual-form input { padding: 9px 12px; border: 1px solid var(--gray-200); border-radius: 6px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; }
-    .manual-form input:focus { border-color: var(--black); }
-    .add-link-btn { padding: 9px 16px; background: var(--black); color: var(--white); border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .icon-picker-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.7); backdrop-filter: blur(4px);
+      z-index: 1000; display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity .2s;
+    }
+    .icon-picker-overlay.open { opacity: 1; pointer-events: all; }
 
-    .social-grid { display: grid; grid-template-columns: repeat(auto-fill, 52px); gap: 8px; margin-bottom: 14px; }
-    .social-btn {
-      width: 52px; height: 52px; border-radius: 12px;
+    .icon-picker-modal {
+      background: #111; border: 1px solid #2a2a2a; border-radius: 16px;
+      width: min(680px, 96vw); max-height: 88vh;
+      display: flex; flex-direction: column; overflow: hidden;
+      transform: translateY(12px) scale(.97); transition: transform .2s;
+      box-shadow: 0 24px 80px rgba(0,0,0,.6);
+    }
+    .icon-picker-overlay.open .icon-picker-modal { transform: translateY(0) scale(1); }
+
+    .icon-picker-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px 0; flex-shrink: 0;
+    }
+    .icon-picker-title { font-size: 15px; font-weight: 700; color: #fff; }
+    .icon-picker-close { background: none; border: none; color: #666; font-size: 22px; cursor: pointer; line-height: 1; padding: 0; }
+    .icon-picker-close:hover { color: #fff; }
+
+    .icon-picker-search {
+      margin: 12px 20px; padding: 9px 14px;
+      background: #1a1a1a; border: 1px solid #333; border-radius: 8px;
+      color: #fff; font-size: 13px; font-family: 'Inter', sans-serif; outline: none;
+      flex-shrink: 0;
+    }
+    .icon-picker-search:focus { border-color: #555; }
+    .icon-picker-search::placeholder { color: #555; }
+
+    .icon-picker-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, 64px);
+      gap: 10px; padding: 4px 20px 16px; overflow-y: auto;
+      justify-content: start;
+    }
+    .icon-picker-grid::-webkit-scrollbar { width: 4px; }
+    .icon-picker-grid::-webkit-scrollbar-track { background: transparent; }
+    .icon-picker-grid::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+
+    .ipick-btn {
+      width: 64px; height: 64px; border-radius: 14px;
       background: #1a1a1a; border: 1.5px solid #2a2a2a;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      cursor: pointer; transition: all .15s; position: relative;
-      padding: 0;
+      cursor: pointer; transition: all .15s; padding: 0; gap: 3px;
     }
-    .social-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,.15); border-color: #444; }
-    .social-btn img { width: 26px; height: 26px; object-fit: contain; border-radius: 4px; }
-    .social-btn .social-label { font-size: 8px; color: #888; margin-top: 2px; text-align: center; line-height: 1; max-width: 48px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ipick-btn:hover { transform: translateY(-2px); border-color: #555; background: #222; box-shadow: 0 6px 20px rgba(0,0,0,.3); }
+    .ipick-btn.selected { border-color: #fff; background: #1e1e1e; }
+    .ipick-btn img { width: 30px; height: 30px; object-fit: contain; border-radius: 5px; pointer-events: none; }
+    .ipick-btn .ipick-label { font-size: 8px; color: #777; text-align: center; line-height: 1.1; max-width: 60px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; pointer-events: none; }
+    .ipick-btn:hover .ipick-label { color: #aaa; }
 
-    .social-custom-btn {
-      width: auto; min-width: 52px; padding: 0 10px;
-      height: 52px; border-radius: 12px;
-      background: #1a1a1a; border: 1.5px dashed #444;
+    .ipick-custom {
+      width: 64px; height: 64px; border-radius: 14px;
+      background: #1a1a1a; border: 1.5px dashed #3a3a3a;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      cursor: pointer; transition: all .15s; gap: 2px;
+      cursor: pointer; transition: all .15s; gap: 3px;
     }
-    .social-custom-btn:hover { border-color: #888; transform: translateY(-2px); }
-    .social-custom-btn span:first-child { font-size: 16px; color: #888; }
-    .social-custom-btn span:last-child { font-size: 8px; color: #666; }
+    .ipick-custom:hover { border-color: #666; transform: translateY(-2px); }
+    .ipick-custom-icon { font-size: 20px; color: #666; }
+    .ipick-custom-label { font-size: 8px; color: #555; text-align: center; }
 
-    /* Social input popup */
-    .social-input-row { display: none; align-items: center; gap: 8px; padding: 12px; background: #111; border: 1px solid #2a2a2a; border-radius: 8px; margin-bottom: 10px; }
-    .social-input-row.active { display: flex; }
-    .social-input-row img { width: 28px; height: 28px; border-radius: 6px; flex-shrink: 0; }
-    .social-input-row input { flex: 1; padding: 8px 10px; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; color: #fff; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; }
-    .social-input-row input:focus { border-color: #555; }
-    .social-input-row input::placeholder { color: #555; }
-    .social-input-row button { padding: 8px 14px; background: var(--white); color: var(--black); border: none; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; }
-    .social-input-close { background: none; border: none; color: #555; cursor: pointer; font-size: 18px; line-height: 1; padding: 0 4px; }
-    .social-input-close:hover { color: #fff; }
+    .icon-picker-input-panel {
+      flex-shrink: 0; border-top: 1px solid #2a2a2a;
+      padding: 14px 20px; background: #0d0d0d;
+      display: none; align-items: center; gap: 10px;
+    }
+    .icon-picker-input-panel.active { display: flex; }
+    .ipin-icon { width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0; }
+    .ipin-name { font-size: 13px; font-weight: 600; color: #fff; min-width: 80px; }
+    .ipin-input {
+      flex: 1; padding: 9px 12px; background: #1a1a1a; border: 1px solid #333;
+      border-radius: 8px; color: #fff; font-size: 13px; font-family: 'Inter', sans-serif; outline: none;
+    }
+    .ipin-input:focus { border-color: #666; }
+    .ipin-input::placeholder { color: #444; }
+    .ipin-add { padding: 9px 18px; background: #fff; color: #000; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+    .ipin-add:hover { background: #ddd; }
+    .ipin-cancel { background: none; border: none; color: #555; font-size: 20px; cursor: pointer; padding: 0 2px; }
+    .ipin-cancel:hover { color: #fff; }
 
-    /* ── MÉDIAS ── */
+    .icon-picker-manual-panel {
+      flex-shrink: 0; border-top: 1px solid #2a2a2a;
+      padding: 14px 20px; background: #0d0d0d;
+      display: none; gap: 10px; align-items: flex-end;
+    }
+    .icon-picker-manual-panel.active { display: flex; }
+    .icon-picker-manual-panel input {
+      flex: 1; padding: 9px 12px; background: #1a1a1a; border: 1px solid #333;
+      border-radius: 8px; color: #fff; font-size: 13px; font-family: 'Inter', sans-serif; outline: none;
+    }
+    .icon-picker-manual-panel input:focus { border-color: #666; }
+    .icon-picker-manual-panel input::placeholder { color: #444; }
+    .ipm-add { padding: 9px 18px; background: #fff; color: #000; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+
+    .manual-form { display: none; }
+
     .media-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px; }
     .media-grid-full { grid-column: 1 / -1; }
     .media-upload-box {
@@ -132,7 +187,6 @@
 </head>
 <body>
 
-<!-- NAV -->
 <nav class="dash-nav">
   <a href="/" class="dash-nav-brand">ak-47<span>.fr</span></a>
   <div class="dash-nav-right">
@@ -142,9 +196,8 @@
   </div>
 </nav>
 
-<!-- LAYOUT -->
 <div class="dash-layout">
-  <!-- SIDEBAR -->
+
   <aside class="dash-sidebar">
     <div class="sidebar-section">
       <div class="sidebar-label">Navigation</div>
@@ -179,10 +232,8 @@
     </div>
   </aside>
 
-  <!-- MAIN -->
   <main class="dash-main">
 
-    <!-- ── OVERVIEW TAB ── -->
     <div class="tab-content active" id="tab-overview">
       <div class="dash-title">Vue d'ensemble</div>
       <div class="dash-subtitle" id="overviewDate">Chargement...</div>
@@ -211,7 +262,6 @@
       </div>
     </div>
 
-    <!-- ── PROFILE TAB ── -->
     <div class="tab-content" id="tab-profile">
       <div class="dash-title">Mon profil</div>
       <div class="dash-subtitle">Personnalisez les informations affichées sur votre page publique.</div>
@@ -257,12 +307,10 @@
         </div>
       </div>
 
-      <!-- ── COMPTES CONNECTÉS ── -->
       <div class="section-card" style="margin-top:20px;">
         <div class="section-card-title">Comptes connectés</div>
         <p style="font-size:13px;color:var(--gray-500);margin-bottom:16px;">Liez vos comptes tiers pour activer les badges, la synchronisation des rôles Discord et la connexion rapide.</p>
 
-        <!-- Discord -->
         <div id="connectedDiscordRow" style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--gray-200);border-radius:9px;margin-bottom:10px;">
           <img src="https://cdn.simpleicons.org/discord/5865F2" alt="Discord" style="width:28px;height:28px;flex-shrink:0;"/>
           <div style="flex:1;">
@@ -277,7 +325,6 @@
           </button>
         </div>
 
-        <!-- Google -->
         <div style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--gray-200);border-radius:9px;">
           <img src="https://cdn.simpleicons.org/google/4285F4" alt="Google" style="width:28px;height:28px;flex-shrink:0;"/>
           <div style="flex:1;">
@@ -294,7 +341,6 @@
       </div>
     </div>
 
-    <!-- ── LINKS TAB ── -->
     <div class="tab-content" id="tab-links">
       <div class="dash-title">Liens</div>
       <div class="dash-subtitle">Ajoutez et organisez les liens affichés sur votre profil.</div>
@@ -304,19 +350,12 @@
         <div class="section-card-title">Vos liens <span id="linkCount" style="font-size:11px;color:var(--gray-400);font-weight:400;"></span></div>
         <div class="links-list" id="linksList"></div>
 
-        <!-- Ajouter un lien -->
         <div style="margin-top:16px;">
-          <div class="manual-form active" id="manualForm">
-            <div>
-              <label style="font-size:11px;font-weight:600;color:var(--gray-500);display:block;margin-bottom:4px;">Titre</label>
-              <input type="text" id="newLinkTitle" placeholder="ex. Mon site" maxlength="60"/>
-            </div>
-            <div>
-              <label style="font-size:11px;font-weight:600;color:var(--gray-500);display:block;margin-bottom:4px;">URL</label>
-              <input type="text" id="newLinkUrl" placeholder="https://..." maxlength="500"/>
-            </div>
-            <button class="add-link-btn" onclick="addLink()">+ Ajouter</button>
-          </div>
+          <button class="add-link-open-btn" onclick="openIconPicker()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Ajouter un lien
+          </button>
+          <div class="manual-form" id="manualForm"></div>
         </div>
       </div>
 
@@ -325,7 +364,6 @@
       </div>
     </div>
 
-    <!-- ── ANALYTICS TAB ── -->
     <div class="tab-content" id="tab-analytics">
       <div class="dash-title">Analytics</div>
       <div class="dash-subtitle">Analysez les performances de votre profil.</div>
@@ -351,9 +389,6 @@
       </div>
     </div>
 
-
-
-      <!-- BADGES -->
       <div class="section-card" id="badgesCard" style="display:none">
         <div class="section-card-title">Tes badges Discord</div>
         <div class="section-card-desc">Clique sur l'œil pour masquer/afficher un badge sur ta page publique.</div>
@@ -366,7 +401,6 @@
         </div>
       </div>
 
-    <!-- ── MÉDIAS TAB ── -->
     <div class="tab-content" id="tab-medias">
       <div class="dash-title">Médias</div>
       <div class="dash-subtitle">Personnalisez l'apparence de votre page publique.</div>
@@ -374,7 +408,6 @@
 
       <div class="media-grid">
 
-        <!-- ARRIÈRE-PLAN -->
         <div>
           <div class="section-card-title" style="font-size:13px;font-weight:600;margin-bottom:8px;">Arrière-plan</div>
           <div class="media-upload-box has-media" id="bgBox" onclick="triggerUpload('bgFile')">
@@ -387,7 +420,6 @@
           </div>
         </div>
 
-        <!-- AUDIO -->
         <div>
           <div class="section-card-title" style="font-size:13px;font-weight:600;margin-bottom:8px;">Audio</div>
           <div class="media-upload-box" id="audioBox" onclick="toggleAudioManager()">
@@ -436,7 +468,6 @@
           </div>
         </div>
 
-        <!-- AVATAR -->
         <div>
           <div class="section-card-title" style="font-size:13px;font-weight:600;margin-bottom:8px;">Avatar du profil</div>
           <div class="media-upload-box" id="avatarBox" onclick="triggerUpload('avatarFile')">
@@ -449,7 +480,6 @@
           </div>
         </div>
 
-        <!-- CURSEUR -->
         <div class="media-grid-full">
           <div class="section-card-title" style="font-size:13px;font-weight:600;margin-bottom:8px;">Curseur personnalisé</div>
           <div class="media-upload-box" id="cursorBox" onclick="triggerUpload('cursorFile')" style="max-width:400px;">
@@ -470,13 +500,11 @@
       </div>
     </div>
 
-    <!-- ── PERSONNALISATION TAB ── -->
     <div class="tab-content" id="tab-perso">
       <div class="dash-title">Personnalisation</div>
       <div class="dash-subtitle">Personnalisez l'apparence de votre page publique en profondeur.</div>
       <div id="persoAlert"></div>
 
-      <!-- BANNIÈRE -->
       <div class="section-card">
         <div class="section-card-title">Bannière de profil</div>
         <div style="font-size:12px;color:var(--gray-500);margin-bottom:10px;">Image affichée en haut de votre profil (1200×400px recommandé).</div>
@@ -490,7 +518,6 @@
         </div>
       </div>
 
-      <!-- FORME AVATAR -->
       <div class="section-card">
         <div class="section-card-title">Forme de l'avatar</div>
         <div style="display:flex;gap:12px;flex-wrap:wrap;">
@@ -513,7 +540,6 @@
         </div>
       </div>
 
-      <!-- FOND DE PAGE -->
       <div class="section-card">
         <div class="section-card-title">Fond de page</div>
         <div style="display:flex;gap:8px;margin-bottom:14px;">
@@ -521,7 +547,7 @@
           <button class="add-link-tab"        id="bgTabGradient" onclick="switchBgTab('gradient')">Dégradé</button>
           <button class="add-link-tab"        id="bgTabImage"    onclick="switchBgTab('image')">Image</button>
         </div>
-        <!-- Couleur -->
+
         <div id="bgZoneColor">
           <div style="display:flex;align-items:center;gap:10px;">
             <input type="color" id="bgColorPicker" value="#fafafa" style="width:44px;height:38px;padding:2px;border:1px solid var(--gray-200);border-radius:6px;cursor:pointer;"
@@ -531,7 +557,7 @@
               oninput="if(/^#[0-9a-fA-F]{6}$/.test(this.value)){document.getElementById('bgColorPicker').value=this.value;pendingPerso.bg_type='color';pendingPerso.bg_value=this.value;}"/>
           </div>
         </div>
-        <!-- Dégradé -->
+
         <div id="bgZoneGradient" style="display:none;">
           <div style="font-size:12px;color:var(--gray-500);margin-bottom:8px;">Presets</div>
           <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;" id="gradientPresets"></div>
@@ -540,7 +566,7 @@
             style="width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;font-family:inherit;outline:none;"
             oninput="pendingPerso.bg_type='gradient';pendingPerso.bg_value=this.value;"/>
         </div>
-        <!-- Image -->
+
         <div id="bgZoneImage" style="display:none;">
           <div class="media-upload-box" onclick="triggerUpload('bgFilePerso')">
             <input type="file" id="bgFilePerso" accept="image/*" onchange="handlePersoMedia('bg', this)" onclick="event.stopPropagation()"/>
@@ -553,7 +579,6 @@
         </div>
       </div>
 
-      <!-- DISPOSITION DES LIENS -->
       <div class="section-card">
         <div class="section-card-title">Disposition des liens</div>
         <div style="display:flex;gap:12px;flex-wrap:wrap;">
@@ -588,7 +613,6 @@
         </div>
       </div>
 
-      <!-- STYLE DES BOUTONS -->
       <div class="section-card">
         <div class="section-card-title">Style des boutons de liens</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
@@ -629,7 +653,6 @@
         </div>
       </div>
 
-      <!-- POLICE D'ÉCRITURE -->
       <div class="section-card">
         <div class="section-card-title">Police d'écriture</div>
         <div style="font-size:12px;color:var(--gray-500);margin-bottom:10px;">Choisissez la police affichée sur votre profil public.</div>
@@ -657,7 +680,6 @@
         <div id="fontPreviewText" style="margin-top:10px;font-size:16px;color:var(--gray-900);">Voici un aperçu de votre texte de profil.</div>
       </div>
 
-      <!-- SPOTIFY -->
       <div class="section-card">
         <div class="section-card-title">Spotify</div>
         <div style="font-size:12px;color:var(--gray-500);margin-bottom:10px;">Affichez un widget Spotify sur votre profil (lien vers votre profil Spotify).</div>
@@ -688,7 +710,6 @@ let analyticsData = null;
 let pendingLinks = null;
 let pendingMedias = { avatar_url: null, bg_url: null, audio_url: null, cursor_url: null };
 
-// ── RÉSEAUX SOCIAUX ──
 const SOCIALS = [
   { id:'snapchat',   label:'Snapchat',   color:'#FFFC00', icon:'https://cdn.simpleicons.org/snapchat/FFFC00',    base:'https://snapchat.com/add/',       placeholder:'Ton pseudo Snapchat' },
   { id:'youtube',    label:'YouTube',    color:'#FF0000', icon:'https://cdn.simpleicons.org/youtube/FF0000',      base:'https://youtube.com/@',           placeholder:'@ta-chaine' },
@@ -738,7 +759,6 @@ const SOCIALS = [
 
 let activeSocial = null;
 
-// ── DÉTECTION D'ICÔNE PAR URL ──
 function getLinkIcon(url) {
   if (!url) return null;
   const u = url.toLowerCase();
@@ -801,8 +821,6 @@ function getLinkIcon(url) {
   return null;
 }
 
-
-// ── INIT ──
 document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('navUsername').textContent = username;
   const profileUrl = window.location.origin + '/' + username;
@@ -812,7 +830,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('overviewDate').textContent = new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   await Promise.all([loadUser(), loadAnalytics()]);
 
-  // Détection retour OAuth liaison
   const params = new URLSearchParams(window.location.search);
   const linked = params.get('linked');
   if (linked === 'discord') {
@@ -826,7 +843,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-// Entrée clavier dans le champ social
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter') {
     if (document.activeElement.id === 'newLinkUrl') addLink();
@@ -838,10 +854,10 @@ async function loadUser() {
     const r = await fetch(API + '/api/user/me', { headers: { Authorization: 'Bearer ' + token } });
     if (r.status === 401) { logout(); return; }
     userData = await r.json();
-    // FIX 6 — resync username depuis la BDD (peut différer du localStorage après setup ou changement)
+
     if (userData.username && userData.username !== localStorage.getItem('username')) {
       localStorage.setItem('username', userData.username);
-      // Recharge pour que la const `username` globale soit correcte
+
       window.location.reload();
       return;
     }
@@ -852,7 +868,7 @@ async function loadUser() {
     loadPersoUI();
     renderBadges();
     renderConnectedAccounts();
-    // Afficher lien admin si discord_id admin
+
     const ADMIN_DISCORD_IDS = ['866613427852804136'];
     if (userData.discord_id && ADMIN_DISCORD_IDS.includes(userData.discord_id)) {
       const adminLink = document.getElementById('adminLink');
@@ -872,7 +888,6 @@ async function loadAnalytics() {
   } catch {}
 }
 
-// ── RENDER ──
 function renderStats() {
   const d = analyticsData;
   ['sv-total','av-total'].forEach(id => el(id).textContent = fmt(d.total_views));
@@ -960,9 +975,8 @@ async function toggleBadge(index) {
   } catch { showToast('Erreur réseau'); }
 }
 
-// ── COMPTES CONNECTÉS ──
 function renderConnectedAccounts() {
-  // Discord
+
   const discordStatus = document.getElementById('discordStatus');
   const discordConnectBtn = document.getElementById('discordConnectBtn');
   const discordDisconnectBtn = document.getElementById('discordDisconnectBtn');
@@ -976,7 +990,6 @@ function renderConnectedAccounts() {
     if (discordDisconnectBtn) discordDisconnectBtn.style.display = 'none';
   }
 
-  // Google
   const googleStatus = document.getElementById('googleStatus');
   const googleConnectBtn = document.getElementById('googleConnectBtn');
   const googleDisconnectBtn = document.getElementById('googleDisconnectBtn');
@@ -992,8 +1005,7 @@ function renderConnectedAccounts() {
 }
 
 function connectDiscord() {
-  // Redirige vers l'OAuth Discord en passant un paramètre link=1 pour lier le compte
-  // (le backend peut utiliser le token JWT stocké pour associer sans recréer un compte)
+
   const linkToken = encodeURIComponent(token);
   window.location.href = `${API}/api/auth/discord?link=1&jwt=${linkToken}`;
 }
@@ -1114,7 +1126,6 @@ function renderLinks() {
   }).join('');
 }
 
-// ── ACTIONS ──
 async function saveProfile() {
   const btn = el('saveProfileBtn');
   btn.disabled = true; btn.textContent = '...';
@@ -1132,6 +1143,127 @@ async function saveProfile() {
   } catch { showToast('Erreur réseau'); }
   finally { btn.disabled = false; btn.textContent = 'Sauvegarder'; }
 }
+
+function buildIconPickerGrid(filter) {
+  const grid = el('iconPickerGrid');
+  grid.innerHTML = '';
+  const q = (filter || '').toLowerCase();
+  const filtered = q ? SOCIALS.filter(s => s.label.toLowerCase().includes(q) || s.id.includes(q)) : SOCIALS;
+  filtered.forEach(s => {
+    const btn = document.createElement('button');
+    btn.className = 'ipick-btn';
+    btn.title = s.label;
+    btn.dataset.id = s.id;
+    btn.innerHTML = `<img src="${s.icon}" alt="${s.label}" onerror="this.style.display='none'"/><span class="ipick-label">${s.label}</span>`;
+    btn.onclick = () => selectIconPickerItem(s, btn);
+    grid.appendChild(btn);
+  });
+
+  if (!q || 'url personnalisée custom lien'.includes(q)) {
+    const custom = document.createElement('button');
+    custom.className = 'ipick-custom';
+    custom.title = 'URL personnalisée';
+    custom.innerHTML = `<span class="ipick-custom-icon">🔗</span><span class="ipick-custom-label">Perso</span>`;
+    custom.onclick = () => openIconManual();
+    grid.appendChild(custom);
+  }
+}
+
+function openIconPicker() {
+  buildIconPickerGrid('');
+  el('iconPickerSearch').value = '';
+  closeIconInput();
+  closeIconManual();
+  el('iconPickerOverlay').classList.add('open');
+  setTimeout(() => el('iconPickerSearch').focus(), 100);
+}
+
+function closeIconPicker() {
+  el('iconPickerOverlay').classList.remove('open');
+  closeIconInput();
+  closeIconManual();
+}
+
+function handleOverlayClick(e) {
+  if (e.target === el('iconPickerOverlay')) closeIconPicker();
+}
+
+function filterIconPicker(q) {
+  buildIconPickerGrid(q);
+  closeIconInput();
+  closeIconManual();
+}
+
+function selectIconPickerItem(s, btn) {
+
+  document.querySelectorAll('.ipick-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  activeSocial = s;
+
+  el('ipinIcon').src = s.icon;
+  el('ipinName').textContent = s.label;
+  el('ipinVal').placeholder = s.placeholder || (s.base ? s.base + '...' : 'https://...');
+  el('ipinVal').value = '';
+  closeIconManual();
+  el('iconInputPanel').classList.add('active');
+  setTimeout(() => el('ipinVal').focus(), 50);
+
+  setTimeout(() => el('iconInputPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 80);
+}
+
+function closeIconInput() {
+  activeSocial = null;
+  el('iconInputPanel').classList.remove('active');
+  document.querySelectorAll('.ipick-btn').forEach(b => b.classList.remove('selected'));
+}
+
+function confirmIconLink() {
+  if (!activeSocial) return;
+  let val = el('ipinVal').value.trim();
+  if (!val) { el('ipinVal').focus(); return; }
+  if (pendingLinks.length >= 20) { closeIconPicker(); showAlert('linksAlert', 'Maximum 20 liens'); return; }
+  let url = val;
+  if (activeSocial.base && !val.startsWith('http') && !val.startsWith('mailto:')) {
+    url = activeSocial.base + val;
+  } else if (!val.startsWith('http') && !val.startsWith('mailto:')) {
+    url = 'https://' + val;
+  }
+  pendingLinks.push({ title: activeSocial.label, url });
+  closeIconPicker();
+  el('linksAlert').innerHTML = '';
+  renderLinks(); updatePreview();
+  showToast('Lien ajouté ✓');
+}
+
+function openIconManual() {
+  closeIconInput();
+  el('ipmTitle').value = '';
+  el('ipmUrl').value = '';
+  el('iconManualPanel').classList.add('active');
+  setTimeout(() => el('ipmTitle').focus(), 50);
+}
+
+function closeIconManual() {
+  el('iconManualPanel').classList.remove('active');
+}
+
+function confirmManualLink() {
+  const title = el('ipmTitle').value.trim();
+  const url = el('ipmUrl').value.trim();
+  if (!title || !url) { if (!title) el('ipmTitle').focus(); else el('ipmUrl').focus(); return; }
+  if (pendingLinks.length >= 20) { closeIconPicker(); showAlert('linksAlert', 'Maximum 20 liens'); return; }
+  let finalUrl = url;
+  if (!url.startsWith('http') && !url.startsWith('mailto:')) finalUrl = 'https://' + url;
+  pendingLinks.push({ title, url: finalUrl });
+  closeIconPicker();
+  el('linksAlert').innerHTML = '';
+  renderLinks(); updatePreview();
+  showToast('Lien ajouté ✓');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeIconPicker();
+});
 
 function addLink() {
   const title = el('newLinkTitle').value.trim();
@@ -1179,7 +1311,6 @@ function logout() {
   window.location.href = '/login';
 }
 
-// ── TABS ──
 function switchTab(name) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.sidebar-item').forEach(t => t.classList.remove('active'));
@@ -1188,12 +1319,10 @@ function switchTab(name) {
   if (name === 'profile' || name === 'links') updatePreview();
 }
 
-// ── LIVE PREVIEW SYNC ──
 ['displayName','bio','avatarColor'].forEach(id => {
   el(id)?.addEventListener('input', updatePreview);
 });
 
-// ── UTILS ──
 function el(id) { return document.getElementById(id); }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function fmt(n) { return n >= 1000 ? (n/1000).toFixed(1).replace('.0','') + 'K' : String(n||0); }
@@ -1206,8 +1335,6 @@ function showToast(msg) {
 function showAlert(containerId, msg) {
   el(containerId).innerHTML = `<div class="alert alert-error">${msg}</div>`;
 }
-
-// ── MÉDIAS ──────────────────────────────────────────────
 
 function triggerUpload(inputId) {
   document.getElementById(inputId).click();
@@ -1238,7 +1365,7 @@ function handleMedia(type, input) {
 
   const reader = new FileReader();
   reader.onload = e => {
-    const data = e.target.result; // data URL base64
+    const data = e.target.result;
     pendingMedias[type + '_url'] = data;
 
     if (type === 'bg') {
@@ -1294,7 +1421,7 @@ function removeMedia(e, type) {
     el('audioName').textContent = '';
     el('audioFileName').textContent = '';
     el('audioRemove').style.display = 'none';
-    // Reset radio
+
     document.querySelector('input[name=audioSrc][value=none]').checked = true;
     selectAudioSrc('none');
   }
@@ -1330,7 +1457,6 @@ async function saveMedias() {
   const btn = el('saveMediasBtn');
   btn.disabled = true; btn.textContent = '...';
 
-  // Only send fields that were actually changed (not null)
   const body = {};
   for (const [k, v] of Object.entries(pendingMedias)) {
     if (v !== null) body[k] = v;
@@ -1357,8 +1483,6 @@ async function saveMedias() {
   finally { btn.disabled = false; btn.textContent = 'Sauvegarder'; }
 }
 
-// ── PERSONNALISATION TAB ─────────────────────────────────
-
 let pendingPerso = {
   avatar_shape: null,
   link_layout: null,
@@ -1367,7 +1491,7 @@ let pendingPerso = {
   bg_type: null,
   bg_value: null,
   banner_url: null,
-  bg_url: null,   // only used when bg_type=image
+  bg_url: null,
   spotify_url: null,
 };
 
@@ -1383,7 +1507,7 @@ const GRADIENT_PRESETS = [
 ];
 
 function initPersoTab() {
-  // Gradient presets
+
   const presetsEl = el('gradientPresets');
   GRADIENT_PRESETS.forEach(p => {
     const btn = document.createElement('button');
@@ -1401,17 +1525,15 @@ function initPersoTab() {
 
 function loadPersoUI() {
   if (!userData) return;
-  // Avatar shape
+
   const shape = userData.avatar_shape || 'circle';
   const shapeEl = document.querySelector(`input[name=avatarShape][value="${shape}"]`);
   if (shapeEl) shapeEl.checked = true;
 
-  // Link layout
   const layout = userData.link_layout || 'list';
   const layoutEl = document.querySelector(`input[name=linkLayout][value="${layout}"]`);
   if (layoutEl) layoutEl.checked = true;
 
-  // Btn style
   let btnStyle = {}; try { btnStyle = JSON.parse(userData.link_btn_style || '{}'); } catch {}
   if (btnStyle.bg) { el('btnBgColor').value = btnStyle.bg; el('btnBgColorHex').textContent = btnStyle.bg; }
   if (btnStyle.color) { el('btnTextColor').value = btnStyle.color; el('btnTextColorHex').textContent = btnStyle.color; }
@@ -1419,27 +1541,23 @@ function loadPersoUI() {
   if (btnStyle.borderRadius) { el('btnRadiusRange').value = parseInt(btnStyle.borderRadius); el('btnRadiusVal').textContent = btnStyle.borderRadius; }
   updateBtnStylePreview();
 
-  // Font
   if (userData.profile_font) {
     el('fontSelect').value = userData.profile_font;
     el('fontPreviewText').style.fontFamily = userData.profile_font + ',sans-serif';
   }
 
-  // Fond
   const bgType  = userData.bg_type  || 'color';
   const bgValue = userData.bg_value || '#fafafa';
   switchBgTab(bgType);
   if (bgType === 'color')    { el('bgColorPicker').value = bgValue; el('bgColorHex').value = bgValue; }
   if (bgType === 'gradient') { el('gradientCustom').value = bgValue; }
 
-  // Bannière
   if (userData.banner_url) {
     el('bannerPreview').src = userData.banner_url; el('bannerPreview').style.display = 'block';
     el('bannerIcon').style.display = 'none'; el('bannerLabel').textContent = 'Bannière actuelle';
     el('bannerRemove').style.display = 'inline';
   }
 
-  // Spotify
   if (userData.spotify_url) el('spotifyUrlInput').value = userData.spotify_url;
 }
 
@@ -1528,7 +1646,7 @@ async function importDiscordAvatar() {
     });
     const data = await r.json();
     if (!r.ok) { showToast(data.error || 'Compte Discord non lié'); return; }
-    // Save directly
+
     const r2 = await fetch(API + '/api/user/me', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
@@ -1573,11 +1691,36 @@ async function savePerso() {
   finally { btn.disabled = false; btn.textContent = 'Sauvegarder'; }
 }
 
-// Init perso tab on page load (social form, gradient presets)
 document.addEventListener('DOMContentLoaded', () => {
   initPersoTab();
 });
 
 </script>
+
+<div class="icon-picker-overlay" id="iconPickerOverlay" onclick="handleOverlayClick(event)">
+  <div class="icon-picker-modal">
+    <div class="icon-picker-header">
+      <span class="icon-picker-title">Choisir un réseau</span>
+      <button class="icon-picker-close" onclick="closeIconPicker()">✕</button>
+    </div>
+    <input class="icon-picker-search" id="iconPickerSearch" placeholder="🔍  Rechercher..." oninput="filterIconPicker(this.value)"/>
+    <div class="icon-picker-grid" id="iconPickerGrid"></div>
+
+    <div class="icon-picker-input-panel" id="iconInputPanel">
+      <img class="ipin-icon" id="ipinIcon" src="" alt=""/>
+      <span class="ipin-name" id="ipinName"></span>
+      <input class="ipin-input" id="ipinVal" placeholder="" maxlength="300" onkeydown="if(event.key==='Enter')confirmIconLink()"/>
+      <button class="ipin-add" onclick="confirmIconLink()">Ajouter</button>
+      <button class="ipin-cancel" onclick="closeIconInput()">✕</button>
+    </div>
+
+    <div class="icon-picker-manual-panel" id="iconManualPanel">
+      <input placeholder="Titre" id="ipmTitle" maxlength="60" style="max-width:140px;" onkeydown="if(event.key==='Enter')confirmManualLink()"/>
+      <input placeholder="https://..." id="ipmUrl" maxlength="500" onkeydown="if(event.key==='Enter')confirmManualLink()"/>
+      <button class="ipm-add" onclick="confirmManualLink()">Ajouter</button>
+      <button class="ipin-cancel" onclick="closeIconManual()">✕</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

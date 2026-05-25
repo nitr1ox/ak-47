@@ -34,7 +34,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── NAV ── */
     nav {
       position: sticky; top: 0; z-index: 50;
       background: rgba(255,255,255,0.9);
@@ -80,7 +79,6 @@
     .btn-solid:hover { background: var(--gray-900); }
     .btn-lg { padding: 11px 24px; font-size: 14px; border-radius: 9px; }
 
-    /* ── HERO ── */
     .hero {
       max-width: 760px; margin: 0 auto;
       padding: 100px 24px 80px;
@@ -143,7 +141,6 @@
     }
     .hero-claim-btn:hover { background: var(--gray-900); }
 
-    /* ── MOCKUP ── */
     .hero-mockup {
       background: var(--white);
       border: 1px solid var(--gray-200);
@@ -211,7 +208,6 @@
     }
     .mm-link-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--black); }
 
-    /* ── STATS ── */
     .stats {
       border-top: 1px solid var(--gray-200);
       border-bottom: 1px solid var(--gray-200);
@@ -230,7 +226,6 @@
     .stat-num { font-size: 36px; font-weight: 700; letter-spacing: -1.5px; }
     .stat-label { font-size: 12px; color: var(--gray-400); margin-top: 4px; text-transform: uppercase; letter-spacing: .5px; }
 
-    /* ── FEATURES ── */
     .features { max-width: 1000px; margin: 0 auto; padding: 80px 24px; }
     .section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray-400); margin-bottom: 12px; }
     .section-title { font-size: clamp(28px,4vw,44px); font-weight: 700; letter-spacing: -1.5px; margin-bottom: 12px; }
@@ -255,7 +250,6 @@
     .feature-title { font-weight: 600; font-size: 14px; margin-bottom: 6px; letter-spacing: -0.2px; }
     .feature-desc { font-size: 13px; color: var(--gray-500); line-height: 1.6; }
 
-    /* ── FAQ ── */
     .faq-section { max-width: 680px; margin: 0 auto; padding: 80px 24px; }
     .faq-list { border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; }
     .faq-item { border-bottom: 1px solid var(--gray-200); }
@@ -273,7 +267,6 @@
     .faq-item.open .faq-a { max-height: 200px; }
     .faq-a-inner { padding: 0 20px 18px; color: var(--gray-500); font-size: 14px; line-height: 1.7; }
 
-    /* ── CTA BOTTOM ── */
     .cta-bottom {
       background: var(--black); padding: 80px 24px; text-align: center;
     }
@@ -291,7 +284,6 @@
     .cta-claim-btn { padding: 0 18px; background: var(--white); border: none; color: var(--black); font-size: 13px; font-weight: 700; cursor: pointer; transition: background .15s; }
     .cta-claim-btn:hover { background: var(--gray-100); }
 
-    /* ── FOOTER ── */
     footer {
       background: var(--white); border-top: 1px solid var(--gray-200);
       padding: 48px 32px 32px;
@@ -311,7 +303,6 @@
     .footer-status { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--gray-500); text-decoration: none; }
     .status-dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; }
 
-    /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
       .mockup-sidebar { display: none; }
       .features-grid { grid-template-columns: 1fr 1fr; }
@@ -328,7 +319,6 @@
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a href="/" class="nav-brand">ak-47<span>.fr</span></a>
   <ul class="nav-links">
@@ -342,7 +332,6 @@
   </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
   <div class="hero-kicker"><span class="hero-kicker-dot"></span> 100% gratuit, pour toujours</div>
   <h1>Votre identité<br><em>en un seul lien.</em></h1>
@@ -391,7 +380,6 @@
   </div>
 </section>
 
-<!-- STATS (dynamiques) -->
 <div class="stats">
   <div class="stats-inner">
     <div class="stat-cell"><div class="stat-num" id="stat-users">…</div><div class="stat-label">Membres inscrits</div></div>
@@ -399,7 +387,6 @@
   </div>
 </div>
 
-<!-- FEATURES -->
 <div id="features" class="features">
   <div class="section-label">Fonctionnalités</div>
   <h2 class="section-title">Tout ce dont vous avez besoin.</h2>
@@ -438,7 +425,6 @@
   </div>
 </div>
 
-<!-- FAQ -->
 <div id="faq" class="faq-section">
   <div class="section-label">FAQ</div>
   <h2 class="section-title">Questions fréquentes.</h2>
@@ -463,7 +449,6 @@
   </div>
 </div>
 
-<!-- CTA BOTTOM -->
 <div class="cta-bottom">
   <h2>Commencez maintenant.</h2>
   <p>Rejoignez la communauté ak-47.fr. Gratuit, pour toujours.</p>
@@ -474,7 +459,6 @@
   </div>
 </div>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-top">
     <div>
@@ -512,7 +496,7 @@
 </footer>
 
 <script>
-  // Load real user count
+
   fetch('https://ak47-backend.onrender.com/api/stats')
     .then(r => r.json())
     .then(d => {
