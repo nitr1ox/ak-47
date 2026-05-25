@@ -5,7 +5,7 @@
   <title>ak-47.fr — S'inscrire</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="/style.css"/>
-  <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+  <script src="https:
   <style>
     .oauth-btn {
       display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -27,7 +27,6 @@
 </head>
 <body>
 <button id="globalThemeBtn" onclick="toggleTheme()" title="Changer le thème" aria-label="Changer le thème">🌙</button>
-
 
 <div class="page-shell">
   <a href="/" class="logo-link">ak-47<span>.fr</span></a>
@@ -87,7 +86,7 @@
     try {
       const captchaToken = hcaptcha.getResponse();
       if (!captchaToken) return showAlert('Veuillez compléter le captcha');
-      const r = await fetch('https://ak47-backend.onrender.com/api/auth/register', {
+      const r = await fetch('https:
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password, 'h-captcha-response': captchaToken })
       });
@@ -108,7 +107,7 @@
 <script>
   (async () => {
     try {
-      const r = await fetch('https://ak47-backend.onrender.com/api/stats');
+      const r = await fetch('https:
       const d = await r.json();
       const n = d.total_users || 0;
 
@@ -119,8 +118,6 @@
     }
   })();
 </script>
-
-
 
 <script>
 (function(){

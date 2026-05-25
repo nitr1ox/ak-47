@@ -146,8 +146,8 @@
 
     .manual-form { display: none; }
 
-    /* ── MÉDIAS ─────────────────────────────────────────────────── */
-    .media-grid { display: none; } /* legacy — plus utilisé */
+    
+    .media-grid { display: none; } 
     .media-grid-full { display: none; }
 
     .mblock { background: var(--white); border: 1px solid var(--gray-200); border-radius: 14px; margin-bottom: 16px; overflow: hidden; transition: box-shadow .2s; }
@@ -181,7 +181,7 @@
     .mblock-body { display: none; padding: 0 18px 20px; border-top: 1px solid var(--gray-100); }
     .mblock.open .mblock-body { display: block; }
 
-    /* dropzone */
+    
     .mdrop {
       border: 2px dashed var(--gray-200); border-radius: 12px;
       padding: 32px 20px; text-align: center; cursor: pointer;
@@ -195,7 +195,7 @@
     .mdrop-label { font-size: 13px; color: var(--gray-500); line-height: 1.4; }
     .mdrop-sub   { font-size: 11px; color: var(--gray-400); margin-top: 4px; }
 
-    /* preview strips */
+    
     .mprev-img  { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; display: block; margin-top: 12px; }
     .mprev-vid  { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; display: none; margin-top: 12px; }
     .mprev-av   { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; display: block; margin: 12px auto 0; border: 2px solid var(--gray-200); }
@@ -208,7 +208,7 @@
     .maction-bar .mremove { font-size: 12px; font-weight: 600; padding: 6px 14px; border: 1px solid #fecaca; border-radius: 6px; background: #fff; color: #ef4444; cursor: pointer; transition: all .15s; }
     .maction-bar .mremove:hover { background: #fef2f2; }
 
-    /* audio source tabs */
+    
     .audio-src-tabs { display: flex; gap: 6px; margin-top: 14px; }
     .audio-src-tab {
       flex: 1; padding: 9px 6px; text-align: center; border: 1.5px solid var(--gray-200);
@@ -218,7 +218,7 @@
     .audio-src-tab:hover { border-color: var(--gray-400); color: var(--gray-700); }
     .audio-src-tab.sel { border-color: var(--black); background: var(--black); color: var(--white); }
 
-    /* audio meta (nom + pochette) */
+    
     .audio-meta-row { display: grid; grid-template-columns: 1fr 100px; gap: 12px; margin-top: 14px; align-items: start; }
     .audio-meta-cover {
       width: 100%; aspect-ratio: 1; border-radius: 10px;
@@ -231,7 +231,7 @@
     .audio-meta-cover input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
     .audio-meta-cover img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: none; position: absolute; inset: 0; }
 
-    /* legacy compat */
+    
     .media-upload-box { display: none !important; }
     .audio-manager { display: none !important; }
     .media-remove-btn { font-size: 11px; color: #ef4444; background: none; border: none; cursor: pointer; padding: 0; margin-top: 4px; }
@@ -243,7 +243,7 @@
     .badge-server.vip { background:linear-gradient(135deg,#f6c90e,#e6a817);color:#000;border-color:transparent; }
     .badge-server.mod { background:#e74c3c;color:#fff;border-color:transparent; }
 
-    /* ── Mobile bottom nav ── */
+    
     .mobile-bottom-nav {
       display: none;
       position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
@@ -492,14 +492,14 @@
       <div class="dash-subtitle">Gérez les fichiers affichés sur votre page publique.</div>
       <div id="mediasAlert"></div>
 
-      <!-- Inputs fichiers cachés (réutilisés par les nouveaux dropzones) -->
+      
       <input type="file" id="bgFile"        accept="image/*,video/mp4" onchange="handleMedia('bg', this)"     style="display:none"/>
       <input type="file" id="avatarFile"    accept="image/*"            onchange="handleMedia('avatar', this)" style="display:none"/>
       <input type="file" id="audioFile"     accept="audio/*"            onchange="handleMedia('audio', this)"  style="display:none"/>
       <input type="file" id="audioCoverFile" accept="image/*"           onchange="handleAudioCover(this)"       style="display:none"/>
       <input type="file" id="cursorFile"    accept="image/*,.cur,.ani"  onchange="handleMedia('cursor', this)" style="display:none"/>
 
-      <!-- ══ AVATAR ══════════════════════════════════════════════════════════ -->
+      
       <div class="mblock" id="mblock-avatar">
         <div class="mblock-head" onclick="toggleMblock('avatar')">
           <div class="mblock-icon av">👤</div>
@@ -532,7 +532,7 @@
         </div>
       </div>
 
-      <!-- ══ ARRIÈRE-PLAN ════════════════════════════════════════════════════ -->
+      
       <div class="mblock" id="mblock-bg">
         <div class="mblock-head" onclick="toggleMblock('bg')">
           <div class="mblock-icon bg">🖼️</div>
@@ -546,7 +546,7 @@
         <div class="mblock-body" id="mbody-bg">
           <div style="margin-top:16px;">
             <p style="font-size:12px;color:var(--gray-500);margin:0 0 12px;">Image (JPG/PNG/WebP) ou vidéo MP4 en boucle. Les images sont compressées auto. Vidéo max 50 Mo.</p>
-            <!-- preview -->
+            
             <div id="bgPreviewWrap" style="display:none;margin-bottom:12px;border-radius:10px;overflow:hidden;">
               <img  id="bgPreview"      class="mprev-img" alt="Fond" style="margin-top:0;"/>
               <video id="bgVideoPreview" class="mprev-vid" muted loop playsinline style="margin-top:0;width:100%;height:120px;object-fit:cover;"></video>
@@ -564,7 +564,7 @@
         </div>
       </div>
 
-      <!-- ══ AUDIO ═══════════════════════════════════════════════════════════ -->
+      
       <div class="mblock" id="mblock-audio">
         <div class="mblock-head" onclick="toggleMblock('audio')">
           <div class="mblock-icon au">🎵</div>
@@ -577,14 +577,14 @@
         </div>
         <div class="mblock-body" id="mbody-audio">
 
-          <!-- Source tabs -->
+          
           <div class="audio-src-tabs">
             <div class="audio-src-tab sel" id="audiotab-none"   onclick="selectAudioSrc2('none')">🔇 Aucun</div>
             <div class="audio-src-tab"     id="audiotab-upload" onclick="selectAudioSrc2('upload')">📁 Fichier</div>
             <div class="audio-src-tab"     id="audiotab-url"    onclick="selectAudioSrc2('url')">🔗 URL</div>
           </div>
 
-          <!-- Zone upload -->
+          
           <div id="audioUploadZone2" style="display:none;">
             <div id="audioDropzone" class="mdrop" onclick="triggerUpload('audioFile')" style="margin-top:14px;">
               <div class="mdrop-icon">🎧</div>
@@ -598,7 +598,7 @@
             </div>
           </div>
 
-          <!-- Zone URL -->
+          
           <div id="audioUrlZone2" style="display:none;margin-top:14px;">
             <label style="font-size:12px;font-weight:600;color:var(--gray-700);display:block;margin-bottom:6px;">Lien direct vers un fichier audio</label>
             <input type="text" id="audioUrlInput"
@@ -607,7 +607,7 @@
               oninput="pendingMedias.audio_url = this.value"/>
           </div>
 
-          <!-- Métadonnées (nom + pochette) -->
+          
           <div id="audioMeta" style="display:none;margin-top:18px;padding-top:16px;border-top:1px solid var(--gray-100);">
             <div style="font-size:13px;font-weight:600;color:var(--gray-700);margin-bottom:12px;">Informations du morceau</div>
             <div class="audio-meta-row">
@@ -633,7 +633,7 @@
         </div>
       </div>
 
-      <!-- ══ CURSEUR ═════════════════════════════════════════════════════════ -->
+      
       <div class="mblock" id="mblock-cursor">
         <div class="mblock-head" onclick="toggleMblock('cursor')">
           <div class="mblock-icon cur">🖱️</div>
@@ -1096,7 +1096,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const API = 'https://ak47-backend.onrender.com';
+const API = 'https:
 const token = localStorage.getItem('token');
 const username = localStorage.getItem('username');
 if (!token) window.location.href = '/login';
@@ -1107,50 +1107,50 @@ let pendingLinks = null;
 let pendingMedias = { avatar_url: null, bg_url: null, audio_url: null, audio_name: null, audio_cover_url: null, cursor_url: null };
 
 const SOCIALS = [
-  { id:'snapchat',   label:'Snapchat',   color:'#FFFC00', icon:'https://cdn.simpleicons.org/snapchat/FFFC00',    base:'https://snapchat.com/add/',       placeholder:'Ton pseudo Snapchat' },
-  { id:'youtube',    label:'YouTube',    color:'#FF0000', icon:'https://cdn.simpleicons.org/youtube/FF0000',      base:'https://youtube.com/@',           placeholder:'@ta-chaine' },
-  { id:'discord',    label:'Discord',    color:'#5865F2', icon:'https://cdn.simpleicons.org/discord/5865F2',      base:'https://discord.gg/',             placeholder:'Lien invitation ou pseudo' },
-  { id:'spotify',    label:'Spotify',    color:'#1DB954', icon:'https://cdn.simpleicons.org/spotify/1DB954',      base:'https://open.spotify.com/user/',  placeholder:'URL Spotify complète' },
-  { id:'instagram',  label:'Instagram',  color:'#E1306C', icon:'https://cdn.simpleicons.org/instagram/E1306C',    base:'https://instagram.com/',          placeholder:'Ton pseudo Instagram' },
-  { id:'x',          label:'X',          color:'#ffffff', icon:'https://cdn.simpleicons.org/x/ffffff',            base:'https://x.com/',                  placeholder:'Ton pseudo X' },
-  { id:'tiktok',     label:'TikTok',     color:'#ffffff', icon:'https://cdn.simpleicons.org/tiktok/ffffff',       base:'https://tiktok.com/@',            placeholder:'Ton pseudo TikTok' },
-  { id:'telegram',   label:'Telegram',   color:'#2CA5E0', icon:'https://cdn.simpleicons.org/telegram/2CA5E0',    base:'https://t.me/',                   placeholder:'Ton pseudo Telegram' },
-  { id:'soundcloud', label:'SoundCloud', color:'#FF5500', icon:'https://cdn.simpleicons.org/soundcloud/FF5500',  base:'https://soundcloud.com/',         placeholder:'Ton pseudo SoundCloud' },
-  { id:'paypal',     label:'PayPal',     color:'#00457C', icon:'https://cdn.simpleicons.org/paypal/00457C',      base:'https://paypal.me/',              placeholder:'Ton lien PayPal.me' },
-  { id:'github',     label:'GitHub',     color:'#ffffff', icon:'https://cdn.simpleicons.org/github/ffffff',       base:'https://github.com/',             placeholder:'Ton pseudo GitHub' },
-  { id:'roblox',     label:'Roblox',     color:'#ffffff', icon:'https://cdn.simpleicons.org/roblox/ffffff',       base:'https://roblox.com/users/',       placeholder:'URL profil Roblox' },
-  { id:'cashapp',    label:'Cash App',   color:'#00D54B', icon:'https://cdn.simpleicons.org/cashapp/00D54B',      base:'https://cash.app/$',              placeholder:'Ton $cashtag' },
-  { id:'venmo',      label:'Venmo',      color:'#3D95CE', icon:'https://cdn.simpleicons.org/venmo/3D95CE',        base:'https://venmo.com/',              placeholder:'Ton pseudo Venmo' },
-  { id:'playstation',label:'PS',         color:'#003087', icon:'https://cdn.simpleicons.org/playstation/003087', base:'https://psnprofiles.com/',         placeholder:'Ton pseudo PSN' },
-  { id:'xbox',       label:'Xbox',       color:'#107C10', icon:'https://cdn.simpleicons.org/xbox/107C10',         base:'https://account.xbox.com/fr-FR/Profile?gamertag=', placeholder:'Ton gamertag Xbox' },
-  { id:'applemusic', label:'Apple Music',color:'#FC3C44', icon:'https://cdn.simpleicons.org/applemusic/FC3C44',  base:'https://music.apple.com/',        placeholder:'URL Apple Music' },
-  { id:'gitlab',     label:'GitLab',     color:'#FC6D26', icon:'https://cdn.simpleicons.org/gitlab/FC6D26',       base:'https://gitlab.com/',             placeholder:'Ton pseudo GitLab' },
-  { id:'twitch',     label:'Twitch',     color:'#9146FF', icon:'https://cdn.simpleicons.org/twitch/9146FF',       base:'https://twitch.tv/',              placeholder:'Ton pseudo Twitch' },
-  { id:'reddit',     label:'Reddit',     color:'#FF4500', icon:'https://cdn.simpleicons.org/reddit/FF4500',       base:'https://reddit.com/u/',           placeholder:'Ton pseudo Reddit' },
-  { id:'vk',         label:'VK',         color:'#4C75A3', icon:'https://cdn.simpleicons.org/vk/4C75A3',           base:'https://vk.com/',                 placeholder:'Ton pseudo VK' },
-  { id:'letterboxd', label:'Letterboxd', color:'#00C030', icon:'https://cdn.simpleicons.org/letterboxd/00C030',  base:'https://letterboxd.com/',         placeholder:'Ton pseudo Letterboxd' },
-  { id:'bluesky',    label:'Bluesky',    color:'#0085FF', icon:'https://cdn.simpleicons.org/bluesky/0085FF',      base:'https://bsky.app/profile/',       placeholder:'Ton handle Bluesky' },
-  { id:'notion',     label:'Notion',     color:'#ffffff', icon:'https://cdn.simpleicons.org/notion/ffffff',       base:'https://notion.so/',              placeholder:'URL Notion' },
-  { id:'onlyfans',   label:'OnlyFans',   color:'#00AFF0', icon:'https://cdn.simpleicons.org/onlyfans/00AFF0',    base:'https://onlyfans.com/',           placeholder:'Ton pseudo OnlyFans' },
-  { id:'linkedin',   label:'LinkedIn',   color:'#0A66C2', icon:'https://cdn.simpleicons.org/linkedin/0A66C2',    base:'https://linkedin.com/in/',        placeholder:'Ton pseudo LinkedIn' },
-  { id:'steam',      label:'Steam',      color:'#ffffff', icon:'https://cdn.simpleicons.org/steam/ffffff',        base:'https://steamcommunity.com/id/', placeholder:'Ton pseudo Steam' },
-  { id:'kick',       label:'Kick',       color:'#53FC18', icon:'https://cdn.simpleicons.org/kick/53FC18',         base:'https://kick.com/',               placeholder:'Ton pseudo Kick' },
-  { id:'pinterest',  label:'Pinterest',  color:'#E60023', icon:'https://cdn.simpleicons.org/pinterest/E60023',   base:'https://pinterest.com/',          placeholder:'Ton pseudo Pinterest' },
-  { id:'lastfm',     label:'Last.fm',    color:'#D51007', icon:'https://cdn.simpleicons.org/lastdotfm/D51007',   base:'https://last.fm/user/',           placeholder:'Ton pseudo Last.fm' },
-  { id:'vsco',       label:'VSCO',       color:'#ffffff', icon:'https://cdn.simpleicons.org/vsco/ffffff',         base:'https://vsco.co/',                placeholder:'Ton pseudo VSCO' },
-  { id:'buymeacoffee',label:'Buy Me a Coffee',color:'#FFDD00',icon:'https://cdn.simpleicons.org/buymeacoffee/FFDD00',base:'https://buymeacoffee.com/', placeholder:'Ton pseudo BMC' },
-  { id:'kofi',       label:'Ko-fi',      color:'#FF5E5B', icon:'https://cdn.simpleicons.org/kofi/FF5E5B',         base:'https://ko-fi.com/',              placeholder:'Ton pseudo Ko-fi' },
-  { id:'facebook',   label:'Facebook',   color:'#1877F2', icon:'https://cdn.simpleicons.org/facebook/1877F2',    base:'https://facebook.com/',           placeholder:'Ton pseudo Facebook' },
-  { id:'threads',    label:'Threads',    color:'#ffffff', icon:'https://cdn.simpleicons.org/threads/ffffff',      base:'https://threads.net/@',           placeholder:'Ton pseudo Threads' },
-  { id:'patreon',    label:'Patreon',    color:'#FF424D', icon:'https://cdn.simpleicons.org/patreon/FF424D',      base:'https://patreon.com/',            placeholder:'Ton pseudo Patreon' },
-  { id:'signal',     label:'Signal',     color:'#3A76F0', icon:'https://cdn.simpleicons.org/signal/3A76F0',       base:'https://signal.me/#p/',           placeholder:'Ton lien Signal' },
-  { id:'bitcoin',    label:'Bitcoin',    color:'#F7931A', icon:'https://cdn.simpleicons.org/bitcoin/F7931A',      base:'',                                placeholder:'Ton adresse Bitcoin' },
-  { id:'ethereum',   label:'Ethereum',   color:'#627EEA', icon:'https://cdn.simpleicons.org/ethereum/627EEA',    base:'',                                placeholder:'Ton adresse Ethereum' },
-  { id:'litecoin',   label:'Litecoin',   color:'#A6A9AA', icon:'https://cdn.simpleicons.org/litecoin/A6A9AA',    base:'',                                placeholder:'Ton adresse Litecoin' },
-  { id:'hive',       label:'Hive',       color:'#E31337', icon:'https://cdn.simpleicons.org/hive/E31337',         base:'https://hive.blog/@',             placeholder:'Ton pseudo Hive' },
-  { id:'ripple',     label:'XRP',        color:'#346AA9', icon:'https://cdn.simpleicons.org/xrp/346AA9',          base:'',                                placeholder:'Ton adresse XRP' },
-  { id:'monero',     label:'Monero',     color:'#FF6600', icon:'https://cdn.simpleicons.org/monero/FF6600',       base:'',                                placeholder:'Ton adresse Monero' },
-  { id:'email',      label:'E-mail',     color:'#ffffff', icon:'https://cdn.simpleicons.org/gmail/ffffff',        base:'mailto:',                         placeholder:'ton@email.com' },
+  { id:'snapchat',   label:'Snapchat',   color:'#FFFC00', icon:'https:
+  { id:'youtube',    label:'YouTube',    color:'#FF0000', icon:'https:
+  { id:'discord',    label:'Discord',    color:'#5865F2', icon:'https:
+  { id:'spotify',    label:'Spotify',    color:'#1DB954', icon:'https:
+  { id:'instagram',  label:'Instagram',  color:'#E1306C', icon:'https:
+  { id:'x',          label:'X',          color:'#ffffff', icon:'https:
+  { id:'tiktok',     label:'TikTok',     color:'#ffffff', icon:'https:
+  { id:'telegram',   label:'Telegram',   color:'#2CA5E0', icon:'https:
+  { id:'soundcloud', label:'SoundCloud', color:'#FF5500', icon:'https:
+  { id:'paypal',     label:'PayPal',     color:'#00457C', icon:'https:
+  { id:'github',     label:'GitHub',     color:'#ffffff', icon:'https:
+  { id:'roblox',     label:'Roblox',     color:'#ffffff', icon:'https:
+  { id:'cashapp',    label:'Cash App',   color:'#00D54B', icon:'https:
+  { id:'venmo',      label:'Venmo',      color:'#3D95CE', icon:'https:
+  { id:'playstation',label:'PS',         color:'#003087', icon:'https:
+  { id:'xbox',       label:'Xbox',       color:'#107C10', icon:'https:
+  { id:'applemusic', label:'Apple Music',color:'#FC3C44', icon:'https:
+  { id:'gitlab',     label:'GitLab',     color:'#FC6D26', icon:'https:
+  { id:'twitch',     label:'Twitch',     color:'#9146FF', icon:'https:
+  { id:'reddit',     label:'Reddit',     color:'#FF4500', icon:'https:
+  { id:'vk',         label:'VK',         color:'#4C75A3', icon:'https:
+  { id:'letterboxd', label:'Letterboxd', color:'#00C030', icon:'https:
+  { id:'bluesky',    label:'Bluesky',    color:'#0085FF', icon:'https:
+  { id:'notion',     label:'Notion',     color:'#ffffff', icon:'https:
+  { id:'onlyfans',   label:'OnlyFans',   color:'#00AFF0', icon:'https:
+  { id:'linkedin',   label:'LinkedIn',   color:'#0A66C2', icon:'https:
+  { id:'steam',      label:'Steam',      color:'#ffffff', icon:'https:
+  { id:'kick',       label:'Kick',       color:'#53FC18', icon:'https:
+  { id:'pinterest',  label:'Pinterest',  color:'#E60023', icon:'https:
+  { id:'lastfm',     label:'Last.fm',    color:'#D51007', icon:'https:
+  { id:'vsco',       label:'VSCO',       color:'#ffffff', icon:'https:
+  { id:'buymeacoffee',label:'Buy Me a Coffee',color:'#FFDD00',icon:'https:
+  { id:'kofi',       label:'Ko-fi',      color:'#FF5E5B', icon:'https:
+  { id:'facebook',   label:'Facebook',   color:'#1877F2', icon:'https:
+  { id:'threads',    label:'Threads',    color:'#ffffff', icon:'https:
+  { id:'patreon',    label:'Patreon',    color:'#FF424D', icon:'https:
+  { id:'signal',     label:'Signal',     color:'#3A76F0', icon:'https:
+  { id:'bitcoin',    label:'Bitcoin',    color:'#F7931A', icon:'https:
+  { id:'ethereum',   label:'Ethereum',   color:'#627EEA', icon:'https:
+  { id:'litecoin',   label:'Litecoin',   color:'#A6A9AA', icon:'https:
+  { id:'hive',       label:'Hive',       color:'#E31337', icon:'https:
+  { id:'ripple',     label:'XRP',        color:'#346AA9', icon:'https:
+  { id:'monero',     label:'Monero',     color:'#FF6600', icon:'https:
+  { id:'email',      label:'E-mail',     color:'#ffffff', icon:'https:
 ];
 
 let activeSocial = null;
@@ -1159,57 +1159,57 @@ function getLinkIcon(url) {
   if (!url) return null;
   const u = url.toLowerCase();
   const map = [
-    ['discord.gg', 'https://cdn.simpleicons.org/discord/5865F2'],
-    ['discord.com', 'https://cdn.simpleicons.org/discord/5865F2'],
-    ['instagram.com', 'https://cdn.simpleicons.org/instagram/E1306C'],
-    ['tiktok.com', 'https://cdn.simpleicons.org/tiktok/ffffff'],
-    ['youtube.com', 'https://cdn.simpleicons.org/youtube/FF0000'],
-    ['youtu.be', 'https://cdn.simpleicons.org/youtube/FF0000'],
-    ['twitch.tv', 'https://cdn.simpleicons.org/twitch/9146FF'],
-    ['github.com', 'https://cdn.simpleicons.org/github/ffffff'],
-    ['x.com', 'https://cdn.simpleicons.org/x/ffffff'],
-    ['twitter.com', 'https://cdn.simpleicons.org/x/ffffff'],
-    ['snapchat.com', 'https://cdn.simpleicons.org/snapchat/FFFC00'],
-    ['linkedin.com', 'https://cdn.simpleicons.org/linkedin/0A66C2'],
-    ['steam', 'https://cdn.simpleicons.org/steam/ffffff'],
-    ['steamcommunity.com', 'https://cdn.simpleicons.org/steam/ffffff'],
-    ['reddit.com', 'https://cdn.simpleicons.org/reddit/FF4500'],
-    ['spotify.com', 'https://cdn.simpleicons.org/spotify/1DB954'],
-    ['telegram.me', 'https://cdn.simpleicons.org/telegram/2CA5E0'],
-    ['t.me', 'https://cdn.simpleicons.org/telegram/2CA5E0'],
-    ['soundcloud.com', 'https://cdn.simpleicons.org/soundcloud/FF5500'],
-    ['paypal.me', 'https://cdn.simpleicons.org/paypal/00457C'],
-    ['paypal.com', 'https://cdn.simpleicons.org/paypal/00457C'],
-    ['roblox.com', 'https://cdn.simpleicons.org/roblox/ffffff'],
-    ['kick.com', 'https://cdn.simpleicons.org/kick/53FC18'],
-    ['pinterest.com', 'https://cdn.simpleicons.org/pinterest/E60023'],
-    ['last.fm', 'https://cdn.simpleicons.org/lastdotfm/D51007'],
-    ['bluesky', 'https://cdn.simpleicons.org/bluesky/0085FF'],
-    ['bsky.app', 'https://cdn.simpleicons.org/bluesky/0085FF'],
-    ['threads.net', 'https://cdn.simpleicons.org/threads/ffffff'],
-    ['notion.so', 'https://cdn.simpleicons.org/notion/ffffff'],
-    ['onlyfans.com', 'https://cdn.simpleicons.org/onlyfans/00AFF0'],
-    ['patreon.com', 'https://cdn.simpleicons.org/patreon/FF424D'],
-    ['buymeacoffee.com', 'https://cdn.simpleicons.org/buymeacoffee/FFDD00'],
-    ['ko-fi.com', 'https://cdn.simpleicons.org/kofi/FF5E5B'],
-    ['facebook.com', 'https://cdn.simpleicons.org/facebook/1877F2'],
-    ['fb.com', 'https://cdn.simpleicons.org/facebook/1877F2'],
-    ['gitlab.com', 'https://cdn.simpleicons.org/gitlab/FC6D26'],
-    ['letterboxd.com', 'https://cdn.simpleicons.org/letterboxd/00C030'],
-    ['vk.com', 'https://cdn.simpleicons.org/vk/4C75A3'],
-    ['xbox.com', 'https://cdn.simpleicons.org/xbox/107C10'],
-    ['xboxlive.com', 'https://cdn.simpleicons.org/xbox/107C10'],
-    ['psnprofiles.com', 'https://cdn.simpleicons.org/playstation/003087'],
-    ['playstation.com', 'https://cdn.simpleicons.org/playstation/003087'],
-    ['music.apple.com', 'https://cdn.simpleicons.org/applemusic/FC3C44'],
-    ['vsco.co', 'https://cdn.simpleicons.org/vsco/ffffff'],
-    ['signal.me', 'https://cdn.simpleicons.org/signal/3A76F0'],
-    ['cashapp.com', 'https://cdn.simpleicons.org/cashapp/00D54B'],
-    ['cash.app', 'https://cdn.simpleicons.org/cashapp/00D54B'],
-    ['venmo.com', 'https://cdn.simpleicons.org/venmo/3D95CE'],
-    ['bitcoin', 'https://cdn.simpleicons.org/bitcoin/F7931A'],
-    ['ethereum', 'https://cdn.simpleicons.org/ethereum/627EEA'],
-    ['mailto:', 'https://cdn.simpleicons.org/gmail/ffffff'],
+    ['discord.gg', 'https:
+    ['discord.com', 'https:
+    ['instagram.com', 'https:
+    ['tiktok.com', 'https:
+    ['youtube.com', 'https:
+    ['youtu.be', 'https:
+    ['twitch.tv', 'https:
+    ['github.com', 'https:
+    ['x.com', 'https:
+    ['twitter.com', 'https:
+    ['snapchat.com', 'https:
+    ['linkedin.com', 'https:
+    ['steam', 'https:
+    ['steamcommunity.com', 'https:
+    ['reddit.com', 'https:
+    ['spotify.com', 'https:
+    ['telegram.me', 'https:
+    ['t.me', 'https:
+    ['soundcloud.com', 'https:
+    ['paypal.me', 'https:
+    ['paypal.com', 'https:
+    ['roblox.com', 'https:
+    ['kick.com', 'https:
+    ['pinterest.com', 'https:
+    ['last.fm', 'https:
+    ['bluesky', 'https:
+    ['bsky.app', 'https:
+    ['threads.net', 'https:
+    ['notion.so', 'https:
+    ['onlyfans.com', 'https:
+    ['patreon.com', 'https:
+    ['buymeacoffee.com', 'https:
+    ['ko-fi.com', 'https:
+    ['facebook.com', 'https:
+    ['fb.com', 'https:
+    ['gitlab.com', 'https:
+    ['letterboxd.com', 'https:
+    ['vk.com', 'https:
+    ['xbox.com', 'https:
+    ['xboxlive.com', 'https:
+    ['psnprofiles.com', 'https:
+    ['playstation.com', 'https:
+    ['music.apple.com', 'https:
+    ['vsco.co', 'https:
+    ['signal.me', 'https:
+    ['cashapp.com', 'https:
+    ['cash.app', 'https:
+    ['venmo.com', 'https:
+    ['bitcoin', 'https:
+    ['ethereum', 'https:
+    ['mailto:', 'https:
   ];
   for (const [key, icon] of map) {
     if (u.includes(key)) return icon;
@@ -1623,7 +1623,7 @@ function selectIconPickerItem(s, btn) {
 
   el('ipinIcon').src = s.icon;
   el('ipinName').textContent = s.label;
-  el('ipinVal').placeholder = s.placeholder || (s.base ? s.base + '...' : 'https://...');
+  el('ipinVal').placeholder = s.placeholder || (s.base ? s.base + '...' : 'https:
   el('ipinVal').value = '';
   closeIconManual();
   el('iconInputPanel').classList.add('active');
@@ -1647,7 +1647,7 @@ function confirmIconLink() {
   if (activeSocial.base && !val.startsWith('http') && !val.startsWith('mailto:')) {
     url = activeSocial.base + val;
   } else if (!val.startsWith('http') && !val.startsWith('mailto:')) {
-    url = 'https://' + val;
+    url = 'https:
   }
   pendingLinks.push({ title: activeSocial.label, url });
   closeIconPicker();
@@ -1674,7 +1674,7 @@ function confirmManualLink() {
   if (!title || !url) { if (!title) el('ipmTitle').focus(); else el('ipmUrl').focus(); return; }
   if (pendingLinks.length >= 20) { closeIconPicker(); showAlert('linksAlert', 'Maximum 20 liens'); return; }
   let finalUrl = url;
-  if (!url.startsWith('http') && !url.startsWith('mailto:')) finalUrl = 'https://' + url;
+  if (!url.startsWith('http') && !url.startsWith('mailto:')) finalUrl = 'https:
   pendingLinks.push({ title, url: finalUrl });
   closeIconPicker();
   el('linksAlert').innerHTML = '';
@@ -1693,7 +1693,7 @@ function addLink() {
   if (!url) return showAlert('linksAlert', "L'URL est requise");
   if (pendingLinks.length >= 20) return showAlert('linksAlert', 'Maximum 20 liens');
   let finalUrl = url;
-  if (!url.startsWith('http://') && !url.startsWith('https://')) finalUrl = 'https://' + url;
+  if (!url.startsWith('http:
   pendingLinks.push({ title, url: finalUrl });
   el('newLinkTitle').value = ''; el('newLinkUrl').value = '';
   el('linksAlert').innerHTML = '';
@@ -1761,8 +1761,6 @@ function triggerUpload(inputId) {
   document.getElementById(inputId).click();
 }
 
-// ─── MÉDIAS : nouveau système ─────────────────────────────────────────────────
-
 function toggleMblock(id) {
   const block = document.getElementById('mblock-' + id);
   if (block) block.classList.toggle('open');
@@ -1787,7 +1785,6 @@ function selectAudioSrc2(val) {
   }
 }
 
-// Alias legacy (perso tab uses old toggleAudioManager)
 function toggleAudioManager() {}
 function selectAudioSrc(val) { selectAudioSrc2(val); }
 
@@ -1847,13 +1844,11 @@ function removeMedia2(type) {
   }
 }
 
-// Legacy alias pour l'ancien code
 function removeMedia(e, type) {
   if (e && e.stopPropagation) e.stopPropagation();
   removeMedia2(type);
 }
 
-// Compresse une image via canvas. maxW/maxH = dimensions max. quality = 0-1 JPEG.
 function compressImage(file, maxW, maxH, quality) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -1870,7 +1865,7 @@ function compressImage(file, maxW, maxH, quality) {
         canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
         let result = canvas.toDataURL('image/jpeg', quality);
-        // Si encore trop lourd (>3.5MB base64), recompresser à qualité réduite
+
         if (result.length > 3.5 * 1024 * 1024) result = canvas.toDataURL('image/jpeg', 0.72);
         if (result.length > 3.5 * 1024 * 1024) result = canvas.toDataURL('image/jpeg', 0.55);
         resolve(result);
@@ -2067,7 +2062,6 @@ function loadMediasUI() {
     if (rem) rem.style.display = 'inline';
   }
 
-  // Ouvrir le premier bloc actif automatiquement
   ['avatar','bg','audio','cursor'].forEach(id => {
     const status = document.getElementById('mstatus-' + id);
     if (status && status.classList.contains('active')) {
@@ -2206,18 +2200,15 @@ function loadPersoUI() {
 
   if (userData.spotify_url) el('spotifyUrlInput').value = userData.spotify_url;
 
-  // Opacité du fond
   const bgOpacity = userData.bg_opacity !== undefined ? userData.bg_opacity : 1;
   el('bgOpacityRange').value = Math.round(bgOpacity * 100);
   el('bgOpacityVal').textContent = Math.round(bgOpacity * 100) + '%';
 
-  // Couleur du texte profil
   if (userData.text_color) {
     el('profileTextColor').value = userData.text_color;
     el('profileTextColorHex').textContent = userData.text_color;
   }
 
-  // Fond de la card
   const cardBg = userData.card_bg || '#ffffff';
   el('cardBgColor').value = cardBg;
   el('cardBgColorHex').textContent = cardBg;
@@ -2225,13 +2216,10 @@ function loadPersoUI() {
   el('cardOpacityRange').value = Math.round(cardOpacity * 100);
   el('cardOpacityVal').textContent = Math.round(cardOpacity * 100) + '%';
 
-  // Présence Discord
-  // Localisation
   if (el('persoLocation')) el('persoLocation').value = userData.location || '';
 
   el('discordPresenceToggle').checked = !!userData.discord_presence;
 
-  // Effet de fond
   const bgEffect = userData.bg_effect || 'none';
   el('bgEffectSelect').value = bgEffect;
   el('bgEffectColorRow').style.display = bgEffect !== 'none' ? 'flex' : 'none';
@@ -2240,21 +2228,17 @@ function loadPersoUI() {
     el('bgEffectColorHex').textContent = userData.bg_effect_color;
   }
 
-  // Couleur d'accent
   if (userData.accent_color) {
     el('accentColorPicker').value = userData.accent_color;
     el('accentColorHex').textContent = userData.accent_color;
   }
 
-  // Flou du profil
   const blur = userData.profile_blur !== undefined ? userData.profile_blur : 0;
   el('profileBlurRange').value = blur;
   el('profileBlurVal').textContent = blur + 'px';
 
-  // Effet pseudo
   el('usernameEffectSelect').value = userData.username_effect || 'none';
 
-  // Cibles glow
   const glowTargets = userData.glow_targets ? userData.glow_targets.split(',') : [];
   document.querySelectorAll('#tab-perso input[type=checkbox][value]').forEach(cb => {
     if (['avatar','username','card','links','badges'].includes(cb.value)) {
@@ -2262,20 +2246,19 @@ function loadPersoUI() {
     }
   });
 
-  // Couleur des icônes
   if (userData.icon_color) {
     el('iconColorPicker').value = userData.icon_color;
     el('iconColorHex').textContent = userData.icon_color;
   }
-  // Icônes monochrome
+
   el('monochromeIconsToggle').checked = !!userData.monochrome_icons;
-  // Titre animé
+
   el('animatedTitleToggle').checked = !!userData.animated_title;
-  // Inverser les blocs
+
   el('invertBlocksToggle').checked = !!userData.invert_blocks;
-  // Avatar Discord auto
+
   el('useDiscordAvatarToggle').checked = !!userData.use_discord_avatar;
-  // Décoration d'avatar
+
   el('avatarDecorationSelect').value = userData.avatar_decoration || 'none';
 }
 
@@ -2321,17 +2304,17 @@ function updateBtnStylePreview() {
 async function handlePersoMedia(type, input) {
   const file = input.files[0];
   if (!file) return;
-  // Limite souple côté client — compression canvas avant envoi
-  const hardMax = 200 * 1024 * 1024; // 200 MB max absolu
+
+  const hardMax = 200 * 1024 * 1024;
   if (file.size > hardMax) { showToast('Fichier trop lourd (max 200MB)'); return; }
 
   let data;
   if (type === 'bg') {
-    // Compresse le fond de page : max 2560×1440, qualité 0.85
+
     try { data = await compressImage(file, 2560, 1440, 0.85); }
     catch { showToast('Impossible de lire cette image.'); return; }
   } else if (type === 'banner') {
-    // Compresse la bannière : max 1200×400, qualité 0.88
+
     try { data = await compressImage(file, 1200, 400, 0.88); }
     catch { showToast('Impossible de lire cette image.'); return; }
   } else {
@@ -2419,7 +2402,7 @@ async function savePerso() {
     const data = await r.json();
     if (!r.ok) { showAlert('persoAlert', data.error || 'Erreur'); return; }
     userData = data;
-    // Sync location to profile tab if changed
+
     if (body.location !== undefined && el('location')) el('location').value = data.location || '';
     pendingPerso = {
       avatar_shape: null, link_layout: null, link_btn_style: null,
@@ -2486,9 +2469,6 @@ document.addEventListener("DOMContentLoaded",function(){
 });
 </script>
 
-
-
-<!-- Mobile bottom nav -->
 <nav class="mobile-bottom-nav" id="mobileBottomNav">
   <button class="mob-nav-btn active" onclick="switchTab('overview');setMobActive(this)">
     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>

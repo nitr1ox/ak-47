@@ -354,14 +354,14 @@
     }
     .dc-badge:hover { transform: scale(1.25); }
 
-    /* Variables accent */
+    
     :root { --accent: #6366f1; }
 
-    /* Effet glow générique via classe */
+    
     .glow-avatar   { box-shadow: 0 0 12px var(--accent), 0 0 30px var(--accent,#6366f1)55 !important; }
     .glow-card     { box-shadow: 0 0 12px var(--accent), 0 0 30px var(--accent,#6366f1)55 !important; }
 
-    /* Décoration avatar — reset position pour ::before */
+    
     .profile-avatar { position: relative; }
 
     .dc-badge:hover::after {
@@ -392,9 +392,6 @@
   </style>
 </head>
 <body>
-
-
-
 
 <div id="enterOverlay" onclick="enterSite()">
   <div class="enter-bg"></div>
@@ -509,7 +506,7 @@
 </div>
 
 <script>
-const API = 'https://ak47-backend.onrender.com';
+const API = 'https:
 const path = window.location.pathname;
 const parts = path.split('/').filter(Boolean);
 const username = parts[0];
@@ -520,70 +517,70 @@ if (!username || STATIC.includes(username)) {
 }
 
 const SOCIAL_META = {
-  twitter:    { emoji: '𝕏',  label: 'X / Twitter',  base: 'https://x.com/' },
-  instagram:  { emoji: '📸', label: 'Instagram',     base: 'https://instagram.com/' },
-  tiktok:     { emoji: '🎵', label: 'TikTok',        base: 'https://tiktok.com/@' },
-  youtube:    { emoji: '▶️', label: 'YouTube',       base: 'https://youtube.com/@' },
-  twitch:     { emoji: '🎮', label: 'Twitch',        base: 'https://twitch.tv/' },
-  github:     { emoji: '💻', label: 'GitHub',        base: 'https://github.com/' },
+  twitter:    { emoji: '𝕏',  label: 'X / Twitter',  base: 'https:
+  instagram:  { emoji: '📸', label: 'Instagram',     base: 'https:
+  tiktok:     { emoji: '🎵', label: 'TikTok',        base: 'https:
+  youtube:    { emoji: '▶️', label: 'YouTube',       base: 'https:
+  twitch:     { emoji: '🎮', label: 'Twitch',        base: 'https:
+  github:     { emoji: '💻', label: 'GitHub',        base: 'https:
   discord:    { emoji: '💬', label: 'Discord',       base: '' },
-  snapchat:   { emoji: '👻', label: 'Snapchat',      base: 'https://snapchat.com/add/' },
-  linkedin:   { emoji: '💼', label: 'LinkedIn',      base: 'https://linkedin.com/in/' },
-  facebook:   { emoji: '👥', label: 'Facebook',      base: 'https://facebook.com/' },
-  pinterest:  { emoji: '📌', label: 'Pinterest',     base: 'https://pinterest.com/' },
-  reddit:     { emoji: '🤖', label: 'Reddit',        base: 'https://reddit.com/u/' },
-  steam:      { emoji: '🎲', label: 'Steam',         base: 'https://steamcommunity.com/id/' },
+  snapchat:   { emoji: '👻', label: 'Snapchat',      base: 'https:
+  linkedin:   { emoji: '💼', label: 'LinkedIn',      base: 'https:
+  facebook:   { emoji: '👥', label: 'Facebook',      base: 'https:
+  pinterest:  { emoji: '📌', label: 'Pinterest',     base: 'https:
+  reddit:     { emoji: '🤖', label: 'Reddit',        base: 'https:
+  steam:      { emoji: '🎲', label: 'Steam',         base: 'https:
 };
 
 function getLinkIcon(url) {
   if (!url) return null;
   const u = url.toLowerCase();
   const map = [
-    ['discord.gg',        'https://cdn.simpleicons.org/discord/5865F2'],
-    ['discord.com',       'https://cdn.simpleicons.org/discord/5865F2'],
-    ['instagram.com',     'https://cdn.simpleicons.org/instagram/E1306C'],
-    ['tiktok.com',        'https://cdn.simpleicons.org/tiktok/ffffff'],
-    ['youtube.com',       'https://cdn.simpleicons.org/youtube/FF0000'],
-    ['youtu.be',          'https://cdn.simpleicons.org/youtube/FF0000'],
-    ['twitch.tv',         'https://cdn.simpleicons.org/twitch/9146FF'],
-    ['github.com',        'https://cdn.simpleicons.org/github/ffffff'],
-    ['x.com',             'https://cdn.simpleicons.org/x/ffffff'],
-    ['twitter.com',       'https://cdn.simpleicons.org/x/ffffff'],
-    ['snapchat.com',      'https://cdn.simpleicons.org/snapchat/FFFC00'],
-    ['linkedin.com',      'https://cdn.simpleicons.org/linkedin/0A66C2'],
-    ['steamcommunity.com','https://cdn.simpleicons.org/steam/ffffff'],
-    ['steam',             'https://cdn.simpleicons.org/steam/ffffff'],
-    ['reddit.com',        'https://cdn.simpleicons.org/reddit/FF4500'],
-    ['spotify.com',       'https://cdn.simpleicons.org/spotify/1DB954'],
-    ['t.me',              'https://cdn.simpleicons.org/telegram/2CA5E0'],
-    ['telegram.me',       'https://cdn.simpleicons.org/telegram/2CA5E0'],
-    ['soundcloud.com',    'https://cdn.simpleicons.org/soundcloud/FF5500'],
-    ['paypal.me',         'https://cdn.simpleicons.org/paypal/00457C'],
-    ['paypal.com',        'https://cdn.simpleicons.org/paypal/00457C'],
-    ['roblox.com',        'https://cdn.simpleicons.org/roblox/ffffff'],
-    ['kick.com',          'https://cdn.simpleicons.org/kick/53FC18'],
-    ['pinterest.com',     'https://cdn.simpleicons.org/pinterest/E60023'],
-    ['last.fm',           'https://cdn.simpleicons.org/lastdotfm/D51007'],
-    ['bsky.app',          'https://cdn.simpleicons.org/bluesky/0085FF'],
-    ['threads.net',       'https://cdn.simpleicons.org/threads/ffffff'],
-    ['notion.so',         'https://cdn.simpleicons.org/notion/ffffff'],
-    ['onlyfans.com',      'https://cdn.simpleicons.org/onlyfans/00AFF0'],
-    ['patreon.com',       'https://cdn.simpleicons.org/patreon/FF424D'],
-    ['buymeacoffee.com',  'https://cdn.simpleicons.org/buymeacoffee/FFDD00'],
-    ['ko-fi.com',         'https://cdn.simpleicons.org/kofi/FF5E5B'],
-    ['facebook.com',      'https://cdn.simpleicons.org/facebook/1877F2'],
-    ['fb.com',            'https://cdn.simpleicons.org/facebook/1877F2'],
-    ['gitlab.com',        'https://cdn.simpleicons.org/gitlab/FC6D26'],
-    ['letterboxd.com',    'https://cdn.simpleicons.org/letterboxd/00C030'],
-    ['vk.com',            'https://cdn.simpleicons.org/vk/4C75A3'],
-    ['psnprofiles.com',   'https://cdn.simpleicons.org/playstation/003087'],
-    ['playstation.com',   'https://cdn.simpleicons.org/playstation/003087'],
-    ['music.apple.com',   'https://cdn.simpleicons.org/applemusic/FC3C44'],
-    ['vsco.co',           'https://cdn.simpleicons.org/vsco/ffffff'],
-    ['signal.me',         'https://cdn.simpleicons.org/signal/3A76F0'],
-    ['cash.app',          'https://cdn.simpleicons.org/cashapp/00D54B'],
-    ['venmo.com',         'https://cdn.simpleicons.org/venmo/3D95CE'],
-    ['mailto:',           'https://cdn.simpleicons.org/gmail/ffffff'],
+    ['discord.gg',        'https:
+    ['discord.com',       'https:
+    ['instagram.com',     'https:
+    ['tiktok.com',        'https:
+    ['youtube.com',       'https:
+    ['youtu.be',          'https:
+    ['twitch.tv',         'https:
+    ['github.com',        'https:
+    ['x.com',             'https:
+    ['twitter.com',       'https:
+    ['snapchat.com',      'https:
+    ['linkedin.com',      'https:
+    ['steamcommunity.com','https:
+    ['steam',             'https:
+    ['reddit.com',        'https:
+    ['spotify.com',       'https:
+    ['t.me',              'https:
+    ['telegram.me',       'https:
+    ['soundcloud.com',    'https:
+    ['paypal.me',         'https:
+    ['paypal.com',        'https:
+    ['roblox.com',        'https:
+    ['kick.com',          'https:
+    ['pinterest.com',     'https:
+    ['last.fm',           'https:
+    ['bsky.app',          'https:
+    ['threads.net',       'https:
+    ['notion.so',         'https:
+    ['onlyfans.com',      'https:
+    ['patreon.com',       'https:
+    ['buymeacoffee.com',  'https:
+    ['ko-fi.com',         'https:
+    ['facebook.com',      'https:
+    ['fb.com',            'https:
+    ['gitlab.com',        'https:
+    ['letterboxd.com',    'https:
+    ['vk.com',            'https:
+    ['psnprofiles.com',   'https:
+    ['playstation.com',   'https:
+    ['music.apple.com',   'https:
+    ['vsco.co',           'https:
+    ['signal.me',         'https:
+    ['cash.app',          'https:
+    ['venmo.com',         'https:
+    ['mailto:',           'https:
   ];
   for (const [key, icon] of map) {
     if (u.includes(key)) return icon;
@@ -620,7 +617,7 @@ async function loadProfile() {
     const font = user.profile_font || 'Inter';
     if (font !== 'Inter') {
       const link = document.getElementById('profileFont');
-      link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}:wght@400;500;600;700&display=swap`;
+      link.href = `https:
       document.body.style.fontFamily = `'${font}', sans-serif`;
     }
 
@@ -800,7 +797,7 @@ async function loadProfile() {
 
       
       const discordAvatarUrl = (discordOauth && discordOauth.avatar)
-        ? `https://cdn.discordapp.com/avatars/${discordOauth.id}/${discordOauth.avatar}.png?size=128`
+        ? `https:
         : (user.avatar_url || null);
       
       const discordUsername = (discordOauth && discordOauth.username) || user.discord_username || null;
@@ -833,46 +830,46 @@ async function loadProfile() {
         discord: { title: 'Connecté via Discord', svg: `<svg viewBox="0 0 24 24" fill="#5865F2"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>` },
 
         
-        nitro: { title: 'Discord Nitro', svg: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="nitroGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f47fff"/><stop offset="100%" stop-color="#7289da"/></linearGradient></defs><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm0 12.5c-2.5 0-4.71-1.28-6-3.22l.03-.03C6.47 13.05 9.27 12 12 12s5.53 1.05 5.97 2.25l.03.03c-1.29 1.94-3.5 3.22-6 3.22z" fill="url(#nitroGrad)"/></svg>` },
+        nitro: { title: 'Discord Nitro', svg: `<svg viewBox="0 0 24 24" xmlns="http:
 
         
-        staff: { title: 'Discord Staff', svg: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="12" fill="#5865F2"/><path d="M12 4L5 7.5v4c0 3.9 3 7.4 7 8.5 4-1.1 7-4.6 7-8.5v-4L12 4zm-1 10.5H9.5v-5H11v5zm3 0h-1.5v-5H14v5z" fill="white"/></svg>` },
+        staff: { title: 'Discord Staff', svg: `<svg viewBox="0 0 24 24" xmlns="http:
 
         
-        early_supporter: { title: 'Early Supporter', svg: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="esGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ff73fa"/><stop offset="100%" stop-color="#9c59c5"/></linearGradient></defs><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="url(#esGrad)"/></svg>` },
+        early_supporter: { title: 'Early Supporter', svg: `<svg viewBox="0 0 24 24" xmlns="http:
 
         
-        hypesquad_bravery: { title: 'HypeSquad Bravery', svg: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L2 9.5V21h20V9.5L12 3zm0 2.5l8 5V19H4V10.5l8-5z" fill="#9c59d1"/><path d="M12 5.5l8 5V19H4V10.5l8-5z" fill="#9c84ef"/></svg>` },
+        hypesquad_bravery: { title: 'HypeSquad Bravery', svg: `<svg viewBox="0 0 24 24" xmlns="http:
 
         
-        hypesquad_brilliance: { title: 'HypeSquad Brilliance', svg: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="5" fill="#f47b67"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="#f47b67" stroke-width="2" stroke-linecap="round"/></svg>` },
+        hypesquad_brilliance: { title: 'HypeSquad Brilliance', svg: `<svg viewBox="0 0 24 24" xmlns="http:
 
         
-        hypesquad_balance: { title: 'HypeSquad Balance', svg: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 3l1.5 4.5h4.5l-3.75 2.75 1.5 4.5L12 12l-3.75 2.75 1.5-4.5L6 7.5h4.5L12 3z" fill="#45ddc0"/><rect x="11" y="14" width="2" height="5" fill="#45ddc0"/><rect x="7" y="19" width="10" height="2" rx="1" fill="#45ddc0"/></svg>` },
+        hypesquad_balance: { title: 'HypeSquad Balance', svg: `<svg viewBox="0 0 24 24" xmlns="http:
 
         
-        hypesquad: { title: 'HypeSquad Events', svg: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="12" fill="#f0b132"/><text x="12" y="17" font-size="13" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial,sans-serif">H</text></svg>` },
+        hypesquad: { title: 'HypeSquad Events', svg: `<svg viewBox="0 0 24 24" xmlns="http:
 
         
-        bug_hunter: { title: 'Bug Hunter', svg: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="11" r="4" fill="#3ba55d"/><path d="M8.5 7.5C9.5 5.5 12 5 12 5s2.5.5 3.5 2.5" stroke="#3ba55d" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M7 9l-3-2M17 9l3-2M7 12l-3 1M17 12l3 1M7 15l-2 2M17 15l2 2" stroke="#3ba55d" stroke-width="1.5" stroke-linecap="round"/><ellipse cx="12" cy="11" rx="2" ry="3" fill="#57f287"/></svg>` },
+        bug_hunter: { title: 'Bug Hunter', svg: `<svg viewBox="0 0 24 24" xmlns="http:
 
         
-        bug_hunter_level_2: { title: 'Bug Hunter Gold', svg: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="11" r="4" fill="#c27c0e"/><path d="M8.5 7.5C9.5 5.5 12 5 12 5s2.5.5 3.5 2.5" stroke="#c27c0e" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M7 9l-3-2M17 9l3-2M7 12l-3 1M17 12l3 1M7 15l-2 2M17 15l2 2" stroke="#c27c0e" stroke-width="1.5" stroke-linecap="round"/><ellipse cx="12" cy="11" rx="2" ry="3" fill="#f0b132"/></svg>` },
+        bug_hunter_level_2: { title: 'Bug Hunter Gold', svg: `<svg viewBox="0 0 24 24" xmlns="http:
 
         
-        active_developer: { title: 'Active Developer', svg: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 2L4 14h7l-2 8 11-12h-7l2-8z" fill="#23a55a"/></svg>` },
+        active_developer: { title: 'Active Developer', svg: `<svg viewBox="0 0 24 24" xmlns="http:
 
         
-        verified_developer: { title: 'Verified Bot Developer', svg: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L3 6v6c0 5.25 3.9 10.15 9 11.35C17.1 22.15 21 17.25 21 12V6L12 2z" fill="#5865F2"/><path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>` },
+        verified_developer: { title: 'Verified Bot Developer', svg: `<svg viewBox="0 0 24 24" xmlns="http:
 
         
-        moderator: { title: 'Modérateur', svg: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L4 5v5c0 4.5 3.4 8.7 8 9.93C16.6 18.7 20 14.5 20 10V5L12 2z" fill="#e74c3c"/><path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>` },
+        moderator: { title: 'Modérateur', svg: `<svg viewBox="0 0 24 24" xmlns="http:
 
         
-        partner: { title: 'Discord Partner', svg: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#5865F2"/><path d="M7 12l3 3 7-7" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>` },
+        partner: { title: 'Discord Partner', svg: `<svg viewBox="0 0 24 24" xmlns="http:
 
         
-        server: { title: 'Membre du serveur', svg: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#23a55a"/><path d="M7 12l3 3 7-7" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>` },
+        server: { title: 'Membre du serveur', svg: `<svg viewBox="0 0 24 24" xmlns="http:
       };
 
       
@@ -970,12 +967,6 @@ async function loadProfile() {
       linksContainer.innerHTML = '<p style="text-align:center;color:var(--gray-400);font-size:13px;padding:20px;">Aucun lien pour l\'instant.</p>';
     }
 
-
-    // ══════════════════════════════════════════════
-    // PARAMÈTRES AVANCÉS DE PERSONNALISATION
-    // ══════════════════════════════════════════════
-
-    // 1. LOCALISATION
     if (user.location) {
       const locEl = document.createElement('div');
       locEl.style.cssText = 'font-size:12px;color:var(--profile-text-color);opacity:0.5;margin-top:4px;';
@@ -983,42 +974,35 @@ async function loadProfile() {
       document.getElementById('pHandle').insertAdjacentElement('afterend', locEl);
     }
 
-    // 2. COULEUR D'ACCENT — variable CSS globale
     const accentColor = user.accent_color || '#6366f1';
     document.documentElement.style.setProperty('--accent', accentColor);
 
-    // 3. COULEUR DES ICÔNES SOCIAUX (colorisation via URL simpleicons)
     if (user.icon_color) {
       const iconHex = user.icon_color.replace('#', '');
       document.querySelectorAll('.social-icon-link img').forEach(img => {
         const src = img.src || img.getAttribute('src') || '';
         if (src.includes('simpleicons.org')) {
-          // L'URL simpleicons est de type: cdn.simpleicons.org/NOM/COULEUR
-          // On remplace ou ajoute la couleur
+
           img.src = src.replace(/(cdn\.simpleicons\.org\/[^/?#]+)(\/[0-9a-fA-F]{3,8})?/, '$1/' + iconHex);
         }
       });
     }
 
-    // 4. ICÔNES MONOCHROME
     if (user.monochrome_icons) {
       document.querySelectorAll('.social-icon-link img, .profile-link-icon').forEach(img => {
         img.style.filter = 'grayscale(1)';
       });
     }
 
-    // 5. FLOU DE LA CARD
     if (user.profile_blur && user.profile_blur > 0) {
       document.querySelector('.profile-card').style.backdropFilter = `blur(${user.profile_blur}px)`;
       document.querySelector('.profile-card').style.webkitBackdropFilter = `blur(${user.profile_blur}px)`;
     }
 
-    // 6. INVERSER LES BLOCS
     if (user.invert_blocks) {
       document.querySelector('.profile-card').style.filter = 'invert(1) hue-rotate(180deg)';
     }
 
-    // 7. TITRE ANIMÉ (onglet navigateur)
     if (user.animated_title) {
       const baseTitle = document.title;
       let i = 0, dir = 1;
@@ -1037,7 +1021,6 @@ async function loadProfile() {
       tickTitle();
     }
 
-    // 8. EFFET SUR LE PSEUDO
     const nameEl = document.getElementById('pName');
     const usernameEffect = user.username_effect || 'none';
     if (usernameEffect !== 'none' && nameEl) {
@@ -1080,7 +1063,6 @@ async function loadProfile() {
       document.head.appendChild(styleTag);
     }
 
-    // 9. GLOW TARGETS
     const glowTargets = [];
     try { glowTargets.push(...(user.glow_targets || '').split(',').map(s=>s.trim()).filter(Boolean)); } catch {}
     if (glowTargets.length) {
@@ -1098,7 +1080,6 @@ async function loadProfile() {
       document.head.appendChild(glowStyle);
     }
 
-    // 10. DÉCORATION D'AVATAR
     const avatarDeco = user.avatar_decoration || 'none';
     if (avatarDeco !== 'none') {
       const decoStyle = document.createElement('style');
@@ -1125,13 +1106,12 @@ async function loadProfile() {
       document.head.appendChild(decoStyle);
     }
 
-    // 11. USE_DISCORD_AVATAR comme avatar principal
     if (user.use_discord_avatar) {
       try {
         let oauth = {}; try { oauth = JSON.parse(user.oauth_meta || '{}'); } catch {}
         const discordOauth = oauth.discord || null;
         if (discordOauth && discordOauth.avatar && discordOauth.id) {
-          const dcAvatarUrl = `https://cdn.discordapp.com/avatars/${discordOauth.id}/${discordOauth.avatar}.png?size=256`;
+          const dcAvatarUrl = `https:
           const mainAvatar = document.querySelector('.profile-avatar');
           if (mainAvatar) {
             if (mainAvatar.tagName === 'IMG') {
@@ -1145,23 +1125,19 @@ async function loadProfile() {
       } catch(e) {}
     }
 
-    // 12. MASQUER CARTE DISCORD si discord_presence = false
     if (user.discord_presence === false || user.discord_presence === 0) {
       const dcCard = document.getElementById('discordCard');
       if (dcCard) dcCard.style.display = 'none';
     }
 
-    // 13. VARIABLE CSS --accent-color (alias de --accent) et --icon-color
     document.documentElement.style.setProperty('--accent-color', accentColor);
     if (user.icon_color) {
       document.documentElement.style.setProperty('--icon-color', user.icon_color);
     }
 
-    // 14. EFFET DE FOND (particules / flocons / pluie / confettis / bulles / étoiles / aurora / nuit / ancienne TV)
     const bgEffect = user.bg_effect || 'none';
     const bgEffectColor = user.bg_effect_color || '#ffffff';
 
-    // Ancienne TV : overlay CSS pur, pas de canvas
     if (bgEffect === 'oldtv') {
       const tvStyle = document.createElement('style');
       tvStyle.textContent = `
@@ -1198,7 +1174,6 @@ async function loadProfile() {
       }
       const rgb = hexToRgb(bgEffectColor);
 
-      // ── AURORA ──────────────────────────────────────────────────────────────
       if (bgEffect === 'aurora') {
         let t = 0;
         const auroraColors = ['#00ffd0','#7f5af0','#2cb67d','#00b4d8','#48cae4'];
@@ -1229,7 +1204,6 @@ async function loadProfile() {
         }
         drawAurora();
 
-      // ── NUIT ÉTOILÉE ────────────────────────────────────────────────────────
       } else if (bgEffect === 'night') {
         const stars = Array.from({length: 180}, () => ({
           x: Math.random() * window.innerWidth,
@@ -1251,7 +1225,7 @@ async function loadProfile() {
             ctx.beginPath();
             ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
             ctx.fill();
-            // halo doux sur les grosses étoiles
+
             if (s.r > 1.2) {
               const g = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r * 4);
               g.addColorStop(0, 'rgba(200,220,255,0.35)');
@@ -1267,7 +1241,6 @@ async function loadProfile() {
         }
         drawNight();
 
-      // ── PLUIE ───────────────────────────────────────────────────────────────
       } else if (bgEffect === 'rain') {
         const drops = Array.from({length: 120}, () => ({
           x: Math.random() * window.innerWidth,
@@ -1297,7 +1270,6 @@ async function loadProfile() {
         }
         drawRain();
 
-      // ── FLOCONS (détaillés) ─────────────────────────────────────────────────
       } else if (bgEffect === 'snow') {
         const flakes = Array.from({length: 70}, () => ({
           x: Math.random() * window.innerWidth,
@@ -1348,7 +1320,6 @@ async function loadProfile() {
         }
         drawSnow();
 
-      // ── EFFETS PARTICULE GÉNÉRIQUES ─────────────────────────────────────────
       } else {
         const COUNT = bgEffect === 'confetti' ? 80 : 60;
         const particles = Array.from({length: COUNT}, () => ({

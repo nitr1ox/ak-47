@@ -9,7 +9,6 @@
 <body>
 <button id="globalThemeBtn" onclick="toggleTheme()" title="Changer le thème" aria-label="Changer le thème">🌙</button>
 
-
 <div class="page-shell">
   <a href="/" class="logo-link">ak-47<span>.fr</span></a>
   <div class="card">
@@ -39,7 +38,7 @@
     if (val.length < 2) { status.textContent = ''; return; }
     checkTimeout = setTimeout(async () => {
       try {
-        const r = await fetch(`https://ak47-backend.onrender.com/api/user/check-username?username=${encodeURIComponent(val)}`
+        const r = await fetch(`https:
         const data = await r.json();
         if (data.available) {
           status.style.color = '#16a34a';
@@ -59,7 +58,7 @@
     if (!/^[a-zA-Z0-9_-]+$/.test(username)) return showAlert('Pseudo invalide (lettres, chiffres, _ et - uniquement)');
     btn.disabled = true; btn.innerHTML = '<span class="loading-spinner"></span>';
     try {
-      const r = await fetch('https://ak47-backend.onrender.com/api/user/setup-username', {
+      const r = await fetch('https:
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ username })
@@ -77,8 +76,6 @@
     document.getElementById('alert').innerHTML = `<div class="alert alert-error">${msg}</div>`;
   }
 </script>
-
-
 
 <script>
 (function(){
