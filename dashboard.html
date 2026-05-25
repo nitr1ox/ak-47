@@ -168,6 +168,14 @@
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
         Médias
       </a>
+      <a class="sidebar-item" onclick="switchTab('perso')" href="#">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M2 12h2M20 12h2M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41"/></svg>
+        Personnalisation
+      </a>
+      <a class="sidebar-item" id="adminLink" href="/admin" style="display:none;color:#ef4444;">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Admin
+      </a>
     </div>
   </aside>
 
@@ -329,10 +337,13 @@
       <!-- BADGES -->
       <div class="section-card" id="badgesCard" style="display:none">
         <div class="section-card-title">Tes badges Discord</div>
-        <div class="section-card-desc">Synchronisés automatiquement depuis Discord à chaque connexion.</div>
-        <div id="dashBadges" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;"></div>
+        <div class="section-card-desc">Clique sur l'œil pour masquer/afficher un badge sur ta page publique.</div>
+        <div id="dashBadges" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;"></div>
         <div id="noBadges" style="font-size:13px;color:var(--gray-400);margin-top:8px;display:none;">
           Aucun badge pour l'instant — connecte-toi via Discord pour les synchroniser.
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+          <button id="syncDiscordBtn" onclick="syncDiscord()" style="padding:6px 14px;border-radius:8px;border:none;background:#5865F2;color:#fff;font-size:12px;font-weight:600;cursor:pointer;">🔄 Actualiser mes rôles</button>
         </div>
       </div>
 
@@ -437,6 +448,215 @@
       <div class="save-bar">
         <span class="save-bar-msg">Les médias sont appliqués sur votre page publique.</span>
         <button class="save-bar-btn" id="saveMediasBtn" onclick="saveMedias()">Sauvegarder</button>
+      </div>
+    </div>
+
+    <!-- ── PERSONNALISATION TAB ── -->
+    <div class="tab-content" id="tab-perso">
+      <div class="dash-title">Personnalisation</div>
+      <div class="dash-subtitle">Personnalisez l'apparence de votre page publique en profondeur.</div>
+      <div id="persoAlert"></div>
+
+      <!-- BANNIÈRE -->
+      <div class="section-card">
+        <div class="section-card-title">Bannière de profil</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:10px;">Image affichée en haut de votre profil (1200×400px recommandé).</div>
+        <div class="media-upload-box" id="bannerBox" onclick="triggerUpload('bannerFile')">
+          <input type="file" id="bannerFile" accept="image/*" onchange="handlePersoMedia('banner', this)" onclick="event.stopPropagation()"/>
+          <img class="media-preview-img" id="bannerPreview" alt="Aperçu bannière" style="width:100%;height:80px;object-fit:cover;border-radius:6px;"/>
+          <div class="media-upload-icon" id="bannerIcon">🖼️</div>
+          <div class="media-upload-label" id="bannerLabel">Cliquez pour téléverser une image</div>
+          <div class="media-upload-name" id="bannerFileName"></div>
+          <button class="media-remove-btn" id="bannerRemove" style="display:none" onclick="removePersoMedia(event,'banner')">✕ Supprimer</button>
+        </div>
+      </div>
+
+      <!-- FORME AVATAR -->
+      <div class="section-card">
+        <div class="section-card-title">Forme de l'avatar</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:500;">
+            <input type="radio" name="avatarShape" value="circle" onchange="pendingPerso.avatar_shape='circle'" style="accent-color:#000"/>
+            <div style="width:36px;height:36px;border-radius:50%;background:#000;"></div> Rond
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:500;">
+            <input type="radio" name="avatarShape" value="rounded" onchange="pendingPerso.avatar_shape='rounded'" style="accent-color:#000"/>
+            <div style="width:36px;height:36px;border-radius:12px;background:#000;"></div> Arrondi
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:500;">
+            <input type="radio" name="avatarShape" value="square" onchange="pendingPerso.avatar_shape='square'" style="accent-color:#000"/>
+            <div style="width:36px;height:36px;border-radius:4px;background:#000;"></div> Carré
+          </label>
+        </div>
+        <div style="margin-top:12px;">
+          <button style="padding:7px 14px;font-size:12px;font-weight:600;border:1px solid var(--gray-200);border-radius:6px;background:var(--white);cursor:pointer;" onclick="importDiscordAvatar()">🔗 Récupérer mon avatar Discord</button>
+          <span style="font-size:11px;color:var(--gray-400);margin-left:8px;">Nécessite un compte Discord lié</span>
+        </div>
+      </div>
+
+      <!-- FOND DE PAGE -->
+      <div class="section-card">
+        <div class="section-card-title">Fond de page</div>
+        <div style="display:flex;gap:8px;margin-bottom:14px;">
+          <button class="add-link-tab active" id="bgTabColor"    onclick="switchBgTab('color')">Couleur</button>
+          <button class="add-link-tab"        id="bgTabGradient" onclick="switchBgTab('gradient')">Dégradé</button>
+          <button class="add-link-tab"        id="bgTabImage"    onclick="switchBgTab('image')">Image</button>
+        </div>
+        <!-- Couleur -->
+        <div id="bgZoneColor">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <input type="color" id="bgColorPicker" value="#fafafa" style="width:44px;height:38px;padding:2px;border:1px solid var(--gray-200);border-radius:6px;cursor:pointer;"
+              oninput="pendingPerso.bg_type='color';pendingPerso.bg_value=this.value;document.getElementById('bgColorHex').value=this.value;"/>
+            <input type="text" id="bgColorHex" value="#fafafa" maxlength="7" placeholder="#fafafa"
+              style="width:90px;padding:8px 10px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;font-family:inherit;outline:none;"
+              oninput="if(/^#[0-9a-fA-F]{6}$/.test(this.value)){document.getElementById('bgColorPicker').value=this.value;pendingPerso.bg_type='color';pendingPerso.bg_value=this.value;}"/>
+          </div>
+        </div>
+        <!-- Dégradé -->
+        <div id="bgZoneGradient" style="display:none;">
+          <div style="font-size:12px;color:var(--gray-500);margin-bottom:8px;">Presets</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;" id="gradientPresets"></div>
+          <div style="font-size:12px;color:var(--gray-500);margin-bottom:6px;">Ou CSS personnalisé</div>
+          <input type="text" id="gradientCustom" placeholder="linear-gradient(135deg, #667eea, #764ba2)"
+            style="width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;font-family:inherit;outline:none;"
+            oninput="pendingPerso.bg_type='gradient';pendingPerso.bg_value=this.value;"/>
+        </div>
+        <!-- Image -->
+        <div id="bgZoneImage" style="display:none;">
+          <div class="media-upload-box" onclick="triggerUpload('bgFilePerso')">
+            <input type="file" id="bgFilePerso" accept="image/*" onchange="handlePersoMedia('bg', this)" onclick="event.stopPropagation()"/>
+            <img class="media-preview-img" id="bgPersoPreview" alt="Aperçu fond"/>
+            <div class="media-upload-icon" id="bgPersoIcon">🖼️</div>
+            <div class="media-upload-label" id="bgPersoLabel">Cliquez pour téléverser</div>
+            <div class="media-upload-name" id="bgPersoFileName"></div>
+            <button class="media-remove-btn" id="bgPersoRemove" style="display:none" onclick="removePersoMedia(event,'bg')">✕ Supprimer</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- DISPOSITION DES LIENS -->
+      <div class="section-card">
+        <div class="section-card-title">Disposition des liens</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <label style="cursor:pointer;font-size:13px;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <input type="radio" name="linkLayout" value="list" onchange="pendingPerso.link_layout='list'" style="accent-color:#000"/>
+            <div style="width:80px;height:60px;border:2px solid var(--gray-200);border-radius:8px;padding:6px;display:flex;flex-direction:column;gap:4px;">
+              <div style="height:12px;background:#e4e4e7;border-radius:4px;"></div>
+              <div style="height:12px;background:#e4e4e7;border-radius:4px;"></div>
+              <div style="height:12px;background:#e4e4e7;border-radius:4px;"></div>
+            </div>
+            Liste
+          </label>
+          <label style="cursor:pointer;font-size:13px;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <input type="radio" name="linkLayout" value="grid" onchange="pendingPerso.link_layout='grid'" style="accent-color:#000"/>
+            <div style="width:80px;height:60px;border:2px solid var(--gray-200);border-radius:8px;padding:6px;display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+              <div style="background:#e4e4e7;border-radius:4px;"></div>
+              <div style="background:#e4e4e7;border-radius:4px;"></div>
+              <div style="background:#e4e4e7;border-radius:4px;"></div>
+              <div style="background:#e4e4e7;border-radius:4px;"></div>
+            </div>
+            Grille
+          </label>
+          <label style="cursor:pointer;font-size:13px;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <input type="radio" name="linkLayout" value="buttons" onchange="pendingPerso.link_layout='buttons'" style="accent-color:#000"/>
+            <div style="width:80px;height:60px;border:2px solid var(--gray-200);border-radius:8px;padding:8px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;justify-content:center;">
+              <div style="height:14px;width:34px;background:#e4e4e7;border-radius:100px;"></div>
+              <div style="height:14px;width:30px;background:#e4e4e7;border-radius:100px;"></div>
+              <div style="height:14px;width:38px;background:#e4e4e7;border-radius:100px;"></div>
+            </div>
+            Boutons
+          </label>
+        </div>
+      </div>
+
+      <!-- STYLE DES BOUTONS -->
+      <div class="section-card">
+        <div class="section-card-title">Style des boutons de liens</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group">
+            <label>Couleur de fond</label>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <input type="color" id="btnBgColor" value="#ffffff" style="width:36px;height:32px;padding:2px;border:1px solid var(--gray-200);border-radius:5px;cursor:pointer;" oninput="updateBtnStyle()"/>
+              <span id="btnBgColorHex" style="font-size:12px;color:var(--gray-500);">#ffffff</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Couleur du texte</label>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <input type="color" id="btnTextColor" value="#000000" style="width:36px;height:32px;padding:2px;border:1px solid var(--gray-200);border-radius:5px;cursor:pointer;" oninput="updateBtnStyle()"/>
+              <span id="btnTextColorHex" style="font-size:12px;color:var(--gray-500);">#000000</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Couleur de bordure</label>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <input type="color" id="btnBorderColor" value="#e4e4e7" style="width:36px;height:32px;padding:2px;border:1px solid var(--gray-200);border-radius:5px;cursor:pointer;" oninput="updateBtnStyle()"/>
+              <span id="btnBorderColorHex" style="font-size:12px;color:var(--gray-500);">#e4e4e7</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Arrondi des coins</label>
+            <input type="range" id="btnRadiusRange" min="0" max="50" value="10"
+              style="width:100%;accent-color:#000;"
+              oninput="el('btnRadiusVal').textContent=this.value+'px';updateBtnStyle()"/>
+            <span id="btnRadiusVal" style="font-size:12px;color:var(--gray-500);">10px</span>
+          </div>
+        </div>
+        <div style="margin-top:12px;">
+          <div style="font-size:12px;color:var(--gray-500);margin-bottom:6px;">Aperçu :</div>
+          <a id="btnStylePreview" style="display:inline-flex;align-items:center;justify-content:space-between;padding:12px 18px;text-decoration:none;font-size:14px;font-weight:500;gap:12px;min-width:200px;transition:all .15s;">
+            Votre lien ↗
+          </a>
+        </div>
+      </div>
+
+      <!-- POLICE D'ÉCRITURE -->
+      <div class="section-card">
+        <div class="section-card-title">Police d'écriture</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:10px;">Choisissez la police affichée sur votre profil public.</div>
+        <select id="fontSelect" onchange="pendingPerso.profile_font=this.value;document.getElementById('fontPreviewText').style.fontFamily=this.value+',sans-serif';"
+          style="width:100%;max-width:300px;padding:9px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;font-family:inherit;outline:none;">
+          <option value="Inter">Inter (défaut)</option>
+          <option value="Roboto">Roboto</option>
+          <option value="Poppins">Poppins</option>
+          <option value="Montserrat">Montserrat</option>
+          <option value="Lato">Lato</option>
+          <option value="Nunito">Nunito</option>
+          <option value="Raleway">Raleway</option>
+          <option value="Playfair Display">Playfair Display</option>
+          <option value="Space Grotesk">Space Grotesk</option>
+          <option value="DM Sans">DM Sans</option>
+          <option value="Syne">Syne</option>
+          <option value="Outfit">Outfit</option>
+          <option value="Lexend">Lexend</option>
+          <option value="Oswald">Oswald</option>
+          <option value="Ubuntu">Ubuntu</option>
+          <option value="Merriweather">Merriweather</option>
+          <option value="Source Code Pro">Source Code Pro</option>
+          <option value="Fira Code">Fira Code</option>
+        </select>
+        <div id="fontPreviewText" style="margin-top:10px;font-size:16px;color:var(--gray-900);">Voici un aperçu de votre texte de profil.</div>
+      </div>
+
+      <!-- RÉSEAUX SOCIAUX -->
+      <div class="section-card">
+        <div class="section-card-title">Réseaux sociaux</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Ajoutez vos profils sociaux pour afficher des icônes sur votre page.</div>
+        <div id="socialLinksForm" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"></div>
+      </div>
+
+      <!-- SPOTIFY -->
+      <div class="section-card">
+        <div class="section-card-title">Spotify</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:10px;">Affichez un widget Spotify sur votre profil (lien vers votre profil Spotify).</div>
+        <input type="url" id="spotifyUrlInput" placeholder="https://open.spotify.com/user/votreid"
+          style="width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;font-family:inherit;outline:none;"
+          oninput="pendingPerso.spotify_url=this.value"/>
+      </div>
+
+      <div class="save-bar">
+        <span class="save-bar-msg">Les modifications seront appliquées sur votre profil public.</span>
+        <button class="save-bar-btn" id="savePersoBtn" onclick="savePerso()">Sauvegarder</button>
       </div>
     </div>
 
@@ -605,6 +825,14 @@ async function loadUser() {
     renderProfile();
     renderLinks();
     loadMediasUI();
+    loadPersoUI();
+    renderBadges();
+    // Afficher lien admin si discord_id admin
+    const ADMIN_DISCORD_IDS = ['866613427852804136'];
+    if (userData.discord_id && ADMIN_DISCORD_IDS.includes(userData.discord_id)) {
+      const adminLink = document.getElementById('adminLink');
+      if (adminLink) adminLink.style.display = 'flex';
+    }
   } catch { showToast('Erreur de chargement du profil'); }
 }
 
@@ -653,6 +881,80 @@ function renderTopLinks() {
       ${data.top_links.map(l => `<tr><td><strong>${esc(l.link_title||'—')}</strong></td><td style="color:var(--gray-400);font-size:12px;">${esc(l.link_url.slice(0,40))}${l.link_url.length>40?'…':''}</td><td><strong>${l.clicks}</strong></td></tr>`).join('')}
     </tbody></table>`;
   });
+}
+
+function renderBadges() {
+  const card = document.getElementById('badgesCard');
+  const container = document.getElementById('dashBadges');
+  const noBadges = document.getElementById('noBadges');
+  if (!card || !container) return;
+  let badges = [];
+  try { badges = JSON.parse(userData.discord_badges || '[]'); } catch {}
+  let hidden = [];
+  try { hidden = JSON.parse(userData.hidden_badges || '[]'); } catch {}
+  if (!userData.discord_id || badges.length === 0) {
+    card.style.display = 'block';
+    container.style.display = 'none';
+    noBadges.style.display = 'block';
+    return;
+  }
+  card.style.display = 'block';
+  container.style.display = 'flex';
+  noBadges.style.display = 'none';
+  container.innerHTML = badges.map((b, i) => {
+    const isHidden = hidden.includes(i);
+    let cls = 'badge';
+    if (b.type === 'nitro') cls += ' badge-nitro';
+    else if (b.type === 'discord') cls += ' badge-discord';
+    else if (b.type === 'server') {
+      cls += ' badge-server';
+      if (b.label === 'VIP') cls += ' vip';
+      if (b.label === 'Modérateur') cls += ' mod';
+    }
+    return `<span class="${cls}" style="opacity:${isHidden ? '0.4' : '1'};cursor:pointer;user-select:none;" title="${isHidden ? 'Masqué — cliquer pour afficher' : 'Visible — cliquer pour masquer'}" onclick="toggleBadge(${i})">${b.emoji || ''} ${b.label} <span style="margin-left:3px;font-size:10px;">${isHidden ? '🚫' : '👁️'}</span></span>`;
+  }).join('');
+}
+
+async function toggleBadge(index) {
+  let hidden = [];
+  try { hidden = JSON.parse(userData.hidden_badges || '[]'); } catch {}
+  if (hidden.includes(index)) {
+    hidden = hidden.filter(i => i !== index);
+  } else {
+    hidden.push(index);
+  }
+  try {
+    const r = await fetch(API + '/api/user/me', {
+      method: 'PATCH',
+      headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ hidden_badges: JSON.stringify(hidden) })
+    });
+    const data = await r.json();
+    userData.hidden_badges = data.hidden_badges !== undefined ? data.hidden_badges : JSON.stringify(hidden);
+    renderBadges();
+  } catch { showToast('Erreur réseau'); }
+}
+
+async function syncDiscord() {
+  const btn = document.getElementById('syncDiscordBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Synchronisation…'; }
+  try {
+    const r = await fetch(API + '/api/user/sync-discord', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    const data = await r.json();
+    if (data.discord_badges) {
+      userData.discord_badges = data.discord_badges;
+      renderBadges();
+      showToast('✅ Rôles synchronisés !');
+    } else {
+      showToast(data.error || 'Erreur de synchronisation');
+    }
+  } catch { showToast('Erreur réseau'); }
+  finally {
+    if (btn) { btn.disabled = false; btn.textContent = '🔄 Actualiser mes rôles'; }
+  }
 }
 
 function renderProfile() {
@@ -937,13 +1239,274 @@ async function saveMedias() {
     const data = await r.json();
     if (!r.ok) { showAlert('mediasAlert', data.error || 'Erreur'); return; }
     userData = data;
-    // Reset pending après save
     pendingMedias = { avatar_url: null, bg_url: null, audio_url: null, cursor_url: null };
     el('mediasAlert').innerHTML = '';
     showToast('Médias sauvegardés ✓');
   } catch { showToast('Erreur réseau'); }
   finally { btn.disabled = false; btn.textContent = 'Sauvegarder'; }
 }
+
+// ── PERSONNALISATION TAB ─────────────────────────────────
+
+let pendingPerso = {
+  avatar_shape: null,
+  link_layout: null,
+  link_btn_style: null,
+  profile_font: null,
+  bg_type: null,
+  bg_value: null,
+  banner_url: null,
+  bg_url: null,   // only used when bg_type=image
+  social_links: null,
+  spotify_url: null,
+};
+
+const SOCIAL_META_DASH = {
+  twitter:   { label: 'X / Twitter',  placeholder: 'votre_pseudo' },
+  instagram: { label: 'Instagram',    placeholder: 'votre_pseudo' },
+  tiktok:    { label: 'TikTok',       placeholder: 'votre_pseudo' },
+  youtube:   { label: 'YouTube',      placeholder: '@votre_chaine' },
+  twitch:    { label: 'Twitch',       placeholder: 'votre_pseudo' },
+  github:    { label: 'GitHub',       placeholder: 'votre_pseudo' },
+  discord:   { label: 'Discord',      placeholder: 'Lien d\'invitation' },
+  snapchat:  { label: 'Snapchat',     placeholder: 'votre_pseudo' },
+  linkedin:  { label: 'LinkedIn',     placeholder: 'votre_profil' },
+  steam:     { label: 'Steam',        placeholder: 'votre_pseudo' },
+};
+
+const GRADIENT_PRESETS = [
+  { label: 'Sombre', css: 'linear-gradient(135deg, #0f0f0f, #1a1a2e)' },
+  { label: 'Violet', css: 'linear-gradient(135deg, #667eea, #764ba2)' },
+  { label: 'Sunset', css: 'linear-gradient(135deg, #f093fb, #f5576c)' },
+  { label: 'Ocean',  css: 'linear-gradient(135deg, #4facfe, #00f2fe)' },
+  { label: 'Forêt',  css: 'linear-gradient(135deg, #43e97b, #38f9d7)' },
+  { label: 'Or',     css: 'linear-gradient(135deg, #f6d365, #fda085)' },
+  { label: 'Nuit',   css: 'linear-gradient(135deg, #2c3e50, #3498db)' },
+  { label: 'Rose',   css: 'linear-gradient(135deg, #fccb90, #d57eeb)' },
+];
+
+function initPersoTab() {
+  // Gradient presets
+  const presetsEl = el('gradientPresets');
+  GRADIENT_PRESETS.forEach(p => {
+    const btn = document.createElement('button');
+    btn.style.cssText = `width:40px;height:40px;border-radius:8px;border:2px solid transparent;cursor:pointer;background:${p.css};`;
+    btn.title = p.label;
+    btn.onclick = () => {
+      el('gradientCustom').value = p.css;
+      pendingPerso.bg_type = 'gradient';
+      pendingPerso.bg_value = p.css;
+    };
+    presetsEl.appendChild(btn);
+  });
+
+  // Social links form
+  const form = el('socialLinksForm');
+  Object.entries(SOCIAL_META_DASH).forEach(([key, meta]) => {
+    const div = document.createElement('div');
+    div.className = 'form-group';
+    div.innerHTML = `<label>${meta.label}</label>
+      <input type="text" id="social_${key}" placeholder="${meta.placeholder}"
+        style="width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;font-family:inherit;outline:none;"
+        oninput="updateSocialLinks()"/>`;
+    form.appendChild(div);
+  });
+}
+
+function loadPersoUI() {
+  if (!userData) return;
+  // Avatar shape
+  const shape = userData.avatar_shape || 'circle';
+  const shapeEl = document.querySelector(`input[name=avatarShape][value="${shape}"]`);
+  if (shapeEl) shapeEl.checked = true;
+
+  // Link layout
+  const layout = userData.link_layout || 'list';
+  const layoutEl = document.querySelector(`input[name=linkLayout][value="${layout}"]`);
+  if (layoutEl) layoutEl.checked = true;
+
+  // Btn style
+  let btnStyle = {}; try { btnStyle = JSON.parse(userData.link_btn_style || '{}'); } catch {}
+  if (btnStyle.bg) { el('btnBgColor').value = btnStyle.bg; el('btnBgColorHex').textContent = btnStyle.bg; }
+  if (btnStyle.color) { el('btnTextColor').value = btnStyle.color; el('btnTextColorHex').textContent = btnStyle.color; }
+  if (btnStyle.border) { el('btnBorderColor').value = btnStyle.border; el('btnBorderColorHex').textContent = btnStyle.border; }
+  if (btnStyle.borderRadius) { el('btnRadiusRange').value = parseInt(btnStyle.borderRadius); el('btnRadiusVal').textContent = btnStyle.borderRadius; }
+  updateBtnStylePreview();
+
+  // Font
+  if (userData.profile_font) {
+    el('fontSelect').value = userData.profile_font;
+    el('fontPreviewText').style.fontFamily = userData.profile_font + ',sans-serif';
+  }
+
+  // Fond
+  const bgType  = userData.bg_type  || 'color';
+  const bgValue = userData.bg_value || '#fafafa';
+  switchBgTab(bgType);
+  if (bgType === 'color')    { el('bgColorPicker').value = bgValue; el('bgColorHex').value = bgValue; }
+  if (bgType === 'gradient') { el('gradientCustom').value = bgValue; }
+
+  // Bannière
+  if (userData.banner_url) {
+    el('bannerPreview').src = userData.banner_url; el('bannerPreview').style.display = 'block';
+    el('bannerIcon').style.display = 'none'; el('bannerLabel').textContent = 'Bannière actuelle';
+    el('bannerRemove').style.display = 'inline';
+  }
+
+  // Social links
+  let socials = {}; try { socials = JSON.parse(userData.social_links || '{}'); } catch {}
+  Object.keys(SOCIAL_META_DASH).forEach(key => {
+    const inp = el('social_' + key);
+    if (inp && socials[key]) inp.value = socials[key];
+  });
+
+  // Spotify
+  if (userData.spotify_url) el('spotifyUrlInput').value = userData.spotify_url;
+}
+
+function switchBgTab(tab) {
+  ['color','gradient','image'].forEach(t => {
+    el('bgZone' + t.charAt(0).toUpperCase() + t.slice(1)).style.display = t === tab ? 'block' : 'none';
+    el('bgTab'  + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
+  });
+  if (tab !== 'image') {
+    pendingPerso.bg_type = tab;
+    if (tab === 'color')    pendingPerso.bg_value = el('bgColorPicker').value;
+    if (tab === 'gradient') pendingPerso.bg_value = el('gradientCustom').value;
+  } else {
+    pendingPerso.bg_type = 'image';
+  }
+}
+
+function updateBtnStyle() {
+  const bg   = el('btnBgColor').value;
+  const txt  = el('btnTextColor').value;
+  const brd  = el('btnBorderColor').value;
+  const rad  = el('btnRadiusRange').value + 'px';
+  el('btnBgColorHex').textContent   = bg;
+  el('btnTextColorHex').textContent = txt;
+  el('btnBorderColorHex').textContent = brd;
+  el('btnRadiusVal').textContent    = rad;
+  pendingPerso.link_btn_style = JSON.stringify({ bg, color: txt, border: brd, borderRadius: rad });
+  updateBtnStylePreview();
+}
+
+function updateBtnStylePreview() {
+  const bg  = el('btnBgColor').value;
+  const txt = el('btnTextColor').value;
+  const brd = el('btnBorderColor').value;
+  const rad = el('btnRadiusRange').value + 'px';
+  const prev = el('btnStylePreview');
+  prev.style.background    = bg;
+  prev.style.color         = txt;
+  prev.style.border        = `1px solid ${brd}`;
+  prev.style.borderRadius  = rad;
+}
+
+function updateSocialLinks() {
+  const socials = {};
+  Object.keys(SOCIAL_META_DASH).forEach(key => {
+    const val = (el('social_' + key)?.value || '').trim();
+    if (val) socials[key] = val;
+  });
+  pendingPerso.social_links = JSON.stringify(socials);
+}
+
+async function handlePersoMedia(type, input) {
+  const file = input.files[0];
+  if (!file) return;
+  const MAX = 2 * 1024 * 1024;
+  if (file.size > MAX) { showToast('Fichier trop lourd (max 2MB)'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    const data = e.target.result;
+    if (type === 'banner') {
+      pendingPerso.banner_url = data;
+      el('bannerPreview').src = data; el('bannerPreview').style.display = 'block';
+      el('bannerIcon').style.display = 'none'; el('bannerLabel').textContent = file.name;
+      el('bannerFileName').textContent = ''; el('bannerRemove').style.display = 'inline';
+    } else if (type === 'bg') {
+      pendingPerso.bg_url = data;
+      pendingPerso.bg_type = 'image';
+      el('bgPersoPreview').src = data; el('bgPersoPreview').style.display = 'block';
+      el('bgPersoIcon').style.display = 'none'; el('bgPersoLabel').textContent = file.name;
+      el('bgPersoRemove').style.display = 'inline';
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function removePersoMedia(event, type) {
+  event.stopPropagation();
+  if (type === 'banner') {
+    pendingPerso.banner_url = '';
+    el('bannerPreview').style.display = 'none'; el('bannerPreview').src = '';
+    el('bannerIcon').style.display = 'block'; el('bannerLabel').textContent = 'Cliquez pour téléverser une image';
+    el('bannerRemove').style.display = 'none';
+  } else if (type === 'bg') {
+    pendingPerso.bg_url = '';
+    el('bgPersoPreview').style.display = 'none'; el('bgPersoPreview').src = '';
+    el('bgPersoIcon').style.display = 'block'; el('bgPersoLabel').textContent = 'Cliquez pour téléverser';
+    el('bgPersoRemove').style.display = 'none';
+  }
+}
+
+async function importDiscordAvatar() {
+  try {
+    const r = await fetch(API + '/api/user/discord-avatar', {
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    const data = await r.json();
+    if (!r.ok) { showToast(data.error || 'Compte Discord non lié'); return; }
+    // Save directly
+    const r2 = await fetch(API + '/api/user/me', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ avatar_url: data.avatar_url })
+    });
+    const d2 = await r2.json();
+    if (!r2.ok) { showToast(d2.error || 'Erreur'); return; }
+    userData = d2;
+    showToast('Avatar Discord importé ✓');
+  } catch { showToast('Erreur réseau'); }
+}
+
+async function savePerso() {
+  const btn = el('savePersoBtn');
+  btn.disabled = true; btn.textContent = '...';
+  const body = {};
+  for (const [k, v] of Object.entries(pendingPerso)) {
+    if (v !== null) body[k] = v;
+  }
+  if (!Object.keys(body).length) {
+    showToast('Aucun changement à sauvegarder');
+    btn.disabled = false; btn.textContent = 'Sauvegarder';
+    return;
+  }
+  try {
+    const r = await fetch(API + '/api/user/me', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify(body)
+    });
+    const data = await r.json();
+    if (!r.ok) { showAlert('persoAlert', data.error || 'Erreur'); return; }
+    userData = data;
+    pendingPerso = {
+      avatar_shape: null, link_layout: null, link_btn_style: null,
+      profile_font: null, bg_type: null, bg_value: null,
+      banner_url: null, bg_url: null, social_links: null, spotify_url: null,
+    };
+    el('persoAlert').innerHTML = '';
+    showToast('Personnalisation sauvegardée ✓');
+  } catch { showToast('Erreur réseau'); }
+  finally { btn.disabled = false; btn.textContent = 'Sauvegarder'; }
+}
+
+// Init perso tab on page load (social form, gradient presets)
+document.addEventListener('DOMContentLoaded', () => {
+  initPersoTab();
+});
 
 </script>
 </body>

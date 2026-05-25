@@ -3,10 +3,15 @@
 <head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>ak-47.fr</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link id="profileFont" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --black:#000; --white:#fff; --gray-50:#fafafa; --gray-100:#f4f4f5; --gray-200:#e4e4e7; --gray-400:#a1a1aa; --gray-500:#71717a; --gray-900:#18181b; }
+    :root {
+      --black:#000; --white:#fff; --gray-50:#fafafa; --gray-100:#f4f4f5;
+      --gray-200:#e4e4e7; --gray-400:#a1a1aa; --gray-500:#71717a; --gray-900:#18181b;
+      --link-bg: var(--white); --link-color: var(--black);
+      --link-border: var(--gray-200); --link-radius: 10px;
+    }
     body { background: var(--gray-50); font-family: 'Inter', sans-serif; min-height: 100vh; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
 
     #loading { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; min-height: 100vh; }
@@ -19,53 +24,117 @@
     #notFound p { color: var(--gray-500); margin-bottom: 24px; }
     #notFound a { color: var(--black); font-weight: 600; text-decoration: none; font-size: 14px; }
 
-    #profile { display: none; flex-direction: column; align-items: center; padding: 48px 20px 80px; min-height: 100vh; }
+    /* ── BANNIÈRE ── */
+    #profileBanner {
+      display: none; width: 100%; max-width: 480px;
+      height: 120px; object-fit: cover;
+      border-radius: 14px 14px 0 0; margin-bottom: -40px;
+    }
 
+    #profile { display: none; flex-direction: column; align-items: center; padding: 0 20px 80px; min-height: 100vh; }
     .profile-card { width: 100%; max-width: 480px; }
 
-    .profile-top { text-align: center; margin-bottom: 28px; }
+    .profile-top { text-align: center; margin-bottom: 28px; padding-top: 20px; }
+
+    /* ── AVATAR ── */
     .profile-avatar {
       width: 80px; height: 80px; border-radius: 50%;
       margin: 0 auto 14px;
       display: flex; align-items: center; justify-content: center;
       font-size: 30px; font-weight: 700;
-      border: 2px solid var(--gray-200);
+      border: 3px solid var(--white);
+      box-shadow: 0 2px 8px rgba(0,0,0,.12);
     }
+    .profile-avatar.shape-rounded { border-radius: 20px; }
+    .profile-avatar.shape-square   { border-radius: 6px; }
+    .profile-avatar-img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; display: block; }
+
     .profile-name { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
-    .profile-bio { font-size: 14px; color: var(--gray-500); line-height: 1.5; max-width: 320px; margin: 0 auto; }
+    .profile-bio  { font-size: 14px; color: var(--gray-500); line-height: 1.5; max-width: 320px; margin: 0 auto; }
     .profile-handle { font-size: 12px; color: var(--gray-400); margin-top: 6px; }
-    .profile-views { font-size: 11px; color: var(--gray-400); margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+    .profile-views  { font-size: 11px; color: var(--gray-400); margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 4px; }
     .profile-views svg { width: 12px; height: 12px; stroke: var(--gray-400); fill: none; flex-shrink: 0; }
 
+    /* ── RÉSEAUX SOCIAUX ── */
+    .social-row {
+      display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+      margin: 12px 0 4px;
+    }
+    .social-icon-link {
+      display: flex; align-items: center; justify-content: center;
+      width: 34px; height: 34px; border-radius: 50%;
+      background: rgba(0,0,0,.06); text-decoration: none;
+      transition: transform .15s, background .15s;
+      font-size: 18px;
+    }
+    .social-icon-link:hover { transform: translateY(-2px); background: rgba(0,0,0,.12); }
+    .social-icon-link img { width: 18px; height: 18px; border-radius: 3px; }
+
+    /* ── SPOTIFY WIDGET ── */
+    .spotify-widget {
+      display: none; align-items: center; gap: 10px;
+      background: #1DB954; border-radius: 12px;
+      padding: 10px 14px; margin: 12px auto 0;
+      max-width: 300px; cursor: pointer; text-decoration: none;
+      color: #fff; font-size: 12px; font-weight: 600;
+      transition: opacity .15s;
+    }
+    .spotify-widget:hover { opacity: .9; }
+    .spotify-widget.visible { display: flex; }
+    .spotify-widget svg { width: 20px; height: 20px; fill: #fff; flex-shrink: 0; }
+    .spotify-widget-text { overflow: hidden; }
+    .spotify-widget-label { font-size: 10px; opacity: .8; }
+    .spotify-widget-name  { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* ── LIENS : LIST (défaut) ── */
     .profile-links { display: flex; flex-direction: column; gap: 10px; }
+
     .profile-link {
       display: flex; align-items: center; justify-content: space-between;
-      background: var(--white); border: 1px solid var(--gray-200);
-      border-radius: 10px; padding: 14px 18px;
-      text-decoration: none; color: var(--black);
-      font-size: 14px; font-weight: 500;
-      transition: all .15s;
+      background: var(--link-bg); border: 1px solid var(--link-border);
+      border-radius: var(--link-radius); padding: 14px 18px;
+      text-decoration: none; color: var(--link-color);
+      font-size: 14px; font-weight: 500; transition: all .15s;
       box-shadow: 0 1px 2px rgba(0,0,0,.04);
     }
-    .profile-link:hover { background: var(--gray-50); border-color: var(--gray-300); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.08); }
-    .profile-link-arrow { color: var(--gray-400); font-size: 16px; }
+    .profile-link:hover { filter: brightness(.93); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+    .profile-link-arrow { opacity: .5; font-size: 16px; }
+
+    /* ── LIENS : GRID ── */
+    .profile-links.layout-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .profile-links.layout-grid .profile-link {
+      flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 18px 10px; gap: 6px;
+    }
+    .profile-links.layout-grid .profile-link-arrow { display: none; }
+
+    /* ── LIENS : BUTTONS ── */
+    .profile-links.layout-buttons {
+      display: flex; flex-direction: row; flex-wrap: wrap;
+      gap: 8px; justify-content: center;
+    }
+    .profile-links.layout-buttons .profile-link {
+      width: auto; padding: 10px 22px;
+      border-radius: 100px;
+    }
+    .profile-links.layout-buttons .profile-link-arrow { display: none; }
 
     .profile-footer { margin-top: 36px; text-align: center; }
     .profile-footer a { font-size: 12px; color: var(--gray-400); text-decoration: none; font-weight: 500; transition: color .15s; }
     .profile-footer a:hover { color: var(--black); }
 
-    /* ── MÉDIAS ── */
+    /* ── FOND ── */
     #profileBg {
       position: fixed; inset: 0; z-index: -1;
       background-size: cover; background-position: center;
       background-repeat: no-repeat;
       opacity: 0.18; pointer-events: none;
     }
-    .profile-avatar-img {
-      width: 80px; height: 80px; border-radius: 50%;
-      object-fit: cover; border: 2px solid var(--gray-200);
-      margin: 0 auto 14px; display: block;
-    }
+
     #audioPlayer { display: none; }
     .audio-bar {
       display: none; align-items: center; gap: 8px;
@@ -79,11 +148,7 @@
 
     /* ── BADGES ── */
     .badges-row { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 10px 0 4px; }
-    .badge {
-      display: inline-flex; align-items: center; gap: 4px;
-      padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
-      border: 1px solid rgba(0,0,0,.08);
-    }
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; border: 1px solid rgba(0,0,0,.08); }
     .badge-discord { background: #5865F2; color: #fff; border-color: #5865F2; }
     .badge-nitro   { background: linear-gradient(135deg,#f47fff,#7289da); color: #fff; border-color: transparent; }
     .badge-server  { background: #000; color: #fff; border-color: #000; }
@@ -108,16 +173,30 @@
 </div>
 
 <div id="profile">
+  <!-- bannière -->
+  <img id="profileBanner" alt="bannière"/>
+
   <div class="profile-card">
     <div class="profile-top">
       <div class="profile-avatar" id="pAvatar"></div>
+      <div class="badges-row" id="pBadges"></div>
       <div class="profile-name" id="pName"></div>
-      <div class="profile-bio" id="pBio"></div>
+      <div class="profile-bio"  id="pBio"></div>
       <div class="profile-handle" id="pHandle"></div>
       <div class="profile-views" id="pViews" style="display:none;">
         <svg viewBox="0 0 24 24" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         <span id="pViewsCount"></span>
       </div>
+      <!-- réseaux sociaux -->
+      <div class="social-row" id="pSocials"></div>
+      <!-- Spotify widget -->
+      <a class="spotify-widget" id="spotifyWidget" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+        <div class="spotify-widget-text">
+          <div class="spotify-widget-label">Spotify</div>
+          <div class="spotify-widget-name" id="spotifyName">Voir le profil</div>
+        </div>
+      </a>
     </div>
     <div class="audio-bar" id="audioBar" onclick="toggleAudio()">
       <span class="audio-bar-icon" id="audioBarIcon">▶</span>
@@ -140,26 +219,38 @@ if (!username || STATIC.includes(username)) {
   document.getElementById('loading').style.display = 'none';
 }
 
+// ── Icônes réseaux sociaux ───────────────────────────────
+const SOCIAL_META = {
+  twitter:    { emoji: '𝕏',  label: 'X / Twitter',  base: 'https://x.com/' },
+  instagram:  { emoji: '📸', label: 'Instagram',     base: 'https://instagram.com/' },
+  tiktok:     { emoji: '🎵', label: 'TikTok',        base: 'https://tiktok.com/@' },
+  youtube:    { emoji: '▶️', label: 'YouTube',       base: 'https://youtube.com/@' },
+  twitch:     { emoji: '🎮', label: 'Twitch',        base: 'https://twitch.tv/' },
+  github:     { emoji: '💻', label: 'GitHub',        base: 'https://github.com/' },
+  discord:    { emoji: '💬', label: 'Discord',       base: '' },
+  snapchat:   { emoji: '👻', label: 'Snapchat',      base: 'https://snapchat.com/add/' },
+  linkedin:   { emoji: '💼', label: 'LinkedIn',      base: 'https://linkedin.com/in/' },
+  facebook:   { emoji: '👥', label: 'Facebook',      base: 'https://facebook.com/' },
+  pinterest:  { emoji: '📌', label: 'Pinterest',     base: 'https://pinterest.com/' },
+  reddit:     { emoji: '🤖', label: 'Reddit',        base: 'https://reddit.com/u/' },
+  steam:      { emoji: '🎲', label: 'Steam',         base: 'https://steamcommunity.com/id/' },
+};
+
 async function loadProfile() {
   if (!username || STATIC.includes(username)) return;
 
-  // Timeout de 20s avec message si le serveur est en cold start
   const controller = new AbortController();
   let timedOut = false;
   const slowTimer = setTimeout(() => {
     document.getElementById('loadingMsg').textContent = 'Le serveur démarre, patiente quelques secondes…';
   }, 5000);
-  const hardTimer = setTimeout(() => {
-    timedOut = true;
-    controller.abort();
-  }, 20000);
+  const hardTimer = setTimeout(() => { timedOut = true; controller.abort(); }, 20000);
 
   try {
     fetch(API + '/api/analytics/profile/' + username).catch(() => {});
 
     const r = await fetch(API + '/api/profile/' + username, { signal: controller.signal });
-    clearTimeout(slowTimer);
-    clearTimeout(hardTimer);
+    clearTimeout(slowTimer); clearTimeout(hardTimer);
     document.getElementById('loading').style.display = 'none';
 
     if (!r.ok) {
@@ -171,22 +262,52 @@ async function loadProfile() {
     const user = await r.json();
     document.title = (user.display_name || user.username) + ' — ak-47.fr';
 
+    // ── Police ──────────────────────────────────────────
+    const font = user.profile_font || 'Inter';
+    if (font !== 'Inter') {
+      const link = document.getElementById('profileFont');
+      link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}:wght@400;500;600;700&display=swap`;
+      document.body.style.fontFamily = `'${font}', sans-serif`;
+    }
+
+    // ── Fond ────────────────────────────────────────────
+    const bgType  = user.bg_type  || 'color';
+    const bgValue = user.bg_value || '#fafafa';
+    if (bgType === 'color') {
+      document.body.style.background = bgValue;
+    } else if (bgType === 'gradient') {
+      document.body.style.background = bgValue;
+    } else if (bgType === 'image' && user.bg_url) {
+      const bg = document.getElementById('profileBg');
+      bg.style.backgroundImage = `url(${JSON.stringify(user.bg_url)})`;
+    }
+
+    // ── Bannière ─────────────────────────────────────────
+    if (user.banner_url) {
+      const banner = document.getElementById('profileBanner');
+      banner.src = user.banner_url;
+      banner.style.display = 'block';
+      document.getElementById('profile').style.paddingTop = '0';
+    }
+
+    // ── Avatar ───────────────────────────────────────────
+    const avContainer = document.getElementById('pAvatar');
+    const shape = user.avatar_shape || 'circle';
+    if (shape === 'rounded') avContainer.classList.add('shape-rounded');
+    if (shape === 'square')  avContainer.classList.add('shape-square');
+
     const color = user.avatar_color || '#000000';
     const isLight = (() => {
       const rv = parseInt(color.slice(1,3),16), g = parseInt(color.slice(3,5),16), b = parseInt(color.slice(5,7),16);
       return (0.299*rv + 0.587*g + 0.114*b) > 128;
     })();
 
-    // Avatar image ou couleur
-    const avContainer = document.getElementById('pAvatar');
     if (user.avatar_url) {
       const img = document.createElement('img');
       img.src = user.avatar_url;
       img.className = 'profile-avatar-img';
       img.alt = user.display_name || user.username;
       avContainer.style.background = 'none';
-      avContainer.style.border = 'none';
-      avContainer.style.padding = '0';
       avContainer.innerHTML = '';
       avContainer.appendChild(img);
     } else {
@@ -195,64 +316,93 @@ async function loadProfile() {
       avContainer.textContent = (user.display_name || user.username).charAt(0).toUpperCase();
     }
 
-    // Arrière-plan
-    if (user.bg_url) {
-      const bg = document.getElementById('profileBg');
-      bg.style.backgroundImage = `url(${JSON.stringify(user.bg_url)})`;
-    }
-
-    // Curseur personnalisé
+    // ── Curseur ──────────────────────────────────────────
     if (user.cursor_url) {
       document.body.style.cursor = `url(${JSON.stringify(user.cursor_url)}), auto`;
     }
 
-    // Audio
+    // ── Audio ────────────────────────────────────────────
     if (user.audio_url) {
       const player = document.getElementById('audioPlayer');
       player.src = user.audio_url;
       const bar = document.getElementById('audioBar');
       bar.classList.add('visible');
-      // Autoplay avec fallback click
       player.play().catch(() => {
         document.getElementById('audioBarTitle').textContent = 'Appuie pour jouer';
       });
     }
 
+    // ── Textes ───────────────────────────────────────────
     document.getElementById('pName').textContent = user.display_name || user.username;
-    document.getElementById('pBio').textContent = user.bio || '';
+    document.getElementById('pBio').textContent  = user.bio || '';
 
-    // Badges
+    // ── Badges ───────────────────────────────────────────
     const badgesRow = document.getElementById('pBadges');
-    if (badgesRow) {
-      badgesRow.innerHTML = '';
-      let badges = [];
-      try { badges = JSON.parse(user.discord_badges || '[]'); } catch {}
-      badges.forEach(b => {
-        const span = document.createElement('span');
-        let cls = 'badge';
-        if (b.type === 'nitro') cls += ' badge-nitro';
-        else if (b.type === 'discord') cls += ' badge-discord';
-        else if (b.type === 'server') {
-          cls += ' badge-server';
-          if (b.label === 'VIP') cls += ' vip';
-          if (b.label === 'Modérateur') cls += ' mod';
-        }
-        span.className = cls;
-        span.textContent = b.emoji + ' ' + b.label;
-        badgesRow.appendChild(span);
-      });
-    }
-    document.getElementById('pHandle').textContent = 'ak-47.fr/' + user.username;
+    let badges = []; try { badges = JSON.parse(user.discord_badges || '[]'); } catch {}
+    let hidden = []; try { hidden = JSON.parse(user.hidden_badges  || '[]'); } catch {}
+    badges = badges.filter((_, i) => !hidden.includes(i));
+    badgesRow.innerHTML = '';
+    badges.forEach(b => {
+      const span = document.createElement('span');
+      let cls = 'badge';
+      if (b.type === 'nitro')  cls += ' badge-nitro';
+      else if (b.type === 'discord') cls += ' badge-discord';
+      else if (b.type === 'server') {
+        cls += ' badge-server';
+        if (b.label === 'VIP') cls += ' vip';
+        if (b.label === 'Modérateur') cls += ' mod';
+      }
+      span.className = cls;
+      span.textContent = b.emoji + ' ' + b.label;
+      badgesRow.appendChild(span);
+    });
 
+    // ── Handle + vues ────────────────────────────────────
+    document.getElementById('pHandle').textContent = 'ak-47.fr/' + user.username;
     if (user.total_views > 0) {
       const views = user.total_views;
-      const formatted = views >= 1000 ? (views / 1000).toFixed(1).replace('.0', '') + 'K' : String(views);
+      const formatted = views >= 1000 ? (views/1000).toFixed(1).replace('.0','')+'K' : String(views);
       document.getElementById('pViewsCount').textContent = formatted + ' vue' + (views > 1 ? 's' : '');
       document.getElementById('pViews').style.display = 'flex';
     }
 
-    const links = user.links || [];
+    // ── Réseaux sociaux ──────────────────────────────────
+    let socials = {}; try { socials = JSON.parse(user.social_links || '{}'); } catch {}
+    const socialsRow = document.getElementById('pSocials');
+    Object.entries(socials).forEach(([key, value]) => {
+      if (!value) return;
+      const meta = SOCIAL_META[key];
+      if (!meta) return;
+      const url = value.startsWith('http') ? value : meta.base + value;
+      const a = document.createElement('a');
+      a.href = url; a.target = '_blank'; a.rel = 'noopener';
+      a.className = 'social-icon-link';
+      a.title = meta.label;
+      a.textContent = meta.emoji;
+      socialsRow.appendChild(a);
+    });
+
+    // ── Spotify ──────────────────────────────────────────
+    if (user.spotify_url) {
+      const w = document.getElementById('spotifyWidget');
+      w.href = user.spotify_url;
+      w.classList.add('visible');
+    }
+
+    // ── Style des boutons ────────────────────────────────
+    let btnStyle = {}; try { btnStyle = JSON.parse(user.link_btn_style || '{}'); } catch {}
+    if (btnStyle.bg)           document.documentElement.style.setProperty('--link-bg',     btnStyle.bg);
+    if (btnStyle.color)        document.documentElement.style.setProperty('--link-color',  btnStyle.color);
+    if (btnStyle.border)       document.documentElement.style.setProperty('--link-border', btnStyle.border);
+    if (btnStyle.borderRadius) document.documentElement.style.setProperty('--link-radius', btnStyle.borderRadius);
+
+    // ── Disposition des liens ────────────────────────────
+    const layout = user.link_layout || 'list';
     const linksContainer = document.getElementById('pLinks');
+    if (layout === 'grid')    linksContainer.classList.add('layout-grid');
+    if (layout === 'buttons') linksContainer.classList.add('layout-buttons');
+
+    const links = user.links || [];
     if (links.length) {
       linksContainer.innerHTML = links.map(l => `
         <a class="profile-link" href="${escAttr(l.url)}" target="_blank" rel="noopener"
@@ -266,8 +416,7 @@ async function loadProfile() {
 
     document.getElementById('profile').style.display = 'flex';
   } catch(e) {
-    clearTimeout(slowTimer);
-    clearTimeout(hardTimer);
+    clearTimeout(slowTimer); clearTimeout(hardTimer);
     document.getElementById('loading').style.display = 'none';
     if (timedOut || e.name === 'AbortError') {
       document.getElementById('notFoundMsg').textContent = 'Le serveur met trop de temps à répondre. Réessaie dans quelques secondes.';
@@ -279,15 +428,13 @@ async function loadProfile() {
 let audioPlaying = false;
 function toggleAudio() {
   const player = document.getElementById('audioPlayer');
-  const icon = document.getElementById('audioBarIcon');
+  const icon   = document.getElementById('audioBarIcon');
   if (player.paused) {
-    player.play();
-    icon.textContent = '⏸';
+    player.play(); icon.textContent = '⏸';
     document.getElementById('audioBarTitle').textContent = 'En lecture…';
     audioPlaying = true;
   } else {
-    player.pause();
-    icon.textContent = '▶';
+    player.pause(); icon.textContent = '▶';
     document.getElementById('audioBarTitle').textContent = 'Musique';
     audioPlaying = false;
   }
@@ -301,8 +448,8 @@ function trackClick(username, url, title) {
   }).catch(() => {});
 }
 
-function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function escAttr(s) { return String(s).replace(/"/g,'&quot;'); }
+function escHtml(s)  { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s)  { return String(s).replace(/"/g,'&quot;'); }
 
 loadProfile();
 </script>

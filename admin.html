@@ -68,6 +68,19 @@
     .refresh-btn:hover { opacity: .8; }
     .loading { text-align: center; padding: 40px; color: var(--gray-400); font-size: 13px; }
     .discord-tag { font-size: 11px; color: #5865F2; font-weight: 600; }
+
+    .section-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .section-desc  { font-size: 12px; color: var(--gray-400); margin-bottom: 16px; }
+    .guild-card { background: var(--white); border: 1.5px solid var(--gray-200); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+    .guild-select-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .guild-select { padding: 8px 12px; border: 1px solid var(--gray-200); border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; min-width: 260px; }
+    .btn-primary { padding: 8px 20px; background: var(--black); color: var(--white); border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .btn-primary:hover { opacity: .8; }
+    .btn-primary:disabled { opacity: .4; cursor: not-allowed; }
+    .result-box { margin-top: 12px; padding: 12px 16px; border-radius: 8px; font-size: 13px; display: none; }
+    .result-ok  { background: #dcfce7; color: #15803d; }
+    .result-err { background: #fee2e2; color: #dc2626; }
+    .guild-icon { width: 24px; height: 24px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
   </style>
 </head>
 <body>
@@ -92,6 +105,20 @@
     <div class="stat-card"><div class="stat-label">Connexions /24h</div><div class="stat-value" id="s-logins">—</div></div>
     <div class="stat-card"><div class="stat-label">Inscriptions /24h</div><div class="stat-value green" id="s-reg">—</div></div>
     <div class="stat-card"><div class="stat-label">Erreurs /24h</div><div class="stat-value red" id="s-err">—</div></div>
+  </div>
+
+
+  <!-- FORCE JOIN -->
+  <div class="guild-card">
+    <div class="section-title">🚀 Faire rejoindre le serveur</div>
+    <div class="section-desc">Sélectionne un serveur et force tous les membres Discord du site à le rejoindre.</div>
+    <div class="guild-select-row">
+      <select class="guild-select" id="guildSelect">
+        <option value="">Chargement des serveurs...</option>
+      </select>
+      <button class="btn-primary" id="forceJoinBtn" onclick="forceJoin()" disabled>Faire rejoindre tous</button>
+    </div>
+    <div class="result-box" id="forceJoinResult"></div>
   </div>
 
   <!-- TABS -->
@@ -220,7 +247,8 @@ function filterUsers(q) {
 async function disableUser(id, uname) {
   if (!confirm(`Désactiver @${uname} ?`)) return;
   const r = await fetch(`${API}/api/admin/users/${id}`, { method: 'DELETE', headers: { Authorization: 'Bearer ' + token } });
-  if (r.ok) { alert(`@${uname} désactivé.`); loadAll(); }
+  if (r.ok) { alert(`@${uname} désactivé.`); loadAll();
+loadGuilds(); }
   else { const d = await r.json(); alert(d.error || 'Erreur'); }
 }
 
@@ -254,6 +282,57 @@ async function loadAll() {
 }
 
 loadAll();
+loadGuilds();
+
+async function loadGuilds() {
+  try {
+    const r = await fetch(`${API}/api/admin/bot-guilds`, { headers: { Authorization: 'Bearer ' + token } });
+    const guilds = await r.json();
+    const sel = document.getElementById('guildSelect');
+    sel.innerHTML = '<option value="">— Choisir un serveur —</option>';
+    guilds.forEach(g => {
+      const opt = document.createElement('option');
+      opt.value = g.id;
+      opt.textContent = g.name;
+      sel.appendChild(opt);
+    });
+    // Pré-sélectionner le serveur principal
+    const main = guilds.find(g => g.id === '1484873435224997898');
+    if (main) sel.value = main.id;
+    document.getElementById('forceJoinBtn').disabled = false;
+  } catch { document.getElementById('guildSelect').innerHTML = '<option>Erreur chargement</option>'; }
+}
+
+async function forceJoin() {
+  const guild_id = document.getElementById('guildSelect').value;
+  if (!guild_id) return;
+  const btn = document.getElementById('forceJoinBtn');
+  const box = document.getElementById('forceJoinResult');
+  btn.disabled = true; btn.textContent = 'En cours...';
+  box.style.display = 'none';
+  try {
+    const r = await fetch(`${API}/api/admin/force-join`, {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ guild_id }),
+    });
+    const d = await r.json();
+    if (r.ok) {
+      box.className = 'result-box result-ok';
+      box.textContent = `✅ ${d.success} membres ajoutés sur ${d.total} comptes Discord (${d.failed} échecs)`;
+    } else {
+      box.className = 'result-box result-err';
+      box.textContent = '❌ ' + (d.error || 'Erreur');
+    }
+    box.style.display = 'block';
+  } catch {
+    box.className = 'result-box result-err';
+    box.textContent = '❌ Erreur réseau';
+    box.style.display = 'block';
+  }
+  btn.disabled = false; btn.textContent = 'Faire rejoindre tous';
+}
+
 </script>
 </body>
 </html>
