@@ -1275,16 +1275,20 @@ async function loadUser() {
 async function loadAnalytics() {
   try {
     const r = await fetch(API + '/api/analytics', { headers: { Authorization: 'Bearer ' + token } });
-    analyticsData = await r.json();
+    if (!r.ok) { console.error('analytics HTTP', r.status); return; }
+    const data = await r.json();
+    if (!data || data.error) { console.error('analytics error', data); return; }
+    analyticsData = data;
     renderStats();
     renderChart('chartBars', analyticsData.daily, 80);
     renderChart('analyticsChart', analyticsData.daily, 100);
     renderTopLinks();
-  } catch {}
+  } catch (e) { console.error('loadAnalytics:', e); }
 }
 
 function renderStats() {
   const d = analyticsData;
+  if (!d) return;
   ['sv-total','av-total'].forEach(id => el(id).textContent = fmt(d.total_views));
   ['sv-today','av-today'].forEach(id => el(id).textContent = fmt(d.views_today));
   ['sv-7d','av-7d'].forEach(id => el(id).textContent = fmt(d.views_7d));
