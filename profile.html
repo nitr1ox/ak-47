@@ -393,7 +393,7 @@
 </head>
 <body>
 
-<button id="globalThemeBtn" onclick="toggleTheme()" title="Changer le thème" aria-label="Changer le thème">🌙</button>
+
 
 
 <div id="enterOverlay" onclick="enterSite()">
@@ -1047,9 +1047,22 @@ async function loadProfile() {
       } else if (usernameEffect === 'typewriter') {
         const txt = nameEl.textContent.trim();
         nameEl.textContent = '';
-        let i = 0;
         styleTag.textContent = `#pName::after{content:'|';animation:blink .7s infinite;}@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}`;
-        const tw = setInterval(() => { nameEl.textContent = txt.slice(0,++i); if(i>=txt.length) clearInterval(tw); }, 80);
+        let i = 0, dir = 1;
+        const SPEED_TYPE = 90, SPEED_DEL = 50, PAUSE_FULL = 1200, PAUSE_EMPTY = 350;
+        function tick() {
+          nameEl.textContent = txt.slice(0, i);
+          if (dir === 1) {
+            i++;
+            if (i > txt.length) { dir = -1; setTimeout(tick, PAUSE_FULL); return; }
+            setTimeout(tick, SPEED_TYPE);
+          } else {
+            i--;
+            if (i < 0) { i = 0; dir = 1; setTimeout(tick, PAUSE_EMPTY); return; }
+            setTimeout(tick, SPEED_DEL);
+          }
+        }
+        tick();
       } else if (usernameEffect === 'shake') {
         styleTag.textContent = `#pName{animation:shake 0.5s infinite;}@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-2px)}75%{transform:translateX(2px)}}`;
       }
@@ -1517,28 +1530,6 @@ function startMusicNow() {
 
 loadProfile();
 </script>
-<script>
-(function(){
-  var btn = document.getElementById('globalThemeBtn');
-  if(!btn) return;
-  var t = document.documentElement.getAttribute('data-theme') || 'light';
-  btn.textContent = t === 'dark' ? '☀️' : '🌙';
-  btn.setAttribute('data-theme-btn', '1');
-})();
-function toggleTheme(){
-  var cur = document.documentElement.getAttribute('data-theme') || 'light';
-  var next = cur === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
-  var btn = document.getElementById('globalThemeBtn');
-  if(btn) btn.textContent = next === 'dark' ? '☀️' : '🌙';
-  var pill = document.getElementById('themeToggle');
-  if(pill) pill.textContent = next === 'dark' ? '☀️' : '🌙';
-}
-document.addEventListener('DOMContentLoaded', function(){
-  var btn = document.getElementById('globalThemeBtn');
-  if(btn){var t=document.documentElement.getAttribute('data-theme')||'light'; btn.textContent=t==='dark'?'☀️':'🌙';}
-});
-</script>
+
 </body>
 </html>

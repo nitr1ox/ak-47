@@ -27,8 +27,9 @@
   </style>
 </head>
 <body>
-
 <button id="globalThemeBtn" onclick="toggleTheme()" title="Changer le thème" aria-label="Changer le thème">🌙</button>
+
+
 <div class="page-shell">
   <a href="/" class="logo-link">ak-47<span>.fr</span></a>
   <div class="card card-sm">
@@ -96,6 +97,9 @@
   }
   document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 </script>
+
+
+
 <script>
 (function(){
   var btn = document.getElementById('globalThemeBtn');
@@ -119,7 +123,5 @@ document.addEventListener('DOMContentLoaded', function(){
   if(btn){var t=document.documentElement.getAttribute('data-theme')||'light'; btn.textContent=t==='dark'?'☀️':'🌙';}
 });
 </script>
-
-
 </body>
 </html>

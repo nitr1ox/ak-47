@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="/style.css"/>
   <style>
     body { background: var(--white); }
-    .snav { display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px;border-bottom:1px solid var(--gray-200); }
+    .snav { display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;border-bottom:1px solid var(--gray-200); }
     .snav-brand { font-size:16px;font-weight:700;letter-spacing:-.3px;color:var(--black);text-decoration:none; }
     .snav-brand span { color:var(--gray-400);font-weight:400; }
     .snav a.back { font-size:13px;color:var(--gray-500);text-decoration:none; }
@@ -30,10 +30,16 @@
     .badge-checking { background:var(--gray-100);color:var(--gray-500);border:1px solid var(--gray-200);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600; }
     .badge-down { background:#fef2f2;color:#dc2626;border:1px solid #fecaca;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600; }
     .last-check { font-size:12px;color:var(--gray-400);text-align:right; }
+    @media (max-width: 480px) {
+      .snav { padding: 0 14px; }
+      .page { padding: 36px 14px; }
+      .srv-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+    }
   </style>
 </head>
 <body>
 <button id="globalThemeBtn" onclick="toggleTheme()" title="Changer le thème" aria-label="Changer le thème">🌙</button>
+
 <nav class="snav">
   <a href="/" class="snav-brand">ak-47<span>.fr</span></a>
   <a href="/" class="back">← Retour</a>
@@ -116,6 +122,9 @@
   checkStatus();
   setInterval(checkStatus, 30000);
 </script>
+
+
+
 <script>
 (function(){
   var btn = document.getElementById('globalThemeBtn');
@@ -139,7 +148,5 @@ document.addEventListener('DOMContentLoaded', function(){
   if(btn){var t=document.documentElement.getAttribute('data-theme')||'light'; btn.textContent=t==='dark'?'☀️':'🌙';}
 });
 </script>
-
-
 </body>
 </html>

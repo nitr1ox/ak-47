@@ -152,6 +152,12 @@ input.error { border-color: var(--red); }
   .dash-main { padding: 16px; }
   .card { padding: 24px 20px; }
 }
+@media (max-width: 360px) {
+  .card { padding: 20px 16px; max-width: 100%; }
+  .page-shell { padding: 16px; }
+  .logo-link { font-size: 16px; margin-bottom: 20px; }
+  .btn { font-size: 13px; }
+}
 
 /* ── DARK MODE ── */
 [data-theme="dark"] {
@@ -179,6 +185,7 @@ input.error { border-color: var(--red); }
 }
 [data-theme="dark"] .input-row { background: var(--gray-100); }
 [data-theme="dark"] .input-prefix { background: var(--gray-200); }
+[data-theme="dark"] .page-shell { background: var(--gray-100); }
 
 /* Theme pill toggle */
 .theme-pill-toggle {

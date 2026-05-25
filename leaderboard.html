@@ -32,10 +32,19 @@
     .lb-views { font-size:13px;font-weight:600;color:var(--gray-700); }
     .empty { text-align:center;padding:48px 24px;color:var(--gray-400);font-size:14px; }
     .loading { text-align:center;padding:48px 24px;color:var(--gray-400);font-size:14px; }
+    @media (max-width: 500px) {
+      .lb-nav { padding: 0 14px; }
+      .page { padding: 36px 14px; }
+      h1 { font-size: 28px; letter-spacing: -1px; }
+      .lb-header, .lb-row { grid-template-columns: 36px 1fr 72px; padding: 10px 12px; }
+      .lb-av { width: 26px; height: 26px; font-size: 11px; }
+      .lb-views { font-size: 12px; }
+    }
   </style>
 </head>
 <body>
 <button id="globalThemeBtn" onclick="toggleTheme()" title="Changer le thème" aria-label="Changer le thème">🌙</button>
+
 <nav class="lb-nav">
   <a href="/" class="lb-nav-brand">ak-47<span>.fr</span></a>
   <a href="/" class="back">← Retour</a>
@@ -55,6 +64,7 @@
   const rankClass = r => r===1?'gold':r===2?'silver':r===3?'bronze':'';
   const rankIcon  = r => r===1?'🥇':r===2?'🥈':r===3?'🥉':r;
 
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
   fetch('https://ak47-backend.onrender.com/api/leaderboard')
     .then(r => r.json())
     .then(users => {
@@ -64,15 +74,15 @@
       }
       document.getElementById('lbBody').innerHTML = users.map((u, i) => {
         const rank = i + 1;
-        const initials = (u.display_name || u.username).slice(0,2).toUpperCase();
-        const color = u.avatar_color || '#18181b';
+        const initials = esc((u.display_name || u.username).slice(0,2).toUpperCase());
+        const color = /^#[0-9a-fA-F]{3,6}$/.test(u.avatar_color||'') ? u.avatar_color : '#18181b';
         return `<a href="/${u.username}" class="lb-row">
           <div class="lb-rank ${rankClass(rank)}">${rankIcon(rank)}</div>
           <div class="lb-user">
             <div class="lb-av" style="background:${color}">${initials}</div>
             <div>
-              <div class="lb-name">${u.display_name || u.username}</div>
-              <div class="lb-handle">ak-47.fr/${u.username}</div>
+              <div class="lb-name">${esc(u.display_name || u.username)}</div>
+              <div class="lb-handle">ak-47.fr/${esc(u.username)}</div>
             </div>
           </div>
           <div class="lb-views">${u.total_views.toLocaleString('fr-FR')}</div>
@@ -83,6 +93,9 @@
       document.getElementById('lbBody').innerHTML = '<div class="empty">Impossible de charger le classement.</div>';
     });
 </script>
+
+
+
 <script>
 (function(){
   var btn = document.getElementById('globalThemeBtn');
@@ -106,7 +119,5 @@ document.addEventListener('DOMContentLoaded', function(){
   if(btn){var t=document.documentElement.getAttribute('data-theme')||'light'; btn.textContent=t==='dark'?'☀️':'🌙';}
 });
 </script>
-
-
 </body>
 </html>

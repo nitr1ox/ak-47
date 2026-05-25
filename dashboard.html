@@ -34,9 +34,6 @@
     .save-bar-btn:hover { background: var(--gray-900); }
     .save-bar-btn:disabled { background: var(--gray-300); cursor: not-allowed; }
 
-    .profile-url-bar { display: flex; align-items: center; gap: 8px; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 7px; padding: 10px 14px; margin-bottom: 20px; }
-    .profile-url-text { font-size: 13px; color: var(--gray-600); flex: 1; }
-    .profile-url-text strong { color: var(--black); }
     .copy-btn { padding: 5px 12px; background: var(--white); border: 1px solid var(--gray-200); border-radius: 5px; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--gray-700); transition: all .15s; }
     .copy-btn:hover { background: var(--gray-100); }
 
@@ -245,6 +242,27 @@
     .badge-server { background:#000;color:#fff;border-color:#000; }
     .badge-server.vip { background:linear-gradient(135deg,#f6c90e,#e6a817);color:#000;border-color:transparent; }
     .badge-server.mod { background:#e74c3c;color:#fff;border-color:transparent; }
+
+    /* ── Mobile bottom nav ── */
+    .mobile-bottom-nav {
+      display: none;
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+      background: var(--white); border-top: 1px solid var(--gray-200);
+      padding: 8px 0 env(safe-area-inset-bottom, 8px);
+      grid-template-columns: repeat(6, 1fr);
+    }
+    .mob-nav-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      padding: 4px 2px; background: none; border: none; cursor: pointer;
+      font-size: 10px; color: var(--gray-400); font-family: 'Inter', sans-serif;
+      font-weight: 500; transition: color .15s;
+    }
+    .mob-nav-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; }
+    .mob-nav-btn.active { color: var(--black); }
+    @media (max-width: 860px) {
+      .mobile-bottom-nav { display: grid; }
+      .dash-main { padding-bottom: 72px; }
+    }
   </style>
 </head>
 <body>
@@ -304,12 +322,6 @@
     <div class="tab-content active" id="tab-overview">
       <div class="dash-title">Vue d'ensemble</div>
       <div class="dash-subtitle" id="overviewDate">Chargement...</div>
-
-      <div class="profile-url-bar">
-        <span class="profile-url-text">Votre profil : <strong id="profileUrlText">—</strong></span>
-        <button class="copy-btn" onclick="copyUrl()">Copier</button>
-        <a id="profileViewBtn2" href="#" target="_blank" class="copy-btn">Voir ↗</a>
-      </div>
 
       <div class="stats-row">
         <div class="stat-card"><div class="stat-card-val" id="sv-total">—</div><div class="stat-card-label">Vues totales</div></div>
@@ -1208,7 +1220,6 @@ function getLinkIcon(url) {
 document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('navUsername').textContent = username;
   const profileUrl = window.location.origin + '/' + username;
-  document.getElementById('profileUrlText').textContent = profileUrl;
   document.getElementById('profileViewBtn').href = profileUrl;
   document.getElementById('profileViewBtn2').href = profileUrl;
   document.getElementById('overviewDate').textContent = new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
@@ -2472,5 +2483,39 @@ document.addEventListener("DOMContentLoaded",function(){
 </script>
 
 
+
+<!-- Mobile bottom nav -->
+<nav class="mobile-bottom-nav" id="mobileBottomNav">
+  <button class="mob-nav-btn active" onclick="switchTab('overview');setMobActive(this)">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Accueil
+  </button>
+  <button class="mob-nav-btn" onclick="switchTab('profile');setMobActive(this)">
+    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    Profil
+  </button>
+  <button class="mob-nav-btn" onclick="switchTab('links');setMobActive(this)">
+    <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+    Liens
+  </button>
+  <button class="mob-nav-btn" onclick="switchTab('analytics');setMobActive(this)">
+    <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    Stats
+  </button>
+  <button class="mob-nav-btn" onclick="switchTab('perso');setMobActive(this)">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+    Perso
+  </button>
+  <button class="mob-nav-btn" onclick="switchTab('medias');setMobActive(this)">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    Médias
+  </button>
+</nav>
+<script>
+function setMobActive(btn) {
+  document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+</script>
 </body>
 </html>
