@@ -414,7 +414,7 @@
             <input type="file" id="bgFile" accept="image/*" onchange="handleMedia('bg', this)" onclick="event.stopPropagation()"/>
             <img class="media-preview-img" id="bgPreview" alt="Aperçu arrière-plan"/>
             <div class="media-upload-icon" id="bgIcon">🖼️</div>
-            <div class="media-upload-label" id="bgLabel">Cliquez pour téléverser un fichier</div>
+            <div class="media-upload-label" id="bgLabel">Cliquez pour téléverser (toute taille — compressé auto)</div>
             <div class="media-upload-name" id="bgName"></div>
             <button class="media-remove-btn" id="bgRemove" style="display:none" onclick="removeMedia(event,'bg')">✕ Supprimer</button>
           </div>
@@ -536,7 +536,7 @@
           <input type="file" id="bannerFile" accept="image/*" onchange="handlePersoMedia('banner', this)" onclick="event.stopPropagation()"/>
           <img class="media-preview-img" id="bannerPreview" alt="Aperçu bannière" style="width:100%;height:80px;object-fit:cover;border-radius:6px;"/>
           <div class="media-upload-icon" id="bannerIcon">🖼️</div>
-          <div class="media-upload-label" id="bannerLabel">Cliquez pour téléverser une image</div>
+          <div class="media-upload-label" id="bannerLabel">Cliquez pour téléverser une image (toute taille — compressé auto)</div>
           <div class="media-upload-name" id="bannerFileName"></div>
           <button class="media-remove-btn" id="bannerRemove" style="display:none" onclick="removePersoMedia(event,'banner')">✕ Supprimer</button>
         </div>
@@ -596,7 +596,7 @@
             <input type="file" id="bgFilePerso" accept="image/*" onchange="handlePersoMedia('bg', this)" onclick="event.stopPropagation()"/>
             <img class="media-preview-img" id="bgPersoPreview" alt="Aperçu fond"/>
             <div class="media-upload-icon" id="bgPersoIcon">🖼️</div>
-            <div class="media-upload-label" id="bgPersoLabel">Cliquez pour téléverser</div>
+            <div class="media-upload-label" id="bgPersoLabel">Cliquez pour téléverser (toute taille — compressé auto)</div>
             <div class="media-upload-name" id="bgPersoFileName"></div>
             <button class="media-remove-btn" id="bgPersoRemove" style="display:none" onclick="removePersoMedia(event,'bg')">✕ Supprimer</button>
           </div>
@@ -1423,49 +1423,88 @@ function selectAudioSrc(val) {
   else document.getElementById('audioRemove').style.display = 'inline';
 }
 
-function handleMedia(type, input) {
+// Compresse une image via canvas. maxW/maxH = dimensions max. quality = 0-1 JPEG.
+function compressImage(file, maxW, maxH, quality) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        if (w > maxW || h > maxH) {
+          const ratio = Math.min(maxW / w, maxH / h);
+          w = Math.round(w * ratio);
+          h = Math.round(h * ratio);
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handleMedia(type, input) {
   const file = input.files[0];
   if (!file) return;
 
-  const limits = { avatar: 2, bg: 50, cursor: 2, audio: 8 };
-  if (file.size > limits[type] * 1024 * 1024) {
-    showAlert('mediasAlert', `Fichier trop lourd (max ${limits[type]}MB)`);
+  // Pas de limite côté client pour les images bg — on compresse
+  const hardLimits = { avatar: 20, bg: 200, cursor: 10, audio: 30 };
+  if (file.size > hardLimits[type] * 1024 * 1024) {
+    showAlert('mediasAlert', `Fichier trop lourd (max ${hardLimits[type]}MB)`);
     input.value = '';
     return;
   }
 
-  const reader = new FileReader();
-  reader.onload = e => {
-    const data = e.target.result;
-    pendingMedias[type + '_url'] = data;
+  let data;
+  if (type === 'bg') {
+    // Compression bg : max 2560x1440, qualité 0.85
+    try { data = await compressImage(file, 2560, 1440, 0.85); }
+    catch { showAlert('mediasAlert', 'Impossible de lire cette image.'); return; }
+  } else if (type === 'avatar') {
+    try { data = await compressImage(file, 400, 400, 0.90); }
+    catch { showAlert('mediasAlert', 'Impossible de lire cette image.'); return; }
+  } else {
+    // cursor, audio : lecture directe
+    data = await new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = e => res(e.target.result); r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+  }
 
-    if (type === 'bg') {
-      const img = el('bgPreview');
-      img.src = data; img.style.display = 'block';
-      el('bgIcon').style.display = 'none';
-      el('bgLabel').textContent = file.name;
-      el('bgRemove').style.display = 'inline';
-    } else if (type === 'avatar') {
-      const img = el('avatarPreview');
-      img.src = data; img.style.display = 'block';
-      el('avatarIcon').style.display = 'none';
-      el('avatarLabel').textContent = file.name;
-      el('avatarRemove').style.display = 'inline';
-    } else if (type === 'cursor') {
-      const img = el('cursorPreview');
-      img.src = data; img.style.display = 'block';
-      el('cursorIcon').style.display = 'none';
-      el('cursorLabel').textContent = file.name;
-      el('cursorRemove').style.display = 'inline';
-    } else if (type === 'audio') {
-      const audio = el('audioPreview');
-      audio.src = data; audio.style.display = 'block';
-      el('audioFileName').textContent = file.name;
-      el('audioName').textContent = '🎵 ' + file.name;
-      el('audioRemove').style.display = 'inline';
-    }
-  };
-  reader.readAsDataURL(file);
+  pendingMedias[type + '_url'] = data;
+
+  if (type === 'bg') {
+    const img = el('bgPreview');
+    img.src = data; img.style.display = 'block';
+    el('bgIcon').style.display = 'none';
+    el('bgLabel').textContent = file.name;
+    el('bgRemove').style.display = 'inline';
+  } else if (type === 'avatar') {
+    const img = el('avatarPreview');
+    img.src = data; img.style.display = 'block';
+    el('avatarIcon').style.display = 'none';
+    el('avatarLabel').textContent = file.name;
+    el('avatarRemove').style.display = 'inline';
+  } else if (type === 'cursor') {
+    const img = el('cursorPreview');
+    img.src = data; img.style.display = 'block';
+    el('cursorIcon').style.display = 'none';
+    el('cursorLabel').textContent = file.name;
+    el('cursorRemove').style.display = 'inline';
+  } else if (type === 'audio') {
+    const audio = el('audioPreview');
+    audio.src = data; audio.style.display = 'block';
+    el('audioFileName').textContent = file.name;
+    el('audioName').textContent = '🎵 ' + file.name;
+    el('audioRemove').style.display = 'inline';
+  }
 }
 
 function removeMedia(e, type) {
@@ -1735,25 +1774,39 @@ function updateBtnStylePreview() {
 async function handlePersoMedia(type, input) {
   const file = input.files[0];
   if (!file) return;
-  const MAX = type === 'bg' ? 50 * 1024 * 1024 : 2 * 1024 * 1024;
-  if (file.size > MAX) { showToast(`Fichier trop lourd (max ${type === 'bg' ? 50 : 2}MB)`); return; }
-  const reader = new FileReader();
-  reader.onload = e => {
-    const data = e.target.result;
-    if (type === 'banner') {
-      pendingPerso.banner_url = data;
-      el('bannerPreview').src = data; el('bannerPreview').style.display = 'block';
-      el('bannerIcon').style.display = 'none'; el('bannerLabel').textContent = file.name;
-      el('bannerFileName').textContent = ''; el('bannerRemove').style.display = 'inline';
-    } else if (type === 'bg') {
-      pendingPerso.bg_url = data;
-      pendingPerso.bg_type = 'image';
-      el('bgPersoPreview').src = data; el('bgPersoPreview').style.display = 'block';
-      el('bgPersoIcon').style.display = 'none'; el('bgPersoLabel').textContent = file.name;
-      el('bgPersoRemove').style.display = 'inline';
-    }
-  };
-  reader.readAsDataURL(file);
+  // Limite souple côté client — compression canvas avant envoi
+  const hardMax = 200 * 1024 * 1024; // 200 MB max absolu
+  if (file.size > hardMax) { showToast('Fichier trop lourd (max 200MB)'); return; }
+
+  let data;
+  if (type === 'bg') {
+    // Compresse le fond de page : max 2560×1440, qualité 0.85
+    try { data = await compressImage(file, 2560, 1440, 0.85); }
+    catch { showToast('Impossible de lire cette image.'); return; }
+  } else if (type === 'banner') {
+    // Compresse la bannière : max 1200×400, qualité 0.88
+    try { data = await compressImage(file, 1200, 400, 0.88); }
+    catch { showToast('Impossible de lire cette image.'); return; }
+  } else {
+    data = await new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = e => res(e.target.result); r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+  }
+
+  if (type === 'banner') {
+    pendingPerso.banner_url = data;
+    el('bannerPreview').src = data; el('bannerPreview').style.display = 'block';
+    el('bannerIcon').style.display = 'none'; el('bannerLabel').textContent = file.name;
+    el('bannerFileName').textContent = ''; el('bannerRemove').style.display = 'inline';
+  } else if (type === 'bg') {
+    pendingPerso.bg_url = data;
+    pendingPerso.bg_type = 'image';
+    el('bgPersoPreview').src = data; el('bgPersoPreview').style.display = 'block';
+    el('bgPersoIcon').style.display = 'none'; el('bgPersoLabel').textContent = file.name;
+    el('bgPersoRemove').style.display = 'inline';
+  }
 }
 
 function removePersoMedia(event, type) {
