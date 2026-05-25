@@ -466,6 +466,30 @@
             </div>
             <button class="media-remove-btn" id="audioRemove" style="display:none;margin-top:8px;" onclick="removeMedia(event,'audio')">✕ Supprimer l'audio</button>
           </div>
+
+          <!-- Nom du son -->
+          <div style="margin-top:16px;">
+            <div class="section-card-title" style="font-size:13px;font-weight:600;margin-bottom:8px;">Nom du morceau</div>
+            <input type="text" id="audioNameInput" placeholder="Ex: My Song - Artist"
+              style="width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;background:transparent;color:var(--black);box-sizing:border-box;outline:none;"
+              oninput="pendingMedias.audio_name = this.value"/>
+            <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">Affiché dans le lecteur. Laissez vide pour utiliser le nom du fichier.</div>
+          </div>
+
+          <!-- Pochette du son -->
+          <div style="margin-top:16px;">
+            <div class="section-card-title" style="font-size:13px;font-weight:600;margin-bottom:8px;">Pochette du morceau</div>
+            <div class="media-upload-box" onclick="triggerUpload('audioCoverFile')" style="position:relative;">
+              <input type="file" id="audioCoverFile" accept="image/*" onchange="handleAudioCover(this)" onclick="event.stopPropagation()" style="display:none;"/>
+              <img class="media-preview-img" id="audioCoverPreview" alt="Aperçu pochette" style="width:60px;height:60px;border-radius:10px;object-fit:cover;margin:0 auto 8px;display:none;"/>
+              <span id="audioCoverIcon" style="font-size:22px;margin-bottom:6px;display:block;">🎨</span>
+              <div class="media-upload-label" id="audioCoverLabel">Cliquez pour choisir une image</div>
+              <div class="media-upload-name" id="audioCoverFileName"></div>
+            </div>
+            <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">Affichée dans le lecteur. Par défaut : votre avatar.</div>
+            <button class="media-remove-btn" id="audioCoverRemove" style="display:none;margin-top:8px;" onclick="removeAudioCover(event)">✕ Supprimer la pochette</button>
+          </div>
+        </div>
         </div>
 
         <div>
@@ -708,7 +732,7 @@ if (!token) window.location.href = '/login';
 let userData = null;
 let analyticsData = null;
 let pendingLinks = null;
-let pendingMedias = { avatar_url: null, bg_url: null, audio_url: null, cursor_url: null };
+let pendingMedias = { avatar_url: null, bg_url: null, audio_url: null, audio_name: null, audio_cover_url: null, cursor_url: null };
 
 const SOCIALS = [
   { id:'snapchat',   label:'Snapchat',   color:'#FFFC00', icon:'https://cdn.simpleicons.org/snapchat/FFFC00',    base:'https://snapchat.com/add/',       placeholder:'Ton pseudo Snapchat' },
@@ -1427,6 +1451,34 @@ function removeMedia(e, type) {
   }
 }
 
+function handleAudioCover(input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  if (file.size > 4 * 1024 * 1024) { showToast('Image trop lourde (max 4 Mo)'); return; }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const data = e.target.result;
+    pendingMedias.audio_cover_url = data;
+    el('audioCoverPreview').src = data;
+    el('audioCoverPreview').style.display = 'block';
+    el('audioCoverIcon').style.display = 'none';
+    el('audioCoverLabel').textContent = 'Pochette sélectionnée';
+    el('audioCoverFileName').textContent = file.name;
+    el('audioCoverRemove').style.display = 'inline';
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeAudioCover(e) {
+  e.stopPropagation();
+  pendingMedias.audio_cover_url = '';
+  el('audioCoverPreview').style.display = 'none'; el('audioCoverPreview').src = '';
+  el('audioCoverIcon').style.display = 'block';
+  el('audioCoverLabel').textContent = 'Cliquez pour choisir une image';
+  el('audioCoverFileName').textContent = '';
+  el('audioCoverRemove').style.display = 'none';
+}
+
 function loadMediasUI() {
   if (!userData) return;
   if (userData.bg_url) {
@@ -1450,6 +1502,16 @@ function loadMediasUI() {
     el('audioRemove').style.display = 'inline';
     document.querySelector('input[name=audioSrc][value=upload]').checked = true;
     selectAudioSrc('upload');
+  }
+  if (userData.audio_name) {
+    el('audioNameInput').value = userData.audio_name;
+  }
+  if (userData.audio_cover_url) {
+    el('audioCoverPreview').src = userData.audio_cover_url;
+    el('audioCoverPreview').style.display = 'block';
+    el('audioCoverIcon').style.display = 'none';
+    el('audioCoverLabel').textContent = 'Pochette actuelle';
+    el('audioCoverRemove').style.display = 'inline';
   }
 }
 
@@ -1476,7 +1538,7 @@ async function saveMedias() {
     const data = await r.json();
     if (!r.ok) { showAlert('mediasAlert', data.error || 'Erreur'); return; }
     userData = data;
-    pendingMedias = { avatar_url: null, bg_url: null, audio_url: null, cursor_url: null };
+    pendingMedias = { avatar_url: null, bg_url: null, audio_url: null, audio_name: null, audio_cover_url: null, cursor_url: null };
     el('mediasAlert').innerHTML = '';
     showToast('Médias sauvegardés ✓');
   } catch { showToast('Erreur réseau'); }

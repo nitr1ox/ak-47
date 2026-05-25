@@ -131,52 +131,117 @@
 
     #audioPlayer { display: none; }
 
-    /* ── Music Player ── */
+    /* ── Music Player Flottant ── */
     .music-player {
       display: none;
-      align-items: center; gap: 10px;
-      background: #111; border-radius: 8px;
-      padding: 8px 12px; margin: 14px auto 0;
-      max-width: 360px; width: 100%;
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px);
+      width: calc(100% - 32px); max-width: 420px;
+      background: rgba(15,15,15,.82);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 20px;
+      padding: 12px 14px 10px;
       color: #fff; user-select: none;
+      z-index: 9999;
+      box-shadow: 0 8px 40px rgba(0,0,0,.45), 0 2px 8px rgba(0,0,0,.3);
+      transition: transform .4s cubic-bezier(.34,1.56,.64,1), opacity .3s ease;
+      opacity: 0;
     }
-    .music-player.visible { display: flex; }
+    .music-player.visible {
+      display: block;
+    }
+    .music-player.shown {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
 
+    /* Barre supérieure : pochette + info + bouton play */
+    .mp-top {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 10px;
+    }
     .mp-thumb {
-      width: 42px; height: 42px; border-radius: 5px;
-      background: #333; flex-shrink: 0; overflow: hidden;
+      width: 44px; height: 44px; border-radius: 10px;
+      background: #2a2a2a; flex-shrink: 0; overflow: hidden;
       display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,.4);
     }
-    .mp-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 5px; }
-    .mp-thumb-placeholder { font-size: 18px; opacity: .5; }
+    .mp-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; display: block; }
+    .mp-thumb-placeholder { font-size: 20px; opacity: .4; }
 
-    .mp-body { flex: 1; min-width: 0; }
-    .mp-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
-    .mp-fav { font-size: 11px; color: #aaa; cursor: pointer; flex-shrink: 0; transition: color .15s; }
-    .mp-fav:hover { color: #fff; }
-    .mp-time-cur { font-size: 11px; color: #ccc; min-width: 28px; text-align: right; }
+    .mp-info { flex: 1; min-width: 0; }
+    .mp-label { font-size: 10px; color: rgba(255,255,255,.45); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 2px; }
+    .mp-title { font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+    .mp-play-btn {
+      width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+      background: #fff; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,.35);
+      transition: transform .15s ease, background .15s;
+    }
+    .mp-play-btn:hover { transform: scale(1.08); background: #e8e8e8; }
+    .mp-play-btn:active { transform: scale(.95); }
+    .mp-play-btn svg { width: 16px; height: 16px; fill: #000; flex-shrink: 0; }
+
+    /* Barre de progression */
+    .mp-progress-row {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 8px;
+    }
+    .mp-time { font-size: 10px; color: rgba(255,255,255,.4); min-width: 30px; }
+    .mp-time.right { text-align: right; }
     .mp-progress {
-      position: relative; flex: 1;
-      height: 3px; background: #444; border-radius: 2px;
-      cursor: pointer; margin: 0 2px;
+      flex: 1; height: 3px; background: rgba(255,255,255,.15);
+      border-radius: 2px; cursor: pointer; position: relative;
     }
+    .mp-progress:hover { height: 5px; margin: -1px 0; }
     .mp-progress-fill {
       height: 100%; background: #fff; border-radius: 2px;
       width: 0%; pointer-events: none; transition: width .1s linear;
+      position: relative;
     }
-    .mp-time-total { font-size: 11px; color: #888; min-width: 28px; }
+    .mp-progress-fill::after {
+      content: ''; position: absolute; right: -4px; top: 50%;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #fff; transform: translateY(-50%) scale(0);
+      transition: transform .15s;
+    }
+    .mp-progress:hover .mp-progress-fill::after { transform: translateY(-50%) scale(1); }
 
-    .mp-controls { display: flex; align-items: center; gap: 8px; margin-top: 2px; justify-content: flex-end; }
-    .mp-btn {
-      background: none; border: none; color: #ccc; cursor: pointer;
-      padding: 2px; display: flex; align-items: center; justify-content: center;
-      transition: color .15s;
+    /* Ligne basse : seek + volume */
+    .mp-bottom {
+      display: flex; align-items: center; justify-content: space-between;
     }
-    .mp-btn:hover { color: #fff; }
-    .mp-btn svg { width: 14px; height: 14px; fill: currentColor; }
-    .mp-btn.play svg { width: 18px; height: 18px; }
-    .mp-btn.play { color: #fff; }
+    .mp-seek-group { display: flex; align-items: center; gap: 4px; }
+    .mp-btn {
+      background: none; border: none; color: rgba(255,255,255,.55); cursor: pointer;
+      padding: 4px; display: flex; align-items: center; justify-content: center;
+      border-radius: 6px; transition: color .15s, background .15s;
+    }
+    .mp-btn:hover { color: #fff; background: rgba(255,255,255,.08); }
+    .mp-btn svg { width: 15px; height: 15px; fill: currentColor; }
+
+    /* Curseur volume */
+    .mp-vol-group { display: flex; align-items: center; gap: 6px; }
+    .mp-vol-icon { color: rgba(255,255,255,.5); display: flex; align-items: center; cursor: pointer; }
+    .mp-vol-icon svg { width: 14px; height: 14px; fill: currentColor; }
+    .mp-vol-slider {
+      -webkit-appearance: none; appearance: none;
+      width: 70px; height: 3px;
+      background: linear-gradient(to right, rgba(255,255,255,.8) 0%, rgba(255,255,255,.8) 70%, rgba(255,255,255,.2) 70%);
+      border-radius: 2px; cursor: pointer; outline: none; border: none;
+    }
+    .mp-vol-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 10px; height: 10px;
+      border-radius: 50%; background: #fff; cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,0,0,.4);
+    }
+    .mp-vol-slider::-moz-range-thumb {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: #fff; cursor: pointer; border: none;
+    }
 
     .badges-row { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 10px 0 4px; }
     .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; border: 1px solid rgba(0,0,0,.08); }
@@ -230,6 +295,7 @@
     .dc-badge-verified {
       background: transparent;
     }
+    .dc-username { font-size: 11px; color: #5865F2; margin-top: 1px; font-weight: 500; opacity: .85; }
     .dc-last-seen { font-size: 12px; color: #878a8f; margin-top: 2px; }
   </style>
 </head>
@@ -287,33 +353,50 @@
           <span class="dc-name" id="dcName"></span>
           <div class="dc-badges" id="dcBadges"></div>
         </div>
+        <div class="dc-username" id="dcUsername" style="display:none"></div>
         <div class="dc-last-seen" id="dcLastSeen"></div>
       </div>
     </div>
 
     <div class="music-player" id="audioBar">
-      <div class="mp-thumb" id="mpThumb">
-        <span class="mp-thumb-placeholder">♪</span>
-      </div>
-      <div class="mp-body">
-        <div class="mp-meta">
-          <span class="mp-fav" id="mpFav">☆</span>
-          <span class="mp-time-cur" id="mpCur">0:00</span>
-          <div class="mp-progress" id="mpProgress">
-            <div class="mp-progress-fill" id="mpFill"></div>
-          </div>
-          <span class="mp-time-total" id="mpTotal">0:00</span>
+      <!-- Ligne haute : pochette + titre + play -->
+      <div class="mp-top">
+        <div class="mp-thumb" id="mpThumb">
+          <span class="mp-thumb-placeholder">♪</span>
         </div>
-        <div class="mp-controls">
-          <button class="mp-btn" title="Retour" onclick="seekBack()">
-            <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+        <div class="mp-info">
+          <div class="mp-label">En écoute</div>
+          <div class="mp-title" id="mpTitle">Musique</div>
+        </div>
+        <button class="mp-play-btn" id="mpPlay" onclick="toggleAudio()" title="Lecture / Pause">
+          <svg viewBox="0 0 24 24" id="mpPlayIcon"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+      </div>
+
+      <!-- Barre de progression -->
+      <div class="mp-progress-row">
+        <span class="mp-time" id="mpCur">0:00</span>
+        <div class="mp-progress" id="mpProgress">
+          <div class="mp-progress-fill" id="mpFill"></div>
+        </div>
+        <span class="mp-time right" id="mpTotal">0:00</span>
+      </div>
+
+      <!-- Bas : seek ±10s + volume -->
+      <div class="mp-bottom">
+        <div class="mp-seek-group">
+          <button class="mp-btn" title="-10s" onclick="seekBack()">
+            <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/><text x="8.5" y="14.5" font-size="5" fill="currentColor" font-family="sans-serif">10</text></svg>
           </button>
-          <button class="mp-btn play" id="mpPlay" onclick="toggleAudio()">
-            <svg viewBox="0 0 24 24" id="mpPlayIcon"><path d="M8 5v14l11-7z"/></svg>
+          <button class="mp-btn" title="+10s" onclick="seekForward()">
+            <svg viewBox="0 0 24 24"><path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z"/><text x="8.5" y="14.5" font-size="5" fill="currentColor" font-family="sans-serif">10</text></svg>
           </button>
-          <button class="mp-btn" title="Suivant" onclick="seekForward()">
-            <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6h2v12h-2z"/></svg>
-          </button>
+        </div>
+        <div class="mp-vol-group">
+          <span class="mp-vol-icon" id="mpVolIcon" onclick="toggleMute()" title="Muet">
+            <svg viewBox="0 0 24 24" id="mpVolSvg"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+          </span>
+          <input type="range" class="mp-vol-slider" id="mpVolSlider" min="0" max="1" step="0.02" value="0.7" oninput="setVolume(this.value)" title="Volume"/>
         </div>
       </div>
     </div>
@@ -488,16 +571,28 @@ async function loadProfile() {
     if (user.audio_url) {
       const player = document.getElementById('audioPlayer');
       player.src = user.audio_url;
+      player.volume = 0.7;
       const bar = document.getElementById('audioBar');
       bar.classList.add('visible');
 
-      // Set thumbnail if avatar available
-      if (user.avatar_url) {
-        const thumb = document.getElementById('mpThumb');
-        thumb.innerHTML = `<img src="${user.avatar_url}" alt="cover"/>`;
+      // Titre : priorité à audio_name, sinon extrait de l'URL
+      try {
+        const customName = user.audio_name && user.audio_name.trim();
+        if (customName) {
+          document.getElementById('mpTitle').textContent = customName;
+        } else {
+          const fileName = decodeURIComponent(user.audio_url.split('/').pop().split('?')[0]).replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+          if (fileName) document.getElementById('mpTitle').textContent = fileName;
+        }
+      } catch {}
+
+      // Pochette : priorité à audio_cover_url, sinon avatar du profil
+      const coverUrl = user.audio_cover_url || user.avatar_url;
+      if (coverUrl) {
+        document.getElementById('mpThumb').innerHTML = `<img src="${coverUrl}" alt="cover"/>`;
       }
 
-      // Wire up progress bar
+      // Progression
       player.addEventListener('timeupdate', () => {
         if (!player.duration) return;
         const pct = (player.currentTime / player.duration) * 100;
@@ -509,18 +604,17 @@ async function loadProfile() {
       });
       document.getElementById('mpProgress').addEventListener('click', (e) => {
         const rect = e.currentTarget.getBoundingClientRect();
-        const ratio = (e.clientX - rect.left) / rect.width;
-        player.currentTime = ratio * player.duration;
+        player.currentTime = ((e.clientX - rect.left) / rect.width) * player.duration;
       });
 
-      // Autoplay
+      // Autoplay + animation d'entrée
       player.play().then(() => {
         document.getElementById('mpPlayIcon').innerHTML = '<path d="M6 19h4V5H6zm8-14v14h4V5z"/>';
         audioPlaying = true;
-      }).catch(() => {
-        // browser blocked autoplay — keep play button showing
-        audioPlaying = false;
-      });
+      }).catch(() => { audioPlaying = false; });
+
+      // Animation slide-up après un court délai
+      setTimeout(() => bar.classList.add('shown'), 600);
     }
 
     document.getElementById('pName').textContent = user.display_name || user.username;
@@ -564,8 +658,17 @@ async function loadProfile() {
       const discordAvatarUrl = (discordOauth && discordOauth.avatar)
         ? `https://cdn.discordapp.com/avatars/${discordOauth.id}/${discordOauth.avatar}.png?size=128`
         : (user.avatar_url || null);
-      const dcName = (discordOauth && discordOauth.username) || user.display_name || user.username;
-      document.getElementById('dcName').textContent = dcName;
+      // Display name vs real Discord username
+      const discordUsername = (discordOauth && discordOauth.username) || user.discord_username || null;
+      const dcDisplayName = user.display_name || user.username;
+      document.getElementById('dcName').textContent = dcDisplayName;
+
+      // Show @username if it differs from display name
+      const dcUsernameEl = document.getElementById('dcUsername');
+      if (discordUsername && discordUsername.toLowerCase() !== dcDisplayName.toLowerCase()) {
+        dcUsernameEl.textContent = '@' + discordUsername;
+        dcUsernameEl.style.display = 'block';
+      }
 
       const letterEl = document.getElementById('dcAvatarLetter');
       const imgEl = document.getElementById('dcAvatar');
@@ -574,27 +677,50 @@ async function loadProfile() {
         imgEl.style.display = 'block';
         letterEl.style.display = 'none';
       } else {
-        letterEl.textContent = dcName.charAt(0).toUpperCase();
+        letterEl.textContent = dcDisplayName.charAt(0).toUpperCase();
       }
 
-      // Badges — render Discord icon badges
+      // Badges — render all Discord badges in the card
       const dcBadgesEl = document.getElementById('dcBadges');
-      // Always show Discord badge if connected via Discord
+
+      // Map badge types to SVG icons
+      const DISCORD_BADGE_SVGS = {
+        discord: { title: 'Connecté via Discord', svg: `<svg viewBox="0 0 24 24" fill="#5865F2"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>` },
+        nitro: { title: 'Discord Nitro', svg: `<svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="ng" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f47fff"/><stop offset="100%" stop-color="#7289da"/></linearGradient></defs><path d="M14 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" fill="url(#ng)"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14a4 4 0 1 1 0-8 4 4 0 0 1 0 8z" fill="url(#ng)"/></svg>` },
+        staff: { title: 'Discord Staff', svg: `<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2L2 7v5c0 5.25 4.2 10.15 10 11.35C17.8 22.15 22 17.25 22 12V7L12 2zm-1 14H9v-2h2v2zm0-4H9V8h2v4zm4 4h-2v-2h2v2zm0-4h-2V8h2v4z"/></svg>` },
+        early_supporter: { title: 'Early Supporter', svg: `<svg viewBox="0 0 24 24" fill="#f47fff"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>` },
+        hypesquad_bravery: { title: 'HypeSquad Bravery', svg: `<svg viewBox="0 0 24 24" fill="#9c84ef"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>` },
+        hypesquad_brilliance: { title: 'HypeSquad Brilliance', svg: `<svg viewBox="0 0 24 24" fill="#f47b67"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>` },
+        hypesquad_balance: { title: 'HypeSquad Balance', svg: `<svg viewBox="0 0 24 24" fill="#45ddc0"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>` },
+        hypesquad: { title: 'HypeSquad Events', svg: `<svg viewBox="0 0 24 24" fill="#f0b132"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>` },
+        bug_hunter: { title: 'Bug Hunter', svg: `<svg viewBox="0 0 24 24" fill="#f47b67"><path d="M20 8h-2.81c-.45-.78-1.07-1.45-1.82-1.96L17 4.41 15.59 3l-2.17 2.17C12.96 5.06 12.49 5 12 5s-.96.06-1.41.17L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z"/></svg>` },
+        bug_hunter_level_2: { title: 'Bug Hunter Gold', svg: `<svg viewBox="0 0 24 24" fill="#f0b132"><path d="M20 8h-2.81c-.45-.78-1.07-1.45-1.82-1.96L17 4.41 15.59 3l-2.17 2.17C12.96 5.06 12.49 5 12 5s-.96.06-1.41.17L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8z"/></svg>` },
+        active_developer: { title: 'Active Developer', svg: `<svg viewBox="0 0 24 24" fill="#23a559"><path d="M8 3l-5 9h5l-1 9 13-13h-7l3-5H8z"/></svg>` },
+        verified_developer: { title: 'Verified Bot Developer', svg: `<svg viewBox="0 0 24 24" fill="#5865F2"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>` },
+        moderator: { title: 'Moderateur Discord', svg: `<svg viewBox="0 0 24 24" fill="#e74c3c"><path d="M12 2L4 5v5c0 4.5 3.4 8.7 8 9.93C16.6 18.7 20 14.5 20 10V5l-8-3z"/></svg>` },
+        partner: { title: 'Discord Partner', svg: `<svg viewBox="0 0 24 24" fill="#7289da"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>` },
+        server: { title: 'Membre du serveur', svg: `<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>` },
+      };
+
+      // Always show Discord link badge first
       if (discordOauth || user.discord_id) {
         const dcIcon = document.createElement('span');
         dcIcon.className = 'dc-badge dc-badge-verified';
         dcIcon.title = 'Connecté via Discord';
-        dcIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="#5865F2"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>`;
+        dcIcon.innerHTML = DISCORD_BADGE_SVGS.discord.svg;
         dcBadgesEl.appendChild(dcIcon);
       }
-      // Nitro badge
-      if (badges.some(b => b.type === 'nitro')) {
-        const nitro = document.createElement('span');
-        nitro.className = 'dc-badge';
-        nitro.title = 'Discord Nitro';
-        nitro.innerHTML = `<svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="ng" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f47fff"/><stop offset="100%" stop-color="#7289da"/></linearGradient></defs><path d="M14 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" fill="url(#ng)"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14a4 4 0 1 1 0-8 4 4 0 0 1 0 8z" fill="url(#ng)"/></svg>`;
-        dcBadgesEl.appendChild(nitro);
-      }
+
+      // Render all user badges as icons
+      badges.forEach(b => {
+        const meta = DISCORD_BADGE_SVGS[b.type];
+        if (!meta) return;
+        const el = document.createElement('span');
+        el.className = 'dc-badge';
+        el.title = b.label || meta.title;
+        el.innerHTML = meta.svg;
+        dcBadgesEl.appendChild(el);
+      });
 
       // Last seen
       const updatedAt = user.updated_at || user.created_at;
@@ -682,11 +808,59 @@ async function loadProfile() {
 }
 
 let audioPlaying = false;
+let audioMuted = false;
+let lastVolume = 0.7;
+
 function fmtTime(s) {
-  if (isNaN(s)) return '0:00';
+  if (isNaN(s) || !isFinite(s)) return '0:00';
   const m = Math.floor(s / 60), sec = Math.floor(s % 60);
   return m + ':' + String(sec).padStart(2, '0');
 }
+
+function updateVolSlider(val) {
+  const slider = document.getElementById('mpVolSlider');
+  if (!slider) return;
+  slider.value = val;
+  const pct = val * 100;
+  slider.style.background = `linear-gradient(to right, rgba(255,255,255,.8) 0%, rgba(255,255,255,.8) ${pct}%, rgba(255,255,255,.2) ${pct}%)`;
+}
+
+function setVolume(val) {
+  const player = document.getElementById('audioPlayer');
+  val = parseFloat(val);
+  player.volume = val;
+  lastVolume = val > 0 ? val : lastVolume;
+  audioMuted = val === 0;
+  updateVolSvg();
+  updateVolSlider(val);
+}
+
+function updateVolSvg() {
+  const svg = document.getElementById('mpVolSvg');
+  if (!svg) return;
+  if (audioMuted || parseFloat(document.getElementById('mpVolSlider').value) === 0) {
+    svg.innerHTML = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
+  } else {
+    svg.innerHTML = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
+  }
+}
+
+function toggleMute() {
+  const player = document.getElementById('audioPlayer');
+  if (audioMuted || player.volume === 0) {
+    const v = lastVolume || 0.7;
+    player.volume = v;
+    audioMuted = false;
+    updateVolSlider(v);
+  } else {
+    lastVolume = player.volume;
+    player.volume = 0;
+    audioMuted = true;
+    updateVolSlider(0);
+  }
+  updateVolSvg();
+}
+
 function toggleAudio() {
   const player = document.getElementById('audioPlayer');
   const icon   = document.getElementById('mpPlayIcon');
@@ -700,14 +874,8 @@ function toggleAudio() {
     audioPlaying = false;
   }
 }
-function seekBack() {
-  const player = document.getElementById('audioPlayer');
-  player.currentTime = Math.max(0, player.currentTime - 10);
-}
-function seekForward() {
-  const player = document.getElementById('audioPlayer');
-  player.currentTime = Math.min(player.duration || 0, player.currentTime + 10);
-}
+function seekBack()    { const p = document.getElementById('audioPlayer'); p.currentTime = Math.max(0, p.currentTime - 10); }
+function seekForward() { const p = document.getElementById('audioPlayer'); p.currentTime = Math.min(p.duration || 0, p.currentTime + 10); }
 
 function trackClick(username, url, title) {
   fetch(API + '/api/analytics/click', {
