@@ -1568,6 +1568,7 @@ async function saveProfile() {
     userData = data;
     el('profileAlert').innerHTML = '';
     showToast('Profil sauvegardé ✓');
+    updatePreview();
   } catch { showToast('Erreur réseau'); }
   finally { btn.disabled = false; btn.textContent = 'Sauvegarder'; }
 }
@@ -1725,6 +1726,7 @@ async function saveLinks() {
     if (!r.ok) { showAlert('linksAlert', data.error); return; }
     userData = data; pendingLinks = [...data.links];
     showToast('Liens sauvegardés ✓');
+    updatePreview();
   } catch { showToast('Erreur réseau'); }
   finally { btn.disabled = false; btn.textContent = 'Sauvegarder les liens'; }
 }
@@ -2114,6 +2116,7 @@ async function saveMedias() {
       if (ni) ni.value = data.audio_name || '';
     }
     showToast('Médias sauvegardés ✓');
+    updatePreview();
   } catch { showToast('Erreur réseau'); }
   finally { btn.disabled = false; btn.textContent = 'Sauvegarder'; }
 }
@@ -2440,6 +2443,7 @@ async function savePerso() {
     };
     el('persoAlert').innerHTML = '';
     showToast('Personnalisation sauvegardée ✓');
+    updatePreview();
   } catch { showToast('Erreur réseau'); }
   finally { btn.disabled = false; btn.textContent = 'Sauvegarder'; }
 }
