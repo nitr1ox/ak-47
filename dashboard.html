@@ -332,6 +332,9 @@
           <button id="discordDisconnectBtn" onclick="disconnectDiscord()" style="display:none;padding:7px 16px;border-radius:8px;border:1px solid var(--gray-200);background:var(--white);color:var(--gray-600);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">
             Délier
           </button>
+          <button id="discordRefreshBtn" onclick="refreshDiscordBadges()" style="display:none;padding:7px 16px;border-radius:8px;border:1px solid #5865F2;background:transparent;color:#5865F2;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">
+            🔄 Badges
+          </button>
         </div>
 
         <div style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--gray-200);border-radius:9px;">
@@ -1232,14 +1235,17 @@ function renderConnectedAccounts() {
   const discordStatus = document.getElementById('discordStatus');
   const discordConnectBtn = document.getElementById('discordConnectBtn');
   const discordDisconnectBtn = document.getElementById('discordDisconnectBtn');
+  const discordRefreshBtn = document.getElementById('discordRefreshBtn');
   if (userData.discord_id) {
     if (discordStatus) discordStatus.innerHTML = `<span style="color:#5865F2;font-weight:600;">✓ Connecté</span>${userData.discord_username ? ' · ' + userData.discord_username : ''}`;
     if (discordConnectBtn) discordConnectBtn.style.display = 'none';
     if (discordDisconnectBtn) discordDisconnectBtn.style.display = 'inline-block';
+    if (discordRefreshBtn) discordRefreshBtn.style.display = 'inline-block';
   } else {
     if (discordStatus) discordStatus.textContent = 'Non connecté';
     if (discordConnectBtn) discordConnectBtn.style.display = 'inline-block';
     if (discordDisconnectBtn) discordDisconnectBtn.style.display = 'none';
+    if (discordRefreshBtn) discordRefreshBtn.style.display = 'none';
   }
 
   const googleStatus = document.getElementById('googleStatus');
@@ -1284,6 +1290,28 @@ async function disconnectDiscord() {
       showToast('Erreur lors de la déconnexion');
     }
   } catch { showToast('Erreur réseau'); }
+}
+
+async function refreshDiscordBadges() {
+  const btn = document.getElementById('discordRefreshBtn');
+  if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
+  try {
+    const r = await fetch(API + '/api/auth/discord/refresh-badges', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    const data = await r.json();
+    if (r.ok) {
+      userData.discord_badges = JSON.stringify(data.badges);
+      renderBadges();
+      showToast('Badges mis à jour ✓ (' + data.badges.length + ' badge' + (data.badges.length > 1 ? 's' : '') + ')');
+    } else {
+      showToast(data.error || 'Erreur lors du rafraîchissement');
+    }
+  } catch { showToast('Erreur réseau'); }
+  finally {
+    if (btn) { btn.textContent = '🔄 Badges'; btn.disabled = false; }
+  }
 }
 
 async function disconnectGoogle() {
