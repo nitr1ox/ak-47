@@ -149,33 +149,95 @@
 
     .manual-form { display: none; }
 
-    .media-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px; }
-    .media-grid-full { grid-column: 1 / -1; }
-    .media-upload-box {
-      border: 1.5px dashed var(--gray-200); border-radius: 10px;
-      padding: 28px 16px; text-align: center; cursor: pointer;
-      transition: all .15s; background: var(--gray-50); position: relative; overflow: hidden;
+    /* ── MÉDIAS ─────────────────────────────────────────────────── */
+    .media-grid { display: none; } /* legacy — plus utilisé */
+    .media-grid-full { display: none; }
+
+    .mblock { background: var(--white); border: 1px solid var(--gray-200); border-radius: 14px; margin-bottom: 16px; overflow: hidden; transition: box-shadow .2s; }
+    .mblock:hover { box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+    .mblock-head {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px 18px; cursor: pointer; user-select: none;
     }
-    .media-upload-box:hover { border-color: var(--black); background: var(--white); }
-    .media-upload-box.has-media { border-style: solid; border-color: var(--gray-300); }
-    .media-upload-box input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-    .media-upload-icon { font-size: 28px; margin-bottom: 8px; }
-    .media-upload-label { font-size: 12px; color: var(--gray-500); }
-    .media-upload-name { font-size: 11px; color: var(--gray-400); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-    .media-preview-img { width: 100%; height: 80px; object-fit: cover; border-radius: 6px; margin-bottom: 8px; display: none; }
-    .media-preview-audio { width: 100%; margin-bottom: 8px; display: none; }
-    .media-preview-cursor { width: 40px; height: 40px; object-fit: contain; margin: 0 auto 8px; display: none; }
+    .mblock-head:hover .mblock-icon { transform: scale(1.05); }
+    .mblock-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0; transition: transform .15s;
+    }
+    .mblock-icon.bg   { background: #f0f4ff; }
+    .mblock-icon.av   { background: #f0fff4; }
+    .mblock-icon.au   { background: #fff8f0; }
+    .mblock-icon.cur  { background: #fdf0ff; }
+    .mblock-meta { flex: 1; min-width: 0; }
+    .mblock-title { font-size: 14px; font-weight: 600; color: var(--gray-900); }
+    .mblock-desc  { font-size: 12px; color: var(--gray-400); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mblock-status {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600; padding: 4px 10px;
+      border-radius: 20px; flex-shrink: 0;
+    }
+    .mblock-status.active { background: #dcfce7; color: #16a34a; }
+    .mblock-status.empty  { background: var(--gray-100); color: var(--gray-400); }
+    .mblock-chevron { font-size: 13px; color: var(--gray-400); transition: transform .2s; flex-shrink: 0; }
+    .mblock.open .mblock-chevron { transform: rotate(180deg); }
+    .mblock-body { display: none; padding: 0 18px 20px; border-top: 1px solid var(--gray-100); }
+    .mblock.open .mblock-body { display: block; }
+
+    /* dropzone */
+    .mdrop {
+      border: 2px dashed var(--gray-200); border-radius: 12px;
+      padding: 32px 20px; text-align: center; cursor: pointer;
+      transition: all .2s; background: var(--gray-50); position: relative;
+      margin-top: 16px;
+    }
+    .mdrop:hover, .mdrop.dragging { border-color: var(--black); background: var(--white); }
+    .mdrop.filled { border-style: solid; border-color: var(--gray-300); background: var(--white); }
+    .mdrop input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; z-index: 2; }
+    .mdrop-icon { font-size: 32px; margin-bottom: 8px; }
+    .mdrop-label { font-size: 13px; color: var(--gray-500); line-height: 1.4; }
+    .mdrop-sub   { font-size: 11px; color: var(--gray-400); margin-top: 4px; }
+
+    /* preview strips */
+    .mprev-img  { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; display: block; margin-top: 12px; }
+    .mprev-vid  { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; display: none; margin-top: 12px; }
+    .mprev-av   { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; display: block; margin: 12px auto 0; border: 2px solid var(--gray-200); }
+    .mprev-cur  { width: 48px; height: 48px; object-fit: contain; display: block; margin: 12px auto 0; }
+    .mprev-audio { width: 100%; margin-top: 12px; display: block; }
+
+    .maction-bar { display: flex; align-items: center; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .maction-bar .mchange { font-size: 12px; font-weight: 600; padding: 6px 14px; border: 1px solid var(--gray-300); border-radius: 6px; background: var(--white); cursor: pointer; transition: all .15s; }
+    .maction-bar .mchange:hover { border-color: var(--black); }
+    .maction-bar .mremove { font-size: 12px; font-weight: 600; padding: 6px 14px; border: 1px solid #fecaca; border-radius: 6px; background: #fff; color: #ef4444; cursor: pointer; transition: all .15s; }
+    .maction-bar .mremove:hover { background: #fef2f2; }
+
+    /* audio source tabs */
+    .audio-src-tabs { display: flex; gap: 6px; margin-top: 14px; }
+    .audio-src-tab {
+      flex: 1; padding: 9px 6px; text-align: center; border: 1.5px solid var(--gray-200);
+      border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;
+      transition: all .15s; color: var(--gray-500); background: var(--gray-50);
+    }
+    .audio-src-tab:hover { border-color: var(--gray-400); color: var(--gray-700); }
+    .audio-src-tab.sel { border-color: var(--black); background: var(--black); color: var(--white); }
+
+    /* audio meta (nom + pochette) */
+    .audio-meta-row { display: grid; grid-template-columns: 1fr 100px; gap: 12px; margin-top: 14px; align-items: start; }
+    .audio-meta-cover {
+      width: 100%; aspect-ratio: 1; border-radius: 10px;
+      border: 2px dashed var(--gray-200); cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-size: 11px; color: var(--gray-400); transition: all .15s; position: relative; overflow: hidden;
+      background: var(--gray-50);
+    }
+    .audio-meta-cover:hover { border-color: var(--black); }
+    .audio-meta-cover input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .audio-meta-cover img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: none; position: absolute; inset: 0; }
+
+    /* legacy compat */
+    .media-upload-box { display: none !important; }
+    .audio-manager { display: none !important; }
     .media-remove-btn { font-size: 11px; color: #ef4444; background: none; border: none; cursor: pointer; padding: 0; margin-top: 4px; }
-    .media-remove-btn:hover { text-decoration: underline; }
-    .audio-manager { display: none; }
-    .audio-manager.active { display: block; }
-    .audio-option { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--gray-200); border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: all .15s; }
-    .audio-option:hover { border-color: var(--black); }
-    .audio-option.selected { border-color: var(--black); background: var(--gray-50); }
-    .audio-option input[type=radio] { accent-color: var(--black); }
-    .audio-option-info { flex: 1; }
-    .audio-option-title { font-size: 13px; font-weight: 600; }
-    .audio-option-desc { font-size: 11px; color: var(--gray-400); }
 
     .badge { display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid rgba(0,0,0,.08); }
     .badge-discord { background:#5865F2;color:#fff;border-color:#5865F2; }
@@ -192,10 +254,6 @@
   <div class="dash-nav-right">
     <span class="dash-nav-user">Bonjour, <strong id="navUsername">—</strong></span>
     <a id="profileViewBtn" href="#" target="_blank" class="dash-btn-sm">Voir mon profil ↗</a>
-    <a href="https://discord.gg/g7MysUNQXs" target="_blank" rel="noopener" class="discord-invite-btn" title="Rejoindre le Discord">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
-    Discord
-  </a>
     <button id="themeToggle" class="theme-pill-toggle" onclick="toggleTheme()" title="Changer de thème" aria-label="Changer de thème">
       <span class="tpt-icon tpt-sun">☀️</span>
       <span class="tpt-track"><span class="tpt-thumb"></span></span>
@@ -419,124 +477,185 @@
 
     <div class="tab-content" id="tab-medias">
       <div class="dash-title">Médias</div>
-      <div class="dash-subtitle">Personnalisez l'apparence de votre page publique.</div>
+      <div class="dash-subtitle">Gérez les fichiers affichés sur votre page publique.</div>
       <div id="mediasAlert"></div>
 
-      <div class="media-grid">
+      <!-- Inputs fichiers cachés (réutilisés par les nouveaux dropzones) -->
+      <input type="file" id="bgFile"        accept="image/*,video/mp4" onchange="handleMedia('bg', this)"     style="display:none"/>
+      <input type="file" id="avatarFile"    accept="image/*"            onchange="handleMedia('avatar', this)" style="display:none"/>
+      <input type="file" id="audioFile"     accept="audio/*"            onchange="handleMedia('audio', this)"  style="display:none"/>
+      <input type="file" id="audioCoverFile" accept="image/*"           onchange="handleAudioCover(this)"       style="display:none"/>
+      <input type="file" id="cursorFile"    accept="image/*,.cur,.ani"  onchange="handleMedia('cursor', this)" style="display:none"/>
 
-        <div>
-          <div class="section-card-title" style="font-size:13px;font-weight:600;margin-bottom:8px;">Arrière-plan</div>
-          <div class="media-upload-box has-media" id="bgBox" onclick="triggerUpload('bgFile')">
-            <input type="file" id="bgFile" accept="image/*,video/mp4" onchange="handleMedia('bg', this)" onclick="event.stopPropagation()"/>
-            <img class="media-preview-img" id="bgPreview" alt="Aperçu arrière-plan"/>
-            <video class="media-preview-img" id="bgVideoPreview" muted loop playsinline style="display:none;height:80px;width:100%;object-fit:cover;border-radius:6px;margin-bottom:8px;"></video>
-            <div class="media-upload-icon" id="bgIcon">🖼️</div>
-            <div class="media-upload-label" id="bgLabel">Image ou vidéo MP4 (compressé auto pour les images)</div>
-            <div class="media-upload-name" id="bgName"></div>
-            <button class="media-remove-btn" id="bgRemove" style="display:none" onclick="removeMedia(event,'bg')">✕ Supprimer</button>
+      <!-- ══ AVATAR ══════════════════════════════════════════════════════════ -->
+      <div class="mblock" id="mblock-avatar">
+        <div class="mblock-head" onclick="toggleMblock('avatar')">
+          <div class="mblock-icon av">👤</div>
+          <div class="mblock-meta">
+            <div class="mblock-title">Avatar</div>
+            <div class="mblock-desc" id="mdesc-avatar">Photo de profil affichée sur votre page</div>
+          </div>
+          <div class="mblock-status empty" id="mstatus-avatar">Vide</div>
+          <div class="mblock-chevron">▾</div>
+        </div>
+        <div class="mblock-body" id="mbody-avatar">
+          <div style="display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;margin-top:16px;">
+            <div style="flex-shrink:0;">
+              <img id="avatarPreview" class="mprev-av" alt="Avatar" style="display:none"/>
+              <div id="avatarPlaceholder" style="width:72px;height:72px;border-radius:50%;background:var(--gray-100);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto;">👤</div>
+            </div>
+            <div style="flex:1;min-width:200px;">
+              <p style="font-size:12px;color:var(--gray-500);margin:0 0 12px;">JPG, PNG, WebP — max 5 Mo. Compressé automatiquement à 400×400.</p>
+              <div id="avatarDropzone" class="mdrop" onclick="triggerUpload('avatarFile')">
+                <div class="mdrop-icon">🖼️</div>
+                <div class="mdrop-label">Glisser-déposer ou <strong>cliquer pour choisir</strong></div>
+                <div class="mdrop-sub">JPG · PNG · WebP · GIF</div>
+              </div>
+              <div class="maction-bar" id="mactions-avatar" style="display:none;">
+                <button class="mchange" onclick="triggerUpload('avatarFile')">↑ Changer</button>
+                <button class="mremove" onclick="removeMedia2('avatar')">✕ Supprimer</button>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
 
-        <div>
-          <div class="section-card-title" style="font-size:13px;font-weight:600;margin-bottom:8px;">Audio</div>
-          <div class="media-upload-box" id="audioBox" onclick="toggleAudioManager()">
-            <div class="media-upload-icon">🎵</div>
-            <div class="media-upload-label">Cliquez pour ouvrir le gestionnaire audio</div>
-            <div class="media-upload-name" id="audioName"></div>
+      <!-- ══ ARRIÈRE-PLAN ════════════════════════════════════════════════════ -->
+      <div class="mblock" id="mblock-bg">
+        <div class="mblock-head" onclick="toggleMblock('bg')">
+          <div class="mblock-icon bg">🖼️</div>
+          <div class="mblock-meta">
+            <div class="mblock-title">Arrière-plan</div>
+            <div class="mblock-desc" id="mdesc-bg">Image ou vidéo en fond de page</div>
           </div>
-          <div class="audio-manager" id="audioManager" onclick="event.stopPropagation()">
-            <div style="font-size:12px;font-weight:600;color:var(--gray-500);margin-bottom:10px;margin-top:12px;">Source audio</div>
-            <label class="audio-option" id="audioOptNone">
-              <input type="radio" name="audioSrc" value="none" onchange="selectAudioSrc('none')" checked/>
-              <div class="audio-option-info">
-                <div class="audio-option-title">Aucun</div>
-                <div class="audio-option-desc">Pas de musique sur le profil</div>
-              </div>
-            </label>
-            <label class="audio-option" id="audioOptUpload">
-              <input type="radio" name="audioSrc" value="upload" onchange="selectAudioSrc('upload')"/>
-              <div class="audio-option-info">
-                <div class="audio-option-title">Fichier audio</div>
-                <div class="audio-option-desc">MP3, WAV, OGG — max 8MB</div>
-              </div>
-            </label>
-            <div id="audioUploadZone" style="display:none;margin-top:8px;">
-              <div class="media-upload-box" onclick="triggerUpload('audioFile')">
-                <input type="file" id="audioFile" accept="audio/*" onchange="handleMedia('audio', this)" onclick="event.stopPropagation()"/>
-                <div class="media-upload-icon">🎧</div>
-                <div class="media-upload-label">Cliquez pour choisir un fichier audio</div>
-                <div class="media-upload-name" id="audioFileName"></div>
-              </div>
-              <audio class="media-preview-audio" id="audioPreview" controls></audio>
-            </div>
-            <label class="audio-option" id="audioOptUrl" style="margin-top:4px;">
-              <input type="radio" name="audioSrc" value="url" onchange="selectAudioSrc('url')"/>
-              <div class="audio-option-info">
-                <div class="audio-option-title">URL externe</div>
-                <div class="audio-option-desc">Lien direct vers un fichier audio</div>
-              </div>
-            </label>
-            <div id="audioUrlZone" style="display:none;margin-top:8px;">
-              <input type="text" id="audioUrlInput" placeholder="https://example.com/music.mp3"
-                style="width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;font-family:inherit;outline:none;"
-                oninput="pendingMedias.audio_url = this.value"/>
-            </div>
-            <button class="media-remove-btn" id="audioRemove" style="display:none;margin-top:8px;" onclick="removeMedia(event,'audio')">✕ Supprimer l'audio</button>
-          </div>
-
-          <!-- Nom du son -->
+          <div class="mblock-status empty" id="mstatus-bg">Vide</div>
+          <div class="mblock-chevron">▾</div>
+        </div>
+        <div class="mblock-body" id="mbody-bg">
           <div style="margin-top:16px;">
-            <div class="section-card-title" style="font-size:13px;font-weight:600;margin-bottom:8px;">Nom du morceau</div>
-            <input type="text" id="audioNameInput" placeholder="Ex: My Song - Artist"
-              style="width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;background:transparent;color:var(--black);box-sizing:border-box;outline:none;"
-              oninput="pendingMedias.audio_name = this.value"/>
-            <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">Affiché dans le lecteur. Laissez vide pour utiliser le nom du fichier.</div>
-          </div>
-
-          <!-- Pochette du son -->
-          <div style="margin-top:16px;">
-            <div class="section-card-title" style="font-size:13px;font-weight:600;margin-bottom:8px;">Pochette du morceau</div>
-            <div class="media-upload-box" onclick="triggerUpload('audioCoverFile')" style="position:relative;">
-              <input type="file" id="audioCoverFile" accept="image/*" onchange="handleAudioCover(this)" onclick="event.stopPropagation()" style="display:none;"/>
-              <img class="media-preview-img" id="audioCoverPreview" alt="Aperçu pochette" style="width:60px;height:60px;border-radius:10px;object-fit:cover;margin:0 auto 8px;display:none;"/>
-              <span id="audioCoverIcon" style="font-size:22px;margin-bottom:6px;display:block;">🎨</span>
-              <div class="media-upload-label" id="audioCoverLabel">Cliquez pour choisir une image</div>
-              <div class="media-upload-name" id="audioCoverFileName"></div>
+            <p style="font-size:12px;color:var(--gray-500);margin:0 0 12px;">Image (JPG/PNG/WebP) ou vidéo MP4 en boucle. Les images sont compressées auto. Vidéo max 50 Mo.</p>
+            <!-- preview -->
+            <div id="bgPreviewWrap" style="display:none;margin-bottom:12px;border-radius:10px;overflow:hidden;">
+              <img  id="bgPreview"      class="mprev-img" alt="Fond" style="margin-top:0;"/>
+              <video id="bgVideoPreview" class="mprev-vid" muted loop playsinline style="margin-top:0;width:100%;height:120px;object-fit:cover;"></video>
             </div>
-            <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">Affichée dans le lecteur. Par défaut : votre avatar.</div>
-            <button class="media-remove-btn" id="audioCoverRemove" style="display:none;margin-top:8px;" onclick="removeAudioCover(event)">✕ Supprimer la pochette</button>
+            <div id="bgDropzone" class="mdrop" onclick="triggerUpload('bgFile')">
+              <div class="mdrop-icon">🖼️</div>
+              <div class="mdrop-label">Glisser-déposer ou <strong>cliquer pour choisir</strong></div>
+              <div class="mdrop-sub">JPG · PNG · WebP · MP4</div>
+            </div>
+            <div class="maction-bar" id="mactions-bg" style="display:none;">
+              <button class="mchange" onclick="triggerUpload('bgFile')">↑ Changer</button>
+              <button class="mremove" onclick="removeMedia2('bg')">✕ Supprimer</button>
+            </div>
           </div>
         </div>
-        </div>
+      </div>
 
-        <div>
-          <div class="section-card-title" style="font-size:13px;font-weight:600;margin-bottom:8px;">Avatar du profil</div>
-          <div class="media-upload-box" id="avatarBox" onclick="triggerUpload('avatarFile')">
-            <input type="file" id="avatarFile" accept="image/*" onchange="handleMedia('avatar', this)" onclick="event.stopPropagation()"/>
-            <img class="media-preview-img" id="avatarPreview" alt="Aperçu avatar" style="height:60px;width:60px;border-radius:50%;margin:0 auto 8px;object-fit:cover;"/>
-            <div class="media-upload-icon" id="avatarIcon">🖼️</div>
-            <div class="media-upload-label" id="avatarLabel">Cliquez pour téléverser un fichier</div>
-            <div class="media-upload-name" id="avatarFileName"></div>
-            <button class="media-remove-btn" id="avatarRemove" style="display:none" onclick="removeMedia(event,'avatar')">✕ Supprimer</button>
+      <!-- ══ AUDIO ═══════════════════════════════════════════════════════════ -->
+      <div class="mblock" id="mblock-audio">
+        <div class="mblock-head" onclick="toggleMblock('audio')">
+          <div class="mblock-icon au">🎵</div>
+          <div class="mblock-meta">
+            <div class="mblock-title">Musique de fond</div>
+            <div class="mblock-desc" id="mdesc-audio">Morceau joué en arrivant sur votre profil</div>
+          </div>
+          <div class="mblock-status empty" id="mstatus-audio">Désactivé</div>
+          <div class="mblock-chevron">▾</div>
+        </div>
+        <div class="mblock-body" id="mbody-audio">
+
+          <!-- Source tabs -->
+          <div class="audio-src-tabs">
+            <div class="audio-src-tab sel" id="audiotab-none"   onclick="selectAudioSrc2('none')">🔇 Aucun</div>
+            <div class="audio-src-tab"     id="audiotab-upload" onclick="selectAudioSrc2('upload')">📁 Fichier</div>
+            <div class="audio-src-tab"     id="audiotab-url"    onclick="selectAudioSrc2('url')">🔗 URL</div>
+          </div>
+
+          <!-- Zone upload -->
+          <div id="audioUploadZone2" style="display:none;">
+            <div id="audioDropzone" class="mdrop" onclick="triggerUpload('audioFile')" style="margin-top:14px;">
+              <div class="mdrop-icon">🎧</div>
+              <div class="mdrop-label">Glisser-déposer ou <strong>cliquer pour choisir</strong></div>
+              <div class="mdrop-sub">MP3 · WAV · OGG · FLAC — max 30 Mo</div>
+            </div>
+            <audio id="audioPreview" class="mprev-audio" controls style="display:none;margin-top:12px;"></audio>
+            <div class="maction-bar" id="mactions-audio" style="display:none;">
+              <button class="mchange" onclick="triggerUpload('audioFile')">↑ Changer</button>
+              <button class="mremove" onclick="removeMedia2('audio')">✕ Supprimer</button>
+            </div>
+          </div>
+
+          <!-- Zone URL -->
+          <div id="audioUrlZone2" style="display:none;margin-top:14px;">
+            <label style="font-size:12px;font-weight:600;color:var(--gray-700);display:block;margin-bottom:6px;">Lien direct vers un fichier audio</label>
+            <input type="text" id="audioUrlInput"
+              placeholder="https://example.com/music.mp3"
+              style="width:100%;padding:10px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:13px;font-family:inherit;outline:none;box-sizing:border-box;"
+              oninput="pendingMedias.audio_url = this.value"/>
+          </div>
+
+          <!-- Métadonnées (nom + pochette) -->
+          <div id="audioMeta" style="display:none;margin-top:18px;padding-top:16px;border-top:1px solid var(--gray-100);">
+            <div style="font-size:13px;font-weight:600;color:var(--gray-700);margin-bottom:12px;">Informations du morceau</div>
+            <div class="audio-meta-row">
+              <div>
+                <label style="font-size:12px;font-weight:600;color:var(--gray-700);display:block;margin-bottom:6px;">Titre affiché</label>
+                <input type="text" id="audioNameInput" placeholder="Artiste — Morceau"
+                  style="width:100%;padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:13px;font-family:inherit;outline:none;box-sizing:border-box;"
+                  oninput="pendingMedias.audio_name = this.value"/>
+                <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">Laissez vide pour utiliser le nom du fichier.</div>
+              </div>
+              <div>
+                <label style="font-size:12px;font-weight:600;color:var(--gray-700);display:block;margin-bottom:6px;">Pochette</label>
+                <div class="audio-meta-cover" onclick="triggerUpload('audioCoverFile')">
+                  <img id="audioCoverPreview" alt="Pochette"/>
+                  <span id="audioCoverIcon" style="font-size:22px;">🎨</span>
+                  <span style="margin-top:4px;">Choisir</span>
+                </div>
+                <button id="audioCoverRemove" style="display:none;font-size:11px;color:#ef4444;background:none;border:none;cursor:pointer;padding:2px 0;margin-top:4px;" onclick="removeAudioCover(event)">✕ Retirer</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ══ CURSEUR ═════════════════════════════════════════════════════════ -->
+      <div class="mblock" id="mblock-cursor">
+        <div class="mblock-head" onclick="toggleMblock('cursor')">
+          <div class="mblock-icon cur">🖱️</div>
+          <div class="mblock-meta">
+            <div class="mblock-title">Curseur personnalisé</div>
+            <div class="mblock-desc" id="mdesc-cursor">Remplace le curseur de la souris sur votre profil</div>
+          </div>
+          <div class="mblock-status empty" id="mstatus-cursor">Vide</div>
+          <div class="mblock-chevron">▾</div>
+        </div>
+        <div class="mblock-body" id="mbody-cursor">
+          <div style="display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;margin-top:16px;">
+            <div id="cursorPreviewWrap" style="display:none;flex-shrink:0;">
+              <img id="cursorPreview" class="mprev-cur" alt="Curseur"/>
+              <div style="font-size:11px;color:var(--gray-400);text-align:center;margin-top:4px;">Aperçu</div>
+            </div>
+            <div style="flex:1;min-width:200px;">
+              <p style="font-size:12px;color:var(--gray-500);margin:0 0 12px;">PNG ou GIF recommandé. Idéalement 32×32 ou 64×64 px. Max 10 Mo.</p>
+              <div id="cursorDropzone" class="mdrop" onclick="triggerUpload('cursorFile')">
+                <div class="mdrop-icon">🖱️</div>
+                <div class="mdrop-label">Glisser-déposer ou <strong>cliquer pour choisir</strong></div>
+                <div class="mdrop-sub">PNG · GIF · ICO · CUR</div>
+              </div>
+              <div class="maction-bar" id="mactions-cursor" style="display:none;">
+                <button class="mchange" onclick="triggerUpload('cursorFile')">↑ Changer</button>
+                <button class="mremove" onclick="removeMedia2('cursor')">✕ Supprimer</button>
+              </div>
+            </div>
           </div>
         </div>
-
-        <div class="media-grid-full">
-          <div class="section-card-title" style="font-size:13px;font-weight:600;margin-bottom:8px;">Curseur personnalisé</div>
-          <div class="media-upload-box" id="cursorBox" onclick="triggerUpload('cursorFile')" style="max-width:400px;">
-            <input type="file" id="cursorFile" accept="image/*,.cur,.ani" onchange="handleMedia('cursor', this)" onclick="event.stopPropagation()"/>
-            <img class="media-preview-cursor" id="cursorPreview" alt="Aperçu curseur"/>
-            <div class="media-upload-icon" id="cursorIcon">🖱️</div>
-            <div class="media-upload-label" id="cursorLabel">Cliquez pour téléverser un fichier</div>
-            <div class="media-upload-name" id="cursorFileName"></div>
-            <button class="media-remove-btn" id="cursorRemove" style="display:none" onclick="removeMedia(event,'cursor')">✕ Supprimer</button>
-          </div>
-        </div>
-
       </div>
 
       <div class="save-bar">
-        <span class="save-bar-msg">Les médias sont appliqués sur votre page publique.</span>
+        <span class="save-bar-msg">Les modifications seront appliquées sur votre profil public.</span>
         <button class="save-bar-btn" id="saveMediasBtn" onclick="saveMedias()">Sauvegarder</button>
       </div>
     </div>
@@ -829,6 +948,8 @@
           <option value="none">Aucun effet</option>
           <option value="gradient">Dégradé de couleur</option>
           <option value="glow">Lueur (glow)</option>
+          <option value="neon">Néon</option>
+          <option value="shadow">Ombre portée</option>
           <option value="rainbow">Arc-en-ciel</option>
           <option value="typewriter">Machine à écrire</option>
           <option value="shake">Tremblement</option>
@@ -867,10 +988,14 @@
           style="width:100%;max-width:280px;padding:9px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;font-family:inherit;outline:none;">
           <option value="none">Aucun effet</option>
           <option value="particles">Particules</option>
-          <option value="snow">Neige</option>
+          <option value="snow">Flocons</option>
+          <option value="rain">Pluie</option>
           <option value="confetti">Confettis</option>
           <option value="bubbles">Bulles</option>
           <option value="stars">Étoiles</option>
+          <option value="aurora">Aurora (boréale)</option>
+          <option value="night">Ciel nocturne</option>
+          <option value="oldtv">Ancienne TV (scanlines)</option>
         </select>
         <div id="bgEffectColorRow" style="display:none;align-items:center;gap:10px;margin-top:12px;">
           <label style="font-size:12px;font-weight:600;color:var(--gray-700);">Couleur de l'effet</label>
@@ -1625,16 +1750,96 @@ function triggerUpload(inputId) {
   document.getElementById(inputId).click();
 }
 
-function toggleAudioManager() {
-  const m = document.getElementById('audioManager');
-  m.classList.toggle('active');
+// ─── MÉDIAS : nouveau système ─────────────────────────────────────────────────
+
+function toggleMblock(id) {
+  const block = document.getElementById('mblock-' + id);
+  if (block) block.classList.toggle('open');
 }
 
-function selectAudioSrc(val) {
-  document.getElementById('audioUploadZone').style.display = val === 'upload' ? 'block' : 'none';
-  document.getElementById('audioUrlZone').style.display   = val === 'url'    ? 'block' : 'none';
-  if (val === 'none') { pendingMedias.audio_url = ''; document.getElementById('audioRemove').style.display = 'none'; }
-  else document.getElementById('audioRemove').style.display = 'inline';
+function selectAudioSrc2(val) {
+  ['none','upload','url'].forEach(v => {
+    const tab = el('audiotab-' + v);
+    if (tab) tab.classList.toggle('sel', v === val);
+  });
+  const upZone = el('audioUploadZone2');
+  const urlZone = el('audioUrlZone2');
+  const meta    = el('audioMeta');
+  if (upZone)  upZone.style.display  = val === 'upload' ? 'block' : 'none';
+  if (urlZone) urlZone.style.display = val === 'url'    ? 'block' : 'none';
+  if (val === 'none') {
+    pendingMedias.audio_url = '';
+    if (meta) meta.style.display = 'none';
+    setMblockStatus('audio', false);
+  } else {
+    if (meta) meta.style.display = 'block';
+  }
+}
+
+// Alias legacy (perso tab uses old toggleAudioManager)
+function toggleAudioManager() {}
+function selectAudioSrc(val) { selectAudioSrc2(val); }
+
+function setMblockStatus(id, active, label) {
+  const el_s = document.getElementById('mstatus-' + id);
+  if (!el_s) return;
+  el_s.className = 'mblock-status ' + (active ? 'active' : 'empty');
+  el_s.textContent = label || (active ? 'Actif' : 'Vide');
+}
+
+function removeMedia2(type) {
+  pendingMedias[type + '_url'] = '';
+
+  if (type === 'bg') {
+    const img = el('bgPreview'); const vid = el('bgVideoPreview');
+    if (img) { img.style.display = 'none'; img.src = ''; }
+    if (vid) { vid.style.display = 'none'; vid.src = ''; }
+    const wrap = el('bgPreviewWrap');
+    if (wrap) wrap.style.display = 'none';
+    const dz = el('bgDropzone');
+    if (dz) dz.style.display = 'block';
+    const act = el('mactions-bg');
+    if (act) act.style.display = 'none';
+    setMblockStatus('bg', false, 'Vide');
+  } else if (type === 'avatar') {
+    const img = el('avatarPreview');
+    if (img) { img.style.display = 'none'; img.src = ''; }
+    const ph = el('avatarPlaceholder');
+    if (ph) ph.style.display = 'flex';
+    const dz = el('avatarDropzone');
+    if (dz) dz.style.display = 'block';
+    const act = el('mactions-avatar');
+    if (act) act.style.display = 'none';
+    setMblockStatus('avatar', false, 'Vide');
+  } else if (type === 'cursor') {
+    const img = el('cursorPreview');
+    if (img) { img.style.display = 'none'; img.src = ''; }
+    const wrap = el('cursorPreviewWrap');
+    if (wrap) wrap.style.display = 'none';
+    const dz = el('cursorDropzone');
+    if (dz) dz.style.display = 'block';
+    const act = el('mactions-cursor');
+    if (act) act.style.display = 'none';
+    setMblockStatus('cursor', false, 'Vide');
+  } else if (type === 'audio') {
+    const audio = el('audioPreview');
+    if (audio) { audio.style.display = 'none'; audio.src = ''; }
+    pendingMedias.audio_name = '';
+    const ni = el('audioNameInput');
+    if (ni) ni.value = '';
+    const act = el('mactions-audio');
+    if (act) act.style.display = 'none';
+    const dz = el('audioDropzone');
+    if (dz) dz.style.display = 'block';
+    selectAudioSrc2('none');
+    setMblockStatus('audio', false, 'Désactivé');
+  }
+}
+
+// Legacy alias pour l'ancien code
+function removeMedia(e, type) {
+  if (e && e.stopPropagation) e.stopPropagation();
+  removeMedia2(type);
 }
 
 // Compresse une image via canvas. maxW/maxH = dimensions max. quality = 0-1 JPEG.
@@ -1667,23 +1872,19 @@ async function handleMedia(type, input) {
   const file = input.files[0];
   if (!file) return;
 
-  // Pas de limite côté client pour les images bg — on compresse
   const hardLimits = { avatar: 20, bg: 200, cursor: 10, audio: 30 };
-  // Pour les vidéos mp4 bg, on applique une limite séparée de 50MB
   if (file.type === 'video/mp4' && file.size > 50 * 1024 * 1024) {
     showAlert('mediasAlert', 'Vidéo trop lourde (max 50 Mo)');
     input.value = ''; return;
   }
-  if (file.size > hardLimits[type] * 1024 * 1024) {
-    showAlert('mediasAlert', `Fichier trop lourd (max ${hardLimits[type]}MB)`);
-    input.value = '';
-    return;
+  if (hardLimits[type] && file.size > hardLimits[type] * 1024 * 1024) {
+    showAlert('mediasAlert', `Fichier trop lourd (max ${hardLimits[type]} Mo)`);
+    input.value = ''; return;
   }
 
   let data;
   if (type === 'bg') {
     if (file.type === 'video/mp4') {
-      // Vidéo MP4 : lecture directe en base64
       try {
         data = await new Promise((res, rej) => {
           const r = new FileReader();
@@ -1692,7 +1893,6 @@ async function handleMedia(type, input) {
         });
       } catch { showAlert('mediasAlert', 'Impossible de lire cette vidéo.'); return; }
     } else {
-      // Compression bg : max 2560x1440, qualité 0.85
       try { data = await compressImage(file, 2560, 1440, 0.85); }
       catch { showAlert('mediasAlert', 'Impossible de lire cette image.'); return; }
     }
@@ -1700,7 +1900,6 @@ async function handleMedia(type, input) {
     try { data = await compressImage(file, 400, 400, 0.90); }
     catch { showAlert('mediasAlert', 'Impossible de lire cette image.'); return; }
   } else {
-    // cursor, audio : lecture directe
     data = await new Promise((res, rej) => {
       const r = new FileReader();
       r.onload = e => res(e.target.result); r.onerror = rej;
@@ -1712,75 +1911,52 @@ async function handleMedia(type, input) {
 
   if (type === 'bg') {
     if (file.type === 'video/mp4') {
-      el('bgPreview').style.display = 'none'; el('bgPreview').src = '';
+      const img = el('bgPreview'); if (img) { img.style.display = 'none'; img.src = ''; }
       const vid = el('bgVideoPreview');
-      vid.src = data; vid.style.display = 'block'; vid.play();
+      if (vid) { vid.src = data; vid.style.display = 'block'; vid.play(); }
     } else {
-      el('bgVideoPreview').style.display = 'none'; el('bgVideoPreview').src = '';
+      const vid = el('bgVideoPreview'); if (vid) { vid.style.display = 'none'; vid.src = ''; }
       const img = el('bgPreview');
-      img.src = data; img.style.display = 'block';
+      if (img) { img.src = data; img.style.display = 'block'; }
     }
-    el('bgIcon').style.display = 'none';
-    el('bgLabel').textContent = file.name;
-    el('bgRemove').style.display = 'inline';
+    const wrap = el('bgPreviewWrap'); if (wrap) wrap.style.display = 'block';
+    const dz = el('bgDropzone'); if (dz) dz.style.display = 'none';
+    const act = el('mactions-bg'); if (act) act.style.display = 'flex';
+    setMblockStatus('bg', true, file.type === 'video/mp4' ? 'Vidéo' : 'Image');
+    const desc = el('mdesc-bg'); if (desc) desc.textContent = file.name;
+
   } else if (type === 'avatar') {
     const img = el('avatarPreview');
-    img.src = data; img.style.display = 'block';
-    el('avatarIcon').style.display = 'none';
-    el('avatarLabel').textContent = file.name;
-    el('avatarRemove').style.display = 'inline';
+    if (img) { img.src = data; img.style.display = 'block'; }
+    const ph = el('avatarPlaceholder'); if (ph) ph.style.display = 'none';
+    const dz = el('avatarDropzone'); if (dz) dz.style.display = 'none';
+    const act = el('mactions-avatar'); if (act) act.style.display = 'flex';
+    setMblockStatus('avatar', true, 'Actif');
+    const desc = el('mdesc-avatar'); if (desc) desc.textContent = file.name;
+
   } else if (type === 'cursor') {
     const img = el('cursorPreview');
-    img.src = data; img.style.display = 'block';
-    el('cursorIcon').style.display = 'none';
-    el('cursorLabel').textContent = file.name;
-    el('cursorRemove').style.display = 'inline';
+    if (img) { img.src = data; img.style.display = 'block'; }
+    const wrap = el('cursorPreviewWrap'); if (wrap) wrap.style.display = 'block';
+    const dz = el('cursorDropzone'); if (dz) dz.style.display = 'none';
+    const act = el('mactions-cursor'); if (act) act.style.display = 'flex';
+    setMblockStatus('cursor', true, 'Actif');
+    const desc = el('mdesc-cursor'); if (desc) desc.textContent = file.name;
+
   } else if (type === 'audio') {
     const audio = el('audioPreview');
-    audio.src = data; audio.style.display = 'block';
-    el('audioFileName').textContent = file.name;
-    el('audioName').textContent = '🎵 ' + file.name;
-    el('audioRemove').style.display = 'inline';
-    // Auto-remplir le nom du morceau avec le nom du fichier (sans extension) si le champ est vide
+    if (audio) { audio.src = data; audio.style.display = 'block'; }
+    const dz = el('audioDropzone'); if (dz) dz.style.display = 'none';
+    const act = el('mactions-audio'); if (act) act.style.display = 'flex';
+    const meta = el('audioMeta'); if (meta) meta.style.display = 'block';
     const nameInput = el('audioNameInput');
-    if (!nameInput.value.trim()) {
+    if (nameInput && !nameInput.value.trim()) {
       const autoName = file.name.replace(/\.[^.]+$/, '');
       nameInput.value = autoName;
       pendingMedias.audio_name = autoName;
     }
-  }
-}
-
-function removeMedia(e, type) {
-  e.stopPropagation();
-  pendingMedias[type + '_url'] = '';
-
-  if (type === 'bg') {
-    el('bgPreview').style.display = 'none'; el('bgPreview').src = '';
-    el('bgVideoPreview').style.display = 'none'; el('bgVideoPreview').src = '';
-    el('bgIcon').style.display = 'block';
-    el('bgLabel').textContent = 'Image ou vidéo MP4 (compressé auto pour les images)';
-    el('bgRemove').style.display = 'none';
-  } else if (type === 'avatar') {
-    el('avatarPreview').style.display = 'none'; el('avatarPreview').src = '';
-    el('avatarIcon').style.display = 'block';
-    el('avatarLabel').textContent = 'Cliquez pour téléverser un fichier';
-    el('avatarRemove').style.display = 'none';
-  } else if (type === 'cursor') {
-    el('cursorPreview').style.display = 'none'; el('cursorPreview').src = '';
-    el('cursorIcon').style.display = 'block';
-    el('cursorLabel').textContent = 'Cliquez pour téléverser un fichier';
-    el('cursorRemove').style.display = 'none';
-  } else if (type === 'audio') {
-    el('audioPreview').style.display = 'none'; el('audioPreview').src = '';
-    el('audioName').textContent = '';
-    el('audioFileName').textContent = '';
-    el('audioRemove').style.display = 'none';
-    // Reset aussi le nom du son
-    pendingMedias.audio_name = '';
-    el('audioNameInput').value = '';
-    document.querySelector('input[name=audioSrc][value=none]').checked = true;
-    selectAudioSrc('none');
+    setMblockStatus('audio', true, 'Actif');
+    const desc = el('mdesc-audio'); if (desc) desc.textContent = file.name;
   }
 }
 
@@ -1792,67 +1968,98 @@ function handleAudioCover(input) {
   reader.onload = (e) => {
     const data = e.target.result;
     pendingMedias.audio_cover_url = data;
-    el('audioCoverPreview').src = data;
-    el('audioCoverPreview').style.display = 'block';
-    el('audioCoverIcon').style.display = 'none';
-    el('audioCoverLabel').textContent = 'Pochette sélectionnée';
-    el('audioCoverFileName').textContent = file.name;
-    el('audioCoverRemove').style.display = 'inline';
+    const img = el('audioCoverPreview');
+    if (img) { img.src = data; img.style.display = 'block'; }
+    const icon = el('audioCoverIcon');
+    if (icon) icon.style.display = 'none';
+    const rem = el('audioCoverRemove');
+    if (rem) rem.style.display = 'inline';
   };
   reader.readAsDataURL(file);
 }
 
 function removeAudioCover(e) {
-  e.stopPropagation();
+  if (e) e.stopPropagation();
   pendingMedias.audio_cover_url = '';
-  el('audioCoverPreview').style.display = 'none'; el('audioCoverPreview').src = '';
-  el('audioCoverIcon').style.display = 'block';
-  el('audioCoverLabel').textContent = 'Cliquez pour choisir une image';
-  el('audioCoverFileName').textContent = '';
-  el('audioCoverRemove').style.display = 'none';
+  const img = el('audioCoverPreview');
+  if (img) { img.style.display = 'none'; img.src = ''; }
+  const icon = el('audioCoverIcon');
+  if (icon) icon.style.display = 'block';
+  const rem = el('audioCoverRemove');
+  if (rem) rem.style.display = 'none';
 }
 
 function loadMediasUI() {
   if (!userData) return;
+
   if (userData.bg_url) {
     if (userData.bg_url.includes('data:video/mp4') || userData.bg_url.endsWith('.mp4')) {
       const vid = el('bgVideoPreview');
-      vid.src = userData.bg_url; vid.style.display = 'block'; vid.play();
-      el('bgPreview').style.display = 'none';
+      if (vid) { vid.src = userData.bg_url; vid.style.display = 'block'; vid.play(); }
+      const img = el('bgPreview'); if (img) img.style.display = 'none';
+      setMblockStatus('bg', true, 'Vidéo');
     } else {
-      el('bgPreview').src = userData.bg_url; el('bgPreview').style.display = 'block';
-      el('bgVideoPreview').style.display = 'none';
+      const img = el('bgPreview');
+      if (img) { img.src = userData.bg_url; img.style.display = 'block'; }
+      const vid = el('bgVideoPreview'); if (vid) vid.style.display = 'none';
+      setMblockStatus('bg', true, 'Image');
     }
-    el('bgIcon').style.display = 'none'; el('bgLabel').textContent = 'Arrière-plan actuel';
-    el('bgRemove').style.display = 'inline';
+    const wrap = el('bgPreviewWrap'); if (wrap) wrap.style.display = 'block';
+    const dz = el('bgDropzone'); if (dz) dz.style.display = 'none';
+    const act = el('mactions-bg'); if (act) act.style.display = 'flex';
   }
+
   if (userData.avatar_url) {
-    el('avatarPreview').src = userData.avatar_url; el('avatarPreview').style.display = 'block';
-    el('avatarIcon').style.display = 'none'; el('avatarLabel').textContent = 'Avatar actuel';
-    el('avatarRemove').style.display = 'inline';
+    const img = el('avatarPreview');
+    if (img) { img.src = userData.avatar_url; img.style.display = 'block'; }
+    const ph = el('avatarPlaceholder'); if (ph) ph.style.display = 'none';
+    const dz = el('avatarDropzone'); if (dz) dz.style.display = 'none';
+    const act = el('mactions-avatar'); if (act) act.style.display = 'flex';
+    setMblockStatus('avatar', true, 'Actif');
   }
+
   if (userData.cursor_url) {
-    el('cursorPreview').src = userData.cursor_url; el('cursorPreview').style.display = 'block';
-    el('cursorIcon').style.display = 'none'; el('cursorLabel').textContent = 'Curseur actuel';
-    el('cursorRemove').style.display = 'inline';
+    const img = el('cursorPreview');
+    if (img) { img.src = userData.cursor_url; img.style.display = 'block'; }
+    const wrap = el('cursorPreviewWrap'); if (wrap) wrap.style.display = 'block';
+    const dz = el('cursorDropzone'); if (dz) dz.style.display = 'none';
+    const act = el('mactions-cursor'); if (act) act.style.display = 'flex';
+    setMblockStatus('cursor', true, 'Actif');
   }
+
   if (userData.audio_url) {
-    el('audioPreview').src = userData.audio_url; el('audioPreview').style.display = 'block';
-    el('audioName').textContent = '🎵 Audio actuel';
-    el('audioRemove').style.display = 'inline';
-    document.querySelector('input[name=audioSrc][value=upload]').checked = true;
-    selectAudioSrc('upload');
+    const audio = el('audioPreview');
+    if (audio) { audio.src = userData.audio_url; audio.style.display = 'block'; }
+    const dz = el('audioDropzone'); if (dz) dz.style.display = 'none';
+    const act = el('mactions-audio'); if (act) act.style.display = 'flex';
+    const meta = el('audioMeta'); if (meta) meta.style.display = 'block';
+    selectAudioSrc2('upload');
+    setMblockStatus('audio', true, 'Actif');
   }
+
   if (userData.audio_name) {
-    el('audioNameInput').value = userData.audio_name;
+    const ni = el('audioNameInput');
+    if (ni) ni.value = userData.audio_name;
+    pendingMedias.audio_name = userData.audio_name;
   }
+
   if (userData.audio_cover_url) {
-    el('audioCoverPreview').src = userData.audio_cover_url;
-    el('audioCoverPreview').style.display = 'block';
-    el('audioCoverIcon').style.display = 'none';
-    el('audioCoverLabel').textContent = 'Pochette actuelle';
-    el('audioCoverRemove').style.display = 'inline';
+    const img = el('audioCoverPreview');
+    if (img) { img.src = userData.audio_cover_url; img.style.display = 'block'; }
+    const icon = el('audioCoverIcon');
+    if (icon) icon.style.display = 'none';
+    const rem = el('audioCoverRemove');
+    if (rem) rem.style.display = 'inline';
   }
+
+  // Ouvrir le premier bloc actif automatiquement
+  ['avatar','bg','audio','cursor'].forEach(id => {
+    const status = document.getElementById('mstatus-' + id);
+    if (status && status.classList.contains('active')) {
+      const block = document.getElementById('mblock-' + id);
+      if (block) block.classList.add('open');
+    }
+  });
 }
 
 async function saveMedias() {
@@ -1880,14 +2087,9 @@ async function saveMedias() {
     userData = data;
     pendingMedias = { avatar_url: null, bg_url: null, audio_url: null, audio_name: null, audio_cover_url: null, cursor_url: null };
     el('mediasAlert').innerHTML = '';
-    // Sync nom du son avec ce qui a été sauvegardé
     if (data.audio_name !== undefined) {
-      el('audioNameInput').value = data.audio_name || '';
-    }
-    if (!data.audio_url) {
-      // Audio supprimé côté serveur, reset UI
-      el('audioName').textContent = '';
-      el('audioRemove').style.display = 'none';
+      const ni = el('audioNameInput');
+      if (ni) ni.value = data.audio_name || '';
     }
     showToast('Médias sauvegardés ✓');
   } catch { showToast('Erreur réseau'); }
@@ -2269,6 +2471,6 @@ document.addEventListener("DOMContentLoaded",function(){
 });
 </script>
 
-<footer style="text-align:center;padding:20px;font-size:11px;color:var(--gray-400);border-top:1px solid var(--gray-200);margin-top:auto;">Fait par <a href="https://discord.gg/g7MysUNQXs" target="_blank" rel="noopener" style="color:var(--gray-400);font-weight:700;text-decoration:none;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">nitrox</a></footer>
+
 </body>
 </html>
