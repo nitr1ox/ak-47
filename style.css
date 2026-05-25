@@ -180,13 +180,35 @@ input.error { border-color: var(--red); }
 [data-theme="dark"] .input-row { background: var(--gray-100); }
 [data-theme="dark"] .input-prefix { background: var(--gray-200); }
 
-/* Theme toggle button */
-.theme-toggle {
-  width: 32px; height: 32px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 6px; border: 1px solid var(--gray-200);
-  background: var(--white); cursor: pointer;
-  color: var(--gray-700); font-size: 15px;
-  transition: all .15s; flex-shrink: 0;
+/* Theme pill toggle */
+.theme-pill-toggle {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--gray-100); border: 1px solid var(--gray-200);
+  border-radius: 999px; padding: 4px 8px;
+  cursor: pointer; transition: background .2s, border-color .2s;
+  flex-shrink: 0;
 }
-.theme-toggle:hover { background: var(--gray-100); }
+.theme-pill-toggle:hover { background: var(--gray-200); }
+.tpt-icon { font-size: 13px; line-height: 1; transition: opacity .2s; }
+.tpt-track {
+  width: 28px; height: 16px; background: var(--gray-300);
+  border-radius: 999px; position: relative;
+  transition: background .2s; flex-shrink: 0;
+}
+.tpt-thumb {
+  position: absolute; top: 2px; left: 2px;
+  width: 12px; height: 12px; background: var(--white);
+  border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,.25);
+  transition: transform .2s, background .2s;
+}
+/* light mode: thumb left, moon dim */
+.theme-pill-toggle[data-active="light"] .tpt-sun  { opacity: 1; }
+.theme-pill-toggle[data-active="light"] .tpt-moon { opacity: 0.35; }
+.theme-pill-toggle[data-active="light"] .tpt-track { background: #e4e4e7; }
+.theme-pill-toggle[data-active="light"] .tpt-thumb { transform: translateX(0); }
+/* dark mode: thumb right, sun dim */
+.theme-pill-toggle[data-active="dark"] .tpt-sun  { opacity: 0.35; }
+.theme-pill-toggle[data-active="dark"] .tpt-moon { opacity: 1; }
+.theme-pill-toggle[data-active="dark"] .tpt-track { background: #3f3f46; }
+.theme-pill-toggle[data-active="dark"] .tpt-thumb { transform: translateX(12px); background: #fafafa; }
+

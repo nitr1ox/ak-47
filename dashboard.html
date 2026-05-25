@@ -192,7 +192,11 @@
   <div class="dash-nav-right">
     <span class="dash-nav-user">Bonjour, <strong id="navUsername">—</strong></span>
     <a id="profileViewBtn" href="#" target="_blank" class="dash-btn-sm">Voir mon profil ↗</a>
-    <button id="themeToggle" class="dash-btn-sm" onclick="toggleTheme()" title="Changer de thème" style="font-size:15px;padding:5px 10px;line-height:1;">🌙</button>
+    <button id="themeToggle" class="theme-pill-toggle" onclick="toggleTheme()" title="Changer de thème" aria-label="Changer de thème">
+      <span class="tpt-icon tpt-sun">☀️</span>
+      <span class="tpt-track"><span class="tpt-thumb"></span></span>
+      <span class="tpt-icon tpt-moon">🌙</span>
+    </button>
     <button class="dash-btn-sm logout" onclick="logout()">Déconnexion</button>
   </div>
 </nav>
@@ -2203,12 +2207,15 @@ function toggleTheme(){
   var next=cur==="dark"?"light":"dark";
   document.documentElement.setAttribute("data-theme",next);
   localStorage.setItem("theme",next);
+  document.getElementById("themeToggle").setAttribute("data-active", next);
+}
+function initThemeToggle(){
+  var cur=document.documentElement.getAttribute("data-theme")||"light";
   var btn=document.getElementById("themeToggle");
-  if(btn) btn.textContent=next==="dark"?"☀️":"🌙";
+  if(btn) btn.setAttribute("data-active", cur);
 }
 document.addEventListener("DOMContentLoaded",function(){
-  var btn=document.getElementById("themeToggle");
-  if(btn){var cur=document.documentElement.getAttribute("data-theme")||"light";btn.textContent=cur==="dark"?"☀️":"🌙";}
+  initThemeToggle();
 });
 </script>
 </body>
