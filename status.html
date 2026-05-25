@@ -74,7 +74,7 @@
 
     try {
       const t0 = Date.now();
-      const r = await fetch('https:
+      const r = await fetch('https://ak47-backend.onrender.com/api/health');
       const ms = Date.now() - t0;
       if (r.ok) {
         document.getElementById('api-badge').className = 'badge-up';
@@ -91,7 +91,7 @@
 
     try {
       const t0 = Date.now();
-      const r = await fetch('https:
+      const r = await fetch('https://ak47-backend.onrender.com/api/stats');
       const ms = Date.now() - t0;
       if (r.ok) {
         document.getElementById('db-badge').className = 'badge-up';
