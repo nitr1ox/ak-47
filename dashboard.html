@@ -1356,7 +1356,7 @@ function handleMedia(type, input) {
   const file = input.files[0];
   if (!file) return;
 
-  const limits = { avatar: 2, bg: 2, cursor: 2, audio: 8 };
+  const limits = { avatar: 2, bg: 50, cursor: 2, audio: 8 };
   if (file.size > limits[type] * 1024 * 1024) {
     showAlert('mediasAlert', `Fichier trop lourd (max ${limits[type]}MB)`);
     input.value = '';
@@ -1603,8 +1603,8 @@ function updateBtnStylePreview() {
 async function handlePersoMedia(type, input) {
   const file = input.files[0];
   if (!file) return;
-  const MAX = 2 * 1024 * 1024;
-  if (file.size > MAX) { showToast('Fichier trop lourd (max 2MB)'); return; }
+  const MAX = type === 'bg' ? 50 * 1024 * 1024 : 2 * 1024 * 1024;
+  if (file.size > MAX) { showToast(`Fichier trop lourd (max ${type === 'bg' ? 50 : 2}MB)`); return; }
   const reader = new FileReader();
   reader.onload = e => {
     const data = e.target.result;
