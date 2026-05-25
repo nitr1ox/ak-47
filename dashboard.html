@@ -280,6 +280,10 @@
               <textarea id="bio" placeholder="Décrivez-vous en quelques mots..." maxlength="200"></textarea>
             </div>
             <div class="form-group">
+              <label>📍 Localisation</label>
+              <input type="text" id="location" placeholder="Ex : Paris, France" maxlength="100" oninput="pendingProfile=true;"/>
+            </div>
+            <div class="form-group">
               <label>Couleur d'avatar</label>
               <div style="display:flex;align-items:center;gap:10px;">
                 <input type="color" id="avatarColor" style="width:40px;height:36px;padding:2px;border:1px solid var(--gray-200);border-radius:6px;cursor:pointer;"/>
@@ -759,6 +763,161 @@
           oninput="pendingPerso.spotify_url=this.value"/>
       </div>
 
+      <div class="section-card">
+        <div class="section-card-title">Présence Discord</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Affiche votre statut Discord en temps réel sur votre profil public (nécessite un compte Discord lié).</div>
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+          <input type="checkbox" id="discordPresenceToggle" style="width:16px;height:16px;accent-color:#5865F2;cursor:pointer;"
+            onchange="pendingPerso.discord_presence=this.checked"/>
+          <span style="font-size:13px;font-weight:500;">Activer la présence Discord</span>
+        </label>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-title">Couleur d'accent</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Couleur principale utilisée pour les éléments interactifs et les highlights de votre profil.</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <input type="color" id="accentColorPicker" value="#6366f1"
+            style="width:44px;height:38px;padding:2px;border:1px solid var(--gray-200);border-radius:6px;cursor:pointer;"
+            oninput="pendingPerso.accent_color=this.value;el('accentColorHex').textContent=this.value;"/>
+          <span id="accentColorHex" style="font-size:13px;color:var(--gray-500);">#6366f1</span>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-title">Flou du profil</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Applique un effet de flou (glassmorphism) sur la card de profil.</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <input type="range" id="profileBlurRange" min="0" max="20" value="0"
+            style="flex:1;max-width:260px;accent-color:#000;"
+            oninput="pendingPerso.profile_blur=parseInt(this.value);el('profileBlurVal').textContent=this.value+'px';"/>
+          <span id="profileBlurVal" style="font-size:12px;color:var(--gray-500);min-width:36px;">0px</span>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-title">Effet sur le pseudo</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Ajoutez un effet visuel animé sur votre nom d'utilisateur.</div>
+        <select id="usernameEffectSelect" onchange="pendingPerso.username_effect=this.value;"
+          style="width:100%;max-width:280px;padding:9px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;font-family:inherit;outline:none;">
+          <option value="none">Aucun effet</option>
+          <option value="gradient">Dégradé de couleur</option>
+          <option value="glow">Lueur (glow)</option>
+          <option value="rainbow">Arc-en-ciel</option>
+          <option value="typewriter">Machine à écrire</option>
+          <option value="shake">Tremblement</option>
+        </select>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-title">Cibles de l'effet de lueur</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Choisissez les éléments sur lesquels appliquer l'effet glow (utilise la couleur d'accent).</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+            <input type="checkbox" value="avatar" style="accent-color:#000;" onchange="updateGlowTargets()"/> Avatar
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+            <input type="checkbox" value="username" style="accent-color:#000;" onchange="updateGlowTargets()"/> Pseudo
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+            <input type="checkbox" value="card" style="accent-color:#000;" onchange="updateGlowTargets()"/> Card de profil
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+            <input type="checkbox" value="links" style="accent-color:#000;" onchange="updateGlowTargets()"/> Liens
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+            <input type="checkbox" value="badges" style="accent-color:#000;" onchange="updateGlowTargets()"/> Badges
+          </label>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-title">Effet de fond</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Ajoutez un effet animé en arrière-plan de votre profil.</div>
+        <select id="bgEffectSelect" onchange="pendingPerso.bg_effect=this.value;el('bgEffectColorRow').style.display=this.value!=='none'?'flex':'none';"
+          style="width:100%;max-width:280px;padding:9px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;font-family:inherit;outline:none;">
+          <option value="none">Aucun effet</option>
+          <option value="particles">Particules</option>
+          <option value="snow">Neige</option>
+          <option value="confetti">Confettis</option>
+          <option value="bubbles">Bulles</option>
+          <option value="stars">Étoiles</option>
+        </select>
+        <div id="bgEffectColorRow" style="display:none;align-items:center;gap:10px;margin-top:12px;">
+          <label style="font-size:12px;font-weight:600;color:var(--gray-700);">Couleur de l'effet</label>
+          <input type="color" id="bgEffectColorPicker" value="#ffffff"
+            style="width:36px;height:32px;padding:2px;border:1px solid var(--gray-200);border-radius:5px;cursor:pointer;"
+            oninput="pendingPerso.bg_effect_color=this.value;el('bgEffectColorHex').textContent=this.value;"/>
+          <span id="bgEffectColorHex" style="font-size:12px;color:var(--gray-500);">#ffffff</span>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-title">Couleur des icônes</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Couleur appliquée aux icônes de réseau social et de navigation sur votre profil.</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <input type="color" id="iconColorPicker" value="#6366f1"
+            style="width:44px;height:38px;padding:2px;border:1px solid var(--gray-200);border-radius:6px;cursor:pointer;"
+            oninput="pendingPerso.icon_color=this.value;el('iconColorHex').textContent=this.value;"/>
+          <span id="iconColorHex" style="font-size:13px;color:var(--gray-500);">#6366f1</span>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-title">Options avancées</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Paramètres visuels supplémentaires pour personnaliser l'apparence de votre profil.</div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+            <input type="checkbox" id="monochromeIconsToggle" style="width:16px;height:16px;accent-color:#000;cursor:pointer;"
+              onchange="pendingPerso.monochrome_icons=this.checked"/>
+            <div>
+              <span style="font-size:13px;font-weight:500;">Icônes monochrome</span>
+              <div style="font-size:11px;color:var(--gray-500);">Affiche toutes les icônes en noir et blanc.</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+            <input type="checkbox" id="animatedTitleToggle" style="width:16px;height:16px;accent-color:#000;cursor:pointer;"
+              onchange="pendingPerso.animated_title=this.checked"/>
+            <div>
+              <span style="font-size:13px;font-weight:500;">Titre animé</span>
+              <div style="font-size:11px;color:var(--gray-500);">Anime le titre de la page (onglet du navigateur).</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+            <input type="checkbox" id="invertBlocksToggle" style="width:16px;height:16px;accent-color:#000;cursor:pointer;"
+              onchange="pendingPerso.invert_blocks=this.checked"/>
+            <div>
+              <span style="font-size:13px;font-weight:500;">Inverser les blocs</span>
+              <div style="font-size:11px;color:var(--gray-500);">Inverse les couleurs des blocs de contenu (mode négatif).</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+            <input type="checkbox" id="useDiscordAvatarToggle" style="width:16px;height:16px;accent-color:#5865F2;cursor:pointer;"
+              onchange="pendingPerso.use_discord_avatar=this.checked"/>
+            <div>
+              <span style="font-size:13px;font-weight:500;">Utiliser l'avatar Discord automatiquement</span>
+              <div style="font-size:11px;color:var(--gray-500);">Synchronise automatiquement votre avatar depuis Discord.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-title">Décoration d'avatar</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Ajoutez un cadre ou une décoration autour de votre avatar.</div>
+        <select id="avatarDecorationSelect" onchange="pendingPerso.avatar_decoration=this.value;"
+          style="width:100%;max-width:280px;padding:9px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;font-family:inherit;outline:none;">
+          <option value="none">Aucune décoration</option>
+          <option value="ring">Anneau simple</option>
+          <option value="ring_accent">Anneau couleur d'accent</option>
+          <option value="ring_rainbow">Anneau arc-en-ciel</option>
+          <option value="ring_glow">Anneau lumineux</option>
+          <option value="double_ring">Double anneau</option>
+          <option value="dots">Points autour</option>
+          <option value="hexagon">Hexagone</option>
+        </select>
+      </div>
+
       <div class="save-bar">
         <span class="save-bar-msg">Les modifications seront appliquées sur votre profil public.</span>
         <button class="save-bar-btn" id="savePersoBtn" onclick="savePerso()">Sauvegarder</button>
@@ -1148,6 +1307,7 @@ function renderProfile() {
   if (!userData) return;
   el('displayName').value = userData.display_name || '';
   el('bio').value = userData.bio || '';
+  el('location').value = userData.location || 'Paris, France';
   el('avatarColor').value = userData.avatar_color || '#000000';
   updatePreview();
 }
@@ -1204,7 +1364,7 @@ async function saveProfile() {
     const r = await fetch(API + '/api/user/me', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-      body: JSON.stringify({ display_name: el('displayName').value, bio: el('bio').value, avatar_color: el('avatarColor').value })
+      body: JSON.stringify({ display_name: el('displayName').value, bio: el('bio').value, location: el('location').value, avatar_color: el('avatarColor').value })
     });
     const data = await r.json();
     if (!r.ok) { el('profileAlert').innerHTML = `<div class="alert alert-error">${data.error}</div>`; return; }
@@ -1390,7 +1550,7 @@ function switchTab(name) {
   if (name === 'profile' || name === 'links') updatePreview();
 }
 
-['displayName','bio','avatarColor'].forEach(id => {
+['displayName','bio','location','avatarColor'].forEach(id => {
   el(id)?.addEventListener('input', updatePreview);
 });
 
@@ -1645,6 +1805,19 @@ let pendingPerso = {
   banner_url: null,
   bg_url: null,
   spotify_url: null,
+  discord_presence: null,
+  bg_effect: null,
+  bg_effect_color: null,
+  profile_blur: null,
+  username_effect: null,
+  glow_targets: null,
+  accent_color: null,
+  icon_color: null,
+  monochrome_icons: null,
+  animated_title: null,
+  invert_blocks: null,
+  use_discord_avatar: null,
+  avatar_decoration: null,
 };
 
 const GRADIENT_PRESETS = [
@@ -1730,6 +1903,56 @@ function loadPersoUI() {
   const cardOpacity = userData.card_opacity !== undefined ? userData.card_opacity : 1;
   el('cardOpacityRange').value = Math.round(cardOpacity * 100);
   el('cardOpacityVal').textContent = Math.round(cardOpacity * 100) + '%';
+
+  // Présence Discord
+  el('discordPresenceToggle').checked = !!userData.discord_presence;
+
+  // Effet de fond
+  const bgEffect = userData.bg_effect || 'none';
+  el('bgEffectSelect').value = bgEffect;
+  el('bgEffectColorRow').style.display = bgEffect !== 'none' ? 'flex' : 'none';
+  if (userData.bg_effect_color) {
+    el('bgEffectColorPicker').value = userData.bg_effect_color;
+    el('bgEffectColorHex').textContent = userData.bg_effect_color;
+  }
+
+  // Couleur d'accent
+  if (userData.accent_color) {
+    el('accentColorPicker').value = userData.accent_color;
+    el('accentColorHex').textContent = userData.accent_color;
+  }
+
+  // Flou du profil
+  const blur = userData.profile_blur !== undefined ? userData.profile_blur : 0;
+  el('profileBlurRange').value = blur;
+  el('profileBlurVal').textContent = blur + 'px';
+
+  // Effet pseudo
+  el('usernameEffectSelect').value = userData.username_effect || 'none';
+
+  // Cibles glow
+  const glowTargets = userData.glow_targets ? userData.glow_targets.split(',') : [];
+  document.querySelectorAll('#tab-perso input[type=checkbox][value]').forEach(cb => {
+    if (['avatar','username','card','links','badges'].includes(cb.value)) {
+      cb.checked = glowTargets.includes(cb.value);
+    }
+  });
+
+  // Couleur des icônes
+  if (userData.icon_color) {
+    el('iconColorPicker').value = userData.icon_color;
+    el('iconColorHex').textContent = userData.icon_color;
+  }
+  // Icônes monochrome
+  el('monochromeIconsToggle').checked = !!userData.monochrome_icons;
+  // Titre animé
+  el('animatedTitleToggle').checked = !!userData.animated_title;
+  // Inverser les blocs
+  el('invertBlocksToggle').checked = !!userData.invert_blocks;
+  // Avatar Discord auto
+  el('useDiscordAvatarToggle').checked = !!userData.use_discord_avatar;
+  // Décoration d'avatar
+  el('avatarDecorationSelect').value = userData.avatar_decoration || 'none';
 }
 
 function switchBgTab(tab) {
@@ -1844,6 +2067,13 @@ async function importDiscordAvatar() {
   } catch { showToast('Erreur réseau'); }
 }
 
+function updateGlowTargets() {
+  const checked = [...document.querySelectorAll('#tab-perso input[type=checkbox][value]')]
+    .filter(cb => ['avatar','username','card','links','badges'].includes(cb.value) && cb.checked)
+    .map(cb => cb.value);
+  pendingPerso.glow_targets = checked.join(',');
+}
+
 async function savePerso() {
   const btn = el('savePersoBtn');
   btn.disabled = true; btn.textContent = '...';
@@ -1870,6 +2100,10 @@ async function savePerso() {
       profile_font: null, bg_type: null, bg_value: null,
       bg_opacity: null, text_color: null, card_bg: null, card_opacity: null,
       banner_url: null, bg_url: null, social_links: null, spotify_url: null,
+      discord_presence: null, bg_effect: null, bg_effect_color: null,
+      profile_blur: null, username_effect: null, glow_targets: null, accent_color: null,
+      icon_color: null, monochrome_icons: null, animated_title: null,
+      invert_blocks: null, use_discord_avatar: null, avatar_decoration: null,
     };
     el('persoAlert').innerHTML = '';
     showToast('Personnalisation sauvegardée ✓');
