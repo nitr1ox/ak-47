@@ -1021,9 +1021,20 @@ async function loadProfile() {
     // 7. TITRE ANIMÉ (onglet navigateur)
     if (user.animated_title) {
       const baseTitle = document.title;
-      const frames = [baseTitle, '✨ ' + baseTitle, '⭐ ' + baseTitle, '🌟 ' + baseTitle];
-      let fi = 0;
-      setInterval(() => { document.title = frames[fi++ % frames.length]; }, 800);
+      let i = 0, dir = 1;
+      function tickTitle() {
+        document.title = baseTitle.slice(0, i);
+        if (dir === 1) {
+          i++;
+          if (i > baseTitle.length) { dir = -1; setTimeout(tickTitle, 1200); return; }
+          setTimeout(tickTitle, 90);
+        } else {
+          i--;
+          if (i < 0) { i = 0; dir = 1; setTimeout(tickTitle, 350); return; }
+          setTimeout(tickTitle, 50);
+        }
+      }
+      tickTitle();
     }
 
     // 8. EFFET SUR LE PSEUDO

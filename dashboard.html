@@ -1869,7 +1869,11 @@ function compressImage(file, maxW, maxH, quality) {
         const canvas = document.createElement('canvas');
         canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        resolve(canvas.toDataURL('image/jpeg', quality));
+        let result = canvas.toDataURL('image/jpeg', quality);
+        // Si encore trop lourd (>3.5MB base64), recompresser à qualité réduite
+        if (result.length > 3.5 * 1024 * 1024) result = canvas.toDataURL('image/jpeg', 0.72);
+        if (result.length > 3.5 * 1024 * 1024) result = canvas.toDataURL('image/jpeg', 0.55);
+        resolve(result);
       };
       img.onerror = reject;
       img.src = e.target.result;
@@ -2094,7 +2098,7 @@ async function saveMedias() {
       body: JSON.stringify(body)
     });
     const data = await r.json();
-    if (!r.ok) { showAlert('mediasAlert', data.error || 'Erreur'); return; }
+    if (!r.ok) { showAlert('mediasAlert', data.error || 'Erreur'); showToast('❌ ' + (data.error || 'Erreur lors de la sauvegarde')); return; }
     userData = data;
     pendingMedias = { avatar_url: null, bg_url: null, audio_url: null, audio_name: null, audio_cover_url: null, cursor_url: null };
     el('mediasAlert').innerHTML = '';
