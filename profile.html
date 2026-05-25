@@ -53,9 +53,35 @@
     .profile-footer { margin-top: 36px; text-align: center; }
     .profile-footer a { font-size: 12px; color: var(--gray-400); text-decoration: none; font-weight: 500; transition: color .15s; }
     .profile-footer a:hover { color: var(--black); }
+
+    /* ── MÉDIAS ── */
+    #profileBg {
+      position: fixed; inset: 0; z-index: -1;
+      background-size: cover; background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0.18; pointer-events: none;
+    }
+    .profile-avatar-img {
+      width: 80px; height: 80px; border-radius: 50%;
+      object-fit: cover; border: 2px solid var(--gray-200);
+      margin: 0 auto 14px; display: block;
+    }
+    #audioPlayer { display: none; }
+    .audio-bar {
+      display: none; align-items: center; gap: 8px;
+      background: rgba(0,0,0,.06); border-radius: 20px;
+      padding: 6px 14px; margin: 10px auto 0; max-width: 220px;
+      font-size: 12px; color: var(--gray-500); cursor: pointer;
+    }
+    .audio-bar.visible { display: flex; }
+    .audio-bar-icon { font-size: 14px; }
+    .audio-bar-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   </style>
 </head>
 <body>
+
+<div id="profileBg"></div>
+<audio id="audioPlayer" loop></audio>
 
 <div id="loading">
   <div class="spinner"></div>
@@ -79,6 +105,11 @@
         <svg viewBox="0 0 24 24" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         <span id="pViewsCount"></span>
       </div>
+    </div>
+    <div class="audio-bar" id="audioBar" onclick="toggleAudio()">
+      <span class="audio-bar-icon" id="audioBarIcon">▶</span>
+      <span class="audio-bar-title" id="audioBarTitle">Musique</span>
+      <span style="font-size:10px;color:var(--gray-400);">cliquer pour jouer</span>
     </div>
     <div class="profile-links" id="pLinks"></div>
     <div class="profile-footer"><a href="/">Créez votre profil sur ak-47.fr →</a></div>
@@ -133,10 +164,46 @@ async function loadProfile() {
       return (0.299*rv + 0.587*g + 0.114*b) > 128;
     })();
 
-    const av = document.getElementById('pAvatar');
-    av.style.background = color;
-    av.style.color = isLight ? '#000' : '#fff';
-    av.textContent = (user.display_name || user.username).charAt(0).toUpperCase();
+    // Avatar image ou couleur
+    const avContainer = document.getElementById('pAvatar');
+    if (user.avatar_url) {
+      const img = document.createElement('img');
+      img.src = user.avatar_url;
+      img.className = 'profile-avatar-img';
+      img.alt = user.display_name || user.username;
+      avContainer.style.background = 'none';
+      avContainer.style.border = 'none';
+      avContainer.style.padding = '0';
+      avContainer.innerHTML = '';
+      avContainer.appendChild(img);
+    } else {
+      avContainer.style.background = color;
+      avContainer.style.color = isLight ? '#000' : '#fff';
+      avContainer.textContent = (user.display_name || user.username).charAt(0).toUpperCase();
+    }
+
+    // Arrière-plan
+    if (user.bg_url) {
+      const bg = document.getElementById('profileBg');
+      bg.style.backgroundImage = `url(${JSON.stringify(user.bg_url)})`;
+    }
+
+    // Curseur personnalisé
+    if (user.cursor_url) {
+      document.body.style.cursor = `url(${JSON.stringify(user.cursor_url)}), auto`;
+    }
+
+    // Audio
+    if (user.audio_url) {
+      const player = document.getElementById('audioPlayer');
+      player.src = user.audio_url;
+      const bar = document.getElementById('audioBar');
+      bar.classList.add('visible');
+      // Autoplay avec fallback click
+      player.play().catch(() => {
+        document.getElementById('audioBarTitle').textContent = 'Appuie pour jouer';
+      });
+    }
 
     document.getElementById('pName').textContent = user.display_name || user.username;
     document.getElementById('pBio').textContent = user.bio || '';
@@ -171,6 +238,23 @@ async function loadProfile() {
       document.getElementById('notFoundMsg').textContent = 'Le serveur met trop de temps à répondre. Réessaie dans quelques secondes.';
     }
     document.getElementById('notFound').style.display = 'flex';
+  }
+}
+
+let audioPlaying = false;
+function toggleAudio() {
+  const player = document.getElementById('audioPlayer');
+  const icon = document.getElementById('audioBarIcon');
+  if (player.paused) {
+    player.play();
+    icon.textContent = '⏸';
+    document.getElementById('audioBarTitle').textContent = 'En lecture…';
+    audioPlaying = true;
+  } else {
+    player.pause();
+    icon.textContent = '▶';
+    document.getElementById('audioBarTitle').textContent = 'Musique';
+    audioPlaying = false;
   }
 }
 

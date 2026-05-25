@@ -9,3 +9,4 @@
 /terms        /terms.html         200
 /privacy      /privacy.html       200
 /oauth-callback /oauth-callback.html 200
+/:username    /profile.html       200
