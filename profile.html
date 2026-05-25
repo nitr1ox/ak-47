@@ -76,6 +76,19 @@
     .audio-bar.visible { display: flex; }
     .audio-bar-icon { font-size: 14px; }
     .audio-bar-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* ── BADGES ── */
+    .badges-row { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 10px 0 4px; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+      border: 1px solid rgba(0,0,0,.08);
+    }
+    .badge-discord { background: #5865F2; color: #fff; border-color: #5865F2; }
+    .badge-nitro   { background: linear-gradient(135deg,#f47fff,#7289da); color: #fff; border-color: transparent; }
+    .badge-server  { background: #000; color: #fff; border-color: #000; }
+    .badge-server.vip { background: linear-gradient(135deg,#f6c90e,#e6a817); color: #000; border-color: transparent; }
+    .badge-server.mod { background: #e74c3c; color: #fff; border-color: transparent; }
   </style>
 </head>
 <body>
@@ -207,6 +220,28 @@ async function loadProfile() {
 
     document.getElementById('pName').textContent = user.display_name || user.username;
     document.getElementById('pBio').textContent = user.bio || '';
+
+    // Badges
+    const badgesRow = document.getElementById('pBadges');
+    if (badgesRow) {
+      badgesRow.innerHTML = '';
+      let badges = [];
+      try { badges = JSON.parse(user.discord_badges || '[]'); } catch {}
+      badges.forEach(b => {
+        const span = document.createElement('span');
+        let cls = 'badge';
+        if (b.type === 'nitro') cls += ' badge-nitro';
+        else if (b.type === 'discord') cls += ' badge-discord';
+        else if (b.type === 'server') {
+          cls += ' badge-server';
+          if (b.label === 'VIP') cls += ' vip';
+          if (b.label === 'Modérateur') cls += ' mod';
+        }
+        span.className = cls;
+        span.textContent = b.emoji + ' ' + b.label;
+        badgesRow.appendChild(span);
+      });
+    }
     document.getElementById('pHandle').textContent = 'ak-47.fr/' + user.username;
 
     if (user.total_views > 0) {

@@ -121,6 +121,13 @@
     .audio-option-info { flex: 1; }
     .audio-option-title { font-size: 13px; font-weight: 600; }
     .audio-option-desc { font-size: 11px; color: var(--gray-400); }
+
+    .badge { display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid rgba(0,0,0,.08); }
+    .badge-discord { background:#5865F2;color:#fff;border-color:#5865F2; }
+    .badge-nitro { background:linear-gradient(135deg,#f47fff,#7289da);color:#fff;border-color:transparent; }
+    .badge-server { background:#000;color:#fff;border-color:#000; }
+    .badge-server.vip { background:linear-gradient(135deg,#f6c90e,#e6a817);color:#000;border-color:transparent; }
+    .badge-server.mod { background:#e74c3c;color:#fff;border-color:transparent; }
   </style>
 </head>
 <body>
@@ -317,6 +324,17 @@
       </div>
     </div>
 
+
+
+      <!-- BADGES -->
+      <div class="section-card" id="badgesCard" style="display:none">
+        <div class="section-card-title">Tes badges Discord</div>
+        <div class="section-card-desc">Synchronisés automatiquement depuis Discord à chaque connexion.</div>
+        <div id="dashBadges" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;"></div>
+        <div id="noBadges" style="font-size:13px;color:var(--gray-400);margin-top:8px;display:none;">
+          Aucun badge pour l'instant — connecte-toi via Discord pour les synchroniser.
+        </div>
+      </div>
 
     <!-- ── MÉDIAS TAB ── -->
     <div class="tab-content" id="tab-medias">
