@@ -192,6 +192,10 @@
   <div class="dash-nav-right">
     <span class="dash-nav-user">Bonjour, <strong id="navUsername">—</strong></span>
     <a id="profileViewBtn" href="#" target="_blank" class="dash-btn-sm">Voir mon profil ↗</a>
+    <a href="https://discord.gg/g7MysUNQXs" target="_blank" rel="noopener" class="discord-invite-btn" title="Rejoindre le Discord">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+    Discord
+  </a>
     <button id="themeToggle" class="theme-pill-toggle" onclick="toggleTheme()" title="Changer de thème" aria-label="Changer de thème">
       <span class="tpt-icon tpt-sun">☀️</span>
       <span class="tpt-track"><span class="tpt-thumb"></span></span>
@@ -1737,6 +1741,13 @@ async function handleMedia(type, input) {
     el('audioFileName').textContent = file.name;
     el('audioName').textContent = '🎵 ' + file.name;
     el('audioRemove').style.display = 'inline';
+    // Auto-remplir le nom du morceau avec le nom du fichier (sans extension) si le champ est vide
+    const nameInput = el('audioNameInput');
+    if (!nameInput.value.trim()) {
+      const autoName = file.name.replace(/\.[^.]+$/, '');
+      nameInput.value = autoName;
+      pendingMedias.audio_name = autoName;
+    }
   }
 }
 
@@ -1765,7 +1776,9 @@ function removeMedia(e, type) {
     el('audioName').textContent = '';
     el('audioFileName').textContent = '';
     el('audioRemove').style.display = 'none';
-
+    // Reset aussi le nom du son
+    pendingMedias.audio_name = '';
+    el('audioNameInput').value = '';
     document.querySelector('input[name=audioSrc][value=none]').checked = true;
     selectAudioSrc('none');
   }
@@ -1867,6 +1880,15 @@ async function saveMedias() {
     userData = data;
     pendingMedias = { avatar_url: null, bg_url: null, audio_url: null, audio_name: null, audio_cover_url: null, cursor_url: null };
     el('mediasAlert').innerHTML = '';
+    // Sync nom du son avec ce qui a été sauvegardé
+    if (data.audio_name !== undefined) {
+      el('audioNameInput').value = data.audio_name || '';
+    }
+    if (!data.audio_url) {
+      // Audio supprimé côté serveur, reset UI
+      el('audioName').textContent = '';
+      el('audioRemove').style.display = 'none';
+    }
     showToast('Médias sauvegardés ✓');
   } catch { showToast('Erreur réseau'); }
   finally { btn.disabled = false; btn.textContent = 'Sauvegarder'; }
@@ -2246,5 +2268,7 @@ document.addEventListener("DOMContentLoaded",function(){
   initThemeToggle();
 });
 </script>
+
+<footer style="text-align:center;padding:20px;font-size:11px;color:var(--gray-400);border-top:1px solid var(--gray-200);margin-top:auto;">Fait par <a href="https://discord.gg/g7MysUNQXs" target="_blank" rel="noopener" style="color:var(--gray-400);font-weight:700;text-decoration:none;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">nitrox</a></footer>
 </body>
 </html>

@@ -212,3 +212,57 @@ input.error { border-color: var(--red); }
 .theme-pill-toggle[data-active="dark"] .tpt-track { background: #3f3f46; }
 .theme-pill-toggle[data-active="dark"] .tpt-thumb { transform: translateX(12px); background: #fafafa; }
 
+
+/* ── Bouton thème flottant universel ── */
+#globalThemeBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+  color: var(--gray-900);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,.10);
+  transition: transform .15s, box-shadow .15s, background .2s;
+  line-height: 1;
+}
+#globalThemeBtn:hover {
+  transform: scale(1.12);
+  box-shadow: 0 4px 18px rgba(0,0,0,.16);
+}
+[data-theme="dark"] #globalThemeBtn {
+  background: var(--gray-100);
+  border-color: var(--gray-200);
+  box-shadow: 0 2px 12px rgba(0,0,0,.35);
+}
+
+/* ── Bouton Discord invite ── */
+.discord-invite-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: #5865F2;
+  color: #fff !important;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background .15s, transform .15s, box-shadow .15s;
+  box-shadow: 0 2px 8px rgba(88,101,242,.35);
+  white-space: nowrap;
+}
+.discord-invite-btn:hover {
+  background: #4752C4;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(88,101,242,.45);
+}
+.discord-invite-btn svg { flex-shrink: 0; }
