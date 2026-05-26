@@ -660,7 +660,7 @@
         </div>
         <div class="mblock-body" id="mbody-bg">
           <div style="margin-top:16px;">
-            <p style="font-size:12px;color:var(--gray-500);margin:0 0 12px;">Image (JPG/PNG/WebP) ou vidéo MP4 en boucle. Les images sont compressées auto. Vidéo max 50 Mo.</p>
+            <p style="font-size:12px;color:var(--gray-500);margin:0 0 12px;">Image (JPG/PNG/WebP) ou vidéo MP4 en boucle. Les images sont compressées auto. Vidéo max 200 Mo.</p>
             
             <div id="bgPreviewWrap" style="display:none;margin-bottom:12px;border-radius:10px;overflow:hidden;">
               <img  id="bgPreview"      class="mprev-img" alt="Fond" style="margin-top:0;"/>
@@ -1039,7 +1039,8 @@
         <div style="font-size:12px;color:var(--gray-500);margin-bottom:10px;">Affichez un widget Spotify sur votre profil (lien vers votre profil Spotify).</div>
         <input type="url" id="spotifyUrlInput" placeholder="https://open.spotify.com/user/votreid"
           style="width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;font-family:inherit;outline:none;"
-          oninput="pendingPerso.spotify_url=this.value"/>
+          autocomplete="off"
+          oninput="pendingPerso.spotify_url=this.value.trim()||null"/>
       </div>
 
       <div class="section-card">
@@ -1336,7 +1337,7 @@ const SOCIALS = [
   { id:'cashapp',    label:'Cash App',   color:'#00D54B', icon:'https://cdn.simpleicons.org/cashapp/00D54B',      base:'https://cash.app/$',              placeholder:'Ton $cashtag' },
   { id:'venmo',      label:'Venmo',      color:'#3D95CE', icon:'https://cdn.simpleicons.org/venmo/3D95CE',        base:'https://venmo.com/',              placeholder:'Ton pseudo Venmo' },
   { id:'playstation',label:'PS',         color:'#003087', icon:'https://cdn.simpleicons.org/playstation/003087', base:'https://psnprofiles.com/',         placeholder:'Ton pseudo PSN' },
-  { id:'xbox',       label:'Xbox',       color:'#107C10', icon:'https://cdn.simpleicons.org/xbox/107C10',         base:'https://account.xbox.com/fr-FR/Profile?gamertag=', placeholder:'Ton gamertag Xbox' },
+  { id:'xbox',       label:'Xbox',       color:'#107C10', icon:'https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/xbox.svg',         base:'https://account.xbox.com/fr-FR/Profile?gamertag=', placeholder:'Ton gamertag Xbox' },
   { id:'applemusic', label:'Apple Music',color:'#FC3C44', icon:'https://cdn.simpleicons.org/applemusic/FC3C44',  base:'https://music.apple.com/',        placeholder:'URL Apple Music' },
   { id:'gitlab',     label:'GitLab',     color:'#FC6D26', icon:'https://cdn.simpleicons.org/gitlab/FC6D26',       base:'https://gitlab.com/',             placeholder:'Ton pseudo GitLab' },
   { id:'twitch',     label:'Twitch',     color:'#9146FF', icon:'https://cdn.simpleicons.org/twitch/9146FF',       base:'https://twitch.tv/',              placeholder:'Ton pseudo Twitch' },
@@ -1346,12 +1347,12 @@ const SOCIALS = [
   { id:'bluesky',    label:'Bluesky',    color:'#0085FF', icon:'https://cdn.simpleicons.org/bluesky/0085FF',      base:'https://bsky.app/profile/',       placeholder:'Ton handle Bluesky' },
   { id:'notion',     label:'Notion',     color:'#ffffff', icon:'https://cdn.simpleicons.org/notion/ffffff',       base:'https://notion.so/',              placeholder:'URL Notion' },
   { id:'onlyfans',   label:'OnlyFans',   color:'#00AFF0', icon:'https://cdn.simpleicons.org/onlyfans/00AFF0',    base:'https://onlyfans.com/',           placeholder:'Ton pseudo OnlyFans' },
-  { id:'linkedin',   label:'LinkedIn',   color:'#0A66C2', icon:'https://cdn.simpleicons.org/linkedin/0A66C2',    base:'https://linkedin.com/in/',        placeholder:'Ton pseudo LinkedIn' },
+  { id:'linkedin',   label:'LinkedIn',   color:'#0A66C2', icon:'https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/linkedin.svg',    base:'https://linkedin.com/in/',        placeholder:'Ton pseudo LinkedIn' },
   { id:'steam',      label:'Steam',      color:'#ffffff', icon:'https://cdn.simpleicons.org/steam/ffffff',        base:'https://steamcommunity.com/id/', placeholder:'Ton pseudo Steam' },
   { id:'kick',       label:'Kick',       color:'#53FC18', icon:'https://cdn.simpleicons.org/kick/53FC18',         base:'https://kick.com/',               placeholder:'Ton pseudo Kick' },
   { id:'pinterest',  label:'Pinterest',  color:'#E60023', icon:'https://cdn.simpleicons.org/pinterest/E60023',   base:'https://pinterest.com/',          placeholder:'Ton pseudo Pinterest' },
   { id:'lastfm',     label:'Last.fm',    color:'#D51007', icon:'https://cdn.simpleicons.org/lastdotfm/D51007',   base:'https://last.fm/user/',           placeholder:'Ton pseudo Last.fm' },
-  { id:'vsco',       label:'VSCO',       color:'#ffffff', icon:'https://cdn.simpleicons.org/vsco/ffffff',         base:'https://vsco.co/',                placeholder:'Ton pseudo VSCO' },
+  { id:'vsco',       label:'VSCO',       color:'#ffffff', icon:'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27%3E%3Ctext y=%2718%27 font-size=%2714%27 fill=%27white%27%3EV%3C/text%3E%3C/svg%3E',         base:'https://vsco.co/',                placeholder:'Ton pseudo VSCO' },
   { id:'buymeacoffee',label:'Buy Me a Coffee',color:'#FFDD00',icon:'https://cdn.simpleicons.org/buymeacoffee/FFDD00',base:'https://buymeacoffee.com/', placeholder:'Ton pseudo BMC' },
   { id:'kofi',       label:'Ko-fi',      color:'#FF5E5B', icon:'https://cdn.simpleicons.org/kofi/FF5E5B',         base:'https://ko-fi.com/',              placeholder:'Ton pseudo Ko-fi' },
   { id:'facebook',   label:'Facebook',   color:'#1877F2', icon:'https://cdn.simpleicons.org/facebook/1877F2',    base:'https://facebook.com/',           placeholder:'Ton pseudo Facebook' },
@@ -1384,7 +1385,7 @@ function getLinkIcon(url) {
     ['x.com', 'https://cdn.simpleicons.org/x/ffffff'],
     ['twitter.com', 'https://cdn.simpleicons.org/x/ffffff'],
     ['snapchat.com', 'https://cdn.simpleicons.org/snapchat/FFFC00'],
-    ['linkedin.com', 'https://cdn.simpleicons.org/linkedin/0A66C2'],
+    ['linkedin.com', 'https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/linkedin.svg'],
     ['steam', 'https://cdn.simpleicons.org/steam/ffffff'],
     ['steamcommunity.com', 'https://cdn.simpleicons.org/steam/ffffff'],
     ['reddit.com', 'https://cdn.simpleicons.org/reddit/FF4500'],
@@ -1411,12 +1412,12 @@ function getLinkIcon(url) {
     ['gitlab.com', 'https://cdn.simpleicons.org/gitlab/FC6D26'],
     ['letterboxd.com', 'https://cdn.simpleicons.org/letterboxd/00C030'],
     ['vk.com', 'https://cdn.simpleicons.org/vk/4C75A3'],
-    ['xbox.com', 'https://cdn.simpleicons.org/xbox/107C10'],
-    ['xboxlive.com', 'https://cdn.simpleicons.org/xbox/107C10'],
+    ['xbox.com', 'https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/xbox.svg'],
+    ['xboxlive.com', 'https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/xbox.svg'],
     ['psnprofiles.com', 'https://cdn.simpleicons.org/playstation/003087'],
     ['playstation.com', 'https://cdn.simpleicons.org/playstation/003087'],
     ['music.apple.com', 'https://cdn.simpleicons.org/applemusic/FC3C44'],
-    ['vsco.co', 'https://cdn.simpleicons.org/vsco/ffffff'],
+    ['vsco.co', 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27%3E%3Ctext y=%2718%27 font-size=%2714%27 fill=%27white%27%3EV%3C/text%3E%3C/svg%3E'],
     ['signal.me', 'https://cdn.simpleicons.org/signal/3A76F0'],
     ['cashapp.com', 'https://cdn.simpleicons.org/cashapp/00D54B'],
     ['cash.app', 'https://cdn.simpleicons.org/cashapp/00D54B'],

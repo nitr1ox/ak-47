@@ -721,7 +721,7 @@ function getLinkIcon(url) {
     ['x.com',             'https://cdn.simpleicons.org/x/ffffff'],
     ['twitter.com',       'https://cdn.simpleicons.org/x/ffffff'],
     ['snapchat.com',      'https://cdn.simpleicons.org/snapchat/FFFC00'],
-    ['linkedin.com',      'https://cdn.simpleicons.org/linkedin/0A66C2'],
+    ['linkedin.com',      'https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/linkedin.svg'],
     ['steamcommunity.com','https://cdn.simpleicons.org/steam/ffffff'],
     ['steam',             'https://cdn.simpleicons.org/steam/ffffff'],
     ['reddit.com',        'https://cdn.simpleicons.org/reddit/FF4500'],
@@ -754,6 +754,9 @@ function getLinkIcon(url) {
     ['signal.me',         'https://cdn.simpleicons.org/signal/3A76F0'],
     ['cash.app',          'https://cdn.simpleicons.org/cashapp/00D54B'],
     ['venmo.com',         'https://cdn.simpleicons.org/venmo/3D95CE'],
+    ['xbox.com',          'https://cdn.simpleicons.org/xbox/107C10'],
+    ['xboxlive.com',      'https://cdn.simpleicons.org/xbox/107C10'],
+    ['account.xbox.com',  'https://cdn.simpleicons.org/xbox/107C10'],
     ['mailto:',           'https://cdn.simpleicons.org/gmail/ffffff'],
   ];
   for (const [key, icon] of map) {
@@ -833,6 +836,11 @@ async function loadProfile() {
         vid.src = user.bg_url;
         vid.style.opacity = bgOpacity;
         vid.style.display = 'block';
+        // Si pas de musique configurée, on démute la vidéo de fond
+        if (!user.audio_url) {
+          vid.muted = false;
+          vid.volume = 0.7;
+        }
         vid.play();
         const bg = document.getElementById('profileBg');
         bg.style.backgroundImage = '';
