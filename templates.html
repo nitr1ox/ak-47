@@ -4,158 +4,291 @@
 <script>(function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>ak-47.fr — Modèles</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="/style.css"/>
 <style>
+  * { box-sizing: border-box; }
   body { background: var(--white); }
-  .tp-nav { display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px;border-bottom:1px solid var(--gray-200);background:rgba(255,255,255,.9);backdrop-filter:blur(12px);position:sticky;top:0;z-index:50; }
-  .tp-nav-brand { font-size:16px;font-weight:700;letter-spacing:-.3px;color:var(--black);text-decoration:none; }
-  .tp-nav-brand span { color:var(--gray-400);font-weight:400; }
-  .tp-nav-right { display:flex;gap:12px;align-items:center; }
-  .tp-nav a.back { font-size:13px;color:var(--gray-500);text-decoration:none;font-weight:500; }
-  .tp-nav a.back:hover { color:var(--black); }
-  .btn-publish { background:var(--black);color:var(--white);border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s; }
-  .btn-publish:hover { opacity:.8; }
-
-  .page { max-width:1100px;margin:0 auto;padding:56px 24px 80px; }
-  .page-tag { font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--gray-400);margin-bottom:12px; }
-  h1 { font-size:clamp(28px,4vw,48px);font-weight:700;letter-spacing:-2px;margin-bottom:8px; }
-  .subtitle { font-size:14px;color:var(--gray-500);margin-bottom:40px; }
-
-  .filters { display:flex;gap:8px;margin-bottom:32px;flex-wrap:wrap; }
-  .filter-btn { background:var(--gray-100);border:none;border-radius:999px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;color:var(--gray-600);transition:all .15s; }
-  .filter-btn.active { background:var(--black);color:var(--white); }
-
-  .grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px; }
-
+  .tp-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; height: 54px;
+    border-bottom: 1px solid var(--gray-200);
+    background: var(--white);
+    backdrop-filter: blur(16px);
+    position: sticky; top: 0; z-index: 50;
+  }
+  .tp-nav-brand {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px; font-weight: 700; letter-spacing: 1px;
+    color: var(--black); text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .tp-nav-brand span { color: var(--gray-400); font-weight: 400; font-family: Inter, sans-serif; font-size: 16px; }
+  .tp-nav-right { display: flex; gap: 10px; align-items: center; }
+  .tp-nav a.back {
+    font-size: 12px; color: var(--gray-400); text-decoration: none;
+    font-family: 'JetBrains Mono', monospace; letter-spacing: .5px;
+    transition: color .15s;
+  }
+  .tp-nav a.back:hover { color: var(--black); }
+  .btn-publish {
+    background: var(--black); color: var(--white);
+    border: none; border-radius: 4px;
+    padding: 7px 16px; font-size: 12px; font-weight: 600;
+    font-family: 'Rajdhani', sans-serif; letter-spacing: 1.5px; text-transform: uppercase;
+    cursor: pointer; transition: opacity .15s;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+  }
+  .btn-publish:hover { opacity: .75; }
+  .page { max-width: 1200px; margin: 0 auto; padding: 52px 28px 80px; }
+  .page-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--gray-400); margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .page-tag::before { content: '//'; color: var(--gray-300); }
+  h1 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(36px, 5vw, 60px); font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    line-height: .95; color: var(--black);
+    margin-bottom: 10px;
+  }
+  .subtitle {
+    font-size: 12px; color: var(--gray-400);
+    font-family: 'JetBrains Mono', monospace; letter-spacing: .3px;
+    margin-bottom: 36px;
+  }
+  .toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 28px; gap: 12px; flex-wrap: wrap;
+  }
+  .filters { display: flex; gap: 4px; }
+  .filter-btn {
+    background: transparent; border: 1px solid var(--gray-200);
+    border-radius: 3px; padding: 6px 14px;
+    font-size: 11px; font-weight: 600;
+    font-family: 'Rajdhani', sans-serif; letter-spacing: 1.5px; text-transform: uppercase;
+    cursor: pointer; color: var(--gray-400); transition: all .15s;
+  }
+  .filter-btn.active { background: var(--black); color: var(--white); border-color: var(--black); }
+  .filter-btn:hover:not(.active) { border-color: var(--gray-400); color: var(--black); }
+  .search-wrap { position: relative; }
+  .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--gray-400); font-size: 13px; pointer-events: none; }
+  .search-wrap input {
+    background: var(--gray-50); border: 1px solid var(--gray-200);
+    border-radius: 3px; padding: 7px 12px 7px 30px;
+    font-size: 12px; font-family: 'JetBrains Mono', monospace;
+    color: var(--black); outline: none; width: 210px; transition: border-color .15s;
+  }
+  .search-wrap input:focus { border-color: var(--gray-400); }
+  .search-wrap input::placeholder { color: var(--gray-300); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
   .card {
-    border:1px solid var(--gray-200);border-radius:16px;overflow:hidden;
-    transition:transform .2s,box-shadow .2s;cursor:pointer;background:var(--white);
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 4px; overflow: hidden;
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+    cursor: pointer; position: relative;
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
   }
-  .card:hover { transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.10); }
-
-  .card-preview {
-    width:100%;height:180px;position:relative;overflow:hidden;
-    background:#1a1a2e;
+  .card:hover {
+    transform: translateY(-3px);
+    border-color: var(--gray-300);
+    box-shadow: 0 8px 32px rgba(0,0,0,.08);
   }
+  
+  .card::after {
+    content: ''; position: absolute; top: 0; right: 0;
+    width: 14px; height: 14px;
+    background: linear-gradient(135deg, transparent 50%, var(--gray-200) 50%);
+    pointer-events: none;
+  }
+  
+  .card-num {
+    position: absolute; top: 10px; left: 10px; z-index: 5;
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    color: rgba(255,255,255,.5); letter-spacing: 1px;
+    background: rgba(0,0,0,.35); padding: 2px 6px; border-radius: 2px;
+  }
+  
+  .card-star {
+    position: absolute; top: 8px; right: 8px; z-index: 5;
+    background: none; border: none; cursor: pointer;
+    font-size: 15px; opacity: .5; transition: opacity .15s, transform .15s; line-height: 1;
+  }
+  .card-star:hover, .card-star.active { opacity: 1; transform: scale(1.15); }
+  
+  .card-preview { width: 100%; height: 190px; position: relative; overflow: hidden; background: var(--gray-100); }
   .card-preview-inner {
-    position:absolute;inset:0;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    gap:6px;padding:16px;
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px; padding: 16px;
+  }
+  .card-preview::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,.4));
+    pointer-events: none;
   }
   .prev-avatar {
-    width:48px;height:48px;border-radius:50%;
-    background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);
-    display:flex;align-items:center;justify-content:center;font-size:20px;
-    flex-shrink:0;
+    width: 46px; height: 46px; border-radius: 50%;
+    background: rgba(255,255,255,.15); border: 2px solid rgba(255,255,255,.3);
+    display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
   }
-  .prev-name { font-size:13px;font-weight:700;color:#fff;letter-spacing:-.3px; }
-  .prev-bio { font-size:10px;color:rgba(255,255,255,.6);text-align:center;max-width:180px; }
-  .prev-badges { display:flex;gap:4px;margin-top:4px; }
-  .prev-badge { width:20px;height:20px;border-radius:4px;background:rgba(255,255,255,.15); }
-  .prev-links { display:flex;gap:6px;margin-top:6px; }
-  .prev-link { height:6px;border-radius:3px;background:rgba(255,255,255,.25); }
-
-  .card-body { padding:16px; }
-  .card-name { font-size:14px;font-weight:700;color:var(--black);margin-bottom:4px; }
-  .card-desc { font-size:12px;color:var(--gray-500);margin-bottom:12px;min-height:32px;line-height:1.5; }
-  .card-meta { display:flex;align-items:center;justify-content:space-between; }
-  .card-author { font-size:11px;color:var(--gray-400);text-decoration:none; }
-  .card-author:hover { color:var(--black); }
-  .card-uses { font-size:11px;color:var(--gray-400); }
-  .card-actions { display:flex;gap:8px;margin-top:12px; }
+  .prev-name { font-size: 13px; font-weight: 700; color: #fff; font-family: 'Rajdhani', sans-serif; letter-spacing: .5px; }
+  .prev-bio { font-size: 10px; color: rgba(255,255,255,.55); text-align: center; max-width: 180px; }
+  .prev-links { display: flex; gap: 6px; margin-top: 4px; }
+  .prev-link { height: 5px; border-radius: 2px; background: rgba(255,255,255,.2); }
+  
+  .card-body { padding: 14px 16px 16px; }
+  .card-name {
+    font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700;
+    letter-spacing: .5px; text-transform: uppercase; color: var(--black);
+    margin-bottom: 4px;
+  }
+  .card-desc { font-size: 11px; color: var(--gray-400); margin-bottom: 10px; line-height: 1.5; min-height: 28px; }
+  .card-stats { display: flex; gap: 12px; margin-bottom: 10px; }
+  .card-stat {
+    display: flex; align-items: center; gap: 4px;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gray-400);
+  }
+  .card-stat.trend { color: #16a34a; }
+  .card-tags { display: flex; gap: 4px; margin-bottom: 12px; flex-wrap: wrap; }
+  .card-tag {
+    font-size: 9px; font-family: 'JetBrains Mono', monospace; letter-spacing: 1px;
+    padding: 2px 7px; border-radius: 2px; text-transform: uppercase;
+    background: var(--gray-100); color: var(--gray-500);
+    border: 1px solid var(--gray-200);
+  }
+  .card-footer { display: flex; gap: 8px; align-items: center; }
+  .card-author {
+    font-size: 11px; color: var(--gray-400); text-decoration: none;
+    font-family: 'JetBrains Mono', monospace; flex: 1; transition: color .15s;
+  }
+  .card-author:hover { color: var(--black); }
   .btn-apply {
-    flex:1;background:var(--black);color:var(--white);border:none;border-radius:8px;
-    padding:8px;font-size:12px;font-weight:600;cursor:pointer;transition:opacity .15s;
+    background: var(--black); color: var(--white); border: none; border-radius: 3px;
+    padding: 7px 16px; font-size: 11px; font-weight: 600;
+    font-family: 'Rajdhani', sans-serif; letter-spacing: 1.5px; text-transform: uppercase;
+    cursor: pointer; transition: opacity .15s;
+    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%);
   }
-  .btn-apply:hover { opacity:.8; }
+  .btn-apply:hover { opacity: .75; }
   .btn-delete {
-    background:var(--gray-100);color:var(--gray-600);border:none;border-radius:8px;
-    padding:8px 12px;font-size:12px;cursor:pointer;transition:background .15s;
+    background: var(--gray-100); color: var(--gray-500); border: 1px solid var(--gray-200);
+    border-radius: 3px; padding: 7px 10px; font-size: 11px; cursor: pointer; transition: all .15s;
   }
-  .btn-delete:hover { background:#fee2e2;color:#dc2626; }
-
-  .empty { text-align:center;padding:80px 24px;color:var(--gray-400);font-size:14px; }
-  .loading { text-align:center;padding:80px 24px;color:var(--gray-400); }
-
-  /* Modal publication */
+  .btn-delete:hover { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
+  .empty, .loading {
+    grid-column: 1/-1; text-align: center; padding: 80px 24px;
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--gray-400);
+  }
   .modal-overlay {
-    display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);
-    backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.5); backdrop-filter: blur(6px);
+    z-index: 1000; align-items: center; justify-content: center;
   }
-  .modal-overlay.open { display:flex; }
+  .modal-overlay.open { display: flex; }
   .modal {
-    background:var(--white);border-radius:16px;padding:28px;width:90%;max-width:460px;
-    box-shadow:0 24px 80px rgba(0,0,0,.2);
+    background: var(--white); border: 1px solid var(--gray-200);
+    border-radius: 6px; padding: 28px; width: 90%; max-width: 440px;
+    box-shadow: 0 24px 80px rgba(0,0,0,.2);
+    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
   }
-  .modal h2 { font-size:18px;font-weight:700;margin-bottom:4px;letter-spacing:-.5px; }
-  .modal p { font-size:13px;color:var(--gray-500);margin-bottom:20px; }
-  .modal label { font-size:12px;font-weight:600;color:var(--gray-700);display:block;margin-bottom:6px; }
-  .modal input,.modal textarea {
-    width:100%;border:1px solid var(--gray-200);border-radius:8px;
-    padding:10px 12px;font-size:13px;font-family:inherit;
-    background:var(--white);color:var(--black);outline:none;
-    transition:border-color .15s;box-sizing:border-box;
+  .modal h2 {
+    font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase; color: var(--black); margin-bottom: 4px;
   }
-  .modal input:focus,.modal textarea:focus { border-color:var(--black); }
-  .modal textarea { resize:vertical;min-height:72px; }
-  .modal-field { margin-bottom:16px; }
-  .modal-actions { display:flex;gap:8px;justify-content:flex-end;margin-top:20px; }
-  .btn-cancel { background:var(--gray-100);color:var(--gray-700);border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer; }
-  .btn-confirm { background:var(--black);color:var(--white);border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer; }
-  .btn-confirm:disabled { opacity:.5;cursor:not-allowed; }
-
+  .modal p { font-size: 12px; color: var(--gray-400); margin-bottom: 20px; font-family: 'JetBrains Mono', monospace; }
+  .modal label {
+    font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--gray-500); font-family: 'Rajdhani', sans-serif; display: block; margin-bottom: 6px;
+  }
+  .modal input, .modal textarea {
+    width: 100%; background: var(--gray-50); border: 1px solid var(--gray-200);
+    border-radius: 3px; padding: 10px 12px; font-size: 13px;
+    font-family: 'JetBrains Mono', monospace; color: var(--black);
+    outline: none; transition: border-color .15s; box-sizing: border-box;
+  }
+  .modal input:focus, .modal textarea:focus { border-color: var(--black); }
+  .modal input::placeholder, .modal textarea::placeholder { color: var(--gray-300); }
+  .modal textarea { resize: vertical; min-height: 72px; }
+  .modal-field { margin-bottom: 16px; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+  .btn-cancel {
+    background: var(--gray-100); color: var(--gray-700); border: 1px solid var(--gray-200);
+    border-radius: 3px; padding: 9px 16px; font-size: 12px; font-weight: 600;
+    font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer; transition: all .15s;
+  }
+  .btn-cancel:hover { background: var(--gray-200); }
+  .btn-confirm {
+    background: var(--black); color: var(--white); border: none;
+    border-radius: 3px; padding: 9px 16px; font-size: 12px; font-weight: 600;
+    font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer; transition: opacity .15s;
+    clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 0 100%);
+  }
+  .btn-confirm:hover { opacity: .75; }
+  .btn-confirm:disabled { opacity: .4; cursor: not-allowed; }
   .toast-tp {
-    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
-    background:var(--black);color:var(--white);padding:10px 20px;border-radius:999px;
-    font-size:13px;font-weight:500;opacity:0;transition:all .3s;pointer-events:none;z-index:9999;white-space:nowrap;
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--black); color: var(--white);
+    padding: 10px 20px; border-radius: 3px;
+    font-size: 12px; font-family: 'JetBrains Mono', monospace;
+    opacity: 0; transition: all .3s; pointer-events: none; z-index: 9999; white-space: nowrap;
   }
-  .toast-tp.show { opacity:1;transform:translateX(-50%) translateY(0); }
-
+  .toast-tp.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   @media(max-width:600px){
-    .tp-nav{padding:0 14px;}
-    .page{padding:36px 14px 60px;}
-    .grid{grid-template-columns:1fr;}
-    h1{font-size:26px;letter-spacing:-1px;}
+    .tp-nav { padding: 0 14px; }
+    .page { padding: 36px 14px 60px; }
+    .grid { grid-template-columns: 1fr; }
+    h1 { font-size: 32px; }
+    .toolbar { flex-direction: column; align-items: flex-start; }
+    .search-wrap input { width: 100%; }
   }
 </style>
 </head>
 <body>
 <button id="globalThemeBtn" onclick="toggleTheme()" title="Changer le thème" aria-label="Changer le thème">🌙</button>
-
 <nav class="tp-nav">
-  <a href="/" class="tp-nav-brand">ak-47<span>.fr</span></a>
+  <a href="/" class="tp-nav-brand">
+    <img src="/logo.png" alt="ak-47.fr" style="height:20px;width:20px;object-fit:contain;filter:var(--logo-filter,none);">
+    ak-47<span>.fr</span>
+  </a>
   <div class="tp-nav-right">
-    <a href="/" class="back">← Retour</a>
-    <button class="btn-publish" id="btnPublish" onclick="openPublishModal()" style="display:none">+ Publier un modèle</button>
+    <a href="/" class="back">← retour</a>
+    <button class="btn-publish" id="btnPublish" onclick="openPublishModal()" style="display:none">+ Publier</button>
   </div>
 </nav>
-
 <div class="page">
   <div class="page-tag">Communauté</div>
   <h1>Modèles</h1>
-  <p class="subtitle">Applique le style d'un autre profil en un clic, ou partage le tien.</p>
-
-  <div class="filters">
-    <button class="filter-btn active" onclick="setFilter('recent',this)">Récents</button>
-    <button class="filter-btn" onclick="setFilter('popular',this)">Populaires</button>
-    <button class="filter-btn" onclick="setFilter('mine',this)" id="filterMine" style="display:none">Mes modèles</button>
+  <p class="subtitle">applique le style d'un autre profil en un clic, ou partage le tien.</p>
+  <div class="toolbar">
+    <div class="filters">
+      <button class="filter-btn active" onclick="setFilter('recent',this)">Récents</button>
+      <button class="filter-btn" onclick="setFilter('popular',this)">Populaires</button>
+      <button class="filter-btn" onclick="setFilter('mine',this)" id="filterMine" style="display:none">Mes modèles</button>
+    </div>
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="searchInput" placeholder="rechercher..." oninput="renderGrid()">
+    </div>
   </div>
-
   <div class="grid" id="grid"><div class="loading">Chargement…</div></div>
 </div>
-
-<!-- Modal publication -->
 <div class="modal-overlay" id="publishModal">
   <div class="modal">
-    <h2>Publier un modèle</h2>
-    <p>Ton style actuel sera sauvegardé et partagé avec la communauté.</p>
+    <h2>Publier</h2>
+    <p>// ton style actuel sera partagé avec la communauté</p>
     <div class="modal-field">
       <label>Nom du modèle *</label>
-      <input type="text" id="tplName" placeholder="Ex: Dark Neon, Minimaliste blanc…" maxlength="50"/>
+      <input type="text" id="tplName" placeholder="Dark Neon, Minimaliste blanc…" maxlength="50"/>
     </div>
     <div class="modal-field">
-      <label>Description (optionnel)</label>
+      <label>Description</label>
       <textarea id="tplDesc" placeholder="Décris ton modèle…" maxlength="200"></textarea>
     </div>
     <div class="modal-actions">
@@ -164,184 +297,174 @@
     </div>
   </div>
 </div>
-
 <div class="toast-tp" id="toastTp"></div>
-
 <script>
 const API = 'https://ak47-backend.onrender.com';
 const token = localStorage.getItem('token');
 const myUsername = localStorage.getItem('username');
 let allTemplates = [];
 let currentFilter = 'recent';
-
+let favorites = JSON.parse(localStorage.getItem('tpl_favs') || '[]');
 if (token) {
   document.getElementById('btnPublish').style.display = 'block';
   document.getElementById('filterMine').style.display = 'block';
 }
-
 function showToast(msg) {
   const t = document.getElementById('toastTp');
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2800);
 }
-
 function setFilter(f, btn) {
   currentFilter = f;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderGrid();
 }
-
 function getFiltered() {
-  if (currentFilter === 'popular') return [...allTemplates].sort((a,b) => (b.uses||0)-(a.uses||0));
-  if (currentFilter === 'mine') return allTemplates.filter(t => t.username === myUsername);
-  return allTemplates;
+  const q = (document.getElementById('searchInput')?.value || '').toLowerCase();
+  let list = [...allTemplates];
+  if (currentFilter === 'popular') list.sort((a,b) => (b.uses||0)-(a.uses||0));
+  if (currentFilter === 'mine') list = list.filter(t => t.username === myUsername);
+  if (q) list = list.filter(t =>
+    (t.name||'').toLowerCase().includes(q) ||
+    (t.username||'').toLowerCase().includes(q) ||
+    (t.description||'').toLowerCase().includes(q)
+  );
+  return list;
 }
-
 function buildPreview(config) {
-  let bg = config.bg_type === 'color' ? config.bg_value || '#1a1a2e'
-         : config.bg_type === 'gradient' ? config.bg_value || '#1a1a2e'
-         : '#1a1a2e';
+  let bg = '#1a1a2e';
+  if (config.bg_type === 'color' || config.bg_type === 'gradient') bg = config.bg_value || bg;
   const textColor = config.text_color || '#ffffff';
   const accent = config.accent_color || '#6366f1';
   const cardBg = config.card_bg ? hexToRgba(config.card_bg, config.card_opacity ?? 0.15) : 'rgba(255,255,255,0.12)';
-
-  let blur = '';
-  if (config.profile_blur > 0) blur = `backdrop-filter:blur(${config.profile_blur}px);`;
-
+  let blur = config.profile_blur > 0 ? `backdrop-filter:blur(${config.profile_blur}px);` : '';
   return `
     <div class="card-preview-inner" style="background:${bg};">
       <div class="prev-avatar" style="border-color:${accent};background:${cardBg};${blur}">👤</div>
       <div class="prev-name" style="color:${textColor}">username</div>
       <div class="prev-bio" style="color:${textColor}88">bio du profil</div>
       <div class="prev-links">
-        <div class="prev-link" style="width:60px;background:${accent}99"></div>
-        <div class="prev-link" style="width:40px;background:${accent}66"></div>
+        <div class="prev-link" style="width:55px;background:${accent}99"></div>
+        <div class="prev-link" style="width:35px;background:${accent}66"></div>
       </div>
     </div>`;
 }
-
 function hexToRgba(hex, alpha) {
   const h = hex.replace('#','');
   const r = parseInt(h.slice(0,2),16), g = parseInt(h.slice(2,4),16), b = parseInt(h.slice(4,6),16);
   return `rgba(${r},${g},${b},${alpha})`;
 }
-
+function toggleFav(id, btn) {
+  const idx = favorites.indexOf(id);
+  if (idx === -1) { favorites.push(id); btn.classList.add('active'); btn.textContent = '⭐'; }
+  else { favorites.splice(idx,1); btn.classList.remove('active'); btn.textContent = '☆'; }
+  localStorage.setItem('tpl_favs', JSON.stringify(favorites));
+}
+function fmt(n) { return n >= 1000 ? (n/1000).toFixed(1).replace('.0','')+'K' : String(n||0); }
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 function renderGrid() {
   const list = getFiltered();
   const grid = document.getElementById('grid');
-  if (!list.length) {
-    grid.innerHTML = '<div class="empty">Aucun modèle ici pour l\'instant.</div>';
-    return;
-  }
-  grid.innerHTML = list.map(t => {
+  if (!list.length) { grid.innerHTML = '<div class="empty">// aucun modèle trouvé</div>'; return; }
+  grid.innerHTML = list.map((t, i) => {
     let config = {};
     try { config = JSON.parse(t.config || '{}'); } catch {}
     const isOwner = token && t.username === myUsername;
+    const isTrend = (t.uses||0) > 5000;
+    const isFav = favorites.includes(t.id);
+    const tags = (t.tags || [t.username]).slice(0,4);
     return `
     <div class="card">
+      <span class="card-num">#${String(i+1).padStart(3,'0')}</span>
+      <button class="card-star ${isFav?'active':''}" onclick="toggleFav('${t.id}',this)">${isFav?'⭐':'☆'}</button>
       <div class="card-preview">${buildPreview(config)}</div>
       <div class="card-body">
         <div class="card-name">${escHtml(t.name)}</div>
-        <div class="card-desc">${escHtml(t.description || '')}</div>
-        <div class="card-meta">
-          <a class="card-author" href="/${escHtml(t.username)}">@${escHtml(t.username)}</a>
-          <span class="card-uses">🔥 ${t.uses || 0} utilisations</span>
+        <div class="card-desc">${escHtml(t.description||'—')}</div>
+        <div class="card-stats">
+          <span class="card-stat">⏱ ${fmt(t.uses||0)} uses</span>
+          ${isTrend?'<span class="card-stat trend">↗ Tendance</span>':''}
+          <span class="card-stat">★ ${fmt(t.likes||0)}</span>
         </div>
-        <div class="card-actions">
-          <button class="btn-apply" onclick="applyTemplate('${t.id}','${escHtml(t.name)}')">
-            ${token ? 'Appliquer' : 'Se connecter pour appliquer'}
+        <div class="card-tags">${tags.map(tag=>`<span class="card-tag">${escHtml(tag)}</span>`).join('')}</div>
+        <div class="card-footer">
+          <a class="card-author" href="/${escHtml(t.username)}">@${escHtml(t.username)}</a>
+          <button class="btn-apply" onclick="applyTemplate('${t.id}','${escHtml(t.name).replace(/'/g,"\\'")}')">
+            ${token?'Utiliser':'Connexion'}
           </button>
-          ${isOwner ? `<button class="btn-delete" onclick="deleteTemplate('${t.id}')">🗑</button>` : ''}
+          ${isOwner?`<button class="btn-delete" onclick="deleteTemplate('${t.id}')">🗑</button>`:''}
         </div>
       </div>
     </div>`;
   }).join('');
 }
-
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
 async function applyTemplate(id, name) {
   if (!token) { window.location.href = '/login'; return; }
-  if (!confirm(`Appliquer le modèle "${name}" ? Ton style actuel sera remplacé.`)) return;
+  if (!confirm(`Appliquer "${name}" ? Ton style actuel sera remplacé.`)) return;
   try {
-    const r = await fetch(`${API}/api/templates/${id}/use`, {
-      method: 'POST',
-      headers: { Authorization: 'Bearer ' + token }
-    });
+    const r = await fetch(`${API}/api/templates/${id}/use`, { method:'POST', headers:{ Authorization:'Bearer '+token } });
     if (!r.ok) throw new Error();
-    const t = allTemplates.find(t => t.id === id);
-    if (t) t.uses = (t.uses || 0) + 1;
-    renderGrid();
-    showToast(`✓ Modèle "${name}" appliqué ! Recharge ton profil.`);
+    const t = allTemplates.find(t=>t.id===id);
+    if (t) t.uses = (t.uses||0)+1;
+    renderGrid(); showToast(`✓ "${name}" appliqué — recharge ton profil`);
   } catch { showToast('Erreur lors de l\'application.'); }
 }
-
 async function deleteTemplate(id) {
   if (!confirm('Supprimer ce modèle ?')) return;
   try {
-    const r = await fetch(`${API}/api/templates/${id}`, {
-      method: 'DELETE',
-      headers: { Authorization: 'Bearer ' + token }
-    });
+    const r = await fetch(`${API}/api/templates/${id}`, { method:'DELETE', headers:{ Authorization:'Bearer '+token } });
     if (!r.ok) throw new Error();
-    allTemplates = allTemplates.filter(t => t.id !== id);
-    renderGrid();
-    showToast('Modèle supprimé.');
+    allTemplates = allTemplates.filter(t=>t.id!==id);
+    renderGrid(); showToast('Modèle supprimé.');
   } catch { showToast('Erreur.'); }
 }
-
 function openPublishModal() {
-  if (!token) { window.location.href = '/login'; return; }
-  document.getElementById('tplName').value = '';
-  document.getElementById('tplDesc').value = '';
+  if (!token) { window.location.href='/login'; return; }
+  document.getElementById('tplName').value='';
+  document.getElementById('tplDesc').value='';
   document.getElementById('publishModal').classList.add('open');
 }
-
-function closePublishModal() {
-  document.getElementById('publishModal').classList.remove('open');
-}
-
+function closePublishModal() { document.getElementById('publishModal').classList.remove('open'); }
 async function publishTemplate() {
   const name = document.getElementById('tplName').value.trim();
   if (!name) { document.getElementById('tplName').focus(); return; }
   const btn = document.getElementById('btnConfirmPublish');
-  btn.disabled = true; btn.textContent = '…';
+  btn.disabled=true; btn.textContent='…';
   try {
     const r = await fetch(`${API}/api/templates`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-      body: JSON.stringify({ name, description: document.getElementById('tplDesc').value.trim() })
+      method:'POST',
+      headers:{'Content-Type':'application/json', Authorization:'Bearer '+token},
+      body:JSON.stringify({name, description:document.getElementById('tplDesc').value.trim()})
     });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error);
-    allTemplates.unshift(data);
-    renderGrid();
-    closePublishModal();
+    allTemplates.unshift(data); renderGrid(); closePublishModal();
     showToast('✓ Modèle publié !');
-  } catch(e) { showToast(e.message || 'Erreur.'); }
-  finally { btn.disabled = false; btn.textContent = 'Publier'; }
+  } catch(e) { showToast(e.message||'Erreur.'); }
+  finally { btn.disabled=false; btn.textContent='Publier'; }
 }
-
 document.getElementById('publishModal').addEventListener('click', e => {
-  if (e.target === document.getElementById('publishModal')) closePublishModal();
+  if (e.target===document.getElementById('publishModal')) closePublishModal();
 });
-
 async function loadTemplates() {
   try {
     const r = await fetch(`${API}/api/templates`);
-    allTemplates = await r.json();
-    renderGrid();
-  } catch { document.getElementById('grid').innerHTML = '<div class="empty">Erreur de chargement.</div>'; }
+    allTemplates = await r.json(); renderGrid();
+  } catch { document.getElementById('grid').innerHTML='<div class="empty">// erreur de chargement</div>'; }
 }
-
 loadTemplates();
-
-function toggleTheme(){const h=document.documentElement;const t=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',t);localStorage.setItem('theme',t);document.getElementById('globalThemeBtn').textContent=t==='dark'?'☀️':'🌙';}
-const _th=localStorage.getItem('theme')||'light';document.getElementById('globalThemeBtn').textContent=_th==='dark'?'☀️':'🌙';
+function toggleTheme(){
+  const h=document.documentElement;
+  const t=h.getAttribute('data-theme')==='dark'?'light':'dark';
+  h.setAttribute('data-theme',t); localStorage.setItem('theme',t);
+  document.getElementById('globalThemeBtn').textContent=t==='dark'?'☀️':'🌙';
+}
+const _th=localStorage.getItem('theme')||'light';
+document.getElementById('globalThemeBtn').textContent=_th==='dark'?'☀️':'🌙';
 </script>
 </body>
 </html>

@@ -146,8 +146,8 @@
 
     .manual-form { display: none; }
 
-    /* ── MÉDIAS ─────────────────────────────────────────────────── */
-    .media-grid { display: none; } /* legacy — plus utilisé */
+    
+    .media-grid { display: none; } 
     .media-grid-full { display: none; }
 
     .mblock { background: var(--white); border: 1px solid var(--gray-200); border-radius: 14px; margin-bottom: 16px; overflow: hidden; transition: box-shadow .2s; }
@@ -181,7 +181,7 @@
     .mblock-body { display: none; padding: 0 18px 20px; border-top: 1px solid var(--gray-100); }
     .mblock.open .mblock-body { display: block; }
 
-    /* dropzone */
+    
     .mdrop {
       border: 2px dashed var(--gray-200); border-radius: 12px;
       padding: 32px 20px; text-align: center; cursor: pointer;
@@ -195,7 +195,7 @@
     .mdrop-label { font-size: 13px; color: var(--gray-500); line-height: 1.4; }
     .mdrop-sub   { font-size: 11px; color: var(--gray-400); margin-top: 4px; }
 
-    /* preview strips */
+    
     .mprev-img  { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; display: block; margin-top: 12px; }
     .mprev-vid  { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; display: none; margin-top: 12px; }
     .mprev-av   { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; display: block; margin: 12px auto 0; border: 2px solid var(--gray-200); }
@@ -208,7 +208,7 @@
     .maction-bar .mremove { font-size: 12px; font-weight: 600; padding: 6px 14px; border: 1px solid #fecaca; border-radius: 6px; background: #fff; color: #ef4444; cursor: pointer; transition: all .15s; }
     .maction-bar .mremove:hover { background: #fef2f2; }
 
-    /* audio source tabs */
+    
     .audio-src-tabs { display: flex; gap: 6px; margin-top: 14px; }
     .audio-src-tab {
       flex: 1; padding: 9px 6px; text-align: center; border: 1.5px solid var(--gray-200);
@@ -218,7 +218,7 @@
     .audio-src-tab:hover { border-color: var(--gray-400); color: var(--gray-700); }
     .audio-src-tab.sel { border-color: var(--black); background: var(--black); color: var(--white); }
 
-    /* audio meta (nom + pochette) */
+    
     .audio-meta-row { display: grid; grid-template-columns: 1fr 100px; gap: 12px; margin-top: 14px; align-items: start; }
     .audio-meta-cover {
       width: 100%; aspect-ratio: 1; border-radius: 10px;
@@ -231,7 +231,7 @@
     .audio-meta-cover input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
     .audio-meta-cover img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: none; position: absolute; inset: 0; }
 
-    /* legacy compat */
+    
     .media-upload-box { display: none !important; }
     .audio-manager { display: none !important; }
     .media-remove-btn { font-size: 11px; color: #ef4444; background: none; border: none; cursor: pointer; padding: 0; margin-top: 4px; }
@@ -243,7 +243,7 @@
     .badge-server.vip { background:linear-gradient(135deg,#f6c90e,#e6a817);color:#000;border-color:transparent; }
     .badge-server.mod { background:#e74c3c;color:#fff;border-color:transparent; }
 
-    /* ── Mobile bottom nav ── */
+    
     .mobile-bottom-nav {
       display: none;
       position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
@@ -266,9 +266,9 @@
   </style>
 
   <style id="fluid-global">
-    /* ── FLUIDITÉ GLOBALE ───────────────────────────────────────── */
+    
 
-    /* Transitions universelles */
+    
     a, button, input, textarea, select,
     [role="button"], [tabindex] {
       transition: opacity .2s ease, color .2s ease, background .2s ease,
@@ -276,16 +276,16 @@
                   transform .2s cubic-bezier(.34,1.56,.64,1) !important;
     }
 
-    /* Scroll fluide */
+    
     html { scroll-behavior: smooth; }
 
-    /* Boutons — rebond au clic */
+    
     button:active, [role="button"]:active {
       transform: scale(.96) !important;
       transition-duration: .08s !important;
     }
 
-    /* Inputs focus glow */
+    
     input:focus, textarea:focus, select:focus {
       outline: none;
       box-shadow: 0 0 0 3px rgba(0,0,0,.08) !important;
@@ -293,7 +293,7 @@
       transition: box-shadow .2s ease, border-color .2s ease !important;
     }
 
-    /* Cards hover lift */
+    
     .section-card, .mblock, .profile-card {
       transition: box-shadow .25s ease, transform .25s cubic-bezier(.22,1,.36,1) !important;
     }
@@ -302,12 +302,12 @@
       transform: translateY(-1px) !important;
     }
 
-    /* Tabs */
+    
     .tab {
       transition: color .2s ease, border-color .2s ease !important;
     }
 
-    /* Modals / overlays fade */
+    
     .icon-picker-overlay {
       transition: opacity .25s ease !important;
     }
@@ -315,7 +315,7 @@
       transition: transform .3s cubic-bezier(.34,1.56,.64,1), opacity .25s ease !important;
     }
 
-    /* Dropzone */
+    
     .mdrop {
       transition: border-color .2s ease, background .2s ease, box-shadow .2s ease !important;
     }
@@ -323,53 +323,53 @@
       box-shadow: 0 2px 12px rgba(0,0,0,.06) !important;
     }
 
-    /* Toast */
+    
     .toast {
       transition: opacity .25s ease, transform .25s cubic-bezier(.34,1.56,.64,1) !important;
     }
 
-    /* Nav mobile */
+    
     .mob-nav-btn {
       transition: color .15s ease, transform .15s cubic-bezier(.34,1.56,.64,1) !important;
     }
     .mob-nav-btn:active { transform: scale(.9) !important; }
     .mob-nav-btn.active { transform: scale(1.05) !important; }
 
-    /* Badges */
+    
     .badge {
       transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s ease !important;
     }
     .badge:hover { transform: scale(1.06) !important; }
 
-    /* copy-btn, save-btn */
+    
     .copy-btn:hover, .save-bar-btn:hover {
       transform: translateY(-1px) !important;
       box-shadow: 0 4px 12px rgba(0,0,0,.12) !important;
     }
 
-    /* ipick-btn */
+    
     .ipick-btn {
       transition: transform .2s cubic-bezier(.34,1.56,.64,1), border-color .15s, background .15s, box-shadow .2s !important;
     }
     .ipick-btn:hover { transform: translateY(-3px) scale(1.04) !important; }
 
-    /* mblock-chevron */
+    
     .mblock-chevron {
       transition: transform .25s cubic-bezier(.34,1.56,.64,1) !important;
     }
 
-    /* audio-src-tab */
+    
     .audio-src-tab {
       transition: all .2s cubic-bezier(.34,1.56,.64,1) !important;
     }
     .audio-src-tab:hover { transform: translateY(-1px) !important; }
 
-    /* Liens navigation */
+    
     nav a, .nav-link {
       transition: color .2s ease, opacity .2s ease !important;
     }
 
-    /* Scrollbar fluide */
+    
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 3px; }
@@ -379,7 +379,7 @@
 <body>
 
 <nav class="dash-nav">
-  <a href="/" class="dash-nav-brand">ak-47<span>.fr</span></a>
+  <a href="/" class="dash-nav-brand" style="display:inline-flex;align-items:center;"><img src="/logo.png" alt="ak-47.fr" style="height:22px;width:22px;object-fit:contain;margin-right:6px;vertical-align:middle;filter:var(--logo-filter,none);">ak-47<span>.fr</span></a>
   <div class="dash-nav-right">
     <span class="dash-nav-user">Bonjour, <strong id="navUsername">—</strong></span>
     <a id="profileViewBtn" href="#" target="_blank" class="dash-btn-sm">Voir mon profil ↗</a>
@@ -607,14 +607,14 @@
       <div class="dash-subtitle">Gérez les fichiers affichés sur votre page publique.</div>
       <div id="mediasAlert"></div>
 
-      <!-- Inputs fichiers cachés (réutilisés par les nouveaux dropzones) -->
+      
       <input type="file" id="bgFile"        accept="image/*,video/mp4" onchange="handleMedia('bg', this)"     style="display:none"/>
       <input type="file" id="avatarFile"    accept="image/*"            onchange="handleMedia('avatar', this)" style="display:none"/>
       <input type="file" id="audioFile"     accept="audio/*"            onchange="handleMedia('audio', this)"  style="display:none"/>
       <input type="file" id="audioCoverFile" accept="image/*"           onchange="handleAudioCover(this)"       style="display:none"/>
       <input type="file" id="cursorFile"    accept="image/*,.cur,.ani"  onchange="handleMedia('cursor', this)" style="display:none"/>
 
-      <!-- ══ AVATAR ══════════════════════════════════════════════════════════ -->
+      
       <div class="mblock" id="mblock-avatar">
         <div class="mblock-head" onclick="toggleMblock('avatar')">
           <div class="mblock-icon av">👤</div>
@@ -647,7 +647,7 @@
         </div>
       </div>
 
-      <!-- ══ ARRIÈRE-PLAN ════════════════════════════════════════════════════ -->
+      
       <div class="mblock" id="mblock-bg">
         <div class="mblock-head" onclick="toggleMblock('bg')">
           <div class="mblock-icon bg">🖼️</div>
@@ -661,7 +661,7 @@
         <div class="mblock-body" id="mbody-bg">
           <div style="margin-top:16px;">
             <p style="font-size:12px;color:var(--gray-500);margin:0 0 12px;">Image (JPG/PNG/WebP) ou vidéo MP4 en boucle. Les images sont compressées auto. Vidéo max 50 Mo.</p>
-            <!-- preview -->
+            
             <div id="bgPreviewWrap" style="display:none;margin-bottom:12px;border-radius:10px;overflow:hidden;">
               <img  id="bgPreview"      class="mprev-img" alt="Fond" style="margin-top:0;"/>
               <video id="bgVideoPreview" class="mprev-vid" muted loop playsinline style="margin-top:0;width:100%;height:120px;object-fit:cover;"></video>
@@ -679,7 +679,7 @@
         </div>
       </div>
 
-      <!-- ══ AUDIO ═══════════════════════════════════════════════════════════ -->
+      
       <div class="mblock" id="mblock-audio">
         <div class="mblock-head" onclick="toggleMblock('audio')">
           <div class="mblock-icon au">🎵</div>
@@ -692,14 +692,14 @@
         </div>
         <div class="mblock-body" id="mbody-audio">
 
-          <!-- Source tabs -->
+          
           <div class="audio-src-tabs">
             <div class="audio-src-tab sel" id="audiotab-none"   onclick="selectAudioSrc2('none')">🔇 Aucun</div>
             <div class="audio-src-tab"     id="audiotab-upload" onclick="selectAudioSrc2('upload')">📁 Fichier</div>
             <div class="audio-src-tab"     id="audiotab-url"    onclick="selectAudioSrc2('url')">🔗 URL</div>
           </div>
 
-          <!-- Zone upload -->
+          
           <div id="audioUploadZone2" style="display:none;">
             <div id="audioDropzone" class="mdrop" onclick="triggerUpload('audioFile')" style="margin-top:14px;">
               <div class="mdrop-icon">🎧</div>
@@ -713,7 +713,7 @@
             </div>
           </div>
 
-          <!-- Zone URL -->
+          
           <div id="audioUrlZone2" style="display:none;margin-top:14px;">
             <label style="font-size:12px;font-weight:600;color:var(--gray-700);display:block;margin-bottom:6px;">Lien direct vers un fichier audio</label>
             <input type="text" id="audioUrlInput"
@@ -722,7 +722,7 @@
               oninput="pendingMedias.audio_url = this.value"/>
           </div>
 
-          <!-- Métadonnées (nom + pochette) -->
+          
           <div id="audioMeta" style="display:none;margin-top:18px;padding-top:16px;border-top:1px solid var(--gray-100);">
             <div style="font-size:13px;font-weight:600;color:var(--gray-700);margin-bottom:12px;">Informations du morceau</div>
             <div class="audio-meta-row">
@@ -748,7 +748,7 @@
         </div>
       </div>
 
-      <!-- ══ CURSEUR ═════════════════════════════════════════════════════════ -->
+      
       <div class="mblock" id="mblock-cursor">
         <div class="mblock-head" onclick="toggleMblock('cursor')">
           <div class="mblock-icon cur">🖱️</div>
@@ -2106,8 +2106,8 @@ async function handleMedia(type, input) {
   if (!file) return;
 
   const hardLimits = { avatar: 20, bg: 200, cursor: 10, audio: 30 };
-  if (file.type === 'video/mp4' && file.size > 50 * 1024 * 1024) {
-    showAlert('mediasAlert', 'Vidéo trop lourde (max 50 Mo)');
+  if (file.type === 'video/mp4' && file.size > 200 * 1024 * 1024) {
+    showAlert('mediasAlert', 'Vidéo trop lourde (max 200 Mo)');
     input.value = ''; return;
   }
   if (hardLimits[type] && file.size > hardLimits[type] * 1024 * 1024) {
@@ -2542,7 +2542,7 @@ function applyLinkPreset(preset) {
 async function handlePersoMedia(type, input) {
   const file = input.files[0];
   if (!file) return;
-  const hardMax = 200 * 1024 * 1024; // 200 MB max absolu
+  const hardMax = 200 * 1024 * 1024; 
   if (file.size > hardMax) { showToast('Fichier trop lourd (max 200MB)'); return; }
 
   let data;
@@ -2725,9 +2725,6 @@ document.addEventListener("DOMContentLoaded",function(){
 });
 </script>
 
-
-
-<!-- Mobile bottom nav -->
 <nav class="mobile-bottom-nav" id="mobileBottomNav">
   <button class="mob-nav-btn active" onclick="switchTab('overview');setMobActive(this)">
     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
@@ -2764,7 +2761,7 @@ function setMobActive(btn) {
   btn.classList.add('active');
 }
 
-// ── TEMPLATES ────────────────────────────────────────────────
+
 let tplAll = [];
 let tplFilter = 'recent';
 
@@ -2910,7 +2907,7 @@ async function tplPublish() {
 
 el('tplModal')?.addEventListener('click', e => { if (e.target === el('tplModal')) tplClosePublish(); });
 
-// Load templates when tab is opened
+
 const _origSwitchTab = switchTab;
 switchTab = function(name) {
   _origSwitchTab(name);

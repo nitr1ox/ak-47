@@ -26,9 +26,9 @@
   </style>
 
   <style id="fluid-global">
-    /* ── FLUIDITÉ GLOBALE ───────────────────────────────────────── */
+    
 
-    /* Transitions universelles */
+    
     a, button, input, textarea, select,
     [role="button"], [tabindex] {
       transition: opacity .2s ease, color .2s ease, background .2s ease,
@@ -36,16 +36,16 @@
                   transform .2s cubic-bezier(.34,1.56,.64,1) !important;
     }
 
-    /* Scroll fluide */
+    
     html { scroll-behavior: smooth; }
 
-    /* Boutons — rebond au clic */
+    
     button:active, [role="button"]:active {
       transform: scale(.96) !important;
       transition-duration: .08s !important;
     }
 
-    /* Inputs focus glow */
+    
     input:focus, textarea:focus, select:focus {
       outline: none;
       box-shadow: 0 0 0 3px rgba(0,0,0,.08) !important;
@@ -53,7 +53,7 @@
       transition: box-shadow .2s ease, border-color .2s ease !important;
     }
 
-    /* Cards hover lift */
+    
     .section-card, .mblock, .profile-card {
       transition: box-shadow .25s ease, transform .25s cubic-bezier(.22,1,.36,1) !important;
     }
@@ -62,12 +62,12 @@
       transform: translateY(-1px) !important;
     }
 
-    /* Tabs */
+    
     .tab {
       transition: color .2s ease, border-color .2s ease !important;
     }
 
-    /* Modals / overlays fade */
+    
     .icon-picker-overlay {
       transition: opacity .25s ease !important;
     }
@@ -75,7 +75,7 @@
       transition: transform .3s cubic-bezier(.34,1.56,.64,1), opacity .25s ease !important;
     }
 
-    /* Dropzone */
+    
     .mdrop {
       transition: border-color .2s ease, background .2s ease, box-shadow .2s ease !important;
     }
@@ -83,53 +83,53 @@
       box-shadow: 0 2px 12px rgba(0,0,0,.06) !important;
     }
 
-    /* Toast */
+    
     .toast {
       transition: opacity .25s ease, transform .25s cubic-bezier(.34,1.56,.64,1) !important;
     }
 
-    /* Nav mobile */
+    
     .mob-nav-btn {
       transition: color .15s ease, transform .15s cubic-bezier(.34,1.56,.64,1) !important;
     }
     .mob-nav-btn:active { transform: scale(.9) !important; }
     .mob-nav-btn.active { transform: scale(1.05) !important; }
 
-    /* Badges */
+    
     .badge {
       transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s ease !important;
     }
     .badge:hover { transform: scale(1.06) !important; }
 
-    /* copy-btn, save-btn */
+    
     .copy-btn:hover, .save-bar-btn:hover {
       transform: translateY(-1px) !important;
       box-shadow: 0 4px 12px rgba(0,0,0,.12) !important;
     }
 
-    /* ipick-btn */
+    
     .ipick-btn {
       transition: transform .2s cubic-bezier(.34,1.56,.64,1), border-color .15s, background .15s, box-shadow .2s !important;
     }
     .ipick-btn:hover { transform: translateY(-3px) scale(1.04) !important; }
 
-    /* mblock-chevron */
+    
     .mblock-chevron {
       transition: transform .25s cubic-bezier(.34,1.56,.64,1) !important;
     }
 
-    /* audio-src-tab */
+    
     .audio-src-tab {
       transition: all .2s cubic-bezier(.34,1.56,.64,1) !important;
     }
     .audio-src-tab:hover { transform: translateY(-1px) !important; }
 
-    /* Liens navigation */
+    
     nav a, .nav-link {
       transition: color .2s ease, opacity .2s ease !important;
     }
 
-    /* Scrollbar fluide */
+    
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 3px; }
@@ -141,7 +141,7 @@
 
 
 <div class="page-shell">
-  <a href="/" class="logo-link">ak-47<span>.fr</span></a>
+  <a href="/" class="logo-link" style="display:inline-flex;align-items:center;"><img src="/logo.png" alt="ak-47.fr" style="height:22px;width:22px;object-fit:contain;margin-right:6px;vertical-align:middle;filter:var(--logo-filter,none);">ak-47<span>.fr</span></a>
   <div class="card">
     <h1>Créer un compte</h1>
     <p class="subtitle">Rejoignez <span id="userCount">...</span> utilisateurs sur ak-47.fr</p>
@@ -230,8 +230,6 @@
     }
   })();
 </script>
-
-
 
 <script>
 (function(){
