@@ -266,18 +266,10 @@
   <div class="page-tag">Communauté</div>
   <h1>Modèles</h1>
   <p class="subtitle">applique le style d'un autre profil en un clic, ou partage le tien.</p>
-  <div class="toolbar">
-    <div class="filters">
-      <button class="filter-btn active" onclick="setFilter('recent',this)">Récents</button>
-      <button class="filter-btn" onclick="setFilter('popular',this)">Populaires</button>
-      <button class="filter-btn" onclick="setFilter('mine',this)" id="filterMine" style="display:none">Mes modèles</button>
-    </div>
-    <div class="search-wrap">
-      <span class="search-icon">⌕</span>
-      <input type="text" id="searchInput" placeholder="rechercher..." oninput="renderGrid()">
-    </div>
+  <div class="grid" id="grid" style="display:none"></div>
+  <div style="margin-top:48px;text-align:center;color:var(--muted);font-size:15px;letter-spacing:.02em;">
+    — demain —
   </div>
-  <div class="grid" id="grid"><div class="loading">Chargement…</div></div>
 </div>
 <div class="modal-overlay" id="publishModal">
   <div class="modal">
