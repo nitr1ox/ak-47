@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head><script>(function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ak-47.fr — Vérification email</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/style.css"/>
+  <style>
+    .code-inputs { display: flex; gap: 10px; justify-content: center; margin: 20px 0; }
+    .code-inputs input {
+      width: 48px; height: 56px; text-align: center;
+      font-size: 24px; font-weight: 700; font-family: 'Inter', sans-serif;
+      border: 1.5px solid var(--gray-200); border-radius: var(--radius);
+      background: var(--white); color: var(--black); outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .code-inputs input:focus { border-color: var(--black); box-shadow: 0 0 0 3px rgba(0,0,0,.06); }
+    .code-inputs input.filled { border-color: var(--gray-400); }
+    .resend-link { font-size: 13px; color: var(--gray-400); text-align: center; margin-top: 12px; }
+    .resend-link a { color: var(--black); font-weight: 600; cursor: pointer; text-decoration: none; }
+    .resend-link a:hover { text-decoration: underline; }
+    .resend-link a.disabled { color: var(--gray-400); cursor: default; pointer-events: none; text-decoration: none; }
+    .email-hint { font-size: 13px; color: var(--gray-500); text-align: center; margin-bottom: 4px; }
+    .email-hint strong { color: var(--black); }
+  </style>
+</head>
+<body>
+<button id="globalThemeBtn" onclick="toggleTheme()" title="Changer le thème" aria-label="Changer le thème">🌙</button>
+
+<div class="page-shell">
+  <a href="/" class="logo-link">ak-47<span>.fr</span></a>
+  <div class="card card-sm">
+    <h1>Vérifie ton email</h1>
+    <p class="subtitle">On t'a envoyé un code à 6 chiffres.</p>
+    <p class="email-hint" id="emailHint"></p>
+
+    <div id="alert"></div>
+
+    <div class="code-inputs" id="codeInputs">
+      <input type="text" inputmode="numeric" maxlength="1" id="c0" oninput="onDigit(this,0)" onkeydown="onKey(event,0)" onpaste="onPaste(event)"/>
+      <input type="text" inputmode="numeric" maxlength="1" id="c1" oninput="onDigit(this,1)" onkeydown="onKey(event,1)"/>
+      <input type="text" inputmode="numeric" maxlength="1" id="c2" oninput="onDigit(this,2)" onkeydown="onKey(event,2)"/>
+      <input type="text" inputmode="numeric" maxlength="1" id="c3" oninput="onDigit(this,3)" onkeydown="onKey(event,3)"/>
+      <input type="text" inputmode="numeric" maxlength="1" id="c4" oninput="onDigit(this,4)" onkeydown="onKey(event,4)"/>
+      <input type="text" inputmode="numeric" maxlength="1" id="c5" oninput="onDigit(this,5)" onkeydown="onKey(event,5)"/>
+    </div>
+
+    <button class="btn btn-primary" id="submitBtn" onclick="doVerify()">Confirmer</button>
+
+    <div class="resend-link">
+      Tu n'as rien reçu ? <a id="resendLink" onclick="doResend()">Renvoyer le code</a>
+      <span id="resendTimer" style="display:none"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API = 'https://ak47-backend.onrender.com';
+  const email = localStorage.getItem('pendingEmail');
+  if (!email) window.location.href = '/register';
+
+  document.getElementById('emailHint').innerHTML = `Code envoyé à <strong>${email}</strong>`;
+
+  function getCode() {
+    return [0,1,2,3,4,5].map(i => document.getElementById('c'+i).value).join('');
+  }
+
+  function onDigit(el, idx) {
+    el.value = el.value.replace(/[^0-9]/g, '').slice(-1);
+    el.classList.toggle('filled', el.value !== '');
+    if (el.value && idx < 5) document.getElementById('c'+(idx+1)).focus();
+    if (getCode().length === 6) doVerify();
+  }
+
+  function onKey(e, idx) {
+    if (e.key === 'Backspace' && !document.getElementById('c'+idx).value && idx > 0) {
+      document.getElementById('c'+(idx-1)).focus();
+    }
+  }
+
+  function onPaste(e) {
+    const text = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
+    if (!text) return;
+    e.preventDefault();
+    [...text].forEach((ch, i) => {
+      const el = document.getElementById('c'+i);
+      if (el) { el.value = ch; el.classList.add('filled'); }
+    });
+    const last = Math.min(text.length, 5);
+    document.getElementById('c'+last).focus();
+    if (text.length === 6) doVerify();
+  }
+
+  async function doVerify() {
+    const code = getCode();
+    if (code.length < 6) return;
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true; btn.innerHTML = '<span class="loading-spinner"></span>';
+    clearAlert();
+    try {
+      const r = await fetch(API + '/api/auth/verify-email', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code })
+      });
+      const data = await r.json();
+      if (!r.ok) {
+        showAlert(data.error || 'Code incorrect');
+        if (data.error && data.error.includes('expiré')) {
+          setTimeout(() => window.location.href = '/register', 2000);
+        }
+        return;
+      }
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('username', data.username);
+      localStorage.removeItem('pendingEmail');
+      window.location.href = '/dashboard';
+    } catch { showAlert('Erreur réseau'); }
+    finally { btn.disabled = false; btn.innerHTML = 'Confirmer'; }
+  }
+
+  let resendCooldown = 0;
+  async function doResend() {
+    if (resendCooldown > 0) return;
+    clearAlert();
+    try {
+      const r = await fetch(API + '/api/auth/resend-code', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await r.json();
+      if (!r.ok) { showAlert(data.error || 'Erreur'); return; }
+      showAlert('Nouveau code envoyé !', 'success');
+      startResendCooldown(60);
+    } catch { showAlert('Erreur réseau'); }
+  }
+
+  function startResendCooldown(seconds) {
+    resendCooldown = seconds;
+    const link = document.getElementById('resendLink');
+    const timer = document.getElementById('resendTimer');
+    link.classList.add('disabled');
+    timer.style.display = 'inline';
+    const iv = setInterval(() => {
+      resendCooldown--;
+      timer.textContent = ` (${resendCooldown}s)`;
+      if (resendCooldown <= 0) {
+        clearInterval(iv);
+        link.classList.remove('disabled');
+        timer.style.display = 'none';
+      }
+    }, 1000);
+  }
+
+  function showAlert(msg, type = 'error') {
+    document.getElementById('alert').innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+  }
+  function clearAlert() { document.getElementById('alert').innerHTML = ''; }
+
+  document.getElementById('c0').focus();
+</script>
+
+<script>
+(function(){
+  var btn = document.getElementById('globalThemeBtn');
+  if(!btn) return;
+  var t = document.documentElement.getAttribute('data-theme') || 'light';
+  btn.textContent = t === 'dark' ? '☀️' : '🌙';
+  btn.setAttribute('data-theme-btn', '1');
+})();
+function toggleTheme(){
+  var cur = document.documentElement.getAttribute('data-theme') || 'light';
+  var next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  var btn = document.getElementById('globalThemeBtn');
+  if(btn) btn.textContent = next === 'dark' ? '☀️' : '🌙';
+}
+document.addEventListener('DOMContentLoaded', function(){
+  var btn = document.getElementById('globalThemeBtn');
+  if(btn){var t=document.documentElement.getAttribute('data-theme')||'light'; btn.textContent=t==='dark'?'☀️':'🌙';}
+});
+</script>
+</body>
+</html>

@@ -756,6 +756,13 @@ async function loadProfile() {
       document.body.style.cursor = `url(${JSON.stringify(user.cursor_url)}), auto`;
     }
 
+    // Si pas de musique → masquer l'overlay directement
+    if (!user.audio_url) {
+      const overlay = document.getElementById('enterOverlay');
+      if (overlay) overlay.classList.add('hidden');
+      _profileReady = true;
+    }
+
     if (user.audio_url) {
       const player = document.getElementById('audioPlayer');
       player.src = user.audio_url;
