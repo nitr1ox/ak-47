@@ -851,7 +851,7 @@ async function loadProfile() {
       const ms = document.getElementById('pMemberSince');
       const days = Math.floor((Date.now()/1000 - user.created_at) / 86400);
       let label;
-      if (days === 0) label = 'Membre depuis aujourd'hui';
+      if (days === 0) label = "Membre depuis aujourd'hui";
       else if (days < 30) label = `Membre depuis ${days} jour${days>1?'s':''}`;
       else if (days < 365) { const m = Math.floor(days/30); label = `Membre depuis ${m} mois`; }
       else { const y = Math.floor(days/365); label = `Membre depuis ${y} an${y>1?'s':''}`; }
