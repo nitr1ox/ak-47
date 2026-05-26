@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<script>(function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ak-47.fr — Modèles</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/style.css"/>
+<style>
+  body { background: var(--white); }
+  .tp-nav { display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px;border-bottom:1px solid var(--gray-200);background:rgba(255,255,255,.9);backdrop-filter:blur(12px);position:sticky;top:0;z-index:50; }
+  .tp-nav-brand { font-size:16px;font-weight:700;letter-spacing:-.3px;color:var(--black);text-decoration:none; }
+  .tp-nav-brand span { color:var(--gray-400);font-weight:400; }
+  .tp-nav-right { display:flex;gap:12px;align-items:center; }
+  .tp-nav a.back { font-size:13px;color:var(--gray-500);text-decoration:none;font-weight:500; }
+  .tp-nav a.back:hover { color:var(--black); }
+  .btn-publish { background:var(--black);color:var(--white);border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s; }
+  .btn-publish:hover { opacity:.8; }
+
+  .page { max-width:1100px;margin:0 auto;padding:56px 24px 80px; }
+  .page-tag { font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--gray-400);margin-bottom:12px; }
+  h1 { font-size:clamp(28px,4vw,48px);font-weight:700;letter-spacing:-2px;margin-bottom:8px; }
+  .subtitle { font-size:14px;color:var(--gray-500);margin-bottom:40px; }
+
+  .filters { display:flex;gap:8px;margin-bottom:32px;flex-wrap:wrap; }
+  .filter-btn { background:var(--gray-100);border:none;border-radius:999px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;color:var(--gray-600);transition:all .15s; }
+  .filter-btn.active { background:var(--black);color:var(--white); }
+
+  .grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px; }
+
+  .card {
+    border:1px solid var(--gray-200);border-radius:16px;overflow:hidden;
+    transition:transform .2s,box-shadow .2s;cursor:pointer;background:var(--white);
+  }
+  .card:hover { transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.10); }
+
+  .card-preview {
+    width:100%;height:180px;position:relative;overflow:hidden;
+    background:#1a1a2e;
+  }
+  .card-preview-inner {
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:6px;padding:16px;
+  }
+  .prev-avatar {
+    width:48px;height:48px;border-radius:50%;
+    background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);
+    display:flex;align-items:center;justify-content:center;font-size:20px;
+    flex-shrink:0;
+  }
+  .prev-name { font-size:13px;font-weight:700;color:#fff;letter-spacing:-.3px; }
+  .prev-bio { font-size:10px;color:rgba(255,255,255,.6);text-align:center;max-width:180px; }
+  .prev-badges { display:flex;gap:4px;margin-top:4px; }
+  .prev-badge { width:20px;height:20px;border-radius:4px;background:rgba(255,255,255,.15); }
+  .prev-links { display:flex;gap:6px;margin-top:6px; }
+  .prev-link { height:6px;border-radius:3px;background:rgba(255,255,255,.25); }
+
+  .card-body { padding:16px; }
+  .card-name { font-size:14px;font-weight:700;color:var(--black);margin-bottom:4px; }
+  .card-desc { font-size:12px;color:var(--gray-500);margin-bottom:12px;min-height:32px;line-height:1.5; }
+  .card-meta { display:flex;align-items:center;justify-content:space-between; }
+  .card-author { font-size:11px;color:var(--gray-400);text-decoration:none; }
+  .card-author:hover { color:var(--black); }
+  .card-uses { font-size:11px;color:var(--gray-400); }
+  .card-actions { display:flex;gap:8px;margin-top:12px; }
+  .btn-apply {
+    flex:1;background:var(--black);color:var(--white);border:none;border-radius:8px;
+    padding:8px;font-size:12px;font-weight:600;cursor:pointer;transition:opacity .15s;
+  }
+  .btn-apply:hover { opacity:.8; }
+  .btn-delete {
+    background:var(--gray-100);color:var(--gray-600);border:none;border-radius:8px;
+    padding:8px 12px;font-size:12px;cursor:pointer;transition:background .15s;
+  }
+  .btn-delete:hover { background:#fee2e2;color:#dc2626; }
+
+  .empty { text-align:center;padding:80px 24px;color:var(--gray-400);font-size:14px; }
+  .loading { text-align:center;padding:80px 24px;color:var(--gray-400); }
+
+  /* Modal publication */
+  .modal-overlay {
+    display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);
+    backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;
+  }
+  .modal-overlay.open { display:flex; }
+  .modal {
+    background:var(--white);border-radius:16px;padding:28px;width:90%;max-width:460px;
+    box-shadow:0 24px 80px rgba(0,0,0,.2);
+  }
+  .modal h2 { font-size:18px;font-weight:700;margin-bottom:4px;letter-spacing:-.5px; }
+  .modal p { font-size:13px;color:var(--gray-500);margin-bottom:20px; }
+  .modal label { font-size:12px;font-weight:600;color:var(--gray-700);display:block;margin-bottom:6px; }
+  .modal input,.modal textarea {
+    width:100%;border:1px solid var(--gray-200);border-radius:8px;
+    padding:10px 12px;font-size:13px;font-family:inherit;
+    background:var(--white);color:var(--black);outline:none;
+    transition:border-color .15s;box-sizing:border-box;
+  }
+  .modal input:focus,.modal textarea:focus { border-color:var(--black); }
+  .modal textarea { resize:vertical;min-height:72px; }
+  .modal-field { margin-bottom:16px; }
+  .modal-actions { display:flex;gap:8px;justify-content:flex-end;margin-top:20px; }
+  .btn-cancel { background:var(--gray-100);color:var(--gray-700);border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer; }
+  .btn-confirm { background:var(--black);color:var(--white);border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer; }
+  .btn-confirm:disabled { opacity:.5;cursor:not-allowed; }
+
+  .toast-tp {
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--black);color:var(--white);padding:10px 20px;border-radius:999px;
+    font-size:13px;font-weight:500;opacity:0;transition:all .3s;pointer-events:none;z-index:9999;white-space:nowrap;
+  }
+  .toast-tp.show { opacity:1;transform:translateX(-50%) translateY(0); }
+
+  @media(max-width:600px){
+    .tp-nav{padding:0 14px;}
+    .page{padding:36px 14px 60px;}
+    .grid{grid-template-columns:1fr;}
+    h1{font-size:26px;letter-spacing:-1px;}
+  }
+</style>
+</head>
+<body>
+<button id="globalThemeBtn" onclick="toggleTheme()" title="Changer le thème" aria-label="Changer le thème">🌙</button>
+
+<nav class="tp-nav">
+  <a href="/" class="tp-nav-brand">ak-47<span>.fr</span></a>
+  <div class="tp-nav-right">
+    <a href="/" class="back">← Retour</a>
+    <button class="btn-publish" id="btnPublish" onclick="openPublishModal()" style="display:none">+ Publier un modèle</button>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-tag">Communauté</div>
+  <h1>Modèles</h1>
+  <p class="subtitle">Applique le style d'un autre profil en un clic, ou partage le tien.</p>
+
+  <div class="filters">
+    <button class="filter-btn active" onclick="setFilter('recent',this)">Récents</button>
+    <button class="filter-btn" onclick="setFilter('popular',this)">Populaires</button>
+    <button class="filter-btn" onclick="setFilter('mine',this)" id="filterMine" style="display:none">Mes modèles</button>
+  </div>
+
+  <div class="grid" id="grid"><div class="loading">Chargement…</div></div>
+</div>
+
+<!-- Modal publication -->
+<div class="modal-overlay" id="publishModal">
+  <div class="modal">
+    <h2>Publier un modèle</h2>
+    <p>Ton style actuel sera sauvegardé et partagé avec la communauté.</p>
+    <div class="modal-field">
+      <label>Nom du modèle *</label>
+      <input type="text" id="tplName" placeholder="Ex: Dark Neon, Minimaliste blanc…" maxlength="50"/>
+    </div>
+    <div class="modal-field">
+      <label>Description (optionnel)</label>
+      <textarea id="tplDesc" placeholder="Décris ton modèle…" maxlength="200"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closePublishModal()">Annuler</button>
+      <button class="btn-confirm" id="btnConfirmPublish" onclick="publishTemplate()">Publier</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-tp" id="toastTp"></div>
+
+<script>
+const API = 'https://ak47-backend.onrender.com';
+const token = localStorage.getItem('token');
+const myUsername = localStorage.getItem('username');
+let allTemplates = [];
+let currentFilter = 'recent';
+
+if (token) {
+  document.getElementById('btnPublish').style.display = 'block';
+  document.getElementById('filterMine').style.display = 'block';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toastTp');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGrid();
+}
+
+function getFiltered() {
+  if (currentFilter === 'popular') return [...allTemplates].sort((a,b) => (b.uses||0)-(a.uses||0));
+  if (currentFilter === 'mine') return allTemplates.filter(t => t.username === myUsername);
+  return allTemplates;
+}
+
+function buildPreview(config) {
+  let bg = config.bg_type === 'color' ? config.bg_value || '#1a1a2e'
+         : config.bg_type === 'gradient' ? config.bg_value || '#1a1a2e'
+         : '#1a1a2e';
+  const textColor = config.text_color || '#ffffff';
+  const accent = config.accent_color || '#6366f1';
+  const cardBg = config.card_bg ? hexToRgba(config.card_bg, config.card_opacity ?? 0.15) : 'rgba(255,255,255,0.12)';
+
+  let blur = '';
+  if (config.profile_blur > 0) blur = `backdrop-filter:blur(${config.profile_blur}px);`;
+
+  return `
+    <div class="card-preview-inner" style="background:${bg};">
+      <div class="prev-avatar" style="border-color:${accent};background:${cardBg};${blur}">👤</div>
+      <div class="prev-name" style="color:${textColor}">username</div>
+      <div class="prev-bio" style="color:${textColor}88">bio du profil</div>
+      <div class="prev-links">
+        <div class="prev-link" style="width:60px;background:${accent}99"></div>
+        <div class="prev-link" style="width:40px;background:${accent}66"></div>
+      </div>
+    </div>`;
+}
+
+function hexToRgba(hex, alpha) {
+  const h = hex.replace('#','');
+  const r = parseInt(h.slice(0,2),16), g = parseInt(h.slice(2,4),16), b = parseInt(h.slice(4,6),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function renderGrid() {
+  const list = getFiltered();
+  const grid = document.getElementById('grid');
+  if (!list.length) {
+    grid.innerHTML = '<div class="empty">Aucun modèle ici pour l\'instant.</div>';
+    return;
+  }
+  grid.innerHTML = list.map(t => {
+    let config = {};
+    try { config = JSON.parse(t.config || '{}'); } catch {}
+    const isOwner = token && t.username === myUsername;
+    return `
+    <div class="card">
+      <div class="card-preview">${buildPreview(config)}</div>
+      <div class="card-body">
+        <div class="card-name">${escHtml(t.name)}</div>
+        <div class="card-desc">${escHtml(t.description || '')}</div>
+        <div class="card-meta">
+          <a class="card-author" href="/${escHtml(t.username)}">@${escHtml(t.username)}</a>
+          <span class="card-uses">🔥 ${t.uses || 0} utilisations</span>
+        </div>
+        <div class="card-actions">
+          <button class="btn-apply" onclick="applyTemplate('${t.id}','${escHtml(t.name)}')">
+            ${token ? 'Appliquer' : 'Se connecter pour appliquer'}
+          </button>
+          ${isOwner ? `<button class="btn-delete" onclick="deleteTemplate('${t.id}')">🗑</button>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function applyTemplate(id, name) {
+  if (!token) { window.location.href = '/login'; return; }
+  if (!confirm(`Appliquer le modèle "${name}" ? Ton style actuel sera remplacé.`)) return;
+  try {
+    const r = await fetch(`${API}/api/templates/${id}/use`, {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    if (!r.ok) throw new Error();
+    const t = allTemplates.find(t => t.id === id);
+    if (t) t.uses = (t.uses || 0) + 1;
+    renderGrid();
+    showToast(`✓ Modèle "${name}" appliqué ! Recharge ton profil.`);
+  } catch { showToast('Erreur lors de l\'application.'); }
+}
+
+async function deleteTemplate(id) {
+  if (!confirm('Supprimer ce modèle ?')) return;
+  try {
+    const r = await fetch(`${API}/api/templates/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    if (!r.ok) throw new Error();
+    allTemplates = allTemplates.filter(t => t.id !== id);
+    renderGrid();
+    showToast('Modèle supprimé.');
+  } catch { showToast('Erreur.'); }
+}
+
+function openPublishModal() {
+  if (!token) { window.location.href = '/login'; return; }
+  document.getElementById('tplName').value = '';
+  document.getElementById('tplDesc').value = '';
+  document.getElementById('publishModal').classList.add('open');
+}
+
+function closePublishModal() {
+  document.getElementById('publishModal').classList.remove('open');
+}
+
+async function publishTemplate() {
+  const name = document.getElementById('tplName').value.trim();
+  if (!name) { document.getElementById('tplName').focus(); return; }
+  const btn = document.getElementById('btnConfirmPublish');
+  btn.disabled = true; btn.textContent = '…';
+  try {
+    const r = await fetch(`${API}/api/templates`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ name, description: document.getElementById('tplDesc').value.trim() })
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error);
+    allTemplates.unshift(data);
+    renderGrid();
+    closePublishModal();
+    showToast('✓ Modèle publié !');
+  } catch(e) { showToast(e.message || 'Erreur.'); }
+  finally { btn.disabled = false; btn.textContent = 'Publier'; }
+}
+
+document.getElementById('publishModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('publishModal')) closePublishModal();
+});
+
+async function loadTemplates() {
+  try {
+    const r = await fetch(`${API}/api/templates`);
+    allTemplates = await r.json();
+    renderGrid();
+  } catch { document.getElementById('grid').innerHTML = '<div class="empty">Erreur de chargement.</div>'; }
+}
+
+loadTemplates();
+
+function toggleTheme(){const h=document.documentElement;const t=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',t);localStorage.setItem('theme',t);document.getElementById('globalThemeBtn').textContent=t==='dark'?'☀️':'🌙';}
+const _th=localStorage.getItem('theme')||'light';document.getElementById('globalThemeBtn').textContent=_th==='dark'?'☀️':'🌙';
+</script>
+</body>
+</html>

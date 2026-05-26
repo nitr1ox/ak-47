@@ -4,6 +4,8 @@
 /setup        /setup.html         200
 /profile      /profile.html       200
 /leaderboard  /leaderboard.html   200
+/templates        /templates.html         200
+/security-alert   /security-alert.html    200
 /status       /status.html        200
 /recovery     /recovery.html      200
 /terms        /terms.html         200

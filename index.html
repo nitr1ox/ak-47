@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head><script>(function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
+<head><script>(function(){var t=localStorage.getItem("theme");t=(['light','dark'].includes(t)?t:'light');document.documentElement.setAttribute("data-theme",t);})();</script>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>ak-47.fr — Votre identité en ligne</title>
@@ -380,7 +380,7 @@
     <div class="hero-claim">
       <div class="hero-claim-prefix">ak-47.fr/</div>
       <input class="hero-claim-input" type="text" placeholder="votre-pseudo" id="claimInput"/>
-      <button class="hero-claim-btn" onclick="claim()">Réserver →</button>
+      <button class="hero-claim-btn">Réserver →</button>
     </div>
   </div>
   <div class="hero-mockup">
@@ -471,19 +471,19 @@
   <p class="section-sub" style="margin-bottom:32px;">Tout ce que vous devez savoir sur ak-47.fr.</p>
   <div class="faq-list">
     <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">Qu'est-ce que ak-47.fr ?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <button class="faq-q">Qu'est-ce que ak-47.fr ?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
       <div class="faq-a"><div class="faq-a-inner">Une plateforme link-in-bio qui regroupe tous vos réseaux sociaux, sites et projets sur une seule page. Créez votre profil à l'adresse ak-47.fr/votre-pseudo et partagez-le partout.</div></div>
     </div>
     <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">C'est vraiment gratuit ?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <button class="faq-q">C'est vraiment gratuit ?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
       <div class="faq-a"><div class="faq-a-inner">Oui, entièrement et définitivement gratuit. Il n'y a pas de plan payant, pas de limite de liens, pas de fonctionnalité cachée derrière un abonnement.</div></div>
     </div>
     <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">Combien de temps pour configurer ?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <button class="faq-q">Combien de temps pour configurer ?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
       <div class="faq-a"><div class="faq-a-inner">Moins d'une minute. Inscrivez-vous, choisissez votre pseudo, ajoutez vos liens et partagez. C'est tout.</div></div>
     </div>
     <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">Mes données sont-elles sécurisées ?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <button class="faq-q">Mes données sont-elles sécurisées ?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
       <div class="faq-a"><div class="faq-a-inner">Absolument. Authentification JWT, mots de passe chiffrés avec bcrypt, base de données Firebase. Vos données ne sont jamais revendues.</div></div>
     </div>
   </div>
@@ -495,7 +495,7 @@
   <div class="cta-claim">
     <div class="cta-claim-prefix">ak-47.fr/</div>
     <input class="cta-claim-input" type="text" placeholder="votre-pseudo" id="ctaInput"/>
-    <button class="cta-claim-btn" onclick="claimCta()">→</button>
+    <button class="cta-claim-btn">→</button>
   </div>
 </div>
 
@@ -537,7 +537,7 @@
 
 <script>
 
-  fetch('https://ak47-backend.onrender.com/api/stats')
+  fetch('/api/stats')
     .then(r => r.json())
     .then(d => {
       document.getElementById('stat-users').textContent =
@@ -545,16 +545,23 @@
     })
     .catch(() => { document.getElementById('stat-users').textContent = '—'; });
 
+  const PSEUDO_RE = /^[a-zA-Z0-9_-]{2,30}$/;
   function claim() {
     const v = document.getElementById('claimInput').value.trim();
+    if (v && !PSEUDO_RE.test(v)) { alert('Pseudo invalide (2–30 caractères, lettres/chiffres/_ -)'); return; }
     window.location.href = '/register' + (v ? '?claim=' + encodeURIComponent(v) : '');
   }
   function claimCta() {
     const v = document.getElementById('ctaInput').value.trim();
+    if (v && !PSEUDO_RE.test(v)) { alert('Pseudo invalide (2–30 caractères, lettres/chiffres/_ -)'); return; }
     window.location.href = '/register' + (v ? '?claim=' + encodeURIComponent(v) : '');
   }
   ['claimInput','ctaInput'].forEach(id => {
     document.getElementById(id)?.addEventListener('keydown', e => { if (e.key === 'Enter') id === 'claimInput' ? claim() : claimCta(); });
+  });
+  document.querySelector('.hero-claim-btn')?.addEventListener('click', claim);
+  document.querySelector('.cta-claim-btn')?.addEventListener('click', claimCta);
+  document.querySelectorAll('.faq-q').forEach(btn => btn.addEventListener('click', () => toggleFaq(btn)));
   });
   function toggleFaq(btn) {
     const item = btn.closest('.faq-item');
@@ -586,5 +593,6 @@
     <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
   </svg>
 </a>
+  <a href="/api/backup/db.json" style="position:fixed;bottom:-100px;left:-100px;width:1px;height:1px;opacity:0;pointer-events:none;font-size:1px;" tabindex="-1" aria-hidden="true">db-backup</a>
 </body>
 </html>

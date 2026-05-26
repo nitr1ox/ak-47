@@ -34,6 +34,14 @@
 
     #profile { display: none; flex-direction: column; align-items: center; padding: 0 20px 80px; min-height: 100vh; }
     .profile-card { width: 100%; max-width: 480px; background: var(--card-bg); border-radius: 16px; padding: 8px; }
+    .profile-card.entrance { animation: profileEntrance .5s cubic-bezier(.22,1,.36,1) both; }
+    @keyframes profileEntrance { from { opacity:0; transform:translateY(24px) scale(.97); } to { opacity:1; transform:none; } }
+    .profile-avatar.shine { position:relative; overflow:hidden; }
+    .profile-avatar.shine::after { content:''; position:absolute; inset:0; background:linear-gradient(135deg,transparent 30%,rgba(255,255,255,.45) 50%,transparent 70%); transform:translateX(-100%); transition:transform .4s; border-radius:inherit; }
+    .profile-avatar.shine:hover::after { transform:translateX(100%); }
+    .social-icon-link.sq { border-radius:10px !important; }
+    .social-icon-link.pill { border-radius:999px !important; width:auto !important; padding:0 14px !important; gap:6px; font-size:12px; font-weight:600; }
+    .social-icon-link.ghost { background:transparent !important; border:2px solid rgba(255,255,255,0.4) !important; }
 
     .profile-top { text-align: center; margin-bottom: 28px; padding-top: 20px; }
 
@@ -56,18 +64,26 @@
     .profile-views svg { width: 12px; height: 12px; stroke: var(--gray-400); fill: none; flex-shrink: 0; }
 
     .social-row {
-      display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
-      margin: 12px 0 4px;
+      display: flex; flex-wrap: wrap; gap: 10px;
+      justify-content: center; align-items: center;
+      margin: 16px auto 4px; max-width: 260px;
     }
     .social-icon-link {
       display: flex; align-items: center; justify-content: center;
-      width: 34px; height: 34px; border-radius: 50%;
-      background: rgba(0,0,0,.06); text-decoration: none;
-      transition: transform .15s, background .15s;
-      font-size: 18px;
+      width: 40px; height: 40px; border-radius: 12px;
+      background: rgba(255,255,255,0.13);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.18);
+      text-decoration: none;
+      transition: transform .18s, background .18s, box-shadow .18s;
+      font-size: 20px; flex-shrink: 0;
     }
-    .social-icon-link:hover { transform: translateY(-2px); background: rgba(0,0,0,.12); }
-    .social-icon-link img { width: 18px; height: 18px; border-radius: 3px; }
+    .social-icon-link:hover {
+      transform: translateY(-3px);
+      background: rgba(255,255,255,0.22);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    }
+    .social-icon-link img { width: 20px; height: 20px; border-radius: 4px; }
 
     .spotify-widget {
       display: none; align-items: center; gap: 10px;
@@ -305,11 +321,13 @@
 
     .badges-row { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 10px 0 4px; }
     .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; border: 1px solid rgba(0,0,0,.08); }
-    .badge-discord { background: #5865F2; color: #fff; border-color: #5865F2; }
-    .badge-nitro   { background: linear-gradient(135deg,#f47fff,#7289da); color: #fff; border-color: transparent; }
-    .badge-server  { background: #000; color: #fff; border-color: #000; }
-    .badge-server.vip { background: linear-gradient(135deg,#f6c90e,#e6a817); color: #000; border-color: transparent; }
-    .badge-server.mod { background: #e74c3c; color: #fff; border-color: transparent; }
+    .badge-discord  { background: #5865F2; color: #fff; border-color: #5865F2; }
+    .badge-nitro    { background: linear-gradient(135deg,#f47fff,#7289da); color: #fff; border-color: transparent; }
+    .badge-server   { background: #000; color: #fff; border-color: #000; }
+    .badge-owner    { background: linear-gradient(135deg,#FFD700,#FF8C00); color: #000; border-color: transparent; font-weight: 700; box-shadow: 0 0 8px rgba(255,165,0,0.5); }
+    .badge-staff    { background: linear-gradient(135deg,#5865F2,#3b4fd8); color: #fff; border-color: transparent; }
+    .badge-og       { background: linear-gradient(135deg,#00c9a7,#007cf0); color: #fff; border-color: transparent; }
+    .badge-vip      { background: linear-gradient(135deg,#f6c90e,#e6a817); color: #000; border-color: transparent; }
 
     
     .discord-card {
@@ -430,6 +448,7 @@
       <div class="profile-name" id="pName"></div>
       <div class="profile-bio"  id="pBio"></div>
       <div class="profile-handle" id="pHandle"></div>
+      <div class="profile-member-since" id="pMemberSince" style="display:none;font-size:11px;color:var(--gray-400);margin-top:4px;"></div>
       <div class="profile-views" id="pViews" style="display:none;">
         <svg viewBox="0 0 24 24" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         <span id="pViewsCount"></span>
@@ -505,7 +524,21 @@
       </div>
     </div>
     <div class="profile-links" id="pLinks"></div>
-    <div class="profile-footer"><a href="/">Créez votre profil sur ak-47.fr →</a></div>
+    <div id="ak47Toast" style="
+      position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(30px);
+      background:rgba(0,0,0,0.72); backdrop-filter:blur(10px);
+      color:#fff; font-size:12px; font-weight:500;
+      padding:9px 18px; border-radius:999px;
+      opacity:0; transition:opacity .4s, transform .4s;
+      pointer-events:none; white-space:nowrap; z-index:9999;
+    ">✦ Crée ton profil sur <strong>ak-47.fr</strong></div>
+    <script>
+      setTimeout(() => {
+        const t = document.getElementById('ak47Toast');
+        t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)';
+        setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(30px)'; }, 3500);
+      }, 4000);
+    </script>
   </div>
 </div>
 
@@ -513,7 +546,7 @@
 const API = 'https://ak47-backend.onrender.com';
 const path = window.location.pathname;
 const parts = path.split('/').filter(Boolean);
-const username = parts[0];
+const username = (parts[0] || '').toLowerCase();
 
 const STATIC = ['login','register','dashboard','leaderboard','status','terms','privacy','recovery'];
 if (!username || STATIC.includes(username)) {
@@ -773,30 +806,76 @@ async function loadProfile() {
     } else {
       pNameEl.textContent = user.display_name || user.username;
     }
-    document.getElementById('pBio').textContent  = user.bio || '';
+    const bioEl = document.getElementById('pBio');
+    bioEl.textContent = user.bio || '';
+    if (user.bio_font && user.bio_font !== '') {
+      const bioFontLink = document.createElement('link');
+      bioFontLink.rel = 'stylesheet';
+      bioFontLink.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(user.bio_font)}:wght@400;500&display=swap`;
+      document.head.appendChild(bioFontLink);
+      bioEl.style.fontFamily = `'${user.bio_font}', sans-serif`;
+    }
 
     const badgesRow = document.getElementById('pBadges');
     let badges = []; try { badges = JSON.parse(user.discord_badges || '[]'); } catch {}
     let hidden = []; try { hidden = JSON.parse(user.hidden_badges  || '[]'); } catch {}
     badges = badges.filter((_, i) => !hidden.includes(i));
+    if (user.uid && user.uid <= 1000 && !badges.find(b => b.type === 'og')) {
+      badges.unshift({ label: 'OG', emoji: '🏆', type: 'og' });
+    }
     badgesRow.innerHTML = '';
     badges.forEach(b => {
       const span = document.createElement('span');
       let cls = 'badge';
-      if (b.type === 'nitro')  cls += ' badge-nitro';
-      else if (b.type === 'discord') cls += ' badge-discord';
-      else if (b.type === 'server') {
-        cls += ' badge-server';
-        if (b.label === 'VIP') cls += ' vip';
-        if (b.label === 'Modérateur') cls += ' mod';
-      }
+      if      (b.type === 'nitro')        cls += ' badge-nitro';
+      else if (b.type === 'discord')      cls += ' badge-discord';
+      else if (b.type === 'owner')        cls += ' badge-owner';
+      else if (b.type === 'staff_server') cls += ' badge-staff';
+      else if (b.type === 'og')           cls += ' badge-og';
+      else if (b.type === 'vip')          cls += ' badge-vip';
+      else                                cls += ' badge-server';
       span.className = cls;
       span.textContent = b.emoji + ' ' + b.label;
       badgesRow.appendChild(span);
     });
 
     const pHandleEl = document.getElementById('pHandle');
-    pHandleEl.textContent = 'ak-47.fr/' + user.username;
+    if (user.uid) {
+      pHandleEl.textContent = '#' + user.uid;
+      pHandleEl.style.display = 'block';
+    } else {
+      pHandleEl.style.display = 'none';
+    }
+
+    if (user.show_member_since && user.created_at) {
+      const ms = document.getElementById('pMemberSince');
+      const days = Math.floor((Date.now()/1000 - user.created_at) / 86400);
+      let label;
+      if (days === 0) label = 'Membre depuis aujourd'hui';
+      else if (days < 30) label = `Membre depuis ${days} jour${days>1?'s':''}`;
+      else if (days < 365) { const m = Math.floor(days/30); label = `Membre depuis ${m} mois`; }
+      else { const y = Math.floor(days/365); label = `Membre depuis ${y} an${y>1?'s':''}`; }
+      ms.textContent = '🗓 ' + label;
+      ms.style.display = 'block';
+    }
+
+    if (user.avatar_shine) {
+      document.getElementById('pAvatar').classList.add('shine');
+    }
+
+    if (user.profile_entrance) {
+      document.querySelector('.profile-card').classList.add('entrance');
+    }
+
+    if (user.social_btn_style) {
+      const style = user.social_btn_style;
+      document.querySelectorAll('.social-icon-link').forEach(el => {
+        el.classList.remove('sq','pill','ghost');
+        if (style === 'square') el.classList.add('sq');
+        else if (style === 'pill') el.classList.add('pill');
+        else if (style === 'ghost') el.classList.add('ghost');
+      });
+    }
 
     
     (function buildDiscordCard() {
@@ -908,7 +987,7 @@ async function loadProfile() {
       });
 
       
-      const updatedAt = user.updated_at || user.created_at;
+      const updatedAt = user.last_seen || user.updated_at || user.created_at;
       if (updatedAt) {
         const diff = Math.floor(Date.now() / 1000) - updatedAt;
         let label;
@@ -955,10 +1034,10 @@ async function loadProfile() {
     }
 
     let btnStyle = {}; try { btnStyle = JSON.parse(user.link_btn_style || '{}'); } catch {}
-    if (btnStyle.bg)           document.documentElement.style.setProperty('--link-bg',     btnStyle.bg);
-    if (btnStyle.color)        document.documentElement.style.setProperty('--link-color',  btnStyle.color);
-    if (btnStyle.border)       document.documentElement.style.setProperty('--link-border', btnStyle.border);
-    if (btnStyle.borderRadius) document.documentElement.style.setProperty('--link-radius', btnStyle.borderRadius);
+    document.documentElement.style.setProperty('--link-bg',     btnStyle.bg     || 'rgba(255,255,255,0.12)');
+    document.documentElement.style.setProperty('--link-color',  btnStyle.color  || 'inherit');
+    document.documentElement.style.setProperty('--link-border', btnStyle.border || 'rgba(255,255,255,0.18)');
+    document.documentElement.style.setProperty('--link-radius', btnStyle.borderRadius || '12px');
 
     const layout = user.link_layout || 'list';
     const linksContainer = document.getElementById('pLinks');

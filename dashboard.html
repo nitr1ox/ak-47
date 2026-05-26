@@ -877,6 +877,13 @@
             <span id="btnRadiusVal" style="font-size:12px;color:var(--gray-500);">10px</span>
           </div>
         </div>
+        <div style="display:flex;gap:8px;margin-top:4px;margin-bottom:4px;flex-wrap:wrap;">
+          <button onclick="applyLinkPreset('dark')"   style="padding:5px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;background:#000;color:#fff;">⬛ Sombre</button>
+          <button onclick="applyLinkPreset('light')"  style="padding:5px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;background:#fff;color:#000;">⬜ Clair</button>
+          <button onclick="applyLinkPreset('glass')"  style="padding:5px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;background:rgba(255,255,255,0.15);color:#555;backdrop-filter:blur(4px);">🔮 Verre</button>
+          <button onclick="applyLinkPreset('accent')" style="padding:5px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;background:#6366f1;color:#fff;">🎨 Accent</button>
+          <button onclick="applyLinkPreset('reset')"  style="padding:5px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;background:var(--gray-100);color:var(--gray-600);">↺ Défaut</button>
+        </div>
         <div style="margin-top:12px;">
           <div style="font-size:12px;color:var(--gray-500);margin-bottom:6px;">Aperçu :</div>
           <a id="btnStylePreview" style="display:inline-flex;align-items:center;justify-content:space-between;padding:12px 18px;text-decoration:none;font-size:14px;font-weight:500;gap:12px;min-width:200px;transition:all .15s;">
@@ -1084,9 +1091,91 @@
         </select>
       </div>
 
+
+      <div class="section-card">
+        <div class="section-card-title">Éléments affichés</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Choisissez ce qui est visible sur votre profil public.</div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+            <input type="checkbox" id="showMemberSinceToggle" style="width:16px;height:16px;accent-color:#000;cursor:pointer;"
+              onchange="pendingPerso.show_member_since=this.checked"/>
+            <div>
+              <span style="font-size:13px;font-weight:500;">Membre depuis</span>
+              <div style="font-size:11px;color:var(--gray-500);">Affiche depuis combien de temps tu es inscrit.</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+            <input type="checkbox" id="showAvatarShineToggle" style="width:16px;height:16px;accent-color:#000;cursor:pointer;"
+              onchange="pendingPerso.avatar_shine=this.checked"/>
+            <div>
+              <span style="font-size:13px;font-weight:500;">Effet shine sur l'avatar</span>
+              <div style="font-size:11px;color:var(--gray-500);">Reflet lumineux au survol de l'avatar.</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+            <input type="checkbox" id="profileEntranceToggle" style="width:16px;height:16px;accent-color:#000;cursor:pointer;"
+              onchange="pendingPerso.profile_entrance=this.checked"/>
+            <div>
+              <span style="font-size:13px;font-weight:500;">Animation d'entrée</span>
+              <div style="font-size:11px;color:var(--gray-500);">La card de profil apparaît avec une animation.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-title">Police du bio</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Police utilisée uniquement pour la bio (différente du pseudo si souhaité).</div>
+        <select id="bioFontSelect" onchange="pendingPerso.bio_font=this.value;"
+          style="width:100%;max-width:280px;padding:9px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;font-family:inherit;outline:none;">
+          <option value="">Même police que le profil</option>
+          <option value="Inter">Inter</option>
+          <option value="Roboto">Roboto</option>
+          <option value="Playfair Display">Playfair Display</option>
+          <option value="Lora">Lora</option>
+          <option value="Merriweather">Merriweather</option>
+          <option value="Dancing Script">Dancing Script</option>
+          <option value="Pacifico">Pacifico</option>
+          <option value="Space Mono">Space Mono</option>
+          <option value="Courier Prime">Courier Prime</option>
+          <option value="Oswald">Oswald</option>
+        </select>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-title">Style des boutons sociaux</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Forme des icônes de réseaux sociaux sur votre profil.</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <label style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font-size:11px;font-weight:600;color:var(--gray-600);">
+            <input type="radio" name="socialBtnStyle" value="circle" onchange="pendingPerso.social_btn_style='circle'" style="accent-color:#000;"/>
+            <span style="width:36px;height:36px;border-radius:50%;background:var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:16px;">●</span>
+            Rond
+          </label>
+          <label style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font-size:11px;font-weight:600;color:var(--gray-600);">
+            <input type="radio" name="socialBtnStyle" value="square" onchange="pendingPerso.social_btn_style='square'" style="accent-color:#000;"/>
+            <span style="width:36px;height:36px;border-radius:6px;background:var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:16px;">■</span>
+            Carré
+          </label>
+          <label style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font-size:11px;font-weight:600;color:var(--gray-600);">
+            <input type="radio" name="socialBtnStyle" value="pill" onchange="pendingPerso.social_btn_style='pill'" style="accent-color:#000;"/>
+            <span style="width:48px;height:28px;border-radius:999px;background:var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:12px;">pill</span>
+            Pill
+          </label>
+          <label style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font-size:11px;font-weight:600;color:var(--gray-600);">
+            <input type="radio" name="socialBtnStyle" value="ghost" onchange="pendingPerso.social_btn_style='ghost'" style="accent-color:#000;"/>
+            <span style="width:36px;height:36px;border-radius:50%;border:2px solid var(--gray-400);background:transparent;display:flex;align-items:center;justify-content:center;font-size:16px;">○</span>
+            Ghost
+          </label>
+        </div>
+      </div>
+
       <div class="save-bar">
         <span class="save-bar-msg">Les modifications seront appliquées sur votre profil public.</span>
-        <button class="save-bar-btn" id="savePersoBtn" onclick="savePerso()">Sauvegarder</button>
+        <div style="display:flex;gap:8px;">
+          <button class="save-bar-btn" style="background:var(--gray-100);color:var(--gray-700);border:1px solid var(--gray-200);" onclick="window.open('/templates','_blank')">🎨 Modèles</button>
+          <button class="save-bar-btn" style="background:var(--gray-100);color:var(--gray-700);border:1px solid var(--gray-200);" onclick="openPublishTemplateModal()">+ Publier</button>
+          <button class="save-bar-btn" id="savePersoBtn" onclick="savePerso()">Sauvegarder</button>
+        </div>
       </div>
     </div>
 
@@ -1098,6 +1187,15 @@
 <script>
 const API = 'https://ak47-backend.onrender.com';
 fetch(API + '/api/health').catch(() => {});
+
+function startHeartbeat() {
+  const beat = () => fetch(API + '/api/heartbeat', {
+    method: 'POST',
+    headers: { Authorization: 'Bearer ' + token }
+  }).catch(() => {});
+  beat();
+  setInterval(beat, 30000);
+}
 const token = localStorage.getItem('token');
 const username = localStorage.getItem('username');
 if (!token) window.location.href = '/login';
@@ -1224,6 +1322,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('profileViewBtn').href = profileUrl;
   const btn2 = document.getElementById('profileViewBtn2'); if (btn2) btn2.href = profileUrl;
   document.getElementById('overviewDate').textContent = new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  startHeartbeat();
   await Promise.all([loadUser(), loadAnalytics()]);
 
   const params = new URLSearchParams(window.location.search);
@@ -1655,9 +1754,10 @@ function confirmIconLink() {
   if (!val) { el('ipinVal').focus(); return; }
   if (pendingLinks.length >= 20) { closeIconPicker(); showAlert('linksAlert', 'Maximum 20 liens'); return; }
   let url = val;
-  if (activeSocial.base && !val.startsWith('http') && !val.startsWith('mailto:')) {
+  const valLower = val.toLowerCase();
+  if (activeSocial.base && !valLower.startsWith('http') && !valLower.startsWith('mailto:')) {
     url = activeSocial.base + val;
-  } else if (!val.startsWith('http') && !val.startsWith('mailto:')) {
+  } else if (!valLower.startsWith('http') && !valLower.startsWith('mailto:')) {
     url = 'https://' + val;
   }
   pendingLinks.push({ title: activeSocial.label, url });
@@ -1685,7 +1785,7 @@ function confirmManualLink() {
   if (!title || !url) { if (!title) el('ipmTitle').focus(); else el('ipmUrl').focus(); return; }
   if (pendingLinks.length >= 20) { closeIconPicker(); showAlert('linksAlert', 'Maximum 20 liens'); return; }
   let finalUrl = url;
-  if (!url.startsWith('http') && !url.startsWith('mailto:')) finalUrl = 'https://' + url;
+  if (!url.toLowerCase().startsWith('http') && !url.toLowerCase().startsWith('mailto:')) finalUrl = 'https://' + url;
   pendingLinks.push({ title, url: finalUrl });
   closeIconPicker();
   el('linksAlert').innerHTML = '';
@@ -1704,7 +1804,7 @@ function addLink() {
   if (!url) return showAlert('linksAlert', "L'URL est requise");
   if (pendingLinks.length >= 20) return showAlert('linksAlert', 'Maximum 20 liens');
   let finalUrl = url;
-  if (!url.startsWith('http://') && !url.startsWith('https://')) finalUrl = 'https://' + url;
+  if (!url.toLowerCase().startsWith('http://') && !url.toLowerCase().startsWith('https://')) finalUrl = 'https://' + url;
   pendingLinks.push({ title, url: finalUrl });
   el('newLinkTitle').value = ''; el('newLinkUrl').value = '';
   el('linksAlert').innerHTML = '';
@@ -2223,6 +2323,14 @@ function loadPersoUI() {
   if (el('persoLocation')) el('persoLocation').value = userData.location || '';
 
   el('discordPresenceToggle').checked = !!userData.discord_presence;
+  el('showMemberSinceToggle').checked = !!userData.show_member_since;
+  el('showAvatarShineToggle').checked = !!userData.avatar_shine;
+  el('profileEntranceToggle').checked = !!userData.profile_entrance;
+  if (userData.bio_font) el('bioFontSelect').value = userData.bio_font || '';
+  if (userData.social_btn_style) {
+    const r = document.querySelector(`input[name="socialBtnStyle"][value="${userData.social_btn_style}"]`);
+    if (r) r.checked = true;
+  }
   const bgEffect = userData.bg_effect || 'none';
   el('bgEffectSelect').value = bgEffect;
   el('bgEffectColorRow').style.display = bgEffect !== 'none' ? 'flex' : 'none';
@@ -2292,6 +2400,28 @@ function updateBtnStylePreview() {
   prev.style.color         = txt;
   prev.style.border        = `1px solid ${brd}`;
   prev.style.borderRadius  = rad;
+}
+
+function applyLinkPreset(preset) {
+  const presets = {
+    dark:   { bg: '#000000', color: '#ffffff', border: '#333333', borderRadius: '12px' },
+    light:  { bg: '#ffffff', color: '#000000', border: '#e4e4e7', borderRadius: '12px' },
+    glass:  { bg: 'rgba(255,255,255,0.12)', color: '#ffffff', border: 'rgba(255,255,255,0.2)', borderRadius: '14px' },
+    accent: { bg: (pendingPerso.accent_color || userData.accent_color || '#6366f1').match(/^#[0-9a-fA-F]{6}$/)?.[0] || '#6366f1', color: '#ffffff', border: 'transparent', borderRadius: '12px' },
+    reset:  { bg: 'rgba(255,255,255,0.12)', color: '', border: 'rgba(255,255,255,0.18)', borderRadius: '12px' },
+  };
+  const p = presets[preset];
+  if (!p) return;
+  el('btnBgColor').value      = p.bg.startsWith('#') ? p.bg : '#ffffff';
+  el('btnTextColor').value    = p.color.startsWith('#') ? p.color : '#000000';
+  el('btnBorderColor').value  = p.border.startsWith('#') ? p.border : '#e4e4e7';
+  el('btnRadiusRange').value  = parseInt(p.borderRadius);
+  el('btnBgColorHex').textContent     = p.bg;
+  el('btnTextColorHex').textContent   = p.color;
+  el('btnBorderColorHex').textContent = p.border;
+  el('btnRadiusVal').textContent      = p.borderRadius;
+  pendingPerso.link_btn_style = JSON.stringify({ bg: p.bg, color: p.color, border: p.border, borderRadius: p.borderRadius });
+  updateBtnStylePreview();
 }
 
 async function handlePersoMedia(type, input) {
@@ -2395,13 +2525,14 @@ async function savePerso() {
     if (body.location !== undefined && el('location')) el('location').value = data.location || '';
     pendingPerso = {
       avatar_shape: null, link_layout: null, link_btn_style: null,
-      profile_font: null, bg_type: null, bg_value: null,
+      profile_font: null, bio_font: null, bg_type: null, bg_value: null,
       bg_opacity: null, text_color: null, card_bg: null, card_opacity: null,
       banner_url: null, bg_url: null, social_links: null, spotify_url: null,
       location: null, discord_presence: null, bg_effect: null, bg_effect_color: null,
       profile_blur: null, username_effect: null, glow_targets: null, accent_color: null,
       icon_color: null, monochrome_icons: null, animated_title: null,
       invert_blocks: null, use_discord_avatar: null, avatar_decoration: null,
+      show_member_since: null, avatar_shine: null, profile_entrance: null, social_btn_style: null,
     };
     el('persoAlert').innerHTML = '';
     showToast('Personnalisation sauvegardée ✓');
@@ -2413,6 +2544,26 @@ async function savePerso() {
 document.addEventListener('DOMContentLoaded', () => {
   initPersoTab();
 });
+
+function openPublishTemplateModal() {
+  const name = prompt('Nom de ton modèle (max 50 car.) :');
+  if (!name || !name.trim()) return;
+  const desc = prompt('Description courte (optionnel) :') || '';
+  publishTemplateFromDash(name.trim(), desc.trim());
+}
+
+async function publishTemplateFromDash(name, description) {
+  try {
+    const r = await fetch(API + '/api/templates', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ name, description })
+    });
+    const data = await r.json();
+    if (!r.ok) { showToast('Erreur : ' + (data.error || 'Impossible de publier')); return; }
+    showToast('✓ Modèle "' + name + '" publié sur /templates !');
+  } catch { showToast('Erreur réseau.'); }
+}
 
 </script>
 
