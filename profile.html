@@ -414,11 +414,11 @@
 
 
 
-<div id="enterOverlay" onclick="enterSite()">
+<div id="enterOverlay">
   <div class="enter-bg"></div>
   <div class="enter-particles" id="enterParticles"></div>
   <div class="enter-content">
-    <button id="enterBtn" onclick="enterSite()">Cliquer pour entrer</button>
+    <button id="enterBtn">Cliquer pour entrer</button>
   </div>
 </div>
 
@@ -1570,6 +1570,8 @@ function enterSite() {
   if (_profileReady) startMusicNow();
 }
 window.enterSite = enterSite;
+document.getElementById('enterOverlay').addEventListener('click', enterSite);
+document.getElementById('enterBtn').addEventListener('click', function(e){ e.stopPropagation(); enterSite(); });
 
 function startMusicNow() {
   const player = document.getElementById('audioPlayer');
