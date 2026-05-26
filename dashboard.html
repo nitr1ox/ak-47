@@ -1302,7 +1302,13 @@
 
 <script>
 const API = 'https://ak47-backend.onrender.com';
-fetch(API + '/api/health').catch(() => {});
+// Ping health pour réveiller Render — loadAnalytics attend que le backend soit prêt
+let _backendReady = false;
+let _analyticsWaiting = false;
+fetch(API + '/api/health').then(() => {
+  _backendReady = true;
+  if (_analyticsWaiting) { _analyticsWaiting = false; loadAnalytics(); }
+}).catch(() => { _backendReady = true; }); // en cas d'erreur, on laisse loadAnalytics se débrouiller
 
 function startHeartbeat() {
   const beat = () => fetch(API + '/api/heartbeat', {
@@ -1439,7 +1445,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btn2 = document.getElementById('profileViewBtn2'); if (btn2) btn2.href = profileUrl;
   document.getElementById('overviewDate').textContent = new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   startHeartbeat();
-  await Promise.all([loadUser(), loadAnalytics()]);
+  // Attendre que le backend soit réveillé (cold start Render) avant les analytics
+  const analyticsPromise = new Promise(resolve => {
+    if (_backendReady) { resolve(loadAnalytics()); }
+    else { _analyticsWaiting = true; /* health ping appellera loadAnalytics */ resolve(); }
+  });
+  await Promise.all([loadUser(), analyticsPromise]);
 
   const params = new URLSearchParams(window.location.search);
   const linked = params.get('linked');
@@ -2181,14 +2192,14 @@ async function handleMedia(type, input) {
         headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
         body: JSON.stringify({ filename: file.name, contentType: file.type, field: type + '_url' })
       });
-      if (!urlResp.ok) throw new Error('Impossible d'obtenir le lien d'upload');
+      if (!urlResp.ok) throw new Error(`Impossible d'obtenir le lien d'upload`);
       const { uploadUrl, publicUrl } = await urlResp.json();
       const uploadResp = await fetch(uploadUrl, {
         method: 'PUT',
         headers: { 'Content-Type': file.type },
         body: file
       });
-      if (!uploadResp.ok) throw new Error('Erreur lors de l'upload');
+      if (!uploadResp.ok) throw new Error(`Erreur lors de l'upload`);
       el('mediasAlert').innerHTML = '';
       pendingMedias[type + '_url'] = publicUrl;
       if (type === 'bg') setMblockStatus('bg', true, file.type === 'video/mp4' ? 'Vidéo' : 'Image');
@@ -2811,6 +2822,10 @@ document.addEventListener("DOMContentLoaded",function(){
   </button>
 </nav>
 <script>
+// Helpers partagés (guard pour éviter redéclaration)
+if (typeof el === 'undefined') { window.el = id => document.getElementById(id); }
+if (typeof showToast === 'undefined') { window.showToast = msg => { const t = document.getElementById('toast'); if(t){t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);} }; }
+
 function setMobActive(btn) {
   document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
