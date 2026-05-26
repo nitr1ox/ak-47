@@ -2116,21 +2116,66 @@ async function handleMedia(type, input) {
     input.value = ''; return;
   }
 
-  let data;
-  if (type === 'bg') {
+  // Pour bg et banner : upload direct Firebase Storage (évite le base64 dans la DB)
+  if (type === 'bg' || type === 'banner') {
+    let previewData;
     if (file.type === 'video/mp4') {
       try {
-        data = await new Promise((res, rej) => {
+        previewData = await new Promise((res, rej) => {
           const r = new FileReader();
           r.onload = e => res(e.target.result); r.onerror = rej;
           r.readAsDataURL(file);
         });
       } catch { showAlert('mediasAlert', 'Impossible de lire cette vidéo.'); return; }
     } else {
-      try { data = await compressImage(file, 2560, 1440, 0.85); }
+      try { previewData = await compressImage(file, 2560, 1440, 0.85); }
       catch { showAlert('mediasAlert', 'Impossible de lire cette image.'); return; }
     }
-  } else if (type === 'avatar') {
+    // Afficher la preview locale immédiatement
+    if (type === 'bg') {
+      if (file.type === 'video/mp4') {
+        const img = el('bgPreview'); if (img) { img.style.display = 'none'; img.src = ''; }
+        const vid = el('bgVideoPreview');
+        if (vid) { vid.src = previewData; vid.style.display = 'block'; vid.play(); }
+      } else {
+        const vid = el('bgVideoPreview'); if (vid) { vid.style.display = 'none'; vid.src = ''; }
+        const img = el('bgPreview');
+        if (img) { img.src = previewData; img.style.display = 'block'; }
+      }
+      const wrap = el('bgPreviewWrap'); if (wrap) wrap.style.display = 'block';
+      const dz = el('bgDropzone'); if (dz) dz.style.display = 'none';
+      const act = el('mactions-bg'); if (act) act.style.display = 'flex';
+      setMblockStatus('bg', true, file.type === 'video/mp4' ? 'Vidéo (upload en cours...)' : 'Image (upload en cours...)');
+      const desc = el('mdesc-bg'); if (desc) desc.textContent = file.name;
+    }
+    // Upload vers Firebase Storage
+    try {
+      showAlert('mediasAlert', '⏳ Upload en cours...');
+      const urlResp = await fetch(API + '/api/user/upload-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        body: JSON.stringify({ filename: file.name, contentType: file.type, field: type + '_url' })
+      });
+      if (!urlResp.ok) throw new Error('Impossible d'obtenir le lien d'upload');
+      const { uploadUrl, publicUrl } = await urlResp.json();
+      const uploadResp = await fetch(uploadUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': file.type },
+        body: file
+      });
+      if (!uploadResp.ok) throw new Error('Erreur lors de l'upload');
+      el('mediasAlert').innerHTML = '';
+      pendingMedias[type + '_url'] = publicUrl;
+      if (type === 'bg') setMblockStatus('bg', true, file.type === 'video/mp4' ? 'Vidéo' : 'Image');
+    } catch (err) {
+      showAlert('mediasAlert', '❌ ' + (err.message || 'Erreur upload'));
+      input.value = '';
+    }
+    return;
+  }
+
+  let data;
+  if (type === 'avatar') {
     try { data = await compressImage(file, 400, 400, 0.90); }
     catch { showAlert('mediasAlert', 'Impossible de lire cette image.'); return; }
   } else {
@@ -2143,23 +2188,7 @@ async function handleMedia(type, input) {
 
   pendingMedias[type + '_url'] = data;
 
-  if (type === 'bg') {
-    if (file.type === 'video/mp4') {
-      const img = el('bgPreview'); if (img) { img.style.display = 'none'; img.src = ''; }
-      const vid = el('bgVideoPreview');
-      if (vid) { vid.src = data; vid.style.display = 'block'; vid.play(); }
-    } else {
-      const vid = el('bgVideoPreview'); if (vid) { vid.style.display = 'none'; vid.src = ''; }
-      const img = el('bgPreview');
-      if (img) { img.src = data; img.style.display = 'block'; }
-    }
-    const wrap = el('bgPreviewWrap'); if (wrap) wrap.style.display = 'block';
-    const dz = el('bgDropzone'); if (dz) dz.style.display = 'none';
-    const act = el('mactions-bg'); if (act) act.style.display = 'flex';
-    setMblockStatus('bg', true, file.type === 'video/mp4' ? 'Vidéo' : 'Image');
-    const desc = el('mdesc-bg'); if (desc) desc.textContent = file.name;
-
-  } else if (type === 'avatar') {
+  if (type === 'avatar') {
     const img = el('avatarPreview');
     if (img) { img.src = data; img.style.display = 'block'; }
     const ph = el('avatarPlaceholder'); if (ph) ph.style.display = 'none';
