@@ -1500,8 +1500,14 @@ async function loadAnalytics() {
     renderChart('analyticsChart', analyticsData.daily, 100);
     renderTopLinks();
   } catch(e) {
-    console.warn('[analytics] echec (' + e.message + ')' + (_analyticsRetries < 5 ? ', retry dans 8s...' : ', abandon.'));
-    if (_analyticsRetries < 5) {
+    console.warn('[analytics] echec (' + e.message + ')');
+    // Afficher les stats à 0 plutôt que laisser les tirets
+    analyticsData = { total_views:0, total_clicks:0, views_today:0, views_7d:0, views_30d:0, clicks_7d:0, daily:[], top_links:[] };
+    renderStats();
+    renderChart('chartBars', [], 80);
+    renderChart('analyticsChart', [], 100);
+    renderTopLinks();
+    if (_analyticsRetries < 3) {
       _analyticsRetries++;
       setTimeout(loadAnalytics, 8000);
     }
