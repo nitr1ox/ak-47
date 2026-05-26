@@ -33,9 +33,7 @@
     <h1>Vérifie ton email</h1>
     <p class="subtitle">On t'a envoyé un code à 6 chiffres.</p>
     <p class="email-hint" id="emailHint"></p>
-
     <div id="alert"></div>
-
     <div class="code-inputs" id="codeInputs">
       <input type="text" inputmode="numeric" maxlength="1" id="c0" oninput="onDigit(this,0)" onkeydown="onKey(event,0)" onpaste="onPaste(event)"/>
       <input type="text" inputmode="numeric" maxlength="1" id="c1" oninput="onDigit(this,1)" onkeydown="onKey(event,1)"/>
@@ -44,12 +42,9 @@
       <input type="text" inputmode="numeric" maxlength="1" id="c4" oninput="onDigit(this,4)" onkeydown="onKey(event,4)"/>
       <input type="text" inputmode="numeric" maxlength="1" id="c5" oninput="onDigit(this,5)" onkeydown="onKey(event,5)"/>
     </div>
-
     <button class="btn btn-primary" id="submitBtn" onclick="doVerify()">Confirmer</button>
-
     <div class="resend-link">
-      Tu n'as rien reçu ? <a id="resendLink" onclick="doResend()">Renvoyer le code</a>
-      <span id="resendTimer" style="display:none"></span>
+      Tu n'as rien reçu ? <a id="resendLink" onclick="doResend()">Renvoyer le code</a><span id="resendTimer" style="display:none"></span>
     </div>
   </div>
 </div>
@@ -58,12 +53,9 @@
   const API = 'https://ak47-backend.onrender.com';
   const email = localStorage.getItem('pendingEmail');
   if (!email) window.location.href = '/register';
-
   document.getElementById('emailHint').innerHTML = `Code envoyé à <strong>${email}</strong>`;
 
-  function getCode() {
-    return [0,1,2,3,4,5].map(i => document.getElementById('c'+i).value).join('');
-  }
+  function getCode() { return [0,1,2,3,4,5].map(i => document.getElementById('c'+i).value).join(''); }
 
   function onDigit(el, idx) {
     el.value = el.value.replace(/[^0-9]/g, '').slice(-1);
@@ -71,23 +63,16 @@
     if (el.value && idx < 5) document.getElementById('c'+(idx+1)).focus();
     if (getCode().length === 6) doVerify();
   }
-
   function onKey(e, idx) {
-    if (e.key === 'Backspace' && !document.getElementById('c'+idx).value && idx > 0) {
+    if (e.key === 'Backspace' && !document.getElementById('c'+idx).value && idx > 0)
       document.getElementById('c'+(idx-1)).focus();
-    }
   }
-
   function onPaste(e) {
     const text = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
     if (!text) return;
     e.preventDefault();
-    [...text].forEach((ch, i) => {
-      const el = document.getElementById('c'+i);
-      if (el) { el.value = ch; el.classList.add('filled'); }
-    });
-    const last = Math.min(text.length, 5);
-    document.getElementById('c'+last).focus();
+    [...text].forEach((ch, i) => { const el = document.getElementById('c'+i); if(el){el.value=ch;el.classList.add('filled');} });
+    document.getElementById('c'+Math.min(text.length,5)).focus();
     if (text.length === 6) doVerify();
   }
 
@@ -105,9 +90,7 @@
       const data = await r.json();
       if (!r.ok) {
         showAlert(data.error || 'Code incorrect');
-        if (data.error && data.error.includes('expiré')) {
-          setTimeout(() => window.location.href = '/register', 2000);
-        }
+        if (data.error && data.error.includes('expiré')) setTimeout(() => window.location.href = '/register', 2000);
         return;
       }
       localStorage.setItem('token', data.token);
@@ -130,32 +113,20 @@
       const data = await r.json();
       if (!r.ok) { showAlert(data.error || 'Erreur'); return; }
       showAlert('Nouveau code envoyé !', 'success');
-      startResendCooldown(60);
+      resendCooldown = 60;
+      const link = document.getElementById('resendLink');
+      const timer = document.getElementById('resendTimer');
+      link.classList.add('disabled'); timer.style.display = 'inline';
+      const iv = setInterval(() => {
+        resendCooldown--;
+        timer.textContent = ` (${resendCooldown}s)`;
+        if (resendCooldown <= 0) { clearInterval(iv); link.classList.remove('disabled'); timer.style.display = 'none'; }
+      }, 1000);
     } catch { showAlert('Erreur réseau'); }
   }
 
-  function startResendCooldown(seconds) {
-    resendCooldown = seconds;
-    const link = document.getElementById('resendLink');
-    const timer = document.getElementById('resendTimer');
-    link.classList.add('disabled');
-    timer.style.display = 'inline';
-    const iv = setInterval(() => {
-      resendCooldown--;
-      timer.textContent = ` (${resendCooldown}s)`;
-      if (resendCooldown <= 0) {
-        clearInterval(iv);
-        link.classList.remove('disabled');
-        timer.style.display = 'none';
-      }
-    }, 1000);
-  }
-
-  function showAlert(msg, type = 'error') {
-    document.getElementById('alert').innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
-  }
+  function showAlert(msg, type='error') { document.getElementById('alert').innerHTML = `<div class="alert alert-${type}">${msg}</div>`; }
   function clearAlert() { document.getElementById('alert').innerHTML = ''; }
-
   document.getElementById('c0').focus();
 </script>
 
