@@ -39,7 +39,7 @@
     if (val.length < 2) { status.textContent = ''; return; }
     checkTimeout = setTimeout(async () => {
       try {
-        const r = await fetch(`https://ak47-backend.onrender.com/api/user/check-username?username=${encodeURIComponent(val)}`);
+        const r = await fetch(`https://ak47-backend.onrender.com/api/user/check-username?username=${encodeURIComponent(val)}`
         const data = await r.json();
         if (data.available) {
           status.style.color = '#16a34a';

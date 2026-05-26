@@ -93,8 +93,9 @@
       });
       const data = await r.json();
       if (!r.ok) { showAlert(data.error || 'Erreur'); return; }
-      localStorage.setItem('pendingEmail', data.email);
-      window.location.href = '/verify';
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('username', data.username);
+      window.location.href = '/dashboard';
     } catch { showAlert('Erreur réseau'); }
     finally { btn.disabled = false; btn.innerHTML = 'Créer mon profil'; }
   }

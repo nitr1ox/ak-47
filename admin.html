@@ -84,8 +84,8 @@
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
       .container { padding: 16px 12px; }
       nav { padding: 0 14px; }
-      .table th:nth-child(4), .table td:nth-child(4),
-      .table th:nth-child(5), .table td:nth-child(5) { display: none; }
+      .table th:nth-child(5), .table td:nth-child(5),
+      .table th:nth-child(6), .table td:nth-child(6) { display: none; }
     }
   </style>
 </head>
@@ -218,19 +218,23 @@ function renderUsers(users) {
   const el = document.getElementById('usersBody');
   if (!users.length) { el.innerHTML = '<div class="empty">Aucun utilisateur</div>'; return; }
   el.innerHTML = `<table>
-    <thead><tr><th>Utilisateur</th><th>Email</th><th>Discord</th><th>Badges</th><th>Inscrit le</th><th>Action</th></tr></thead>
+    <thead><tr><th>Utilisateur</th><th>UID</th><th>Email</th><th>Discord</th><th>Badges</th><th>Inscrit le</th><th>Action</th></tr></thead>
     <tbody>${users.map(u => {
       let badges = [];
       try { badges = JSON.parse(u.discord_badges || '[]'); } catch {}
       const color = u.avatar_color || '#000';
       const initial = (u.display_name || u.username || '?').charAt(0).toUpperCase();
+      const uidBadge = u.uid != null
+        ? `<span style="font-size:12px;font-weight:600;color:var(--gray-600);">#${u.uid}</span>`
+        : `<span style="font-size:11px;font-weight:600;color:#ef4444;background:#fef2f2;padding:2px 6px;border-radius:4px;">—</span>`;
       return `<tr>
         <td><div class="user-cell"><div class="avatar-mini" style="background:${color}">${initial}</div><div><div style="font-weight:600;">@${u.username}</div><div style="font-size:11px;color:var(--gray-400);">${u.display_name || ''}</div></div></div></td>
+        <td>${uidBadge}</td>
         <td style="font-size:12px;color:var(--gray-500);">${u.email || '—'}</td>
         <td>${u.discord_id ? `<span class="discord-tag">🎮 ${u.discord_id}</span>` : '<span style="color:var(--gray-400);">—</span>'}</td>
         <td style="font-size:11px;">${badges.map(b => b.emoji).join(' ') || '—'}</td>
         <td style="font-size:11px;color:var(--gray-400);">${fmt(u.created_at)}</td>
-        <td><button class="btn-sm btn-danger" onclick="disableUser('${u.id}', '${u.username}')">Désactiver</button></td>
+        <td style="display:flex;gap:6px;align-items:center;"><a class="btn-sm" href="https://ak-47.fr/${u.username}" target="_blank" style="background:var(--gray-100);color:var(--gray-700);text-decoration:none;">👁 Voir</a><button class="btn-sm btn-danger" onclick="disableUser('${u.id}', '${u.username}')">Désactiver</button></td>
       </tr>`;
     }).join('')}
     </tbody>
