@@ -829,8 +829,8 @@ async function loadProfile() {
       } else {
         document.body.style.background = bgValue;
       }
-    } else if (bgType === 'image' && user.bg_url) {
-      const isVideo = user.bg_url.startsWith('data:video') || user.bg_url.endsWith('.mp4');
+    } else if ((bgType === 'image' || bgType === 'video' || bgType === 'upload') && user.bg_url) {
+      const isVideo = bgType === 'video' || user.bg_url.startsWith('data:video') || user.bg_url.endsWith('.mp4');
       if (isVideo) {
         const vid = document.getElementById('profileBgVideo');
         vid.src = user.bg_url;
