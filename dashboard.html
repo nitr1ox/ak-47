@@ -2262,8 +2262,8 @@ async function handleMedia(type, input) {
     input.value = ''; return;
   }
 
-  // Pour bg et banner : upload direct Firebase Storage (évite le base64 dans la DB)
-  if (type === 'bg' || type === 'banner') {
+  // Pour bg, banner et audio : upload direct Storj (évite le base64 dans la DB)
+  if (type === 'bg' || type === 'banner' || type === 'audio') {
     // Preview instantanée via ObjectURL (pas besoin de lire le fichier en base64)
     const previewData = URL.createObjectURL(file);
     // Afficher la preview locale immédiatement
@@ -2271,7 +2271,7 @@ async function handleMedia(type, input) {
       if (file.type === 'video/mp4') {
         const img = el('bgPreview'); if (img) { img.style.display = 'none'; img.src = ''; }
         const vid = el('bgVideoPreview');
-        if (vid) { vid.src = previewData; vid.style.display = 'block'; vid.play(); }
+        if (vid) { vid.src = previewData; vid.style.display = 'block'; vid.play().catch(() => {}); }
       } else {
         const vid = el('bgVideoPreview'); if (vid) { vid.style.display = 'none'; vid.src = ''; }
         const img = el('bgPreview');
@@ -2282,15 +2282,30 @@ async function handleMedia(type, input) {
       const act = el('mactions-bg'); if (act) act.style.display = 'flex';
       setMblockStatus('bg', true, file.type === 'video/mp4' ? 'Vidéo ⏳' : 'Image ⏳');
       const desc = el('mdesc-bg'); if (desc) desc.textContent = file.name;
+    } else if (type === 'audio') {
+      const audio = el('audioPreview');
+      if (audio) { audio.src = previewData; audio.style.display = 'block'; }
+      const dz = el('audioDropzone'); if (dz) dz.style.display = 'none';
+      const act = el('mactions-audio'); if (act) act.style.display = 'flex';
+      const meta = el('audioMeta'); if (meta) meta.style.display = 'block';
+      const nameInput = el('audioNameInput');
+      if (nameInput && !nameInput.value.trim()) {
+        const autoName = file.name.replace(/\.[^.]+$/, '');
+        nameInput.value = autoName;
+        pendingMedias.audio_name = autoName;
+      }
+      setMblockStatus('audio', true, 'Upload ⏳');
+      const desc = el('mdesc-audio'); if (desc) desc.textContent = file.name;
     }
     // Upload vers Storj via signed URL avec progress bar
     try {
       showAlert('mediasAlert', '⏳ Préparation...');
       showUploadProgress(0);
       const isVideo = file.type === 'video/mp4';
+      const isAudio = file.type.startsWith('audio/');
       let uploadPayload = file;
       let uploadType = file.type;
-      if (!isVideo) {
+      if (!isVideo && !isAudio) {
         showAlert('mediasAlert', '⏳ Compression...');
         uploadPayload = await compressImageBlob(file, 2560, 1440, 0.85);
         uploadType = 'image/jpeg';
@@ -2317,6 +2332,8 @@ async function handleMedia(type, input) {
       if (type === 'bg') {
         pendingMedias.bg_type = isVideo ? 'video' : 'upload';
         setMblockStatus('bg', true, isVideo ? 'Vidéo ✓' : 'Image ✓');
+      } else if (type === 'audio') {
+        setMblockStatus('audio', true, 'Actif ✓');
       }
     } catch (err) {
       showAlert('mediasAlert', '❌ ' + (err.message || 'Erreur upload'));
@@ -2356,21 +2373,6 @@ async function handleMedia(type, input) {
     const act = el('mactions-cursor'); if (act) act.style.display = 'flex';
     setMblockStatus('cursor', true, 'Actif');
     const desc = el('mdesc-cursor'); if (desc) desc.textContent = file.name;
-
-  } else if (type === 'audio') {
-    const audio = el('audioPreview');
-    if (audio) { audio.src = data; audio.style.display = 'block'; }
-    const dz = el('audioDropzone'); if (dz) dz.style.display = 'none';
-    const act = el('mactions-audio'); if (act) act.style.display = 'flex';
-    const meta = el('audioMeta'); if (meta) meta.style.display = 'block';
-    const nameInput = el('audioNameInput');
-    if (nameInput && !nameInput.value.trim()) {
-      const autoName = file.name.replace(/\.[^.]+$/, '');
-      nameInput.value = autoName;
-      pendingMedias.audio_name = autoName;
-    }
-    setMblockStatus('audio', true, 'Actif');
-    const desc = el('mdesc-audio'); if (desc) desc.textContent = file.name;
   }
 }
 
