@@ -443,6 +443,7 @@
         <div class="stat-card"><div class="stat-card-val" id="sv-today">—</div><div class="stat-card-label">Vues aujourd'hui</div></div>
         <div class="stat-card"><div class="stat-card-val" id="sv-7d">—</div><div class="stat-card-label">Vues 7 jours</div></div>
         <div class="stat-card"><div class="stat-card-val" id="sv-clicks">—</div><div class="stat-card-label">Clics sur liens</div></div>
+        <div class="stat-card"><div class="stat-card-val" id="sv-storage">—</div><div class="stat-card-label">Stockage utilisé</div></div>
       </div>
 
       <div class="section-card">
@@ -1552,6 +1553,7 @@ async function loadUser() {
     loadPersoUI();
     renderBadges();
     renderConnectedAccounts();
+    updateStorageDisplay();
 
     const ADMIN_DISCORD_IDS = ['866613427852804136'];
     if (userData.discord_id && ADMIN_DISCORD_IDS.includes(userData.discord_id)) {
@@ -1691,6 +1693,34 @@ async function toggleBadge(index) {
     userData.hidden_badges = data.hidden_badges !== undefined ? data.hidden_badges : JSON.stringify(hidden);
     renderBadges();
   } catch { showToast('Erreur réseau'); }
+}
+
+function formatBytes(bytes) {
+  if (!bytes || bytes === 0) return '0 MB';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+  return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+}
+
+function updateStorageDisplay() {
+  const used = userData.storage_used || 0;
+  const maxBytes = 25 * 1024 * 1024 * 1024; // 25 GB
+  const storageEl = document.getElementById('sv-storage');
+  if (storageEl) storageEl.textContent = formatBytes(used) + ' / 25 GB';
+}
+
+async function recalcStorage() {
+  try {
+    const r = await fetch(API + '/api/user/recalc-storage', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    if (r.ok) {
+      const data = await r.json();
+      userData.storage_used = data.storage_used;
+      updateStorageDisplay();
+    }
+  } catch (e) { /* silencieux */ }
 }
 
 function renderConnectedAccounts() {
@@ -2262,8 +2292,8 @@ async function handleMedia(type, input) {
     input.value = ''; return;
   }
 
-  // Pour bg, banner et audio : upload direct Storj (évite le base64 dans la DB)
-  if (type === 'bg' || type === 'banner' || type === 'audio') {
+  // Pour bg et banner : upload direct Firebase Storage (évite le base64 dans la DB)
+  if (type === 'bg' || type === 'banner') {
     // Preview instantanée via ObjectURL (pas besoin de lire le fichier en base64)
     const previewData = URL.createObjectURL(file);
     // Afficher la preview locale immédiatement
@@ -2271,7 +2301,7 @@ async function handleMedia(type, input) {
       if (file.type === 'video/mp4') {
         const img = el('bgPreview'); if (img) { img.style.display = 'none'; img.src = ''; }
         const vid = el('bgVideoPreview');
-        if (vid) { vid.src = previewData; vid.style.display = 'block'; vid.play().catch(() => {}); }
+        if (vid) { vid.src = previewData; vid.style.display = 'block'; vid.play(); }
       } else {
         const vid = el('bgVideoPreview'); if (vid) { vid.style.display = 'none'; vid.src = ''; }
         const img = el('bgPreview');
@@ -2282,30 +2312,15 @@ async function handleMedia(type, input) {
       const act = el('mactions-bg'); if (act) act.style.display = 'flex';
       setMblockStatus('bg', true, file.type === 'video/mp4' ? 'Vidéo ⏳' : 'Image ⏳');
       const desc = el('mdesc-bg'); if (desc) desc.textContent = file.name;
-    } else if (type === 'audio') {
-      const audio = el('audioPreview');
-      if (audio) { audio.src = previewData; audio.style.display = 'block'; }
-      const dz = el('audioDropzone'); if (dz) dz.style.display = 'none';
-      const act = el('mactions-audio'); if (act) act.style.display = 'flex';
-      const meta = el('audioMeta'); if (meta) meta.style.display = 'block';
-      const nameInput = el('audioNameInput');
-      if (nameInput && !nameInput.value.trim()) {
-        const autoName = file.name.replace(/\.[^.]+$/, '');
-        nameInput.value = autoName;
-        pendingMedias.audio_name = autoName;
-      }
-      setMblockStatus('audio', true, 'Upload ⏳');
-      const desc = el('mdesc-audio'); if (desc) desc.textContent = file.name;
     }
     // Upload vers Storj via signed URL avec progress bar
     try {
       showAlert('mediasAlert', '⏳ Préparation...');
       showUploadProgress(0);
       const isVideo = file.type === 'video/mp4';
-      const isAudio = file.type.startsWith('audio/');
       let uploadPayload = file;
       let uploadType = file.type;
-      if (!isVideo && !isAudio) {
+      if (!isVideo) {
         showAlert('mediasAlert', '⏳ Compression...');
         uploadPayload = await compressImageBlob(file, 2560, 1440, 0.85);
         uploadType = 'image/jpeg';
@@ -2317,7 +2332,7 @@ async function handleMedia(type, input) {
       const urlResp = await fetch(API + '/api/user/upload-url', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-        body: JSON.stringify({ filename: file.name, contentType: uploadType, field: type + '_url', oldPath: oldUrl, file_size: uploadPayload.size || file.size })
+        body: JSON.stringify({ filename: file.name, contentType: uploadType, field: type + '_url', oldPath: oldUrl })
       });
       if (!urlResp.ok) throw new Error(`Impossible d'obtenir le lien d'upload`);
       const { uploadUrl, publicUrl } = await urlResp.json();
@@ -2332,9 +2347,8 @@ async function handleMedia(type, input) {
       if (type === 'bg') {
         pendingMedias.bg_type = isVideo ? 'video' : 'upload';
         setMblockStatus('bg', true, isVideo ? 'Vidéo ✓' : 'Image ✓');
-      } else if (type === 'audio') {
-        setMblockStatus('audio', true, 'Actif ✓');
       }
+      recalcStorage();
     } catch (err) {
       showAlert('mediasAlert', '❌ ' + (err.message || 'Erreur upload'));
       input.value = '';
@@ -2373,6 +2387,21 @@ async function handleMedia(type, input) {
     const act = el('mactions-cursor'); if (act) act.style.display = 'flex';
     setMblockStatus('cursor', true, 'Actif');
     const desc = el('mdesc-cursor'); if (desc) desc.textContent = file.name;
+
+  } else if (type === 'audio') {
+    const audio = el('audioPreview');
+    if (audio) { audio.src = data; audio.style.display = 'block'; }
+    const dz = el('audioDropzone'); if (dz) dz.style.display = 'none';
+    const act = el('mactions-audio'); if (act) act.style.display = 'flex';
+    const meta = el('audioMeta'); if (meta) meta.style.display = 'block';
+    const nameInput = el('audioNameInput');
+    if (nameInput && !nameInput.value.trim()) {
+      const autoName = file.name.replace(/\.[^.]+$/, '');
+      nameInput.value = autoName;
+      pendingMedias.audio_name = autoName;
+    }
+    setMblockStatus('audio', true, 'Actif');
+    const desc = el('mdesc-audio'); if (desc) desc.textContent = file.name;
   }
 }
 
@@ -2597,12 +2626,6 @@ function loadPersoUI() {
   switchBgTab(bgType);
   if (bgType === 'color')    { el('bgColorPicker').value = bgValue; el('bgColorHex').value = bgValue; }
   if (bgType === 'gradient') { el('gradientCustom').value = bgValue; }
-  // Afficher l'aperçu du fond uploadé (Storj) si bg_type est 'upload' ou 'video'
-  if ((bgType === 'upload' || bgType === 'video') && userData.bg_url) {
-    el('bgPersoPreview').src = userData.bg_url; el('bgPersoPreview').style.display = 'block';
-    el('bgPersoIcon').style.display = 'none'; el('bgPersoLabel').textContent = 'Fond actuel';
-    el('bgPersoRemove').style.display = 'inline';
-  }
 
   if (userData.banner_url) {
     el('bannerPreview').src = userData.banner_url; el('bannerPreview').style.display = 'block';
@@ -2668,22 +2691,16 @@ function loadPersoUI() {
 }
 
 function switchBgTab(tab) {
-  // 'upload' et 'video' sont des variantes du tab 'image' (fond uploadé sur Storj)
-  const displayTab = (tab === 'upload' || tab === 'video') ? 'image' : tab;
   ['color','gradient','image'].forEach(t => {
-    el('bgZone' + t.charAt(0).toUpperCase() + t.slice(1)).style.display = t === displayTab ? 'block' : 'none';
-    el('bgTab'  + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === displayTab);
+    el('bgZone' + t.charAt(0).toUpperCase() + t.slice(1)).style.display = t === tab ? 'block' : 'none';
+    el('bgTab'  + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
   });
-  if (displayTab !== 'image') {
-    pendingPerso.bg_type = displayTab;
-    if (displayTab === 'color')    pendingPerso.bg_value = el('bgColorPicker').value;
-    if (displayTab === 'gradient') pendingPerso.bg_value = el('gradientCustom').value;
+  if (tab !== 'image') {
+    pendingPerso.bg_type = tab;
+    if (tab === 'color')    pendingPerso.bg_value = el('bgColorPicker').value;
+    if (tab === 'gradient') pendingPerso.bg_value = el('gradientCustom').value;
   } else {
-    // Ne pas écraser bg_type si on vient d'un type 'upload' ou 'video' déjà sauvegardé.
-    // Le type reste inchangé sauf si l'utilisateur sélectionne l'onglet Image manuellement
-    // (auquel cas tab === 'image' directement, pas 'upload'/'video').
-    if (tab === 'image') pendingPerso.bg_type = 'image';
-    // Si tab === 'upload' ou 'video', on préserve le bg_type existant (déjà dans pendingPerso ou userData)
+    pendingPerso.bg_type = 'image';
   }
 }
 
