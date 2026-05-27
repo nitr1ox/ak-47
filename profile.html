@@ -795,7 +795,14 @@ async function loadProfile() {
     if (font !== 'Inter') {
       const link = document.getElementById('profileFont');
       link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}:wght@400;500;600;700&display=swap`;
-      document.body.style.fontFamily = `'${font}', sans-serif`;
+      // Attendre que la police soit chargée avant de l'appliquer
+      link.onload = () => {
+        document.body.style.fontFamily = `'${font}', sans-serif`;
+      };
+      // Fallback si onload ne se déclenche pas (déjà en cache)
+      document.fonts.ready.then(() => {
+        document.body.style.fontFamily = `'${font}', sans-serif`;
+      });
     }
 
     const bgType  = user.bg_type  || 'color';

@@ -2691,16 +2691,20 @@ function loadPersoUI() {
 }
 
 function switchBgTab(tab) {
+  // 'video' et 'upload' s'affichent dans l'onglet 'image'
+  const displayTab = (tab === 'video' || tab === 'upload') ? 'image' : tab;
   ['color','gradient','image'].forEach(t => {
-    el('bgZone' + t.charAt(0).toUpperCase() + t.slice(1)).style.display = t === tab ? 'block' : 'none';
-    el('bgTab'  + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
+    el('bgZone' + t.charAt(0).toUpperCase() + t.slice(1)).style.display = t === displayTab ? 'block' : 'none';
+    el('bgTab'  + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === displayTab);
   });
-  if (tab !== 'image') {
+  if (displayTab !== 'image') {
     pendingPerso.bg_type = tab;
     if (tab === 'color')    pendingPerso.bg_value = el('bgColorPicker').value;
     if (tab === 'gradient') pendingPerso.bg_value = el('gradientCustom').value;
   } else {
-    pendingPerso.bg_type = 'image';
+    // Ne pas écraser bg_type si c'est déjà 'video' ou 'upload' en base
+    if (tab === 'image') pendingPerso.bg_type = 'image';
+    // sinon on laisse pendingPerso.bg_type à null pour ne pas changer le type en DB
   }
 }
 
