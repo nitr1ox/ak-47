@@ -443,7 +443,7 @@
         <div class="stat-card"><div class="stat-card-val" id="sv-today">—</div><div class="stat-card-label">Vues aujourd'hui</div></div>
         <div class="stat-card"><div class="stat-card-val" id="sv-7d">—</div><div class="stat-card-label">Vues 7 jours</div></div>
         <div class="stat-card"><div class="stat-card-val" id="sv-clicks">—</div><div class="stat-card-label">Clics sur liens</div></div>
-        <div class="stat-card"><div class="stat-card-val" id="sv-storage">—</div><div class="stat-card-label">Stockage utilisé</div></div>
+        
       </div>
 
       <div class="section-card">
@@ -1365,7 +1365,7 @@
 
 <script>
 const API = 'https://ak47-backend.onrender.com';
-// Ping health pour réveiller Render — loadAnalytics attend que le backend soit prêt
+
 let _backendReady = false;
 let _analyticsWaiting = false;
 fetch(API + '/api/health').then(() => {
@@ -1508,10 +1508,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btn2 = document.getElementById('profileViewBtn2'); if (btn2) btn2.href = profileUrl;
   document.getElementById('overviewDate').textContent = new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   startHeartbeat();
-  // Attendre que le backend soit réveillé (cold start Render) avant les analytics
+
   const analyticsPromise = new Promise(resolve => {
     if (_backendReady) { resolve(loadAnalytics()); }
-    else { _analyticsWaiting = true; /* health ping appellera loadAnalytics */ resolve(); }
+    else { _analyticsWaiting = true;  resolve(); }
   });
   await Promise.all([loadUser(), analyticsPromise]);
 
@@ -1572,7 +1572,7 @@ async function loadAnalytics() {
       throw new Error('HTTP ' + r.status + (body ? ' – ' + body.slice(0, 200) : ''));
     }
     const raw = await r.json();
-    // Normaliser les champs pour éviter undefined → fmt affiche 0
+
     analyticsData = {
       total_views:  raw.total_views  ?? 0,
       total_clicks: raw.total_clicks ?? 0,
@@ -1591,15 +1591,15 @@ async function loadAnalytics() {
     renderTopLinks();
   } catch(e) {
     console.error('[analytics] echec', e);
-    // Réessayer si le backend Render est en cold start
+
     if (_analyticsRetries < 3) {
       _analyticsRetries++;
       const delay = _analyticsRetries * 5000;
       console.warn('[analytics] retry dans ' + delay/1000 + 's… (' + _analyticsRetries + '/3)');
       setTimeout(loadAnalytics, delay);
-      return; // garder les tirets pendant le retry, ne pas écraser avec des 0
+      return;
     }
-    // Après 3 échecs : afficher 0
+
     analyticsData = { total_views:0, total_clicks:0, views_today:0, views_7d:0, views_30d:0, clicks_7d:0, daily:[], top_links:[] };
     renderStats();
     renderChart('chartBars', [], 80);
@@ -1700,27 +1700,6 @@ function formatBytes(bytes) {
   if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
   if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
   return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
-}
-
-function updateStorageDisplay() {
-  const used = userData.storage_used || 0;
-  const maxBytes = 25 * 1024 * 1024 * 1024; // 25 GB
-  const storageEl = document.getElementById('sv-storage');
-  if (storageEl) storageEl.textContent = formatBytes(used) + ' / 25 GB';
-}
-
-async function recalcStorage() {
-  try {
-    const r = await fetch(API + '/api/user/recalc-storage', {
-      method: 'POST',
-      headers: { Authorization: 'Bearer ' + token }
-    });
-    if (r.ok) {
-      const data = await r.json();
-      userData.storage_used = data.storage_used;
-      updateStorageDisplay();
-    }
-  } catch (e) { /* silencieux */ }
 }
 
 function renderConnectedAccounts() {
@@ -2202,7 +2181,7 @@ function removeMedia(e, type) {
   if (e && e.stopPropagation) e.stopPropagation();
   removeMedia2(type);
 }
-// Retourne un Blob JPEG compressé (plus rapide que base64 toDataURL)
+
 function compressImageBlob(file, maxW, maxH, quality) {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file);
@@ -2229,14 +2208,12 @@ function compressImageBlob(file, maxW, maxH, quality) {
   });
 }
 
-// Compat : retourne toujours un dataURL (pour les endroits qui en ont besoin pour preview)
 function compressImage(file, maxW, maxH, quality) {
   return compressImageBlob(file, maxW, maxH, quality).then(blob => new Promise((res, rej) => {
     const r = new FileReader(); r.onload = e => res(e.target.result); r.onerror = rej; r.readAsDataURL(blob);
   }));
 }
 
-// Upload direct vers Firebase Storage avec progress bar XHR
 function uploadWithProgress(url, fileOrBlob, contentType, onProgress) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
@@ -2265,7 +2242,6 @@ function showUploadProgress(pct) {
   if (pct >= 100) setTimeout(() => { bar.style.opacity = '0'; }, 800);
 }
 
-// ── Cloudinary upload via signed URL avec progress XHR ──
 async function uploadToCloudinary(fileOrBlob, uploadData, contentType, onProgress) {
   return new Promise((resolve, reject) => {
     const formData = new FormData();
@@ -2306,11 +2282,10 @@ async function handleMedia(type, input) {
     input.value = ''; return;
   }
 
-  // Pour bg et banner : upload direct Firebase Storage (évite le base64 dans la DB)
   if (type === 'bg' || type === 'banner') {
-    // Preview instantanée via ObjectURL (pas besoin de lire le fichier en base64)
+
     const previewData = URL.createObjectURL(file);
-    // Afficher la preview locale immédiatement
+
     if (type === 'bg') {
       if (file.type === 'video/mp4') {
         const img = el('bgPreview'); if (img) { img.style.display = 'none'; img.src = ''; }
@@ -2327,7 +2302,7 @@ async function handleMedia(type, input) {
       setMblockStatus('bg', true, file.type === 'video/mp4' ? 'Vidéo ⏳' : 'Image ⏳');
       const desc = el('mdesc-bg'); if (desc) desc.textContent = file.name;
     }
-    // Upload vers Storj via signed URL avec progress bar
+
     try {
       showAlert('mediasAlert', '⏳ Préparation...');
       showUploadProgress(0);
@@ -2362,7 +2337,6 @@ async function handleMedia(type, input) {
         pendingMedias.bg_type = isVideo ? 'video' : 'upload';
         setMblockStatus('bg', true, isVideo ? 'Vidéo ✓' : 'Image ✓');
       }
-      recalcStorage();
     } catch (err) {
       showAlert('mediasAlert', '❌ ' + (err.message || 'Erreur upload'));
       input.value = '';
@@ -2494,6 +2468,16 @@ function loadMediasUI() {
     const meta = el('audioMeta'); if (meta) meta.style.display = 'block';
     selectAudioSrc2('upload');
     setMblockStatus('audio', true, 'Actif');
+  } else if (userData.bg_type === 'video' && userData.bg_url) {
+    // Pas d'audio uploadé : utiliser l'audio de la vidéo de fond
+    const audio = el('audioPreview');
+    if (audio) { audio.src = userData.bg_url; audio.style.display = 'block'; }
+    const dz = el('audioDropzone'); if (dz) dz.style.display = 'none';
+    const act = el('mactions-audio'); if (act) act.style.display = 'flex';
+    const meta = el('audioMeta'); if (meta) meta.style.display = 'block';
+    selectAudioSrc2('upload');
+    setMblockStatus('audio', true, 'Vidéo (auto)');
+    pendingMedias.audio_url = userData.bg_url;
   }
 
   if (userData.audio_name) {
@@ -2718,7 +2702,7 @@ function switchBgTab(tab) {
   } else {
     // Ne pas écraser bg_type si c'est déjà 'video' ou 'upload' en base
     if (tab === 'image') pendingPerso.bg_type = 'image';
-    // sinon on laisse pendingPerso.bg_type à null pour ne pas changer le type en DB
+
   }
 }
 
@@ -2986,7 +2970,7 @@ document.addEventListener("DOMContentLoaded",function(){
   </button>
 </nav>
 <script>
-// Helpers partagés (guard pour éviter redéclaration)
+
 if (typeof el === 'undefined') { window.el = id => document.getElementById(id); }
 if (typeof showToast === 'undefined') { window.showToast = msg => { const t = document.getElementById('toast'); if(t){t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);} }; }
 
@@ -2994,7 +2978,6 @@ function setMobActive(btn) {
   document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
 }
-
 
 let tplAll = [];
 let tplFilter = 'recent';
@@ -3141,7 +3124,6 @@ async function tplPublish() {
 
 el('tplModal')?.addEventListener('click', e => { if (e.target === el('tplModal')) tplClosePublish(); });
 
-/* ===================== TEMPLATES DASHBOARD ===================== */
 let _tplDashData = [];
 let _tplDashTab = 'all';
 let _tplDashFavs = JSON.parse(localStorage.getItem('tpl_favs') || '[]');
@@ -3210,7 +3192,7 @@ function tplDashRender() {
   if (!grid) return;
   const list = tplDashGetList();
   if (!list.length) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--gray-400);font-family:'JetBrains Mono',monospace;font-size:12px;">// aucun modèle trouvé</div>`;
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--gray-400);font-family:'JetBrains Mono',monospace;font-size:12px;">
     return;
   }
   grid.innerHTML = list.map((t, i) => {
@@ -3268,7 +3250,7 @@ async function tplDashLoad() {
     _tplDashData = await r.json();
     tplDashRender();
   } catch {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--gray-400);font-family:'JetBrains Mono',monospace;font-size:12px;">// erreur de chargement</div>`;
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--gray-400);font-family:'JetBrains Mono',monospace;font-size:12px;">
   }
 }
 
@@ -3331,7 +3313,6 @@ async function tplDashPublish() {
 document.getElementById('tplDashModal')?.addEventListener('click', e => {
   if (e.target === document.getElementById('tplDashModal')) tplDashClosePublish();
 });
-
 
 const _origSwitchTab = switchTab;
 switchTab = function(name) {
