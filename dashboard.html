@@ -1387,7 +1387,7 @@ if (!token) window.location.href = '/login';
 let userData = null;
 let analyticsData = null;
 let pendingLinks = null;
-let pendingMedias = { avatar_url: null, bg_url: null, audio_url: null, audio_name: null, audio_cover_url: null, cursor_url: null };
+let pendingMedias = { avatar_url: null, bg_url: null, bg_type: null, audio_url: null, audio_name: null, audio_cover_url: null, cursor_url: null };
 
 const SOCIALS = [
   { id:'snapchat',   label:'Snapchat',   color:'#FFFC00', icon:'https://cdn.simpleicons.org/snapchat/FFFC00',    base:'https://snapchat.com/add/',       placeholder:'Ton pseudo Snapchat' },
@@ -2314,7 +2314,10 @@ async function handleMedia(type, input) {
       showUploadProgress(100);
       el('mediasAlert').innerHTML = '';
       pendingMedias[type + '_url'] = publicUrl;
-      if (type === 'bg') setMblockStatus('bg', true, isVideo ? 'Vidéo ✓' : 'Image ✓');
+      if (type === 'bg') {
+        pendingMedias.bg_type = isVideo ? 'video' : 'upload';
+        setMblockStatus('bg', true, isVideo ? 'Vidéo ✓' : 'Image ✓');
+      }
     } catch (err) {
       showAlert('mediasAlert', '❌ ' + (err.message || 'Erreur upload'));
       input.value = '';
@@ -2494,7 +2497,7 @@ async function saveMedias() {
     const data = await r.json();
     if (!r.ok) { showAlert('mediasAlert', data.error || 'Erreur'); showToast('❌ ' + (data.error || 'Erreur lors de la sauvegarde')); return; }
     userData = data;
-    pendingMedias = { avatar_url: null, bg_url: null, audio_url: null, audio_name: null, audio_cover_url: null, cursor_url: null };
+    pendingMedias = { avatar_url: null, bg_url: null, bg_type: null, audio_url: null, audio_name: null, audio_cover_url: null, cursor_url: null };
     el('mediasAlert').innerHTML = '';
     if (data.audio_name !== undefined) {
       const ni = el('audioNameInput');
