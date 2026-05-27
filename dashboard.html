@@ -2302,7 +2302,7 @@ async function handleMedia(type, input) {
       const urlResp = await fetch(API + '/api/user/upload-url', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-        body: JSON.stringify({ filename: file.name, contentType: uploadType, field: type + '_url', oldPath: oldUrl })
+        body: JSON.stringify({ filename: file.name, contentType: uploadType, field: type + '_url', oldPath: oldUrl, file_size: uploadPayload.size || file.size })
       });
       if (!urlResp.ok) throw new Error(`Impossible d'obtenir le lien d'upload`);
       const { uploadUrl, publicUrl } = await urlResp.json();
@@ -2595,6 +2595,12 @@ function loadPersoUI() {
   switchBgTab(bgType);
   if (bgType === 'color')    { el('bgColorPicker').value = bgValue; el('bgColorHex').value = bgValue; }
   if (bgType === 'gradient') { el('gradientCustom').value = bgValue; }
+  // Afficher l'aperçu du fond uploadé (Storj) si bg_type est 'upload' ou 'video'
+  if ((bgType === 'upload' || bgType === 'video') && userData.bg_url) {
+    el('bgPersoPreview').src = userData.bg_url; el('bgPersoPreview').style.display = 'block';
+    el('bgPersoIcon').style.display = 'none'; el('bgPersoLabel').textContent = 'Fond actuel';
+    el('bgPersoRemove').style.display = 'inline';
+  }
 
   if (userData.banner_url) {
     el('bannerPreview').src = userData.banner_url; el('bannerPreview').style.display = 'block';
@@ -2660,16 +2666,22 @@ function loadPersoUI() {
 }
 
 function switchBgTab(tab) {
+  // 'upload' et 'video' sont des variantes du tab 'image' (fond uploadé sur Storj)
+  const displayTab = (tab === 'upload' || tab === 'video') ? 'image' : tab;
   ['color','gradient','image'].forEach(t => {
-    el('bgZone' + t.charAt(0).toUpperCase() + t.slice(1)).style.display = t === tab ? 'block' : 'none';
-    el('bgTab'  + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
+    el('bgZone' + t.charAt(0).toUpperCase() + t.slice(1)).style.display = t === displayTab ? 'block' : 'none';
+    el('bgTab'  + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === displayTab);
   });
-  if (tab !== 'image') {
-    pendingPerso.bg_type = tab;
-    if (tab === 'color')    pendingPerso.bg_value = el('bgColorPicker').value;
-    if (tab === 'gradient') pendingPerso.bg_value = el('gradientCustom').value;
+  if (displayTab !== 'image') {
+    pendingPerso.bg_type = displayTab;
+    if (displayTab === 'color')    pendingPerso.bg_value = el('bgColorPicker').value;
+    if (displayTab === 'gradient') pendingPerso.bg_value = el('gradientCustom').value;
   } else {
-    pendingPerso.bg_type = 'image';
+    // Ne pas écraser bg_type si on vient d'un type 'upload' ou 'video' déjà sauvegardé.
+    // Le type reste inchangé sauf si l'utilisateur sélectionne l'onglet Image manuellement
+    // (auquel cas tab === 'image' directement, pas 'upload'/'video').
+    if (tab === 'image') pendingPerso.bg_type = 'image';
+    // Si tab === 'upload' ou 'video', on préserve le bg_type existant (déjà dans pendingPerso ou userData)
   }
 }
 
