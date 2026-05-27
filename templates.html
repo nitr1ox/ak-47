@@ -361,7 +361,7 @@ function escHtml(s) {
 function renderGrid() {
   const list = getFiltered();
   const grid = document.getElementById('grid');
-  if (!list.length) { grid.innerHTML = '<div class="empty">// aucun modèle trouvé</div>'; return; }
+  if (!list.length) { grid.innerHTML = '<div class="empty">
   grid.innerHTML = list.map((t, i) => {
     let config = {};
     try { config = JSON.parse(t.config || '{}'); } catch {}
@@ -446,7 +446,7 @@ async function loadTemplates() {
   try {
     const r = await fetch(`${API}/api/templates`);
     allTemplates = await r.json(); renderGrid();
-  } catch { document.getElementById('grid').innerHTML='<div class="empty">// erreur de chargement</div>'; }
+  } catch { document.getElementById('grid').innerHTML='<div class="empty">
 }
 loadTemplates();
 function toggleTheme(){

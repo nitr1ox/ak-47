@@ -795,11 +795,11 @@ async function loadProfile() {
     if (font !== 'Inter') {
       const link = document.getElementById('profileFont');
       link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}:wght@400;500;600;700&display=swap`;
-      // Attendre que la police soit chargée avant de l'appliquer
+
       link.onload = () => {
         document.body.style.fontFamily = `'${font}', sans-serif`;
       };
-      // Fallback si onload ne se déclenche pas (déjà en cache)
+
       document.fonts.ready.then(() => {
         document.body.style.fontFamily = `'${font}', sans-serif`;
       });
@@ -845,7 +845,7 @@ async function loadProfile() {
         vid.style.display = 'block';
         vid.muted = true;
         vid.play().catch(() => {
-          // Autoplay bloqué par le navigateur, on attend une interaction
+
           document.addEventListener('click', () => vid.play().catch(() => {}), { once: true });
         });
         const bg = document.getElementById('profileBg');

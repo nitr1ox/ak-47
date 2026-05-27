@@ -1208,7 +1208,6 @@
         </select>
       </div>
 
-
       <div class="section-card">
         <div class="section-card-title">Éléments affichés</div>
         <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Choisissez ce qui est visible sur votre profil public.</div>
@@ -1305,7 +1304,7 @@
         <button onclick="tplDashOpenPublish()" style="display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--black);color:var(--white);border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Rajdhani',sans-serif;letter-spacing:1px;text-transform:uppercase;">+ Publier mon style</button>
       </div>
 
-      <!-- Tabs filtres -->
+      
       <div style="display:flex;gap:4px;border-bottom:1px solid var(--gray-200);margin-bottom:20px;overflow-x:auto;">
         <button class="tpl-dash-tab active" onclick="tplDashSetTab('all',this)" style="padding:8px 16px;font-size:12px;font-weight:600;background:none;border:none;border-bottom:2px solid var(--black);color:var(--black);cursor:pointer;white-space:nowrap;font-family:'Rajdhani',sans-serif;letter-spacing:.5px;text-transform:uppercase;">Bibliothèque</button>
         <button class="tpl-dash-tab" onclick="tplDashSetTab('favs',this)" style="padding:8px 16px;font-size:12px;font-weight:600;background:none;border:none;border-bottom:2px solid transparent;color:var(--gray-400);cursor:pointer;white-space:nowrap;font-family:'Rajdhani',sans-serif;letter-spacing:.5px;text-transform:uppercase;">⭐ Favoris</button>
@@ -1313,7 +1312,7 @@
         <button class="tpl-dash-tab" onclick="tplDashSetTab('mine',this)" style="padding:8px 16px;font-size:12px;font-weight:600;background:none;border:none;border-bottom:2px solid transparent;color:var(--gray-400);cursor:pointer;white-space:nowrap;font-family:'Rajdhani',sans-serif;letter-spacing:.5px;text-transform:uppercase;">Mes envois</button>
       </div>
 
-      <!-- Toolbar recherche + tri -->
+      
       <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
         <div style="position:relative;flex:1;min-width:180px;">
           <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:13px;pointer-events:none;">🔍</span>
@@ -1330,12 +1329,12 @@
         <button onclick="tplDashLoad()" style="padding:8px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:12px;background:var(--gray-50);color:var(--gray-600);cursor:pointer;" title="Rafraîchir">↺</button>
       </div>
 
-      <!-- Grille -->
+      
       <div id="tplDashGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;">
         <div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--gray-400);font-family:'JetBrains Mono',monospace;font-size:12px;">Chargement des modèles…</div>
       </div>
 
-      <!-- Modal publier -->
+      
       <div id="tplDashModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);z-index:1000;align-items:center;justify-content:center;">
         <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:10px;padding:28px;width:90%;max-width:420px;box-shadow:0 24px 80px rgba(0,0,0,.2);">
           <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Publier</div>
@@ -1371,7 +1370,7 @@ let _analyticsWaiting = false;
 fetch(API + '/api/health').then(() => {
   _backendReady = true;
   if (_analyticsWaiting) { _analyticsWaiting = false; loadAnalytics(); }
-}).catch(() => { _backendReady = true; }); // en cas d'erreur, on laisse loadAnalytics se débrouiller
+}).catch(() => { _backendReady = true; });
 
 function startHeartbeat() {
   const beat = () => fetch(API + '/api/heartbeat', {
@@ -2315,7 +2314,7 @@ async function handleMedia(type, input) {
         uploadType = 'image/jpeg';
         showUploadProgress(5);
       }
-      // Récupérer l'ancienne URL pour suppression côté backend
+
       const oldUrl = userData?.[type + '_url'] || pendingMedias[type + '_url'] || null;
       showAlert('mediasAlert', '⏳ Connexion...');
       const urlResp = await fetch(API + '/api/user/upload-url', {
@@ -2469,7 +2468,7 @@ function loadMediasUI() {
     selectAudioSrc2('upload');
     setMblockStatus('audio', true, 'Actif');
   } else if (userData.bg_type === 'video' && userData.bg_url) {
-    // Pas d'audio uploadé : utiliser l'audio de la vidéo de fond
+
     const audio = el('audioPreview');
     if (audio) { audio.src = userData.bg_url; audio.style.display = 'block'; }
     const dz = el('audioDropzone'); if (dz) dz.style.display = 'none';
@@ -2689,7 +2688,7 @@ function loadPersoUI() {
 }
 
 function switchBgTab(tab) {
-  // 'video' et 'upload' s'affichent dans l'onglet 'image'
+
   const displayTab = (tab === 'video' || tab === 'upload') ? 'image' : tab;
   ['color','gradient','image'].forEach(t => {
     el('bgZone' + t.charAt(0).toUpperCase() + t.slice(1)).style.display = t === displayTab ? 'block' : 'none';
@@ -2700,7 +2699,7 @@ function switchBgTab(tab) {
     if (tab === 'color')    pendingPerso.bg_value = el('bgColorPicker').value;
     if (tab === 'gradient') pendingPerso.bg_value = el('gradientCustom').value;
   } else {
-    // Ne pas écraser bg_type si c'est déjà 'video' ou 'upload' en base
+
     if (tab === 'image') pendingPerso.bg_type = 'image';
 
   }

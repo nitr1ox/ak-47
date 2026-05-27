@@ -262,6 +262,5 @@ input.error { border-color: var(--red); }
 }
 .discord-invite-btn svg { flex-shrink: 0; }
 
-
 [data-theme="dark"] { --logo-filter: invert(1); }
 [data-theme="light"] { --logo-filter: none; }
