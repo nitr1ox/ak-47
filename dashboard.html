@@ -2280,7 +2280,7 @@ async function handleMedia(type, input) {
       const wrap = el('bgPreviewWrap'); if (wrap) wrap.style.display = 'block';
       const dz = el('bgDropzone'); if (dz) dz.style.display = 'none';
       const act = el('mactions-bg'); if (act) act.style.display = 'flex';
-      setMblockStatus('bg', true, file.type === 'video/mp4' ? 'Vidéo (upload en cours...)' : 'Image (upload en cours...)');
+      setMblockStatus('bg', true, file.type === 'video/mp4' ? 'Vidéo ⏳' : 'Image ⏳');
       const desc = el('mdesc-bg'); if (desc) desc.textContent = file.name;
     }
     // Upload vers Storj via signed URL avec progress bar
@@ -2314,7 +2314,7 @@ async function handleMedia(type, input) {
       showUploadProgress(100);
       el('mediasAlert').innerHTML = '';
       pendingMedias[type + '_url'] = publicUrl;
-      if (type === 'bg') setMblockStatus('bg', true, isVideo ? 'Vidéo' : 'Image');
+      if (type === 'bg') setMblockStatus('bg', true, isVideo ? 'Vidéo ✓' : 'Image ✓');
     } catch (err) {
       showAlert('mediasAlert', '❌ ' + (err.message || 'Erreur upload'));
       input.value = '';
