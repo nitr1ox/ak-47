@@ -830,23 +830,16 @@ async function loadProfile() {
         document.body.style.background = bgValue;
       }
     } else if ((bgType === 'image' || bgType === 'video' || bgType === 'upload') && user.bg_url) {
-      const isVideo = bgType === 'video' || user.bg_url.startsWith('data:video');
+      const isVideo = bgType === 'video' || user.bg_url.startsWith('data:video') || user.bg_url.endsWith('.mp4');
       if (isVideo) {
         const vid = document.getElementById('profileBgVideo');
-        const mimeType = user.bg_url.startsWith('data:video/webm') ? 'video/webm'
-                       : user.bg_url.startsWith('data:video/ogg')  ? 'video/ogg'
-                       : 'video/mp4';
-        vid.innerHTML = `<source src="${user.bg_url.replace(/"/g, '&quot;')}" type="${mimeType}">`;
-        vid.load();
+        vid.src = user.bg_url;
         vid.style.opacity = bgOpacity;
         vid.style.display = 'block';
-        // Si pas de musique configurée, on démute la vidéo de fond
-        if (!user.audio_url) {
-          vid.muted = false;
-          vid.volume = 0.7;
-        }
-        vid.play().catch(err => {
-          console.warn('Vidéo de fond non lisible :', err);
+        vid.muted = true;
+        vid.play().catch(() => {
+          // Autoplay bloqué par le navigateur, on attend une interaction
+          document.addEventListener('click', () => vid.play().catch(() => {}), { once: true });
         });
         const bg = document.getElementById('profileBg');
         bg.style.backgroundImage = '';
@@ -909,12 +902,7 @@ async function loadProfile() {
 
     if (user.audio_url) {
       const player = document.getElementById('audioPlayer');
-      const audioMime = user.audio_url.startsWith('data:audio/ogg')  ? 'audio/ogg'
-                      : user.audio_url.startsWith('data:audio/wav')  ? 'audio/wav'
-                      : user.audio_url.startsWith('data:audio/webm') ? 'audio/webm'
-                      : 'audio/mpeg';
-      player.innerHTML = `<source src="${user.audio_url.replace(/"/g, '&quot;')}" type="${audioMime}">`;
-      player.load();
+      player.src = user.audio_url;
       player.volume = 0.7;
       const bar = document.getElementById('audioBar');
       bar.classList.add('visible');
@@ -1695,14 +1683,9 @@ function toggleAudio() {
   const player = document.getElementById('audioPlayer');
   const icon   = document.getElementById('mpPlayIcon');
   if (player.paused) {
-    player.play().then(() => {
-      icon.innerHTML = '<path d="M6 19h4V5H6zm8-14v14h4V5z"/>';
-      audioPlaying = true;
-    }).catch(err => {
-      console.warn('Lecture audio impossible :', err);
-      audioPlaying = false;
-    });
-    return;
+    player.play();
+    icon.innerHTML = '<path d="M6 19h4V5H6zm8-14v14h4V5z"/>';
+    audioPlaying = true;
   } else {
     player.pause();
     icon.innerHTML = '<path d="M8 5v14l11-7z"/>';
@@ -1755,8 +1738,7 @@ document.getElementById('enterBtn').addEventListener('click', function(e){ e.sto
 
 function startMusicNow() {
   const player = document.getElementById('audioPlayer');
-  const hasSource = player && (player.src || player.querySelector('source'));
-  if (!hasSource) return;
+  if (!player || !player.src) return;
   player.play().then(() => {
     const icon = document.getElementById('mpPlayIcon');
     if (icon) icon.innerHTML = '<path d="M6 19h4V5H6zm8-14v14h4V5z"/>';
