@@ -2265,16 +2265,30 @@ function showUploadProgress(pct) {
   if (pct >= 100) setTimeout(() => { bar.style.opacity = '0'; }, 800);
 }
 
-// ── Storj upload via signed URL avec progress XHR ──
-async function uploadToStorj(fileOrBlob, uploadUrl, contentType, onProgress) {
+// ── Cloudinary upload via signed URL avec progress XHR ──
+async function uploadToCloudinary(fileOrBlob, uploadData, contentType, onProgress) {
   return new Promise((resolve, reject) => {
+    const formData = new FormData();
+    formData.append('file', fileOrBlob);
+    formData.append('api_key', uploadData.api_key);
+    formData.append('timestamp', uploadData.timestamp);
+    formData.append('signature', uploadData.signature);
+    formData.append('folder', uploadData.folder);
+    formData.append('public_id', uploadData.public_id);
+
     const xhr = new XMLHttpRequest();
-    xhr.open('PUT', uploadUrl);
-    xhr.setRequestHeader('Content-Type', contentType);
+    xhr.open('POST', uploadData.uploadUrl);
     xhr.upload.onprogress = e => { if (e.lengthComputable) onProgress(Math.round(e.loaded / e.total * 100)); };
-    xhr.onload = () => xhr.status < 300 ? resolve() : reject(new Error('Upload échoué (' + xhr.status + ')'));
+    xhr.onload = () => {
+      if (xhr.status < 300) {
+        try { resolve(JSON.parse(xhr.responseText)); }
+        catch { reject(new Error('Réponse invalide')); }
+      } else {
+        reject(new Error('Upload échoué (' + xhr.status + ')'));
+      }
+    };
     xhr.onerror = () => reject(new Error('Erreur réseau'));
-    xhr.send(fileOrBlob);
+    xhr.send(formData);
   });
 }
 
@@ -2335,15 +2349,15 @@ async function handleMedia(type, input) {
         body: JSON.stringify({ filename: file.name, contentType: uploadType, field: type + '_url', oldPath: oldUrl })
       });
       if (!urlResp.ok) throw new Error(`Impossible d'obtenir le lien d'upload`);
-      const { uploadUrl, publicUrl } = await urlResp.json();
+      const uploadData = await urlResp.json();
       showAlert('mediasAlert', '⏳ Upload 0%');
-      await uploadToStorj(uploadPayload, uploadUrl, uploadType, pct => {
+      const cloudResult = await uploadToCloudinary(uploadPayload, uploadData, uploadType, pct => {
         showUploadProgress(pct);
         showAlert('mediasAlert', `⏳ Upload ${pct}%`);
       });
       showUploadProgress(100);
       el('mediasAlert').innerHTML = '';
-      pendingMedias[type + '_url'] = publicUrl;
+      pendingMedias[type + '_url'] = cloudResult.secure_url;
       if (type === 'bg') {
         pendingMedias.bg_type = isVideo ? 'video' : 'upload';
         setMblockStatus('bg', true, isVideo ? 'Vidéo ✓' : 'Image ✓');
