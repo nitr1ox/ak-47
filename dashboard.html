@@ -541,6 +541,14 @@
           </button>
         </div>
       </div>
+
+      <div class="section-card" style="margin-top:20px;border:1px solid #fecaca;background:#fff5f5;">
+        <div class="section-card-title" style="color:#dc2626;">Zone de danger</div>
+        <p style="font-size:13px;color:var(--gray-500);margin-bottom:16px;">La suppression de votre compte est irréversible. Toutes vos données, liens et personnalisations seront définitivement supprimés.</p>
+        <button onclick="confirmDeleteAccount()" style="padding:9px 18px;background:#dc2626;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">
+          🗑️ Supprimer mon compte
+        </button>
+      </div>
     </div>
 
     <div class="tab-content" id="tab-links">
@@ -1038,10 +1046,13 @@
       <div class="section-card">
         <div class="section-card-title">Spotify</div>
         <div style="font-size:12px;color:var(--gray-500);margin-bottom:10px;">Affichez un widget Spotify sur votre profil (lien vers votre profil Spotify).</div>
-        <input type="url" id="spotifyUrlInput" placeholder="https://open.spotify.com/user/votreid"
-          style="width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;font-family:inherit;outline:none;"
-          autocomplete="off"
-          oninput="pendingPerso.spotify_url=this.value.trim()||null"/>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input type="url" id="spotifyUrlInput" placeholder="https://open.spotify.com/user/votreid"
+            style="flex:1;padding:9px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;font-family:inherit;outline:none;"
+            autocomplete="off"
+            oninput="pendingPerso.spotify_url=this.value.trim()||null"/>
+          <button onclick="clearSpotify()" style="padding:9px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;background:transparent;cursor:pointer;color:var(--gray-500);white-space:nowrap;" title="Supprimer Spotify">✕</button>
+        </div>
       </div>
 
       <div class="section-card">
@@ -1211,6 +1222,10 @@
       <div class="section-card">
         <div class="section-card-title">Éléments affichés</div>
         <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Choisissez ce qui est visible sur votre profil public.</div>
+        <div id="rolesVisibilitySection" style="margin-bottom:16px;display:none;">
+          <div style="font-size:12px;font-weight:600;margin-bottom:8px;color:var(--gray-700);">Vos rôles</div>
+          <div id="rolesToggleList" style="display:flex;flex-direction:column;gap:8px;"></div>
+        </div>
         <div style="display:flex;flex-direction:column;gap:14px;">
           <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
             <input type="checkbox" id="showMemberSinceToggle" style="width:16px;height:16px;accent-color:#000;cursor:pointer;"
@@ -1427,12 +1442,12 @@ const SOCIALS = [
   { id:'threads',    label:'Threads',    color:'#ffffff', icon:'https://cdn.simpleicons.org/threads/ffffff',      base:'https://threads.net/@',           placeholder:'Ton pseudo Threads' },
   { id:'patreon',    label:'Patreon',    color:'#FF424D', icon:'https://cdn.simpleicons.org/patreon/FF424D',      base:'https://patreon.com/',            placeholder:'Ton pseudo Patreon' },
   { id:'signal',     label:'Signal',     color:'#3A76F0', icon:'https://cdn.simpleicons.org/signal/3A76F0',       base:'https://signal.me/#p/',           placeholder:'Ton lien Signal' },
-  { id:'bitcoin',    label:'Bitcoin',    color:'#F7931A', icon:'https://cdn.simpleicons.org/bitcoin/F7931A',      base:'',                                placeholder:'Ton adresse Bitcoin' },
-  { id:'ethereum',   label:'Ethereum',   color:'#627EEA', icon:'https://cdn.simpleicons.org/ethereum/627EEA',    base:'',                                placeholder:'Ton adresse Ethereum' },
-  { id:'litecoin',   label:'Litecoin',   color:'#A6A9AA', icon:'https://cdn.simpleicons.org/litecoin/A6A9AA',    base:'',                                placeholder:'Ton adresse Litecoin' },
+  { id:'bitcoin',    label:'Bitcoin',    color:'#F7931A', icon:'https://cdn.simpleicons.org/bitcoin/F7931A',      base:'',                                placeholder:'Ton adresse Bitcoin',   crypto:true },
+  { id:'ethereum',   label:'Ethereum',   color:'#627EEA', icon:'https://cdn.simpleicons.org/ethereum/627EEA',    base:'',                                placeholder:'Ton adresse Ethereum',  crypto:true },
+  { id:'litecoin',   label:'Litecoin',   color:'#A6A9AA', icon:'https://cdn.simpleicons.org/litecoin/A6A9AA',    base:'',                                placeholder:'Ton adresse Litecoin',  crypto:true },
   { id:'hive',       label:'Hive',       color:'#E31337', icon:'https://cdn.simpleicons.org/hive/E31337',         base:'https://hive.blog/@',             placeholder:'Ton pseudo Hive' },
-  { id:'ripple',     label:'XRP',        color:'#346AA9', icon:'https://cdn.simpleicons.org/xrp/346AA9',          base:'',                                placeholder:'Ton adresse XRP' },
-  { id:'monero',     label:'Monero',     color:'#FF6600', icon:'https://cdn.simpleicons.org/monero/FF6600',       base:'',                                placeholder:'Ton adresse Monero' },
+  { id:'ripple',     label:'XRP',        color:'#346AA9', icon:'https://cdn.simpleicons.org/xrp/346AA9',          base:'',                                placeholder:'Ton adresse XRP',       crypto:true },
+  { id:'monero',     label:'Monero',     color:'#FF6600', icon:'https://cdn.simpleicons.org/monero/FF6600',       base:'',                                placeholder:'Ton adresse Monero',    crypto:true },
   { id:'email',      label:'E-mail',     color:'#ffffff', icon:'https://cdn.simpleicons.org/gmail/ffffff',        base:'mailto:',                         placeholder:'ton@email.com' },
 ];
 
@@ -1699,6 +1714,86 @@ function formatBytes(bytes) {
   if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
   if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
   return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+}
+
+
+const ROLES_DEF = [
+  { id: 'owner',    label: 'Owner',      color: '#f59e0b', emoji: '👑' },
+  { id: 'og',       label: 'OG',         color: '#8b5cf6', emoji: '💎' },
+  { id: 'staff',    label: 'Staff',      color: '#3b82f6', emoji: '🛡️' },
+  { id: 'verified', label: 'Vérifié',    color: '#10b981', emoji: '✅' },
+  { id: 'premium',  label: 'Premium',    color: '#f43f5e', emoji: '⭐' },
+  { id: 'partner',  label: 'Partenaire', color: '#ec4899', emoji: '🤝' },
+];
+
+function renderRolesVisibility() {
+  let userRoles = [];
+  try { userRoles = JSON.parse(userData.roles || '[]'); } catch {}
+  let hidden = [];
+  try { hidden = JSON.parse(userData.hidden_roles || '[]'); } catch {}
+
+  const section = el('rolesVisibilitySection');
+  const list = el('rolesToggleList');
+  if (!userRoles.length) { section.style.display = 'none'; return; }
+
+  section.style.display = 'block';
+  list.innerHTML = userRoles.map(roleId => {
+    const def = ROLES_DEF.find(r => r.id === roleId) || { id: roleId, label: roleId, color: '#888', emoji: '•' };
+    const isVisible = !hidden.includes(roleId);
+    return `<label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:8px 10px;border-radius:8px;border:1px solid var(--gray-200);background:${def.color}10;">
+      <input type="checkbox" value="${roleId}" ${isVisible ? 'checked' : ''} 
+        style="width:16px;height:16px;accent-color:${def.color};cursor:pointer;"
+        onchange="toggleRoleVisibility('${roleId}', this.checked)"/>
+      <span style="font-size:16px;">${def.emoji}</span>
+      <div>
+        <span style="font-size:13px;font-weight:600;color:${def.color};">${def.label}</span>
+        <div style="font-size:11px;color:var(--gray-500);">${isVisible ? 'Visible sur ton profil' : 'Masqué sur ton profil'}</div>
+      </div>
+    </label>`;
+  }).join('');
+}
+
+function toggleRoleVisibility(roleId, visible) {
+  let hidden = [];
+  try { hidden = JSON.parse(userData.hidden_roles || '[]'); } catch {}
+  if (visible) {
+    hidden = hidden.filter(r => r !== roleId);
+  } else {
+    if (!hidden.includes(roleId)) hidden.push(roleId);
+  }
+  pendingPerso.hidden_roles = JSON.stringify(hidden);
+  userData.hidden_roles = JSON.stringify(hidden);
+  renderRolesVisibility();
+}
+
+async function confirmDeleteAccount() {
+  const confirmed = prompt('Pour confirmer la suppression, tapez votre nom d\'utilisateur :');
+  if (!confirmed) return;
+  if (confirmed !== userData.username) {
+    showToast('Nom d\'utilisateur incorrect, suppression annulée.');
+    return;
+  }
+  if (!confirm('Dernière confirmation : supprimer définitivement votre compte ?')) return;
+  try {
+    const r = await fetch(API + '/api/user/me', {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    if (r.ok) {
+      localStorage.clear();
+      window.location.href = '/';
+    } else {
+      const d = await r.json();
+      showToast('Erreur : ' + (d.error || 'inconnue'));
+    }
+  } catch {
+    showToast('Erreur réseau');
+  }
+}
+
+function clearSpotify() {
+  el('spotifyUrlInput').value = '';
+  pendingPerso.spotify_url = '';
 }
 
 function renderConnectedAccounts() {
@@ -2540,6 +2635,7 @@ async function saveMedias() {
 let pendingPerso = {
   avatar_shape: null,
   link_layout: null,
+  hidden_roles: null,
   link_btn_style: null,
   profile_font: null,
   bg_type: null,
@@ -2631,6 +2727,7 @@ function loadPersoUI() {
   }
 
   if (userData.spotify_url) el('spotifyUrlInput').value = userData.spotify_url;
+  renderRolesVisibility();
   const bgOpacity = userData.bg_opacity !== undefined ? userData.bg_opacity : 1;
   el('bgOpacityRange').value = Math.round(bgOpacity * 100);
   el('bgOpacityVal').textContent = Math.round(bgOpacity * 100) + '%';
@@ -2861,6 +2958,7 @@ async function savePerso() {
       icon_color: null, monochrome_icons: null, animated_title: null,
       invert_blocks: null, use_discord_avatar: null, avatar_decoration: null,
       show_member_since: null, avatar_shine: null, profile_entrance: null, social_btn_style: null,
+      hidden_roles: null,
     };
     el('persoAlert').innerHTML = '';
     showToast('Personnalisation sauvegardée ✓');

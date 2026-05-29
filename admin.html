@@ -240,6 +240,8 @@
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('logs')">Logs</button>
     <button class="tab-btn" onclick="switchTab('users')">Utilisateurs</button>
+    <button class="tab-btn" onclick="switchTab('roles')">Rôles</button>
+    <button class="tab-btn" style="margin-left:auto;background:#1a1a2e;color:#818cf8;" onclick="openBroadcastModal()">📧 Mail groupé</button>
   </div>
 
   <div id="tab-logs">
@@ -259,6 +261,11 @@
       </div>
       <div id="logsBody"><div class="loading">Chargement...</div></div>
     </div>
+  </div>
+
+  <div id="tab-roles" style="display:none">
+    <div class="table-title">Gestion des rôles</div>
+    <div id="rolesContainer" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:8px;"></div>
   </div>
 
   <div id="tab-users" style="display:none">
@@ -290,6 +297,9 @@ function switchTab(tab) {
   currentTab = tab;
   document.getElementById('tab-logs').style.display  = tab === 'logs'  ? 'block' : 'none';
   document.getElementById('tab-users').style.display = tab === 'users' ? 'block' : 'none';
+  document.getElementById('tab-roles').style.display = tab === 'roles' ? 'block' : 'none';
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', ['logs','users','roles'][i] === tab));
+  if (tab === 'roles') renderRolesTab();
   document.querySelectorAll('.tab-btn').forEach((b, i) => {
     b.classList.toggle('active', (i === 0 && tab === 'logs') || (i === 1 && tab === 'users'));
   });
@@ -328,7 +338,7 @@ function renderUsers(users) {
   const el = document.getElementById('usersBody');
   if (!users.length) { el.innerHTML = '<div class="empty">Aucun utilisateur</div>'; return; }
   el.innerHTML = `<table>
-    <thead><tr><th>Utilisateur</th><th>UID</th><th>Email</th><th>Discord</th><th>Badges</th><th>Inscrit le</th><th>Action</th></tr></thead>
+    <thead><tr><th>Utilisateur</th><th>UID</th><th>Email</th><th>Discord</th><th>Badges</th><th>Rôles</th><th>Inscrit le</th><th>Action</th></tr></thead>
     <tbody>${users.map(u => {
       let badges = [];
       try { badges = JSON.parse(u.discord_badges || '[]'); } catch {}
@@ -343,12 +353,125 @@ function renderUsers(users) {
         <td style="font-size:12px;color:var(--gray-500);">${u.email || '—'}</td>
         <td>${u.discord_id ? `<span class="discord-tag">🎮 ${u.discord_id}</span>` : '<span style="color:var(--gray-400);">—</span>'}</td>
         <td style="font-size:11px;">${badges.map(b => b.emoji).join(' ') || '—'}</td>
+        <td style="font-size:11px;">${(() => { try { return JSON.parse(u.roles||'[]').map(r => ROLES_MAP[r]||r).join(' '); } catch { return '—'; } })()||'—'}</td>
         <td style="font-size:11px;color:var(--gray-400);">${fmt(u.created_at)}</td>
-        <td style="display:flex;gap:6px;align-items:center;"><a class="btn-sm" href="https://ak-47.fr/${u.username}" target="_blank" style="background:var(--gray-100);color:var(--gray-700);text-decoration:none;">👁 Voir</a><button class="btn-sm btn-danger" onclick="disableUser('${u.id}', '${u.username}')">Désactiver</button></td>
+        <td style="display:flex;gap:6px;align-items:center;"><a class="btn-sm" href="https://ak-47.fr/${u.username}" target="_blank" style="background:var(--gray-100);color:var(--gray-700);text-decoration:none;">👁 Voir</a><button class="btn-sm" onclick="openRoleModal('${u.id}','${u.username}',${JSON.stringify(JSON.stringify(u.roles||'[]'))})" style="background:#f3f0ff;color:#7c3aed;">Rôles</button><button class="btn-sm btn-danger" onclick="deleteUserAdmin('${u.id}', '${u.username}')">Supprimer</button></td>
       </tr>`;
     }).join('')}
     </tbody>
   </table>`;
+}
+
+
+const AVAILABLE_ROLES = [
+  { id: 'owner',    label: 'Owner',      color: '#f59e0b', emoji: '👑' },
+  { id: 'og',       label: 'OG',         color: '#8b5cf6', emoji: '💎' },
+  { id: 'staff',    label: 'Staff',      color: '#3b82f6', emoji: '🛡️' },
+  { id: 'verified', label: 'Vérifié',    color: '#10b981', emoji: '✅' },
+  { id: 'premium',  label: 'Premium',    color: '#f43f5e', emoji: '⭐' },
+  { id: 'partner',  label: 'Partenaire', color: '#ec4899', emoji: '🤝' },
+];
+const ROLES_MAP = Object.fromEntries(AVAILABLE_ROLES.map(r => [r.id, r.emoji + ' ' + r.label]));
+
+let roleModalUser = null;
+
+
+function openBroadcastModal() {
+  document.getElementById('broadcastModal').style.display = 'flex';
+  document.getElementById('broadcastResult').textContent = '';
+}
+function closeBroadcastModal() {
+  document.getElementById('broadcastModal').style.display = 'none';
+}
+async function sendBroadcast() {
+  const subject = document.getElementById('broadcastSubject').value.trim();
+  const message = document.getElementById('broadcastMessage').value.trim();
+  const target = document.getElementById('broadcastTarget').value;
+  if (!subject || !message) { document.getElementById('broadcastResult').textContent = 'Sujet et message requis'; return; }
+  if (!confirm(`Envoyer cet email à tous les utilisateurs (${target}) ?`)) return;
+  const btn = document.getElementById('broadcastSendBtn');
+  btn.disabled = true; btn.textContent = 'Envoi...';
+  try {
+    const r = await fetch(`${API}/api/admin/broadcast-email`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ subject, message, target }),
+    });
+    const d = await r.json();
+    if (r.ok) {
+      document.getElementById('broadcastResult').innerHTML = `<span style="color:#10b981;">✅ ${d.sent} emails envoyés${d.failed ? `, ${d.failed} échecs` : ''}</span>`;
+    } else {
+      document.getElementById('broadcastResult').innerHTML = `<span style="color:#ef4444;">❌ ${d.error}</span>`;
+    }
+  } catch {
+    document.getElementById('broadcastResult').innerHTML = '<span style="color:#ef4444;">❌ Erreur réseau</span>';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Envoyer';
+  }
+}
+
+function openRoleModal(id, username, rolesJson) {
+  roleModalUser = { id, username };
+  let current = [];
+  try { current = JSON.parse(JSON.parse(rolesJson)); } catch { try { current = JSON.parse(rolesJson); } catch {} }
+  document.getElementById('roleModalTitle').textContent = '@' + username;
+  const list = document.getElementById('roleCheckboxes');
+  list.innerHTML = AVAILABLE_ROLES.map(r => `
+    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid var(--gray-200);cursor:pointer;background:${current.includes(r.id)?r.color+'15':''};">
+      <input type="checkbox" value="${r.id}" ${current.includes(r.id)?'checked':''} style="width:16px;height:16px;accent-color:${r.color};">
+      <span style="font-size:18px;">${r.emoji}</span>
+      <span style="font-weight:600;color:${r.color};">${r.label}</span>
+    </label>`).join('');
+  document.getElementById('roleModal').style.display = 'flex';
+}
+
+function closeRoleModal() {
+  document.getElementById('roleModal').style.display = 'none';
+  roleModalUser = null;
+}
+
+async function saveRoles() {
+  if (!roleModalUser) return;
+  const checked = [...document.querySelectorAll('#roleCheckboxes input:checked')].map(i => i.value);
+  const r = await fetch(`${API}/api/admin/users/${roleModalUser.id}/roles`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+    body: JSON.stringify({ roles: checked }),
+  });
+  if (r.ok) {
+    closeRoleModal();
+    loadData();
+  } else {
+    alert('Erreur lors de la sauvegarde');
+  }
+}
+
+async function renderRolesTab() {
+  const container = document.getElementById('rolesContainer');
+  container.innerHTML = '<div style="color:var(--gray-400);">Chargement...</div>';
+  const results = await Promise.all(AVAILABLE_ROLES.map(async role => {
+    const r = await fetch(`${API}/api/admin/roles/${role.id}/users`, { headers: { Authorization: 'Bearer ' + token } });
+    const users = r.ok ? await r.json() : [];
+    return { role, users };
+  }));
+  container.innerHTML = results.map(({ role, users }) => `
+    <div style="background:var(--surface);border:1px solid var(--gray-200);border-radius:12px;padding:16px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <span style="font-size:22px;">${role.emoji}</span>
+        <span style="font-weight:700;font-size:15px;color:${role.color};">${role.label}</span>
+        <span style="margin-left:auto;background:${role.color}20;color:${role.color};padding:2px 8px;border-radius:12px;font-size:12px;font-weight:600;">${users.length}</span>
+      </div>
+      ${users.length ? users.map(u => `
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--gray-100);">
+          <div style="width:28px;height:28px;border-radius:50%;background:${u.avatar_color||'#888'};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;">
+            ${(u.display_name||u.username||'?').charAt(0).toUpperCase()}
+          </div>
+          <div>
+            <div style="font-weight:600;font-size:13px;">@${u.username}</div>
+            <div style="font-size:11px;color:var(--gray-400);">${u.display_name||''}</div>
+          </div>
+        </div>`).join('') : '<div style="color:var(--gray-400);font-size:13px;">Aucun utilisateur</div>'}
+    </div>`).join('');
 }
 
 function filterLogs() {
@@ -363,9 +486,15 @@ function filterUsers(q) {
 
 async function disableUser(id, uname) {
   if (!confirm(`Désactiver @${uname} ?`)) return;
+  const r = await fetch(`${API}/api/admin/users/${id}/disable`, { method: 'PATCH', headers: { Authorization: 'Bearer ' + token } });
+  if (r.ok) { alert(`@${uname} désactivé.`); loadAll(); loadGuilds(); }
+  else { const d = await r.json(); alert(d.error || 'Erreur'); }
+}
+
+async function deleteUserAdmin(id, uname) {
+  if (!confirm(`Supprimer définitivement @${uname} ? Cette action est irréversible.`)) return;
   const r = await fetch(`${API}/api/admin/users/${id}`, { method: 'DELETE', headers: { Authorization: 'Bearer ' + token } });
-  if (r.ok) { alert(`@${uname} désactivé.`); loadAll();
-loadGuilds(); }
+  if (r.ok) { loadData(); }
   else { const d = await r.json(); alert(d.error || 'Erreur'); }
 }
 
@@ -476,5 +605,53 @@ document.addEventListener('DOMContentLoaded', function(){
   if(btn){var t=document.documentElement.getAttribute('data-theme')||'light'; btn.textContent=t==='dark'?'☀️':'🌙';}
 });
 </script>
+
+<div id="roleModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;">
+  <div style="background:var(--surface);border-radius:16px;padding:24px;width:360px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.2);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div style="font-weight:700;font-size:16px;">Rôles de <span id="roleModalTitle"></span></div>
+      <button onclick="closeRoleModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--gray-500);">✕</button>
+    </div>
+    <div id="roleCheckboxes" style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button onclick="closeRoleModal()" style="padding:8px 16px;border:1px solid var(--gray-200);border-radius:8px;background:none;cursor:pointer;">Annuler</button>
+      <button onclick="saveRoles()" style="padding:8px 16px;background:#7c3aed;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Sauvegarder</button>
+    </div>
+  </div>
+</div>
+
+
+<div id="broadcastModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center;">
+  <div style="background:var(--surface);border-radius:16px;padding:28px;width:500px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,.3);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div style="font-weight:700;font-size:17px;">📧 Mail groupé</div>
+      <button onclick="closeBroadcastModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--gray-500);">✕</button>
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="font-size:12px;font-weight:600;color:var(--gray-500);display:block;margin-bottom:6px;">DESTINATAIRES</label>
+      <select id="broadcastTarget" style="width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;font-family:inherit;outline:none;">
+        <option value="all">Tous les utilisateurs</option>
+        <option value="verified">Rôle Vérifié uniquement</option>
+        <option value="premium">Rôle Premium uniquement</option>
+      </select>
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="font-size:12px;font-weight:600;color:var(--gray-500);display:block;margin-bottom:6px;">SUJET</label>
+      <input id="broadcastSubject" type="text" placeholder="Objet de l'email..."
+        style="width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;font-family:inherit;outline:none;box-sizing:border-box;"/>
+    </div>
+    <div style="margin-bottom:20px;">
+      <label style="font-size:12px;font-weight:600;color:var(--gray-500);display:block;margin-bottom:6px;">MESSAGE</label>
+      <textarea id="broadcastMessage" rows="6" placeholder="Contenu du message..."
+        style="width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;font-family:inherit;outline:none;resize:vertical;box-sizing:border-box;"></textarea>
+    </div>
+    <div id="broadcastResult" style="min-height:20px;font-size:13px;margin-bottom:12px;"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button onclick="closeBroadcastModal()" style="padding:9px 18px;border:1px solid var(--gray-200);border-radius:8px;background:none;cursor:pointer;">Annuler</button>
+      <button id="broadcastSendBtn" onclick="sendBroadcast()" style="padding:9px 18px;background:#1a1a2e;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Envoyer</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

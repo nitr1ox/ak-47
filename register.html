@@ -181,6 +181,26 @@
     <div class="form-footer">Déjà un compte ? <a href="/login">Se connecter</a></div>
   </div>
 </div>
+
+<div id="step2" style="display:none;position:fixed;inset:0;background:#0a0a0a;z-index:999;display:none;align-items:center;justify-content:center;flex-direction:column;">
+  <div style="width:100%;max-width:400px;padding:24px;">
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="font-size:48px;margin-bottom:12px;">📬</div>
+      <div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:6px;">Vérifie ton email</div>
+      <div style="font-size:13px;color:#888;">On a envoyé un code à <strong id="emailSentTo" style="color:#fff;"></strong></div>
+    </div>
+    <input id="verifyCode" type="text" inputmode="numeric" maxlength="6" placeholder="000000"
+      style="width:100%;padding:16px;background:#1a1a1a;border:1px solid #333;border-radius:12px;color:#fff;font-size:28px;font-weight:700;letter-spacing:10px;text-align:center;box-sizing:border-box;margin-bottom:12px;font-family:monospace;outline:none;"
+      oninput="if(this.value.length===6) verifyCode()"/>
+    <div id="verifyAlert" style="margin-bottom:10px;min-height:20px;font-size:13px;color:#ef4444;text-align:center;"></div>
+    <button id="verifyBtn" onclick="verifyCode()" style="width:100%;padding:14px;background:#fff;color:#000;border:none;border-radius:12px;font-weight:700;font-size:15px;cursor:pointer;margin-bottom:10px;">
+      Vérifier
+    </button>
+    <button onclick="resendCode()" style="width:100%;padding:11px;background:transparent;border:1px solid #333;border-radius:12px;color:#888;font-size:13px;cursor:pointer;">
+      Renvoyer le code
+    </button>
+  </div>
+</div>
 <script>
   if (localStorage.getItem('token')) window.location.href = '/dashboard';
   const claim = new URLSearchParams(window.location.search).get('claim');
@@ -202,12 +222,53 @@
         body: JSON.stringify({ username, email, password, 'h-captcha-response': captchaToken })
       });
       const data = await r.json();
-      if (!r.ok) { showAlert(data.error || 'Erreur'); return; }
+      if (!r.ok) { showVerifyAlert(data.error || 'Erreur'); return; }
+      if (data.pending) {
+        pendingEmail = email;
+        document.getElementById('step1').style.display = 'none';
+        document.getElementById('step2').style.display = 'flex';
+        document.getElementById('emailSentTo').textContent = email;
+        return;
+      }
       localStorage.setItem('token', data.token);
       localStorage.setItem('username', data.username);
       window.location.href = '/dashboard';
     } catch { showAlert('Erreur réseau'); }
     finally { btn.disabled = false; btn.innerHTML = 'Créer mon profil'; }
+  }
+
+  let pendingEmail = '';
+
+  function showVerifyAlert(msg) {
+    document.getElementById('verifyAlert').textContent = msg;
+  }
+
+  async function verifyCode() {
+    const code = document.getElementById('verifyCode').value.trim();
+    if (!code) return showAlert('Entre le code reçu par email');
+    const btn = document.getElementById('verifyBtn');
+    btn.disabled = true; btn.textContent = '...';
+    try {
+      const r = await fetch('https://ak47-backend.onrender.com/api/auth/verify-email', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: pendingEmail, code })
+      });
+      const data = await r.json();
+      if (!r.ok) { showAlert(data.error || 'Erreur'); return; }
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('username', data.username);
+      window.location.href = '/dashboard';
+    } catch { showAlert('Erreur réseau'); }
+    finally { btn.disabled = false; btn.textContent = 'Vérifier'; }
+  }
+
+  async function resendCode() {
+    const r = await fetch('https://ak47-backend.onrender.com/api/auth/resend-code', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: pendingEmail })
+    });
+    if (r.ok) showAlert('Code renvoyé !', 'success');
+    else showAlert('Erreur lors du renvoi');
   }
 
   function showAlert(msg) {
