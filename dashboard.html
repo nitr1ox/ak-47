@@ -3289,7 +3289,7 @@ function tplDashRender() {
   if (!grid) return;
   const list = tplDashGetList();
   if (!list.length) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--gray-400);font-family:'JetBrains Mono',monospace;font-size:12px;">
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--gray-400);font-family:'JetBrains Mono',monospace;font-size:12px;">Aucun modèle trouvé.</div>`;
     return;
   }
   grid.innerHTML = list.map((t, i) => {
@@ -3304,7 +3304,7 @@ function tplDashRender() {
         ${tplDashBuildPreview(config)}
         <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 60%,rgba(0,0,0,.4));pointer-events:none;"></div>
         <span style="position:absolute;top:10px;left:10px;font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.5);background:rgba(0,0,0,.35);padding:2px 6px;border-radius:2px;">#${String(i+1).padStart(3,'0')}</span>
-        <button onclick="tplDashToggleFav('${t.id}',this)" style="position:absolute;top:8px;right:8px;background:none;border:none;cursor:pointer;font-size:16px;opacity:${isFav?'1':'.5'};transition:opacity .15s,transform .15s;" onmouseenter="this.style.opacity='1';this.style.transform='scale(1.15)'" onmouseleave="this.style.opacity='${isFav?'1':'.5'}';this.style.transform=''">${isFav?'⭐':'☆'}</button>
+        <button onclick="tplDashToggleFav('${t.id}',this)" style="position:absolute;top:8px;right:8px;background:none;border:none;cursor:pointer;font-size:16px;opacity:${isFav?'1':'.5'};transition:opacity .15s,transform .15s;" onmouseenter="this.style.opacity='1';this.style.transform='scale(1.15)'" onmouseleave="this.style.opacity='${isFav?`1`:`0.5`}';this.style.transform=''">${isFav?'⭐':'☆'}</button>
       </div>
       <div style="padding:14px 16px 16px;">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
@@ -3347,7 +3347,7 @@ async function tplDashLoad() {
     _tplDashData = await r.json();
     tplDashRender();
   } catch {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--gray-400);font-family:'JetBrains Mono',monospace;font-size:12px;">
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--gray-400);font-family:'JetBrains Mono',monospace;font-size:12px;">Erreur de chargement.</div>`;
   }
 }
 
