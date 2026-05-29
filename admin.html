@@ -355,7 +355,7 @@ function renderUsers(users) {
         <td style="font-size:11px;">${badges.map(b => b.emoji).join(' ') || '—'}</td>
         <td style="font-size:11px;">${(() => { try { return JSON.parse(u.roles||'[]').map(r => ROLES_MAP[r]||r).join(' '); } catch { return '—'; } })()||'—'}</td>
         <td style="font-size:11px;color:var(--gray-400);">${fmt(u.created_at)}</td>
-        <td style="display:flex;gap:6px;align-items:center;"><a class="btn-sm" href="https://ak-47.fr/${u.username}" target="_blank" style="background:var(--gray-100);color:var(--gray-700);text-decoration:none;">👁 Voir</a><button class="btn-sm" onclick="openRoleModal(this)" data-uid="${u.id}" data-uname="${u.username}" data-roles="${(u.roles||'[]').replace(/"/g,'&quot;')}" style="background:#f3f0ff;color:#7c3aed;">Rôles</button><button class="btn-sm btn-danger" onclick="deleteUserAdmin('${u.id}', '${u.username}')">Supprimer</button></td>
+        <td style="display:flex;gap:6px;align-items:center;"><a class="btn-sm" href="https://ak-47.fr/${u.username}" target="_blank" style="background:var(--gray-100);color:var(--gray-700);text-decoration:none;">👁 Voir</a><button class="btn-sm" onclick="openRoleModal(this)" data-uid="${u.id}" data-uname="${u.username}" data-roles="${encodeURIComponent(u.roles||'[]')}" style="background:#f3f0ff;color:#7c3aed;">Rôles</button><button class="btn-sm btn-danger" onclick="deleteUserAdmin('${u.id}', '${u.username}')">Supprimer</button></td>
       </tr>`;
     }).join('')}
     </tbody>
@@ -413,7 +413,7 @@ async function sendBroadcast() {
 function openRoleModal(btn) {
   const id = btn.dataset.uid;
   const username = btn.dataset.uname;
-  const rolesJson = btn.dataset.roles || '[]';
+  const rolesJson = decodeURIComponent(btn.dataset.roles || '[]');
   roleModalUser = { id, username };
   let current = [];
   try { current = JSON.parse(rolesJson); } catch {}
