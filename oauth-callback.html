@@ -66,9 +66,9 @@
           localStorage.setItem('token', token);
           localStorage.setItem('username', data.username);
 
-          const isNew = params.get('new') === '1';
+          const needsSetup = data.needs_setup === true || params.get('new') === '1';
           document.getElementById('msg').textContent = 'Connecté ! Redirection...';
-          setTimeout(() => window.location.href = isNew ? '/setup' : '/dashboard', 800);
+          setTimeout(() => window.location.href = needsSetup ? '/setup' : '/dashboard', 800);
         } catch {
           showError('Erreur réseau, réessaie.');
         }
