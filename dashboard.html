@@ -1570,11 +1570,9 @@ async function loadUser() {
     renderBadges();
     renderConnectedAccounts();
 
-    const ADMIN_DISCORD_IDS = (window.__ADMIN_IDS || '866613427852804136').split(',');
-    if (userData.discord_id && ADMIN_DISCORD_IDS.includes(userData.discord_id)) {
-      const adminLink = document.getElementById('adminLink');
-      if (adminLink) adminLink.style.display = 'flex';
-    }
+    fetch(API + '/api/admin/users?limit=1', { headers: { Authorization: 'Bearer ' + token } })
+      .then(r => { if (r.ok) { const l = document.getElementById('adminLink'); if (l) l.style.display = 'flex'; } })
+      .catch(() => {});
   } catch(e) { console.error('loadUserData error:', e); showToast('Erreur de chargement du profil'); }
 }
 
