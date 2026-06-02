@@ -581,7 +581,6 @@
   <div class="profile-card">
     <div class="profile-top">
       <div class="profile-avatar" id="pAvatar"></div>
-      <div class="badges-row" id="pBadges"></div>
       <div class="profile-name" id="pName"></div>
       <div class="profile-bio"  id="pBio"></div>
       <div class="profile-handle" id="pHandle"></div>
@@ -611,9 +610,10 @@
       <div class="dc-body">
         <div class="dc-name-row">
           <span class="dc-name" id="dcName"></span>
+          <div class="dc-badges" id="dcBadges"></div>
         </div>
         <div class="dc-username" id="dcUsername" style="display:none"></div>
-        <div class="dc-badges" id="dcBadges"></div>
+        <div class="badges-row" id="pBadges"></div>
         <div class="dc-last-seen" id="dcLastSeen"></div>
       </div>
     </div>
@@ -972,30 +972,7 @@ async function loadProfile() {
       bioEl.style.fontFamily = `'${user.bio_font}', sans-serif`;
     }
 
-    const badgesRow = document.getElementById('pBadges');
-    let badges = []; try { badges = JSON.parse(user.discord_badges || '[]'); } catch {}
-    let hidden = []; try { hidden = JSON.parse(user.hidden_badges  || '[]'); } catch {}
-    badges = badges.filter((_, i) => !hidden.includes(i));
-    if (user.uid && user.uid <= 1000 && !badges.find(b => b.type === 'og')) {
-      badges.unshift({ label: 'OG', emoji: '🏆', type: 'og' });
-    }
-    badgesRow.innerHTML = '';
-    badges.forEach(b => {
-      const span = document.createElement('span');
-      let cls = 'badge';
-      if      (b.type === 'nitro')        cls += ' badge-nitro';
-      else if (b.type === 'discord')      cls += ' badge-discord';
-      else if (b.type === 'owner')        cls += ' badge-owner';
-      else if (b.type === 'staff_server') cls += ' badge-staff';
-      else if (b.type === 'og')           cls += ' badge-og';
-      else if (b.type === 'vip')          cls += ' badge-vip';
-      else                                cls += ' badge-server';
-      span.className = cls;
-      span.textContent = b.emoji + ' ' + b.label;
-      badgesRow.appendChild(span);
-    });
-
-    const pHandleEl = document.getElementById('pHandle');
+    let badges = []; try { badges = JSON.parse(user.discord_badges || '[]'); } catch {}\n    let hidden = []; try { hidden = JSON.parse(user.hidden_badges  || '[]'); } catch {}\n    badges = badges.filter((_, i) => !hidden.includes(i));\n    if (user.uid && user.uid <= 1000 && !badges.find(b => b.type === 'og')) {\n      badges.unshift({ label: 'OG', emoji: '🏆', type: 'og' });\n    }\n\n    const pHandleEl = document.getElementById('pHandle');
     if (user.uid) {
       pHandleEl.textContent = '#' + user.uid;
       pHandleEl.style.display = 'block';
@@ -1106,14 +1083,6 @@ async function loadProfile() {
       };
 
       
-      if (discordOauth || user.discord_id) {
-        const dcIconBadge = document.createElement('span');
-        dcIconBadge.className = 'dc-badge';
-        dcIconBadge.title = 'Connecté via Discord';
-        dcIconBadge.innerHTML = DISCORD_BADGE_SVGS.discord.svg;
-        dcBadgesEl.appendChild(dcIconBadge);
-      }
-
       badges.forEach(b => {
         const meta = DISCORD_BADGE_SVGS[b.type];
         if (!meta) return;
