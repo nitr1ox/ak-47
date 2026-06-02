@@ -1390,16 +1390,71 @@ fetch(API + '/api/health').then(() => {
 }).catch(() => { _backendReady = true; });
 
 function startHeartbeat() {
-  const beat = () => fetch(API + '/api/heartbeat', {
+  const beat = () => apiFetch(API + '/api/heartbeat', {
     method: 'POST',
-    headers: { Authorization: 'Bearer ' + token }
+    headers: { Authorization: 'Bearer ' + getToken() }
   }).catch(() => {});
   beat();
   setInterval(beat, 30000);
 }
-const token = localStorage.getItem('token');
+
+// --- Gestion access token + refresh token ---
+function getToken()        { return localStorage.getItem('token'); }
+function getRefreshToken() { return localStorage.getItem('refreshToken'); }
+function getUserId()       { return localStorage.getItem('userId'); }
+
+async function refreshAccessToken() {
+  const refreshToken = getRefreshToken();
+  const userId = getUserId();
+  if (!refreshToken || !userId) { logout(); return null; }
+  try {
+    const r = await fetch(API + '/api/auth/refresh', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken, userId }),
+    });
+    if (!r.ok) { logout(); return null; }
+    const data = await r.json();
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('refreshToken', data.refreshToken);
+    return data.token;
+  } catch { logout(); return null; }
+}
+
+// Wrapper fetch qui auto-refresh si 401
+async function apiFetch(url, options = {}) {
+  let token = getToken();
+  options.headers = options.headers || {};
+  options.headers['Authorization'] = 'Bearer ' + token;
+  let r = await fetch(url, options);
+  if (r.status === 401) {
+    token = await refreshAccessToken();
+    if (!token) return r;
+    options.headers['Authorization'] = 'Bearer ' + token;
+    r = await fetch(url, options);
+  }
+  return r;
+}
+
+function logout() {
+  const refreshToken = getRefreshToken();
+  const userId = getUserId();
+  if (refreshToken && userId) {
+    fetch(API + '/api/auth/logout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken, userId }),
+    }).catch(() => {});
+  }
+  localStorage.removeItem('token');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('username');
+  localStorage.removeItem('userId');
+  window.location.href = '/login';
+}
+
 const username = localStorage.getItem('username');
-if (!token) window.location.href = '/login';
+if (!getToken()) window.location.href = '/login';
 
 let userData = null;
 let analyticsData = null;
@@ -1552,7 +1607,7 @@ document.addEventListener('keydown', e => {
 
 async function loadUser() {
   try {
-    const r = await fetch(API + '/api/user/me', { headers: { Authorization: 'Bearer ' + token } });
+    const r = await apiFetch(API + '/api/user/me', { headers: { Authorization: 'Bearer ' + getToken() } });
     if (r.status === 401) { logout(); return; }
     userData = await r.json();
 
@@ -1570,7 +1625,7 @@ async function loadUser() {
     renderBadges();
     renderConnectedAccounts();
 
-    fetch(API + '/api/admin/users?limit=1', { headers: { Authorization: 'Bearer ' + token } })
+    apiFetch(API + '/api/admin/users?limit=1', { headers: { Authorization: 'Bearer ' + getToken() } })
       .then(r => { if (r.ok) { const l = document.getElementById('adminLink'); if (l) l.style.display = 'flex'; } })
       .catch(() => {});
   } catch(e) { console.error('loadUserData error:', e); showToast('Erreur de chargement du profil'); }
@@ -1579,7 +1634,7 @@ async function loadUser() {
 let _analyticsRetries = 0;
 async function loadAnalytics() {
   try {
-    const r = await fetch(API + '/api/analytics', { headers: { Authorization: 'Bearer ' + token } });
+    const r = await apiFetch(API + '/api/analytics', { headers: { Authorization: 'Bearer ' + getToken() } });
     if (!r.ok) {
       const body = await r.text().catch(() => '');
       throw new Error('HTTP ' + r.status + (body ? ' – ' + body.slice(0, 200) : ''));
@@ -1697,9 +1752,9 @@ async function toggleBadge(index) {
     hidden.push(index);
   }
   try {
-    const r = await fetch(API + '/api/user/me', {
+    const r = await apiFetch(API + '/api/user/me', {
       method: 'PATCH',
-      headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+      headers: { Authorization: 'Bearer ' + getToken(), 'Content-Type': 'application/json' },
       body: JSON.stringify({ hidden_badges: JSON.stringify(hidden) })
     });
     const data = await r.json();
@@ -1774,9 +1829,9 @@ async function confirmDeleteAccount() {
   }
   if (!confirm('Dernière confirmation : supprimer définitivement votre compte ?')) return;
   try {
-    const r = await fetch(API + '/api/user/me', {
+    const r = await apiFetch(API + '/api/user/me', {
       method: 'DELETE',
-      headers: { Authorization: 'Bearer ' + token }
+      headers: { Authorization: 'Bearer ' + getToken() }
     });
     if (r.ok) {
       localStorage.clear();
@@ -1802,7 +1857,7 @@ function renderConnectedAccounts() {
   const discordDisconnectBtn = document.getElementById('discordDisconnectBtn');
   const discordRefreshBtn = document.getElementById('discordRefreshBtn');
   if (userData.discord_id) {
-    if (discordStatus) discordStatus.innerHTML = `<span style="color:#5865F2;font-weight:600;">✓ Connecté</span>${userData.discord_username ? ' · ' + userData.discord_username : ''}`;
+    if (discordStatus) discordStatus.innerHTML = `<span style="color:#5865F2;font-weight:600;">✓ Connecté</span>${userData.discord_username ? ' · ' + esc(userData.discord_username) : ''}`;
     if (discordConnectBtn) discordConnectBtn.style.display = 'none';
     if (discordDisconnectBtn) discordDisconnectBtn.style.display = 'inline-block';
     if (discordRefreshBtn) discordRefreshBtn.style.display = 'inline-block';
@@ -1817,7 +1872,7 @@ function renderConnectedAccounts() {
   const googleConnectBtn = document.getElementById('googleConnectBtn');
   const googleDisconnectBtn = document.getElementById('googleDisconnectBtn');
   if (userData.google_id) {
-    if (googleStatus) googleStatus.innerHTML = `<span style="color:#4285F4;font-weight:600;">✓ Connecté</span>${userData.email ? ' · ' + userData.email : ''}`;
+    if (googleStatus) googleStatus.innerHTML = `<span style="color:#4285F4;font-weight:600;">✓ Connecté</span>${userData.email ? ' · ' + esc(userData.email) : ''}`;
     if (googleConnectBtn) googleConnectBtn.style.display = 'none';
     if (googleDisconnectBtn) googleDisconnectBtn.style.display = 'inline-block';
   } else {
@@ -1828,22 +1883,21 @@ function renderConnectedAccounts() {
 }
 
 function connectDiscord() {
-
-  const linkToken = encodeURIComponent(token);
+  const linkToken = encodeURIComponent(getToken());
   window.location.href = `${API}/api/auth/discord?link=1&jwt=${linkToken}`;
 }
 
 function connectGoogle() {
-  const linkToken = encodeURIComponent(token);
+  const linkToken = encodeURIComponent(getToken());
   window.location.href = `${API}/api/auth/google?link=1&jwt=${linkToken}`;
 }
 
 async function disconnectDiscord() {
   if (!confirm('Délier votre compte Discord ? Vos badges Discord seront supprimés.')) return;
   try {
-    const r = await fetch(API + '/api/user/unlink/discord', {
+    const r = await apiFetch(API + '/api/user/unlink/discord', {
       method: 'POST',
-      headers: { Authorization: 'Bearer ' + token }
+      headers: { Authorization: 'Bearer ' + getToken() }
     });
     if (r.ok) {
       userData.discord_id = null;
@@ -1861,9 +1915,9 @@ async function refreshDiscordBadges() {
   const btn = document.getElementById('discordRefreshBtn');
   if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
   try {
-    const r = await fetch(API + '/api/auth/discord/refresh-badges', {
+    const r = await apiFetch(API + '/api/auth/discord/refresh-badges', {
       method: 'POST',
-      headers: { Authorization: 'Bearer ' + token }
+      headers: { Authorization: 'Bearer ' + getToken() }
     });
     const data = await r.json();
     if (r.ok) {
@@ -1882,9 +1936,9 @@ async function refreshDiscordBadges() {
 async function disconnectGoogle() {
   if (!confirm('Délier votre compte Google ?')) return;
   try {
-    const r = await fetch(API + '/api/user/unlink/google', {
+    const r = await apiFetch(API + '/api/user/unlink/google', {
       method: 'POST',
-      headers: { Authorization: 'Bearer ' + token }
+      headers: { Authorization: 'Bearer ' + getToken() }
     });
     if (r.ok) {
       userData.google_id = null;
@@ -1900,9 +1954,9 @@ async function syncDiscord() {
   const btn = document.getElementById('syncDiscordBtn');
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Synchronisation…'; }
   try {
-    const r = await fetch(API + '/api/user/sync-discord', {
+    const r = await apiFetch(API + '/api/user/sync-discord', {
       method: 'POST',
-      headers: { Authorization: 'Bearer ' + token }
+      headers: { Authorization: 'Bearer ' + getToken() }
     });
     const data = await r.json();
     if (data.discord_badges) {
@@ -1976,13 +2030,13 @@ async function saveProfile() {
   const btn = el('saveProfileBtn');
   btn.disabled = true; btn.textContent = '...';
   try {
-    const r = await fetch(API + '/api/user/me', {
+    const r = await apiFetch(API + '/api/user/me', {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + getToken() },
       body: JSON.stringify({ display_name: el('displayName').value, bio: el('bio').value, location: el('location').value, avatar_color: el('avatarColor').value })
     });
     const data = await r.json();
-    if (!r.ok) { el('profileAlert').innerHTML = `<div class="alert alert-error">${data.error}</div>`; return; }
+    if (!r.ok) { el('profileAlert').innerHTML = `<div class="alert alert-error">${esc(data.error || 'Erreur')}</div>`; return; }
     userData = data;
     el('profileAlert').innerHTML = '';
     showToast('Profil sauvegardé ✓');
@@ -2136,9 +2190,9 @@ async function saveLinks() {
   const btn = el('saveLinksBtn');
   btn.disabled = true; btn.textContent = '...';
   try {
-    const r = await fetch(API + '/api/user/me', {
+    const r = await apiFetch(API + '/api/user/me', {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + getToken() },
       body: JSON.stringify({ links: pendingLinks })
     });
     const data = await r.json();
@@ -2156,7 +2210,7 @@ function copyUrl() {
 }
 
 function logout() {
-  localStorage.removeItem('token'); localStorage.removeItem('username');
+  logout();
   window.location.href = '/login';
 }
 
@@ -2182,7 +2236,7 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 function showAlert(containerId, msg) {
-  el(containerId).innerHTML = `<div class="alert alert-error">${msg}</div>`;
+  el(containerId).innerHTML = `<div class="alert alert-error">${esc(msg)}</div>`;
 }
 
 function triggerUpload(inputId) {
@@ -2411,9 +2465,9 @@ async function handleMedia(type, input) {
 
       const oldUrl = userData?.[type + '_url'] || pendingMedias[type + '_url'] || null;
       showAlert('mediasAlert', '⏳ Connexion...');
-      const urlResp = await fetch(API + '/api/user/upload-url', {
+      const urlResp = await apiFetch(API + '/api/user/upload-url', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + getToken() },
         body: JSON.stringify({ filename: file.name, contentType: uploadType, field: type + '_url', oldPath: oldUrl })
       });
       if (!urlResp.ok) throw new Error(`Impossible d'obtenir le lien d'upload`);
@@ -2611,9 +2665,9 @@ async function saveMedias() {
   }
 
   try {
-    const r = await fetch(API + '/api/user/me', {
+    const r = await apiFetch(API + '/api/user/me', {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + getToken() },
       body: JSON.stringify(body)
     });
     const data = await r.json();
@@ -2900,15 +2954,15 @@ function removePersoMedia(event, type) {
 
 async function importDiscordAvatar() {
   try {
-    const r = await fetch(API + '/api/user/discord-avatar', {
-      headers: { Authorization: 'Bearer ' + token }
+    const r = await apiFetch(API + '/api/user/discord-avatar', {
+      headers: { Authorization: 'Bearer ' + getToken() }
     });
     const data = await r.json();
     if (!r.ok) { showToast(data.error || 'Compte Discord non lié'); return; }
 
-    const r2 = await fetch(API + '/api/user/me', {
+    const r2 = await apiFetch(API + '/api/user/me', {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + getToken() },
       body: JSON.stringify({ avatar_url: data.avatar_url })
     });
     const d2 = await r2.json();
@@ -2938,9 +2992,9 @@ async function savePerso() {
     return;
   }
   try {
-    const r = await fetch(API + '/api/user/me', {
+    const r = await apiFetch(API + '/api/user/me', {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + getToken() },
       body: JSON.stringify(body)
     });
     const data = await r.json();
@@ -2979,9 +3033,9 @@ function openPublishTemplateModal() {
 
 async function publishTemplateFromDash(name, description) {
   try {
-    const r = await fetch(API + '/api/templates', {
+    const r = await apiFetch(API + '/api/templates', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + getToken() },
       body: JSON.stringify({ name, description })
     });
     const data = await r.json();
@@ -3136,7 +3190,7 @@ function tplRender() {
           <span style="font-size:11px;color:var(--gray-400);">🔥 ${t.uses||0}</span>
         </div>
         <div style="display:flex;gap:8px;">
-          <button onclick="tplApply('${t.id}','${esc(t.name)}')" style="flex:1;background:var(--black);color:var(--white);border:none;border-radius:8px;padding:8px;font-size:12px;font-weight:600;cursor:pointer;">${token ? 'Appliquer' : 'Se connecter'}</button>
+          <button onclick="tplApply('${t.id}','${esc(t.name)}')" style="flex:1;background:var(--black);color:var(--white);border:none;border-radius:8px;padding:8px;font-size:12px;font-weight:600;cursor:pointer;">${getToken() ? 'Appliquer' : 'Se connecter'}</button>
           ${isOwner ? `<button onclick="tplDelete('${t.id}')" style="background:var(--gray-100);color:var(--gray-600);border:none;border-radius:8px;padding:8px 12px;font-size:12px;cursor:pointer;">🗑</button>` : ''}
         </div>
       </div>
@@ -3146,7 +3200,7 @@ function tplRender() {
 
 async function tplLoad() {
   try {
-    const r = await fetch(API + '/api/templates');
+    const r = await apiFetch(API + '/api/templates');
     tplAll = await r.json();
     tplRender();
   } catch {
@@ -3156,11 +3210,11 @@ async function tplLoad() {
 
 async function tplApply(id, name) {
   const token = localStorage.getItem('token');
-  if (!token) { window.location.href = '/login'; return; }
+  if (!getToken()) { window.location.href = '/login'; return; }
   if (!confirm('Appliquer le modèle "' + name + '" ? Ton style actuel sera remplacé.')) return;
   try {
-    const r = await fetch(API + '/api/templates/' + id + '/use', {
-      method: 'POST', headers: { Authorization: 'Bearer ' + token }
+    const r = await apiFetch(API + '/api/templates/' + id + '/use', {
+      method: 'POST', headers: { Authorization: 'Bearer ' + getToken() }
     });
     if (!r.ok) throw new Error();
     const t = tplAll.find(t => t.id === id);
@@ -3174,8 +3228,8 @@ async function tplDelete(id) {
   const token = localStorage.getItem('token');
   if (!confirm('Supprimer ce modèle ?')) return;
   try {
-    const r = await fetch(API + '/api/templates/' + id, {
-      method: 'DELETE', headers: { Authorization: 'Bearer ' + token }
+    const r = await apiFetch(API + '/api/templates/' + id, {
+      method: 'DELETE', headers: { Authorization: 'Bearer ' + getToken() }
     });
     if (!r.ok) throw new Error();
     tplAll = tplAll.filter(t => t.id !== id);
@@ -3186,7 +3240,7 @@ async function tplDelete(id) {
 
 function tplOpenPublish() {
   const token = localStorage.getItem('token');
-  if (!token) { window.location.href = '/login'; return; }
+  if (!getToken()) { window.location.href = '/login'; return; }
   el('tplModalName').value = '';
   el('tplModalDesc').value = '';
   el('tplModal').style.display = 'flex';
@@ -3203,9 +3257,9 @@ async function tplPublish() {
   const btn = el('tplModalBtn');
   btn.disabled = true; btn.textContent = '…';
   try {
-    const r = await fetch(API + '/api/templates', {
+    const r = await apiFetch(API + '/api/templates', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + getToken() },
       body: JSON.stringify({ name, description: el('tplModalDesc').value.trim() })
     });
     const data = await r.json();
@@ -3341,7 +3395,7 @@ async function tplDashLoad() {
   if (!grid) return;
   grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--gray-400);font-family:'JetBrains Mono',monospace;font-size:12px;">Chargement…</div>`;
   try {
-    const r = await fetch(API + '/api/templates', { headers: token ? { Authorization: 'Bearer ' + token } : {} });
+    const r = await apiFetch(API + '/api/templates', { headers: token ? { Authorization: 'Bearer ' + getToken() } : {} });
     if (!r.ok) throw new Error();
     _tplDashData = await r.json();
     tplDashRender();
@@ -3391,9 +3445,9 @@ async function tplDashPublish() {
   const btn = document.getElementById('tplDashPublishBtn');
   btn.disabled = true; btn.textContent = '…';
   try {
-    const r = await fetch(API + '/api/templates', {
+    const r = await apiFetch(API + '/api/templates', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + getToken() },
       body: JSON.stringify({ name, description: document.getElementById('tplDashDesc').value.trim() })
     });
     const data = await r.json();

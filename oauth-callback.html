@@ -39,8 +39,10 @@
   <script>
     const API = 'https://ak47-backend.onrender.com';
     const params = new URLSearchParams(window.location.search);
-    const token  = params.get('token');
-    const error  = params.get('error');
+    const token        = params.get('token');
+    const refreshToken = params.get('refreshToken');
+    const userId       = params.get('userId');
+    const error        = params.get('error');
 
     function showError(msg) {
       document.getElementById('spinner').style.display = 'none';
@@ -64,6 +66,8 @@
           const data = await r.json();
 
           localStorage.setItem('token', token);
+          if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
+          if (userId) localStorage.setItem('userId', userId);
           localStorage.setItem('username', data.username);
 
           const needsSetup = data.needs_setup === true || params.get('new') === '1';

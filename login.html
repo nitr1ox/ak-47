@@ -196,7 +196,9 @@
       const data = await r.json();
       if (!r.ok) { showAlert(data.error || 'Erreur'); return; }
       localStorage.setItem('token', data.token);
+      localStorage.setItem('refreshToken', data.refreshToken);
       localStorage.setItem('username', data.username);
+      if (data.userId) localStorage.setItem('userId', data.userId);
       window.location.href = '/dashboard';
     } catch { showAlert('Erreur réseau'); }
     finally { btn.disabled = false; btn.innerHTML = 'Se connecter'; }
