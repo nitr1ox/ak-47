@@ -1847,7 +1847,8 @@ async function confirmDeleteAccount() {
 
 function clearSpotify() {
   el('spotifyUrlInput').value = '';
-  pendingPerso.spotify_url = '';
+  pendingPerso.spotify_url = null;
+  el('savePersoBtn').style.background = 'var(--accent)';
 }
 
 function renderConnectedAccounts() {
@@ -2207,11 +2208,6 @@ async function saveLinks() {
 function copyUrl() {
   const url = window.location.origin + '/' + username;
   navigator.clipboard.writeText(url).then(() => showToast('URL copiée ✓'));
-}
-
-function logout() {
-  logout();
-  window.location.href = '/login';
 }
 
 function switchTab(name) {
