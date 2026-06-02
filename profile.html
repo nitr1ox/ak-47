@@ -972,7 +972,14 @@ async function loadProfile() {
       bioEl.style.fontFamily = `'${user.bio_font}', sans-serif`;
     }
 
-    let badges = []; try { badges = JSON.parse(user.discord_badges || '[]'); } catch {}\n    let hidden = []; try { hidden = JSON.parse(user.hidden_badges  || '[]'); } catch {}\n    badges = badges.filter((_, i) => !hidden.includes(i));\n    if (user.uid && user.uid <= 1000 && !badges.find(b => b.type === 'og')) {\n      badges.unshift({ label: 'OG', emoji: '🏆', type: 'og' });\n    }\n\n    const pHandleEl = document.getElementById('pHandle');
+    let badges = []; try { badges = JSON.parse(user.discord_badges || '[]'); } catch {}
+    let hidden = []; try { hidden = JSON.parse(user.hidden_badges  || '[]'); } catch {}
+    badges = badges.filter((_, i) => !hidden.includes(i));
+    if (user.uid && user.uid <= 1000 && !badges.find(b => b.type === 'og')) {
+      badges.unshift({ label: 'OG', emoji: '\u{1F3C6}', type: 'og' });
+    }
+
+    const pHandleEl = document.getElementById('pHandle');
     if (user.uid) {
       pHandleEl.textContent = '#' + user.uid;
       pHandleEl.style.display = 'block';
