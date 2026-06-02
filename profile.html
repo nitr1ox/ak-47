@@ -611,9 +611,9 @@
       <div class="dc-body">
         <div class="dc-name-row">
           <span class="dc-name" id="dcName"></span>
-          <div class="dc-badges" id="dcBadges"></div>
         </div>
         <div class="dc-username" id="dcUsername" style="display:none"></div>
+        <div class="dc-badges" id="dcBadges"></div>
         <div class="dc-last-seen" id="dcLastSeen"></div>
       </div>
     </div>
@@ -1051,12 +1051,11 @@ async function loadProfile() {
         : (user.avatar_url || null);
       
       const discordUsername = (discordOauth && discordOauth.username) || user.discord_username || null;
-      const dcDisplayName = user.display_name || user.username;
-      document.getElementById('dcName').textContent = dcDisplayName;
+      const discordDisplayName = (discordOauth && discordOauth.global_name) || user.discord_display_name || discordUsername || user.display_name || user.username;
+      document.getElementById('dcName').textContent = discordDisplayName;
 
-      
       const dcUsernameEl = document.getElementById('dcUsername');
-      if (discordUsername && discordUsername.toLowerCase() !== dcDisplayName.toLowerCase()) {
+      if (discordUsername) {
         dcUsernameEl.textContent = '@' + discordUsername;
         dcUsernameEl.style.display = 'block';
       }
