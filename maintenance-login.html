@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ak-47.fr — Connexion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --black: #000; --white: #fff;
+      --gray-100: #f4f4f5; --gray-200: #e4e4e7;
+      --gray-400: #a1a1aa; --gray-500: #71717a;
+      --gray-700: #3f3f46; --gray-900: #18181b;
+      --red: #ef4444;
+    }
+    html, body { height: 100%; }
+    body {
+      background: var(--white); color: var(--gray-900);
+      font-family: 'Inter', sans-serif; font-size: 15px;
+      -webkit-font-smoothing: antialiased;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 24px;
+    }
+    .card {
+      width: 100%; max-width: 360px;
+      border: 1px solid var(--gray-200); border-radius: 12px;
+      padding: 32px;
+    }
+    .brand { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; color: var(--black); display: block; margin-bottom: 24px; }
+    .brand span { color: var(--gray-500); font-weight: 400; }
+    h1 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+    .subtitle { font-size: 13px; color: var(--gray-500); margin-bottom: 24px; }
+    label { display: block; font-size: 12px; font-weight: 500; color: var(--gray-700); margin-bottom: 6px; }
+    input {
+      width: 100%; padding: 9px 12px; border: 1px solid var(--gray-200);
+      border-radius: 7px; font-family: inherit; font-size: 14px;
+      color: var(--gray-900); outline: none; margin-bottom: 16px;
+      transition: border-color .15s;
+    }
+    input:focus { border-color: var(--gray-400); }
+    .btn {
+      width: 100%; padding: 10px; background: var(--black); color: var(--white);
+      border: none; border-radius: 7px; font-family: inherit; font-size: 14px;
+      font-weight: 500; cursor: pointer; transition: opacity .15s;
+    }
+    .btn:hover { opacity: .85; }
+    .btn:disabled { opacity: .5; cursor: default; }
+    .error { font-size: 13px; color: var(--red); margin-top: 12px; display: none; }
+    .back { display: block; text-align: center; margin-top: 16px; font-size: 12px; color: var(--gray-400); text-decoration: none; }
+    .back:hover { color: var(--gray-700); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <a class="brand" href="/maintenance">ak-47<span>.fr</span></a>
+    <h1>Connexion admin</h1>
+    <p class="subtitle">Réservé à l'équipe.</p>
+
+    <label for="login">Identifiant</label>
+    <input type="text" id="login" placeholder="pseudo ou email" autocomplete="username"/>
+
+    <label for="password">Mot de passe</label>
+    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password"/>
+
+    <button class="btn" id="btn" onclick="doLogin()">Se connecter</button>
+    <p class="error" id="error"></p>
+    <a class="back" href="/maintenance">← Retour</a>
+  </div>
+
+  <script>
+    // Si déjà connecté admin → direct
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetch('/api/admin/stats', { headers: { Authorization: 'Bearer ' + token } })
+        .then(r => { if (r.ok) window.location.href = '/admin'; })
+        .catch(() => {});
+    }
+
+    async function doLogin() {
+      const login    = document.getElementById('login').value.trim();
+      const password = document.getElementById('password').value;
+      const btn      = document.getElementById('btn');
+      const errEl    = document.getElementById('error');
+
+      if (!login || !password) { showError('Remplis tous les champs.'); return; }
+
+      btn.disabled = true;
+      btn.textContent = 'Connexion…';
+      errEl.style.display = 'none';
+
+      try {
+        // Utilise un faux captcha token pour contourner le middleware en mode maintenance
+        const r = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-captcha-token': 'maintenance-bypass' },
+          body: JSON.stringify({ login, password })
+        });
+        const data = await r.json();
+        if (!r.ok) { showError(data.error || 'Identifiants incorrects'); return; }
+
+        // Stocker le token
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('refreshToken', data.refreshToken);
+        localStorage.setItem('userId', data.userId);
+        localStorage.setItem('username', data.username);
+
+        // Vérifier si admin
+        const check = await fetch('/api/admin/stats', {
+          headers: { Authorization: 'Bearer ' + data.token }
+        });
+
+        if (check.ok) {
+          window.location.href = '/admin';
+        } else {
+          // Pas admin → on nettoie et on renvoie vers maintenance
+          localStorage.removeItem('token');
+          localStorage.removeItem('refreshToken');
+          window.location.href = '/maintenance';
+        }
+      } catch {
+        showError('Erreur réseau, réessaie.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Se connecter';
+      }
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('error');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter') doLogin();
+    });
+  </script>
+</body>
+</html>
