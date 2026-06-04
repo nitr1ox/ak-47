@@ -1,262 +1,660 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
+<head><script>(function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>ak-47.fr — Admin</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --black: #000; --white: #fff;
       --gray-50: #fafafa; --gray-100: #f4f4f5; --gray-200: #e4e4e7;
-      --gray-400: #a1a1aa; --gray-500: #71717a;
-      --gray-700: #3f3f46; --gray-900: #18181b;
-      --amber: #f59e0b; --green: #10b981; --red: #ef4444;
+      --gray-300: #d4d4d8; --gray-400: #a1a1aa; --gray-500: #71717a;
+      --gray-900: #09090b;
+      --red: #ef4444; --green: #16a34a; --blue: #3b82f6; --orange: #f97316;
     }
-    body {
-      background: var(--gray-50); color: var(--gray-900);
-      font-family: 'Inter', sans-serif; font-size: 14px;
-      -webkit-font-smoothing: antialiased; min-height: 100vh;
-    }
-    nav {
-      background: var(--white); border-bottom: 1px solid var(--gray-200);
-      padding: 0 24px; height: 52px;
-      display: flex; align-items: center; justify-content: space-between;
-      position: sticky; top: 0; z-index: 10;
-    }
-    .brand { font-size: 15px; font-weight: 700; color: var(--black); text-decoration: none; }
-    .brand span { color: var(--gray-500); font-weight: 400; }
-    .nav-right { display: flex; align-items: center; gap: 12px; }
-    .logout { font-size: 12px; color: var(--gray-500); cursor: pointer; background: none; border: none; font-family: inherit; }
-    .logout:hover { color: var(--gray-900); }
-    main { max-width: 640px; margin: 0 auto; padding: 32px 24px; }
-    h2 { font-size: 18px; font-weight: 600; letter-spacing: -0.3px; margin-bottom: 4px; }
-    .subtitle { font-size: 13px; color: var(--gray-500); margin-bottom: 32px; }
+    body { font-family: 'Inter', sans-serif; background: var(--gray-50); color: var(--gray-900); min-height: 100vh; }
 
-    /* Card maintenance */
-    .card {
-      background: var(--white); border: 1px solid var(--gray-200);
-      border-radius: 12px; padding: 24px;
-    }
-    .card-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 16px;
-    }
-    .card-title { font-size: 14px; font-weight: 600; }
-    .card-desc { font-size: 13px; color: var(--gray-500); line-height: 1.6; margin-bottom: 20px; }
+    .nav { background: var(--black); color: var(--white); padding: 0 28px; height: 52px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-weight: 700; font-size: 16px; letter-spacing: -.5px; }
+    .nav-logo span { color: var(--gray-400); }
+    .nav-right { display: flex; align-items: center; gap: 16px; font-size: 13px; color: var(--gray-400); }
+    .nav-right a { color: var(--gray-400); text-decoration: none; }
+    .nav-right a:hover { color: var(--white); }
 
-    /* Toggle switch */
-    .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: var(--gray-50); border-radius: 8px; border: 1px solid var(--gray-200); }
-    .toggle-label { font-size: 13px; font-weight: 500; }
-    .toggle-sub { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
-    .switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider {
-      position: absolute; inset: 0; background: var(--gray-200);
-      border-radius: 100px; cursor: pointer; transition: background .2s;
-    }
-    .slider::before {
-      content: ''; position: absolute;
-      width: 18px; height: 18px; border-radius: 50%;
-      background: var(--white); top: 3px; left: 3px;
-      transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.15);
-    }
-    input:checked + .slider { background: var(--amber); }
-    input:checked + .slider::before { transform: translateX(20px); }
+    .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+    .page-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .page-sub { font-size: 13px; color: var(--gray-400); margin-bottom: 28px; }
 
-    /* Status badge */
+    .stats-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 28px; }
+    .stat-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: 10px; padding: 16px; }
+    .stat-label { font-size: 11px; color: var(--gray-400); font-weight: 500; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+    .stat-value { font-size: 26px; font-weight: 700; }
+    .stat-value.red { color: var(--red); }
+    .stat-value.green { color: var(--green); }
+    .stat-value.blue { color: var(--blue); }
+
+    .tabs { display: flex; gap: 2px; background: var(--gray-100); border-radius: 8px; padding: 3px; width: fit-content; margin-bottom: 20px; }
+    .tab-btn { padding: 6px 18px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; background: none; color: var(--gray-500); transition: all .15s; }
+    .tab-btn.active { background: var(--white); color: var(--black); box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+
+    .table-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; }
+    .table-header { padding: 16px 20px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+    .table-title { font-size: 14px; font-weight: 600; }
+    .search-input { padding: 6px 12px; border: 1px solid var(--gray-200); border-radius: 6px; font-size: 12px; font-family: inherit; outline: none; width: 200px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: .5px; border-bottom: 1px solid var(--gray-100); background: var(--gray-50); }
+    td { padding: 10px 16px; border-bottom: 1px solid var(--gray-100); color: var(--gray-900); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--gray-50); }
+    .badge-tag { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+    .badge-login    { background: #dbeafe; color: #1d4ed8; }
+    .badge-register { background: #dcfce7; color: #15803d; }
+    .badge-error    { background: #fee2e2; color: #dc2626; }
+    .badge-action   { background: #fef9c3; color: #854d0e; }
+    .btn-sm { padding: 4px 10px; border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid; }
+    .btn-danger { background: #fee2e2; color: var(--red); border-color: #fecaca; }
+    .btn-danger:hover { background: var(--red); color: var(--white); }
+    .avatar-mini { width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--white); margin-right: 8px; vertical-align: middle; }
+    .user-cell { display: flex; align-items: center; }
+    .empty { text-align: center; padding: 40px; color: var(--gray-400); font-size: 13px; }
+    .refresh-btn { padding: 6px 14px; background: var(--black); color: var(--white); border: none; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+    .refresh-btn:hover { opacity: .8; }
+    .loading { text-align: center; padding: 40px; color: var(--gray-400); font-size: 13px; }
+    .discord-tag { font-size: 11px; color: #5865F2; font-weight: 600; }
+
+    .section-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .section-desc  { font-size: 12px; color: var(--gray-400); margin-bottom: 16px; }
+    .guild-card { background: var(--white); border: 1.5px solid var(--gray-200); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+    .guild-select-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .guild-select { padding: 8px 12px; border: 1px solid var(--gray-200); border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; min-width: 260px; }
+    .btn-primary { padding: 8px 20px; background: var(--black); color: var(--white); border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .btn-primary:hover { opacity: .8; }
+    .btn-primary:disabled { opacity: .4; cursor: not-allowed; }
+    .result-box { margin-top: 12px; padding: 12px 16px; border-radius: 8px; font-size: 13px; display: none; }
+    .result-ok  { background: #dcfce7; color: #15803d; }
+    .result-err { background: #fee2e2; color: #dc2626; }
+    .guild-icon { width: 24px; height: 24px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+    @media (max-width: 900px) {
+      .stats-grid { grid-template-columns: repeat(3, 1fr); }
+      .table th, .table td { padding: 8px 10px; font-size: 12px; }
+    }
+    @media (max-width: 600px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .container { padding: 16px 12px; }
+      nav { padding: 0 14px; }
+      .table th:nth-child(5), .table td:nth-child(5),
+      .table th:nth-child(6), .table td:nth-child(6) { display: none; }
+    }
+  </style>
+
+  <style id="fluid-global">
+    
+
+    
+    a, button, input, textarea, select,
+    [role="button"], [tabindex] {
+      transition: opacity .2s ease, color .2s ease, background .2s ease,
+                  border-color .2s ease, box-shadow .2s ease,
+                  transform .2s cubic-bezier(.34,1.56,.64,1) !important;
+    }
+
+    
+    html { scroll-behavior: smooth; }
+
+    
+    button:active, [role="button"]:active {
+      transform: scale(.96) !important;
+      transition-duration: .08s !important;
+    }
+
+    
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(0,0,0,.08) !important;
+      border-color: #000 !important;
+      transition: box-shadow .2s ease, border-color .2s ease !important;
+    }
+
+    
+    .section-card, .mblock, .profile-card {
+      transition: box-shadow .25s ease, transform .25s cubic-bezier(.22,1,.36,1) !important;
+    }
+    .section-card:hover, .mblock:hover {
+      box-shadow: 0 4px 20px rgba(0,0,0,.08) !important;
+      transform: translateY(-1px) !important;
+    }
+
+    
+    .tab {
+      transition: color .2s ease, border-color .2s ease !important;
+    }
+
+    
+    .icon-picker-overlay {
+      transition: opacity .25s ease !important;
+    }
+    .icon-picker-modal {
+      transition: transform .3s cubic-bezier(.34,1.56,.64,1), opacity .25s ease !important;
+    }
+
+    
+    .mdrop {
+      transition: border-color .2s ease, background .2s ease, box-shadow .2s ease !important;
+    }
+    .mdrop:hover {
+      box-shadow: 0 2px 12px rgba(0,0,0,.06) !important;
+    }
+
+    
+    .toast {
+      transition: opacity .25s ease, transform .25s cubic-bezier(.34,1.56,.64,1) !important;
+    }
+
+    
+    .mob-nav-btn {
+      transition: color .15s ease, transform .15s cubic-bezier(.34,1.56,.64,1) !important;
+    }
+    .mob-nav-btn:active { transform: scale(.9) !important; }
+    .mob-nav-btn.active { transform: scale(1.05) !important; }
+
+    
     .badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 4px 10px; border-radius: 100px; font-size: 11px; font-weight: 500;
+      transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s ease !important;
     }
-    .badge-on  { background: #fef3c7; color: #92400e; }
-    .badge-off { background: #d1fae5; color: #065f46; }
-    .badge-dot { width: 6px; height: 6px; border-radius: 50%; }
-    .badge-on  .badge-dot { background: var(--amber); animation: pulse 2s infinite; }
-    .badge-off .badge-dot { background: var(--green); }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .badge:hover { transform: scale(1.06) !important; }
 
-    .save-btn {
-      margin-top: 16px; width: 100%; padding: 10px;
-      background: var(--black); color: var(--white);
-      border: none; border-radius: 7px; font-family: inherit;
-      font-size: 13px; font-weight: 500; cursor: pointer; transition: opacity .15s;
+    
+    .copy-btn:hover, .save-bar-btn:hover {
+      transform: translateY(-1px) !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,.12) !important;
     }
-    .save-btn:hover { opacity: .85; }
-    .save-btn:disabled { opacity: .5; cursor: default; }
-    .feedback { font-size: 12px; color: var(--green); margin-top: 10px; text-align: center; min-height: 18px; }
-    .feedback.err { color: var(--red); }
 
-    /* Auth guard */
-    .auth-guard { display: none; }
-    body.loading main { visibility: hidden; }
+    
+    .ipick-btn {
+      transition: transform .2s cubic-bezier(.34,1.56,.64,1), border-color .15s, background .15s, box-shadow .2s !important;
+    }
+    .ipick-btn:hover { transform: translateY(-3px) scale(1.04) !important; }
+
+    
+    .mblock-chevron {
+      transition: transform .25s cubic-bezier(.34,1.56,.64,1) !important;
+    }
+
+    
+    .audio-src-tab {
+      transition: all .2s cubic-bezier(.34,1.56,.64,1) !important;
+    }
+    .audio-src-tab:hover { transform: translateY(-1px) !important; }
+
+    
+    nav a, .nav-link {
+      transition: color .2s ease, opacity .2s ease !important;
+    }
+
+    
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,.3); }
   </style>
 </head>
-<body class="loading">
-  <nav>
-    <a class="brand" href="/admin">ak-47<span>.fr</span> <span style="font-size:11px;color:var(--gray-400);font-weight:400">/ admin</span></a>
-    <div class="nav-right">
-      <span id="admin-name" style="font-size:12px;color:var(--gray-500)"></span>
-      <button class="logout" onclick="logout()">Déconnexion</button>
+<body>
+<button id="globalThemeBtn" onclick="toggleTheme()" title="Changer le thème" aria-label="Changer le thème">🌙</button>
+
+<nav class="nav">
+  <div class="nav-logo">ak-47<span>.fr</span> <span style="color:#ef4444;font-size:11px;margin-left:8px;background:rgba(239,68,68,.15);padding:2px 8px;border-radius:12px;">ADMIN</span></div>
+  <div class="nav-right">
+    <a href="/dashboard">← Dashboard</a>
+    <span id="navUser">—</span>
+  </div>
+
+</nav>
+
+<div class="container">
+  <div class="page-title">Panel Admin</div>
+  <div class="page-sub">Vue d'ensemble de ak-47.fr</div>
+
+  <div class="stats-grid" id="statsGrid">
+    <div class="stat-card"><div class="stat-label">Total users</div><div class="stat-value" id="s-total">—</div></div>
+    <div class="stat-card"><div class="stat-label">Users aujourd'hui</div><div class="stat-value green" id="s-today">—</div></div>
+    <div class="stat-card"><div class="stat-label">Users 7 jours</div><div class="stat-value blue" id="s-7d">—</div></div>
+    <div class="stat-card"><div class="stat-label">Connexions /24h</div><div class="stat-value" id="s-logins">—</div></div>
+    <div class="stat-card"><div class="stat-label">Inscriptions /24h</div><div class="stat-value green" id="s-reg">—</div></div>
+    <div class="stat-card"><div class="stat-label">Erreurs /24h</div><div class="stat-value red" id="s-err">—</div></div>
+  </div>
+
+  <div class="guild-card">
+    <div class="section-title">🚀 Faire rejoindre le serveur</div>
+    <div class="section-desc">Sélectionne un serveur et force tous les membres Discord du site à le rejoindre.</div>
+    <div class="guild-select-row">
+      <select class="guild-select" id="guildSelect">
+        <option value="">Chargement des serveurs...</option>
+      </select>
+      <button class="btn-primary" id="forceJoinBtn" onclick="forceJoin()" disabled>Faire rejoindre tous</button>
     </div>
-  </nav>
+    <div class="result-box" id="forceJoinResult"></div>
+  </div>
 
-  <main>
-    <h2>Panel Admin</h2>
-    <p class="subtitle">Gestion du site ak-47.fr</p>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('logs')">Logs</button>
+    <button class="tab-btn" onclick="switchTab('users')">Utilisateurs</button>
+    <button class="tab-btn" onclick="switchTab('roles')">Rôles</button>
+    <button class="tab-btn" style="margin-left:auto;background:#1a1a2e;color:#818cf8;" onclick="openBroadcastModal()">📧 Mail groupé</button>
+  </div>
 
-    <!-- Carte maintenance -->
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title">Mode maintenance</span>
-        <span class="badge badge-off" id="status-badge">
-          <span class="badge-dot"></span>
-          <span id="status-text">En ligne</span>
-        </span>
-      </div>
-      <p class="card-desc">Quand activé, toutes les pages du site affichent la page de maintenance. Seuls les admins connectés peuvent accéder au panel.</p>
-
-      <div class="toggle-row">
-        <div>
-          <div class="toggle-label">Maintenance activée</div>
-          <div class="toggle-sub" id="toggle-sub">Le site est actuellement accessible.</div>
+  <div id="tab-logs">
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">Logs récents</div>
+        <div style="display:flex;gap:8px;">
+          <select id="logFilter" onchange="filterLogs()" style="padding:6px 10px;border:1px solid var(--gray-200);border-radius:6px;font-size:12px;font-family:inherit;outline:none;">
+            <option value="">Tous</option>
+            <option value="login">Connexions</option>
+            <option value="register">Inscriptions</option>
+            <option value="error">Erreurs</option>
+            <option value="action">Actions</option>
+          </select>
+          <button class="refresh-btn" onclick="loadAll()">↻ Rafraîchir</button>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="maintenance-toggle" onchange="updateStatus()"/>
-          <span class="slider"></span>
-        </label>
       </div>
-
-      <button class="save-btn" id="save-btn" onclick="saveMaintenanceMode()">Enregistrer</button>
-      <p class="feedback" id="feedback"></p>
+      <div id="logsBody"><div class="loading">Chargement...</div></div>
     </div>
-  </main>
+  </div>
 
-  <script>
-    const API = '/api';
-    let token = localStorage.getItem('token');
-    let pendingState = null;
+  <div id="tab-roles" style="display:none">
+    <div class="table-title">Gestion des rôles</div>
+    <div id="rolesContainer" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:8px;"></div>
+  </div>
 
-    async function refreshAccessToken() {
-      const refreshToken = localStorage.getItem('refreshToken');
-      const userId = localStorage.getItem('userId');
-      if (!refreshToken || !userId) return null;
-      try {
-        const r = await fetch(`${API}/auth/refresh`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ refreshToken, userId })
-        });
-        if (!r.ok) return null;
-        const data = await r.json();
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('refreshToken', data.refreshToken);
-        token = data.token;
-        return data.token;
-      } catch { return null; }
+  <div id="tab-users" style="display:none">
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">Utilisateurs</div>
+        <div style="display:flex;gap:8px;">
+          <input class="search-input" type="text" placeholder="Rechercher..." oninput="filterUsers(this.value)" id="userSearch"/>
+          <button class="refresh-btn" onclick="loadAll()">↻ Rafraîchir</button>
+        </div>
+      </div>
+      <div id="usersBody"><div class="loading">Chargement...</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'https://ak47-backend.onrender.com';
+const token = localStorage.getItem('token');
+const username = localStorage.getItem('username');
+if (!token) window.location.href = '/login';
+document.getElementById('navUser').textContent = username || '—';
+
+let allLogs = [];
+let allUsers = [];
+let currentTab = 'logs';
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('tab-logs').style.display  = tab === 'logs'  ? 'block' : 'none';
+  document.getElementById('tab-users').style.display = tab === 'users' ? 'block' : 'none';
+  document.getElementById('tab-roles').style.display = tab === 'roles' ? 'block' : 'none';
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', ['logs','users','roles'][i] === tab));
+  if (tab === 'roles') renderRolesTab();
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    b.classList.toggle('active', (i === 0 && tab === 'logs') || (i === 1 && tab === 'users'));
+  });
+}
+
+function fmt(ts) {
+  if (!ts) return '—';
+  const d = new Date(ts * 1000);
+  return d.toLocaleDateString('fr-FR') + ' ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+
+function badgeTag(type) {
+  const map = { login: 'badge-login', register: 'badge-register', error: 'badge-error', action: 'badge-action' };
+  const labels = { login: '🔑 Connexion', register: '✨ Inscription', error: '❌ Erreur', action: '⚙️ Action' };
+  return `<span class="badge-tag ${map[type] || ''}">${labels[type] || type}</span>`;
+}
+
+function renderLogs(logs) {
+  const el = document.getElementById('logsBody');
+  if (!logs.length) { el.innerHTML = '<div class="empty">Aucun log</div>'; return; }
+  el.innerHTML = `<table>
+    <thead><tr><th>Date</th><th>Type</th><th>Utilisateur</th><th>Détail</th><th>IP</th></tr></thead>
+    <tbody>${logs.map(l => `
+      <tr>
+        <td style="color:var(--gray-400);white-space:nowrap;">${fmt(l.created_at)}</td>
+        <td>${badgeTag(l.type)}</td>
+        <td>${l.username ? `<a href="/${l.username}" target="_blank" style="color:var(--black);font-weight:600;">@${l.username}</a>` : '<span style="color:var(--gray-400);">—</span>'}</td>
+        <td style="color:var(--gray-500);">${l.detail || '—'}</td>
+        <td style="color:var(--gray-400);font-size:11px;">${l.ip || '—'}</td>
+      </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+function renderUsers(users) {
+  const el = document.getElementById('usersBody');
+  if (!users.length) { el.innerHTML = '<div class="empty">Aucun utilisateur</div>'; return; }
+  el.innerHTML = `<table>
+    <thead><tr><th>Utilisateur</th><th>UID</th><th>Email</th><th>Discord</th><th>Badges</th><th>Rôles</th><th>Inscrit le</th><th>Action</th></tr></thead>
+    <tbody>${users.map(u => {
+      let badges = [];
+      try { badges = JSON.parse(u.discord_badges || '[]'); } catch {}
+      const color = u.avatar_color || '#000';
+      const initial = (u.display_name || u.username || '?').charAt(0).toUpperCase();
+      const uidBadge = u.uid != null
+        ? `<span style="font-size:12px;font-weight:600;color:var(--gray-600);">#${u.uid}</span>`
+        : `<span style="font-size:11px;font-weight:600;color:#ef4444;background:#fef2f2;padding:2px 6px;border-radius:4px;">—</span>`;
+      return `<tr>
+        <td><div class="user-cell"><div class="avatar-mini" style="background:${color}">${initial}</div><div><div style="font-weight:600;">@${u.username}</div><div style="font-size:11px;color:var(--gray-400);">${u.display_name || ''}</div></div></div></td>
+        <td>${uidBadge}</td>
+        <td style="font-size:12px;color:var(--gray-500);">${u.email || '—'}</td>
+        <td>${u.discord_id ? `<span class="discord-tag">🎮 ${u.discord_id}</span>` : '<span style="color:var(--gray-400);">—</span>'}</td>
+        <td style="font-size:11px;">${badges.map(b => b.emoji).join(' ') || '—'}</td>
+        <td style="font-size:11px;">${(() => { try { return JSON.parse(u.roles||'[]').map(r => ROLES_MAP[r]||r).join(' '); } catch { return '—'; } })()||'—'}</td>
+        <td style="font-size:11px;color:var(--gray-400);">${fmt(u.created_at)}</td>
+        <td style="display:flex;gap:6px;align-items:center;"><a class="btn-sm" href="https://ak-47.fr/${u.username}" target="_blank" style="background:var(--gray-100);color:var(--gray-700);text-decoration:none;">👁 Voir</a><button class="btn-sm" onclick="openRoleModal(this)" data-uid="${u.id}" data-uname="${u.username}" data-roles="${encodeURIComponent(u.roles||'[]')}" style="background:#f3f0ff;color:#7c3aed;">Rôles</button><button class="btn-sm btn-danger" onclick="deleteUserAdmin('${u.id}', '${u.username}')">Supprimer</button></td>
+      </tr>`;
+    }).join('')}
+    </tbody>
+  </table>`;
+}
+
+
+const AVAILABLE_ROLES = [
+  { id: 'owner',    label: 'Owner',      color: '#f59e0b', emoji: '👑' },
+  { id: 'og',       label: 'OG',         color: '#8b5cf6', emoji: '💎' },
+  { id: 'staff',    label: 'Staff',      color: '#3b82f6', emoji: '🛡️' },
+  { id: 'verified', label: 'Vérifié',    color: '#10b981', emoji: '✅' },
+  { id: 'premium',  label: 'Premium',    color: '#f43f5e', emoji: '⭐' },
+  { id: 'partner',  label: 'Partenaire', color: '#ec4899', emoji: '🤝' },
+];
+const ROLES_MAP = Object.fromEntries(AVAILABLE_ROLES.map(r => [r.id, r.emoji + ' ' + r.label]));
+
+let roleModalUser = null;
+
+
+function openBroadcastModal() {
+  document.getElementById('broadcastModal').style.display = 'flex';
+  document.getElementById('broadcastResult').textContent = '';
+}
+function closeBroadcastModal() {
+  document.getElementById('broadcastModal').style.display = 'none';
+}
+async function sendBroadcast() {
+  const subject = document.getElementById('broadcastSubject').value.trim();
+  const message = document.getElementById('broadcastMessage').value.trim();
+  const target = document.getElementById('broadcastTarget').value;
+  if (!subject || !message) { document.getElementById('broadcastResult').textContent = 'Sujet et message requis'; return; }
+  if (!confirm(`Envoyer cet email à tous les utilisateurs (${target}) ?`)) return;
+  const btn = document.getElementById('broadcastSendBtn');
+  btn.disabled = true; btn.textContent = 'Envoi...';
+  try {
+    const r = await fetch(`${API}/api/admin/broadcast-email`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ subject, message, target }),
+    });
+    const d = await r.json();
+    if (r.ok) {
+      document.getElementById('broadcastResult').innerHTML = `<span style="color:#10b981;">✅ ${d.sent} emails envoyés${d.failed ? `, ${d.failed} échecs` : ''}</span>`;
+    } else {
+      document.getElementById('broadcastResult').innerHTML = `<span style="color:#ef4444;">❌ ${d.error}</span>`;
     }
+  } catch {
+    document.getElementById('broadcastResult').innerHTML = '<span style="color:#ef4444;">❌ Erreur réseau</span>';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Envoyer';
+  }
+}
 
-    async function authFetch(url, opts = {}) {
-      opts.headers = { ...opts.headers, Authorization: 'Bearer ' + token };
-      let r = await fetch(url, opts);
-      if (r.status === 401) {
-        const newToken = await refreshAccessToken();
-        if (!newToken) { redirectToLogin(); return null; }
-        opts.headers.Authorization = 'Bearer ' + newToken;
-        r = await fetch(url, opts);
-      }
-      return r;
+function openRoleModal(btn) {
+  const id = btn.dataset.uid;
+  const username = btn.dataset.uname;
+  const rolesJson = decodeURIComponent(btn.dataset.roles || '[]');
+  roleModalUser = { id, username };
+  let current = [];
+  try { current = JSON.parse(rolesJson); } catch {}
+  document.getElementById('roleModalTitle').textContent = '@' + username;
+  const list = document.getElementById('roleCheckboxes');
+  list.innerHTML = AVAILABLE_ROLES.map(r => `
+    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid var(--gray-200);cursor:pointer;background:${current.includes(r.id)?r.color+'15':''};">
+      <input type="checkbox" value="${r.id}" ${current.includes(r.id)?'checked':''} style="width:16px;height:16px;accent-color:${r.color};">
+      <span style="font-size:18px;">${r.emoji}</span>
+      <span style="font-weight:600;color:${r.color};">${r.label}</span>
+    </label>`).join('');
+  document.getElementById('roleModal').style.display = 'flex';
+}
+
+function closeRoleModal() {
+  document.getElementById('roleModal').style.display = 'none';
+  roleModalUser = null;
+}
+
+async function saveRoles() {
+  if (!roleModalUser) return;
+  const checked = [...document.querySelectorAll('#roleCheckboxes input:checked')].map(i => i.value);
+  const r = await fetch(`${API}/api/admin/users/${roleModalUser.id}/roles`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+    body: JSON.stringify({ roles: checked }),
+  });
+  if (r.ok) {
+    closeRoleModal();
+    loadData();
+  } else {
+    alert('Erreur lors de la sauvegarde');
+  }
+}
+
+async function renderRolesTab() {
+  const container = document.getElementById('rolesContainer');
+  container.innerHTML = '<div style="color:var(--gray-400);">Chargement...</div>';
+  const results = await Promise.all(AVAILABLE_ROLES.map(async role => {
+    const r = await fetch(`${API}/api/admin/roles/${role.id}/users`, { headers: { Authorization: 'Bearer ' + token } });
+    const users = r.ok ? await r.json() : [];
+    return { role, users };
+  }));
+  container.innerHTML = results.map(({ role, users }) => `
+    <div style="background:var(--surface);border:1px solid var(--gray-200);border-radius:12px;padding:16px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <span style="font-size:22px;">${role.emoji}</span>
+        <span style="font-weight:700;font-size:15px;color:${role.color};">${role.label}</span>
+        <span style="margin-left:auto;background:${role.color}20;color:${role.color};padding:2px 8px;border-radius:12px;font-size:12px;font-weight:600;">${users.length}</span>
+      </div>
+      ${users.length ? users.map(u => `
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--gray-100);">
+          <div style="width:28px;height:28px;border-radius:50%;background:${u.avatar_color||'#888'};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;">
+            ${(u.display_name||u.username||'?').charAt(0).toUpperCase()}
+          </div>
+          <div>
+            <div style="font-weight:600;font-size:13px;">@${u.username}</div>
+            <div style="font-size:11px;color:var(--gray-400);">${u.display_name||''}</div>
+          </div>
+        </div>`).join('') : '<div style="color:var(--gray-400);font-size:13px;">Aucun utilisateur</div>'}
+    </div>`).join('');
+}
+
+function filterLogs() {
+  const type = document.getElementById('logFilter').value;
+  renderLogs(type ? allLogs.filter(l => l.type === type) : allLogs);
+}
+
+function filterUsers(q) {
+  const s = q.toLowerCase();
+  renderUsers(s ? allUsers.filter(u => (u.username||'').includes(s) || (u.email||'').includes(s) || (u.display_name||'').includes(s)) : allUsers);
+}
+
+async function disableUser(id, uname) {
+  if (!confirm(`Désactiver @${uname} ?`)) return;
+  const r = await fetch(`${API}/api/admin/users/${id}/disable`, { method: 'PATCH', headers: { Authorization: 'Bearer ' + token } });
+  if (r.ok) { alert(`@${uname} désactivé.`); loadAll(); loadGuilds(); }
+  else { const d = await r.json(); alert(d.error || 'Erreur'); }
+}
+
+async function deleteUserAdmin(id, uname) {
+  if (!confirm(`Supprimer définitivement @${uname} ? Cette action est irréversible.`)) return;
+  const r = await fetch(`${API}/api/admin/users/${id}`, { method: 'DELETE', headers: { Authorization: 'Bearer ' + token } });
+  if (r.ok) { loadData(); }
+  else { const d = await r.json(); alert(d.error || 'Erreur'); }
+}
+
+async function loadAll() {
+  try {
+    const [statsR, logsR, usersR] = await Promise.all([
+      fetch(`${API}/api/admin/stats`, { headers: { Authorization: 'Bearer ' + token } }),
+      fetch(`${API}/api/admin/logs?limit=200`, { headers: { Authorization: 'Bearer ' + token } }),
+      fetch(`${API}/api/admin/users`, { headers: { Authorization: 'Bearer ' + token } }),
+    ]);
+
+    if (statsR.status === 403) { alert('Accès refusé — tu n\'es pas admin.'); window.location.href = '/dashboard'; return; }
+
+    const stats = await statsR.json();
+    document.getElementById('s-total').textContent  = stats.total_users    ?? '—';
+    document.getElementById('s-today').textContent  = stats.users_today    ?? '—';
+    document.getElementById('s-7d').textContent     = stats.users_7d       ?? '—';
+    document.getElementById('s-logins').textContent = stats.logins_today   ?? '—';
+    document.getElementById('s-reg').textContent    = stats.registers_today ?? '—';
+    document.getElementById('s-err').textContent    = stats.errors_today   ?? '—';
+
+    allLogs  = await logsR.json();
+    allUsers = await usersR.json();
+
+    filterLogs();
+    renderUsers(allUsers);
+  } catch (e) {
+    console.error(e);
+    alert('Erreur de chargement');
+  }
+}
+
+loadAll();
+loadGuilds();
+
+async function loadGuilds() {
+  try {
+    const r = await fetch(`${API}/api/admin/bot-guilds`, { headers: { Authorization: 'Bearer ' + token } });
+    const guilds = await r.json();
+    const sel = document.getElementById('guildSelect');
+    sel.innerHTML = '<option value="">— Choisir un serveur —</option>';
+    guilds.forEach(g => {
+      const opt = document.createElement('option');
+      opt.value = g.id;
+      opt.textContent = g.name;
+      sel.appendChild(opt);
+    });
+
+    const main = guilds.find(g => g.id === '1484873435224997898');
+    if (main) sel.value = main.id;
+    document.getElementById('forceJoinBtn').disabled = false;
+  } catch { document.getElementById('guildSelect').innerHTML = '<option>Erreur chargement</option>'; }
+}
+
+async function forceJoin() {
+  const guild_id = document.getElementById('guildSelect').value;
+  if (!guild_id) return;
+  const btn = document.getElementById('forceJoinBtn');
+  const box = document.getElementById('forceJoinResult');
+  btn.disabled = true; btn.textContent = 'En cours...';
+  box.style.display = 'none';
+  try {
+    const r = await fetch(`${API}/api/admin/force-join`, {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ guild_id }),
+    });
+    const d = await r.json();
+    if (r.ok) {
+      box.className = 'result-box result-ok';
+      box.textContent = `✅ ${d.success} membres ajoutés sur ${d.total} comptes Discord (${d.failed} échecs)`;
+    } else {
+      box.className = 'result-box result-err';
+      box.textContent = '❌ ' + (d.error || 'Erreur');
     }
+    box.style.display = 'block';
+  } catch {
+    box.className = 'result-box result-err';
+    box.textContent = '❌ Erreur réseau';
+    box.style.display = 'block';
+  }
+  btn.disabled = false; btn.textContent = 'Faire rejoindre tous';
+}
 
-    function redirectToLogin() {
-      localStorage.clear();
-      window.location.href = '/maintenance-login';
-    }
+</script>
 
-    function logout() {
-      const refreshToken = localStorage.getItem('refreshToken');
-      const userId = localStorage.getItem('userId');
-      fetch(`${API}/auth/logout`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refreshToken, userId })
-      }).finally(() => { localStorage.clear(); window.location.href = '/maintenance'; });
-    }
+<footer style="text-align:center;padding:20px;font-size:11px;color:var(--gray-400);border-top:1px solid var(--gray-200);margin-top:auto;">Fait par <a href="https://discord.gg/g7MysUNQXs" target="_blank" rel="noopener" style="color:var(--gray-400);font-weight:700;text-decoration:none;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">nitrox</a></footer>
+<script>
+(function(){
+  var btn = document.getElementById('globalThemeBtn');
+  if(!btn) return;
+  var t = document.documentElement.getAttribute('data-theme') || 'light';
+  btn.textContent = t === 'dark' ? '☀️' : '🌙';
+  btn.setAttribute('data-theme-btn', '1');
+})();
+function toggleTheme(){
+  var cur = document.documentElement.getAttribute('data-theme') || 'light';
+  var next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  var btn = document.getElementById('globalThemeBtn');
+  if(btn) btn.textContent = next === 'dark' ? '☀️' : '🌙';
+  var pill = document.getElementById('themeToggle');
+  if(pill) pill.textContent = next === 'dark' ? '☀️' : '🌙';
+}
+document.addEventListener('DOMContentLoaded', function(){
+  var btn = document.getElementById('globalThemeBtn');
+  if(btn){var t=document.documentElement.getAttribute('data-theme')||'light'; btn.textContent=t==='dark'?'☀️':'🌙';}
+});
+</script>
 
-    function setBadge(on) {
-      const badge = document.getElementById('status-badge');
-      const text  = document.getElementById('status-text');
-      const sub   = document.getElementById('toggle-sub');
-      if (on) {
-        badge.className = 'badge badge-on';
-        text.textContent = 'Maintenance';
-        sub.textContent  = 'Le site affiche la page de maintenance.';
-      } else {
-        badge.className = 'badge badge-off';
-        text.textContent = 'En ligne';
-        sub.textContent  = 'Le site est actuellement accessible.';
-      }
-    }
+<div id="roleModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;">
+  <div style="background:var(--surface);border-radius:16px;padding:24px;width:360px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.2);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div style="font-weight:700;font-size:16px;">Rôles de <span id="roleModalTitle"></span></div>
+      <button onclick="closeRoleModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--gray-500);">✕</button>
+    </div>
+    <div id="roleCheckboxes" style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button onclick="closeRoleModal()" style="padding:8px 16px;border:1px solid var(--gray-200);border-radius:8px;background:none;cursor:pointer;">Annuler</button>
+      <button onclick="saveRoles()" style="padding:8px 16px;background:#7c3aed;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Sauvegarder</button>
+    </div>
+  </div>
+</div>
 
-    function updateStatus() {
-      const on = document.getElementById('maintenance-toggle').checked;
-      setBadge(on);
-      pendingState = on;
-    }
 
-    async function saveMaintenanceMode() {
-      const on = document.getElementById('maintenance-toggle').checked;
-      const btn = document.getElementById('save-btn');
-      const fb  = document.getElementById('feedback');
-      btn.disabled = true;
-      btn.textContent = 'Enregistrement…';
-      fb.className = 'feedback';
-      fb.textContent = '';
+<div id="broadcastModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center;">
+  <div style="background:var(--surface);border-radius:16px;padding:28px;width:500px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,.3);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div style="font-weight:700;font-size:17px;">📧 Mail groupé</div>
+      <button onclick="closeBroadcastModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--gray-500);">✕</button>
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="font-size:12px;font-weight:600;color:var(--gray-500);display:block;margin-bottom:6px;">DESTINATAIRES</label>
+      <select id="broadcastTarget" style="width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;font-family:inherit;outline:none;">
+        <option value="all">Tous les utilisateurs</option>
+        <option value="verified">Rôle Vérifié uniquement</option>
+        <option value="premium">Rôle Premium uniquement</option>
+      </select>
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="font-size:12px;font-weight:600;color:var(--gray-500);display:block;margin-bottom:6px;">SUJET</label>
+      <input id="broadcastSubject" type="text" placeholder="Objet de l'email..."
+        style="width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;font-family:inherit;outline:none;box-sizing:border-box;"/>
+    </div>
+    <div style="margin-bottom:20px;">
+      <label style="font-size:12px;font-weight:600;color:var(--gray-500);display:block;margin-bottom:6px;">MESSAGE</label>
+      <textarea id="broadcastMessage" rows="6" placeholder="Contenu du message..."
+        style="width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;font-family:inherit;outline:none;resize:vertical;box-sizing:border-box;"></textarea>
+    </div>
+    <div id="broadcastResult" style="min-height:20px;font-size:13px;margin-bottom:12px;"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button onclick="closeBroadcastModal()" style="padding:9px 18px;border:1px solid var(--gray-200);border-radius:8px;background:none;cursor:pointer;">Annuler</button>
+      <button id="broadcastSendBtn" onclick="sendBroadcast()" style="padding:9px 18px;background:#1a1a2e;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Envoyer</button>
+    </div>
+  </div>
+</div>
 
-      const r = await authFetch(`${API}/admin/maintenance`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ enabled: on })
-      });
-
-      btn.disabled = false;
-      btn.textContent = 'Enregistrer';
-
-      if (!r) return;
-      if (r.ok) {
-        fb.textContent = on ? '✓ Maintenance activée.' : '✓ Site remis en ligne.';
-        setBadge(on);
-      } else {
-        fb.className = 'feedback err';
-        fb.textContent = '✗ Erreur lors de la sauvegarde.';
-      }
-    }
-
-    async function init() {
-      if (!token) { redirectToLogin(); return; }
-
-      // Vérifier que c'est un admin
-      const check = await authFetch(`${API}/admin/stats`);
-      if (!check || !check.ok) { redirectToLogin(); return; }
-
-      // Afficher le username
-      const username = localStorage.getItem('username');
-      if (username) document.getElementById('admin-name').textContent = '@' + username;
-
-      // Charger l'état maintenance actuel
-      const mr = await fetch(`${API}/admin/maintenance`);
-      if (mr.ok) {
-        const { maintenance } = await mr.json();
-        document.getElementById('maintenance-toggle').checked = maintenance;
-        setBadge(maintenance);
-      }
-
-      document.body.classList.remove('loading');
-    }
-
-    init();
-  </script>
 </body>
 </html>

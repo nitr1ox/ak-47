@@ -1,2 +1,265 @@
-<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=/"><script src="/maintenance-check.js"></script>
-</head></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Security Alert — ak-47.fr</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#000;color:#e5e5e5;font-family:'Courier New',monospace;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;overflow:hidden;}
+
+  .scan-line{position:fixed;top:0;left:0;width:100%;height:2px;background:rgba(255,30,30,0.6);animation:scan 4s linear infinite;pointer-events:none;z-index:99;}
+  @keyframes scan{0%{top:0;}100%{top:100vh;}}
+
+  .border-flash{position:fixed;inset:0;border:2px solid rgba(255,30,30,0);animation:borderFlash 2s ease-in-out infinite;pointer-events:none;z-index:98;}
+  @keyframes borderFlash{0%,100%{border-color:rgba(255,30,30,0);}50%{border-color:rgba(255,30,30,0.5);}}
+
+  .container{width:100%;max-width:720px;z-index:10;}
+
+  .header{display:flex;align-items:center;gap:16px;margin-bottom:32px;padding-bottom:16px;border-bottom:1px solid #1f1f1f;}
+  .logo{width:36px;height:36px;background:#ff1e1e;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff;flex-shrink:0;}
+  .header-text{font-size:11px;color:#555;letter-spacing:1px;text-transform:uppercase;}
+  .header-title{font-size:13px;color:#888;margin-top:2px;}
+
+  .alert-box{border:1px solid #ff1e1e33;border-radius:4px;padding:24px;margin-bottom:20px;background:#0a0000;}
+  .alert-label{font-size:10px;color:#ff1e1e;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;}
+  .alert-title{font-size:22px;font-weight:700;color:#fff;margin-bottom:6px;letter-spacing:-0.5px;}
+  .alert-sub{font-size:13px;color:#666;line-height:1.6;}
+
+  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+  @media(max-width:500px){.info-grid{grid-template-columns:1fr;}}
+  .info-card{background:#0d0d0d;border:1px solid #1a1a1a;border-radius:4px;padding:16px;}
+  .info-card-label{font-size:10px;color:#444;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;}
+  .info-card-value{font-size:14px;color:#e5e5e5;word-break:break-all;line-height:1.4;}
+  .info-card-value.red{color:#ff4444;}
+  .info-card-value.dim{color:#666;font-size:12px;}
+
+  .location-box{background:#0d0d0d;border:1px solid #1a1a1a;border-radius:4px;padding:16px;margin-bottom:20px;}
+  .location-box-label{font-size:10px;color:#444;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;}
+  .location-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #111;font-size:13px;}
+  .location-row:last-child{border-bottom:none;}
+  .location-key{color:#555;}
+  .location-val{color:#ccc;text-align:right;}
+
+  .incident-box{background:#0d0d0d;border:1px solid #1a1a1a;border-radius:4px;padding:16px;margin-bottom:20px;}
+  .incident-id{font-size:11px;color:#333;letter-spacing:2px;}
+  .incident-id span{color:#ff1e1e;}
+
+  .footer{font-size:11px;color:#2a2a2a;text-align:center;margin-top:24px;line-height:1.8;}
+
+  .blink{animation:blink 1s step-end infinite;}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+
+  #loadingOverlay{position:fixed;inset:0;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:999;transition:opacity .6s;}
+  #loadingOverlay.hidden{opacity:0;pointer-events:none;}
+  .loading-text{font-size:12px;color:#ff1e1e;letter-spacing:3px;text-transform:uppercase;}
+  .loading-bar{width:300px;height:2px;background:#111;border-radius:2px;overflow:hidden;}
+  .loading-fill{height:100%;background:#ff1e1e;width:0%;transition:width .1s linear;}
+  .loading-status{font-size:11px;color:#333;letter-spacing:1px;min-height:16px;}
+</style>
+</head>
+<body>
+
+<div id="loadingOverlay">
+  <div class="loading-text">Analyzing threat<span class="blink">_</span></div>
+  <div class="loading-bar"><div class="loading-fill" id="loadingFill"></div></div>
+  <div class="loading-status" id="loadingStatus"></div>
+</div>
+
+<div class="scan-line"></div>
+<div class="border-flash"></div>
+
+<div class="container" id="mainContent" style="opacity:0;transition:opacity .5s;">
+
+  <div class="header">
+    <div class="logo">!</div>
+    <div>
+      <div class="header-text">ak-47.fr — Security System</div>
+      <div class="header-title">Unauthorized Access Detection</div>
+    </div>
+  </div>
+
+  <div class="alert-box">
+    <div class="alert-label">⬤ Incident actif</div>
+    <div class="alert-title">Accès non autorisé détecté</div>
+    <div class="alert-sub">Une tentative d'accès à une ressource protégée a été enregistrée depuis votre adresse. Cette activité a été journalisée et transmise à l'équipe de sécurité.</div>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-card-label">Adresse IP</div>
+      <div class="info-card-value red" id="displayIp">—</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-label">Horodatage</div>
+      <div class="info-card-value" id="displayTime">—</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-label">Ressource ciblée</div>
+      <div class="info-card-value dim">/api/backup/db.json</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-label">Statut</div>
+      <div class="info-card-value red">LOGGED <span class="blink">■</span></div>
+    </div>
+  </div>
+
+  <div class="location-box">
+    <div class="location-box-label">Informations de localisation</div>
+    <div class="location-row"><span class="location-key">Pays</span><span class="location-val" id="locCountry">—</span></div>
+    <div class="location-row"><span class="location-key">Région</span><span class="location-val" id="locRegion">—</span></div>
+    <div class="location-row"><span class="location-key">Ville</span><span class="location-val" id="locCity">—</span></div>
+    <div class="location-row"><span class="location-key">FAI</span><span class="location-val" id="locIsp">—</span></div>
+    <div class="location-row"><span class="location-key">Coordonnées</span><span class="location-val" id="locCoords">—</span></div>
+  </div>
+
+  <div class="incident-box">
+    <div class="info-card-label">Référence d'incident</div>
+    <div class="incident-id">ID : <span id="incidentId">—</span></div>
+  </div>
+
+  <div class="footer">
+    Cette page est générée automatiquement par le système de détection d'intrusion d'ak-47.fr.<br>
+    Toute activité suspecte est enregistrée et peut être transmise aux autorités compétentes.
+  </div>
+
+</div>
+
+<script>
+const steps = [
+  [10,  'Collecting network data...'],
+  [25,  'Resolving IP address...'],
+  [45,  'Querying geolocation database...'],
+  [65,  'Identifying ISP...'],
+  [80,  'Logging incident...'],
+  [92,  'Generating report...'],
+  [100, 'Done.'],
+];
+
+let si = 0;
+const fill = document.getElementById('loadingFill');
+const status = document.getElementById('loadingStatus');
+
+function runStep() {
+  if (si >= steps.length) {
+    setTimeout(() => {
+      document.getElementById('loadingOverlay').classList.add('hidden');
+      document.getElementById('mainContent').style.opacity = '1';
+    }, 400);
+    return;
+  }
+  const [pct, txt] = steps[si++];
+  fill.style.width = pct + '%';
+  status.textContent = txt;
+  setTimeout(runStep, 380 + Math.random() * 300);
+}
+setTimeout(runStep, 600);
+
+const params = new URLSearchParams(window.location.search);
+const ip = params.get('ip') || '—';
+document.getElementById('displayIp').textContent = ip;
+document.getElementById('displayTime').textContent = new Date().toLocaleString('fr-FR');
+document.getElementById('incidentId').textContent = 'AK47-' + Date.now().toString(36).toUpperCase();
+
+if (ip && ip !== '—') {
+  fetch(`https://ipapi.co/${ip}/json/`)
+    .then(r => r.json())
+    .then(d => {
+      document.getElementById('locCountry').textContent = (d.country_name || '—') + (d.country_code ? ` (${d.country_code})` : '');
+      document.getElementById('locRegion').textContent  = d.region || '—';
+      document.getElementById('locCity').textContent    = d.city   || '—';
+      document.getElementById('locIsp').textContent     = d.org    || '—';
+      if (d.latitude && d.longitude) {
+        document.getElementById('locCoords').textContent = `${d.latitude}, ${d.longitude}`;
+      }
+    })
+    .catch(() => {});
+}
+</script>
+
+<script>
+const _ac = new (window.AudioContext || window.webkitAudioContext)();
+
+function playGlitch() {
+  const buf = _ac.createBuffer(1, _ac.sampleRate * 0.15, _ac.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+  const src = _ac.createBufferSource();
+  const gain = _ac.createGain();
+  gain.gain.setValueAtTime(0.18, _ac.currentTime);
+  src.buffer = buf;
+  src.connect(gain);
+  gain.connect(_ac.destination);
+  src.start();
+}
+
+function playBeep(freq, duration, vol) {
+  const osc = _ac.createOscillator();
+  const gain = _ac.createGain();
+  osc.type = 'square';
+  osc.frequency.setValueAtTime(freq, _ac.currentTime);
+  gain.gain.setValueAtTime(vol || 0.12, _ac.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, _ac.currentTime + duration);
+  osc.connect(gain);
+  gain.connect(_ac.destination);
+  osc.start();
+  osc.stop(_ac.currentTime + duration);
+}
+
+function playAlarm() {
+  let t = _ac.currentTime;
+  for (let i = 0; i < 6; i++) {
+    const osc = _ac.createOscillator();
+    const gain = _ac.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(880, t + i * 0.5);
+    osc.frequency.setValueAtTime(440, t + i * 0.5 + 0.25);
+    gain.gain.setValueAtTime(0.08, t + i * 0.5);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.5 + 0.48);
+    osc.connect(gain);
+    gain.connect(_ac.destination);
+    osc.start(t + i * 0.5);
+    osc.stop(t + i * 0.5 + 0.48);
+  }
+}
+
+function playKeyboard() {
+  const freqs = [200, 350, 180, 420, 160, 310, 390];
+  freqs.forEach((f, i) => {
+    setTimeout(() => playBeep(f, 0.04, 0.06), i * 60);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.body.addEventListener('click', function startAudio() {
+    _ac.resume();
+    document.body.removeEventListener('click', startAudio);
+  }, { once: true });
+
+  _ac.resume().then(() => {
+    let glitchCount = 0;
+    const glitchInterval = setInterval(() => {
+      playGlitch();
+      playBeep(120 + Math.random() * 80, 0.08, 0.07);
+      glitchCount++;
+      if (glitchCount >= 6) clearInterval(glitchInterval);
+    }, 420);
+
+    setTimeout(() => {
+      playKeyboard();
+    }, 1200);
+
+    setTimeout(() => {
+      playAlarm();
+    }, 2800);
+
+    setTimeout(() => {
+      playBeep(1200, 0.3, 0.1);
+      setTimeout(() => playBeep(800, 0.5, 0.1), 350);
+    }, 5800);
+  });
+});
+</script>
+
+</body>
+</html>

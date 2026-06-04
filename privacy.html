@@ -1,2 +1,157 @@
-<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=/"><script src="/maintenance-check.js"></script>
-</head></html>
+<!DOCTYPE html>
+<html lang="fr">
+<head><script>(function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ak-47.fr</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/style.css"/>
+
+  <style id="fluid-global">
+    
+
+    
+    a, button, input, textarea, select,
+    [role="button"], [tabindex] {
+      transition: opacity .2s ease, color .2s ease, background .2s ease,
+                  border-color .2s ease, box-shadow .2s ease,
+                  transform .2s cubic-bezier(.34,1.56,.64,1) !important;
+    }
+
+    
+    html { scroll-behavior: smooth; }
+
+    
+    button:active, [role="button"]:active {
+      transform: scale(.96) !important;
+      transition-duration: .08s !important;
+    }
+
+    
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(0,0,0,.08) !important;
+      border-color: #000 !important;
+      transition: box-shadow .2s ease, border-color .2s ease !important;
+    }
+
+    
+    .section-card, .mblock, .profile-card {
+      transition: box-shadow .25s ease, transform .25s cubic-bezier(.22,1,.36,1) !important;
+    }
+    .section-card:hover, .mblock:hover {
+      box-shadow: 0 4px 20px rgba(0,0,0,.08) !important;
+      transform: translateY(-1px) !important;
+    }
+
+    
+    .tab {
+      transition: color .2s ease, border-color .2s ease !important;
+    }
+
+    
+    .icon-picker-overlay {
+      transition: opacity .25s ease !important;
+    }
+    .icon-picker-modal {
+      transition: transform .3s cubic-bezier(.34,1.56,.64,1), opacity .25s ease !important;
+    }
+
+    
+    .mdrop {
+      transition: border-color .2s ease, background .2s ease, box-shadow .2s ease !important;
+    }
+    .mdrop:hover {
+      box-shadow: 0 2px 12px rgba(0,0,0,.06) !important;
+    }
+
+    
+    .toast {
+      transition: opacity .25s ease, transform .25s cubic-bezier(.34,1.56,.64,1) !important;
+    }
+
+    
+    .mob-nav-btn {
+      transition: color .15s ease, transform .15s cubic-bezier(.34,1.56,.64,1) !important;
+    }
+    .mob-nav-btn:active { transform: scale(.9) !important; }
+    .mob-nav-btn.active { transform: scale(1.05) !important; }
+
+    
+    .badge {
+      transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s ease !important;
+    }
+    .badge:hover { transform: scale(1.06) !important; }
+
+    
+    .copy-btn:hover, .save-bar-btn:hover {
+      transform: translateY(-1px) !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,.12) !important;
+    }
+
+    
+    .ipick-btn {
+      transition: transform .2s cubic-bezier(.34,1.56,.64,1), border-color .15s, background .15s, box-shadow .2s !important;
+    }
+    .ipick-btn:hover { transform: translateY(-3px) scale(1.04) !important; }
+
+    
+    .mblock-chevron {
+      transition: transform .25s cubic-bezier(.34,1.56,.64,1) !important;
+    }
+
+    
+    .audio-src-tab {
+      transition: all .2s cubic-bezier(.34,1.56,.64,1) !important;
+    }
+    .audio-src-tab:hover { transform: translateY(-1px) !important; }
+
+    
+    nav a, .nav-link {
+      transition: color .2s ease, opacity .2s ease !important;
+    }
+
+    
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,.3); }
+  </style>
+</head>
+<body>
+<button id="globalThemeBtn" onclick="toggleTheme()" title="Changer le thème" aria-label="Changer le thème">🌙</button>
+
+<div class="page-shell">
+  <a href="/" class="logo-link">ak-47<span>.fr</span></a>
+  <div class="card card-sm">
+    <h1>Confidentialité</h1>
+    <p class="subtitle">Politique de confidentialité de ak-47.fr.</p>
+    <p style="color:var(--gray-500);font-size:14px;line-height:1.7;">Contenu légal complet disponible sur la version déployée du site.</p><div class="form-footer" style="margin-top:20px;"><a href="/">← Retour à l'accueil</a></div>
+  </div>
+</div>
+
+<footer style="text-align:center;padding:20px;font-size:11px;color:var(--gray-400);border-top:1px solid var(--gray-200);margin-top:auto;">Fait par <a href="https://discord.gg/g7MysUNQXs" target="_blank" rel="noopener" style="color:var(--gray-400);font-weight:700;text-decoration:none;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">nitrox</a></footer>
+<script>
+(function(){
+  var btn = document.getElementById('globalThemeBtn');
+  if(!btn) return;
+  var t = document.documentElement.getAttribute('data-theme') || 'light';
+  btn.textContent = t === 'dark' ? '☀️' : '🌙';
+  btn.setAttribute('data-theme-btn', '1');
+})();
+function toggleTheme(){
+  var cur = document.documentElement.getAttribute('data-theme') || 'light';
+  var next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  var btn = document.getElementById('globalThemeBtn');
+  if(btn) btn.textContent = next === 'dark' ? '☀️' : '🌙';
+  var pill = document.getElementById('themeToggle');
+  if(pill) pill.textContent = next === 'dark' ? '☀️' : '🌙';
+}
+document.addEventListener('DOMContentLoaded', function(){
+  var btn = document.getElementById('globalThemeBtn');
+  if(btn){var t=document.documentElement.getAttribute('data-theme')||'light'; btn.textContent=t==='dark'?'☀️':'🌙';}
+});
+</script>
+</body>
+</html>

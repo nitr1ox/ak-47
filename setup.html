@@ -1,2 +1,106 @@
-<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=/"><script src="/maintenance-check.js"></script>
-</head></html>
+<!DOCTYPE html>
+<html lang="fr">
+<head><script>(function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ak-47.fr — Choisir ton pseudo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/style.css"/>
+</head>
+<body>
+<button id="globalThemeBtn" onclick="toggleTheme()" title="Changer le thème" aria-label="Changer le thème">🌙</button>
+
+<div class="page-shell">
+  <a href="/" class="logo-link">ak-47<span>.fr</span></a>
+  <div class="card">
+    <h1>Choisis ton pseudo</h1>
+    <p class="subtitle">C'est ton URL publique sur ak-47.fr — tu pourras le changer plus tard.</p>
+    <div id="alert"></div>
+    <div class="field">
+      <label>Pseudo (votre URL)</label>
+      <div class="input-row">
+        <span class="input-prefix">ak-47.fr/</span>
+        <input type="text" id="username" placeholder="votre-pseudo" autocomplete="username" oninput="checkUsername()"/>
+      </div>
+      <div id="usernameStatus" style="font-size:12px;margin-top:4px;"></div>
+    </div>
+    <button class="btn btn-primary" id="submitBtn" onclick="doSetup()">Confirmer mon pseudo</button>
+  </div>
+</div>
+<script>
+  const token = localStorage.getItem('token');
+  if (!token) window.location.href = '/login';
+
+  let checkTimeout;
+  function checkUsername() {
+    const val = document.getElementById('username').value.trim();
+    const status = document.getElementById('usernameStatus');
+    clearTimeout(checkTimeout);
+    if (val.length < 2) { status.textContent = ''; return; }
+    checkTimeout = setTimeout(async () => {
+      try {
+        const r = await fetch(`https://ak47-backend.onrender.com/api/user/check-username?username=${encodeURIComponent(val)}`
+        const data = await r.json();
+        if (data.available) {
+          status.style.color = '#16a34a';
+          status.textContent = '✓ Disponible';
+        } else {
+          status.style.color = '#ef4444';
+          status.textContent = '✗ Déjà pris';
+        }
+      } catch { status.textContent = ''; }
+    }, 400);
+  }
+
+  async function doSetup() {
+    const btn = document.getElementById('submitBtn');
+    const username = document.getElementById('username').value.trim();
+    if (!username || username.length < 2) return showAlert('Pseudo trop court (min 2 caractères)');
+    if (!/^[a-zA-Z0-9_-]+$/.test(username)) return showAlert('Pseudo invalide (lettres, chiffres, _ et - uniquement)');
+    btn.disabled = true; btn.innerHTML = '<span class="loading-spinner"></span>';
+    try {
+      const r = await fetch('https://ak47-backend.onrender.com/api/user/setup-username', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ username })
+      });
+      const data = await r.json();
+      if (!r.ok) { showAlert(data.error || 'Erreur'); return; }
+      localStorage.setItem('username', data.username);
+      if (data.token) localStorage.setItem('token', data.token);
+      if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
+      if (data.userId) localStorage.setItem('userId', data.userId);
+      window.location.href = '/dashboard';
+    } catch { showAlert('Erreur réseau'); }
+    finally { btn.disabled = false; btn.innerHTML = 'Confirmer mon pseudo'; }
+  }
+
+  function showAlert(msg) {
+    document.getElementById('alert').innerHTML = `<div class="alert alert-error">${msg}</div>`;
+  }
+</script>
+
+<script>
+(function(){
+  var btn = document.getElementById('globalThemeBtn');
+  if(!btn) return;
+  var t = document.documentElement.getAttribute('data-theme') || 'light';
+  btn.textContent = t === 'dark' ? '☀️' : '🌙';
+  btn.setAttribute('data-theme-btn', '1');
+})();
+function toggleTheme(){
+  var cur = document.documentElement.getAttribute('data-theme') || 'light';
+  var next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  var btn = document.getElementById('globalThemeBtn');
+  if(btn) btn.textContent = next === 'dark' ? '☀️' : '🌙';
+  var pill = document.getElementById('themeToggle');
+  if(pill) pill.textContent = next === 'dark' ? '☀️' : '🌙';
+}
+document.addEventListener('DOMContentLoaded', function(){
+  var btn = document.getElementById('globalThemeBtn');
+  if(btn){var t=document.documentElement.getAttribute('data-theme')||'light'; btn.textContent=t==='dark'?'☀️':'🌙';}
+});
+</script>
+</body>
+</html>

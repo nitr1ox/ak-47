@@ -1,2 +1,110 @@
-<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=/"><script src="/maintenance-check.js"></script>
-</head></html>
+<!DOCTYPE html>
+<html lang="fr">
+<head><script>(function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ak-47.fr — Connexion...</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--gray-50, #fafafa); font-family: 'Inter', sans-serif;
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 16px;
+    }
+    :root{--gray-50:#fafafa;--gray-200:#e4e4e7;--gray-400:#a1a1aa;--black:#000;--white:#fff;}
+    [data-theme="dark"]{--gray-50:#111113;--gray-200:#2a2a2f;--gray-400:#71717a;--black:#fff;--white:#0a0a0a;}
+    .spinner {
+      width: 32px; height: 32px;
+      border: 2px solid var(--gray-200); border-top-color: var(--black);
+      border-radius: 50%; animation: spin .6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    p { font-size: 14px; color: var(--gray-400); }
+    .error { color: #ef4444; font-size: 14px; text-align: center; }
+    a { color: var(--black); font-weight: 600; font-size: 13px; }
+  </style>
+</head>
+<body>
+<button id="globalThemeBtn" onclick="toggleTheme()" title="Changer le thème" aria-label="Changer le thème">🌙</button>
+
+  <div class="spinner" id="spinner"></div>
+  <p id="msg">Connexion en cours...</p>
+  <div id="errorBox" style="display:none">
+    <p class="error" id="errorMsg"></p>
+    <br/>
+    <a href="/login">← Retour à la connexion</a>
+  </div>
+
+  <script>
+    const API = 'https://ak47-backend.onrender.com';
+    const params = new URLSearchParams(window.location.search);
+    const token        = params.get('token');
+    const refreshToken = params.get('refreshToken');
+    const userId       = params.get('userId');
+    const error        = params.get('error');
+
+    function showError(msg) {
+      document.getElementById('spinner').style.display = 'none';
+      document.getElementById('msg').style.display = 'none';
+      document.getElementById('errorMsg').textContent = msg;
+      document.getElementById('errorBox').style.display = 'block';
+    }
+
+    if (error) {
+      showError(decodeURIComponent(error));
+    } else if (token) {
+
+      (async () => {
+        try {
+          const r = await fetch(API + '/api/user/me', {
+            headers: { Authorization: 'Bearer ' + token }
+          });
+
+          if (r.status === 401) { showError('Session expirée, reconnecte-toi.'); return; }
+          if (!r.ok) { showError('Erreur de connexion, réessaie.'); return; }
+          const data = await r.json();
+
+          localStorage.setItem('token', token);
+          if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
+          if (userId) localStorage.setItem('userId', userId);
+          localStorage.setItem('username', data.username);
+
+          const needsSetup = data.needs_setup === true || params.get('new') === '1';
+          document.getElementById('msg').textContent = 'Connecté ! Redirection...';
+          setTimeout(() => window.location.href = needsSetup ? '/setup' : '/dashboard', 800);
+        } catch {
+          showError('Erreur réseau, réessaie.');
+        }
+      })();
+    } else {
+      window.location.href = '/login';
+    }
+  </script>
+
+<footer style="text-align:center;padding:20px;font-size:11px;color:var(--gray-400);border-top:1px solid var(--gray-200);margin-top:auto;">Fait par <a href="https://discord.gg/g7MysUNQXs" target="_blank" rel="noopener" style="color:var(--gray-400);font-weight:700;text-decoration:none;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">nitrox</a></footer>
+<script>
+(function(){
+  var btn = document.getElementById('globalThemeBtn');
+  if(!btn) return;
+  var t = document.documentElement.getAttribute('data-theme') || 'light';
+  btn.textContent = t === 'dark' ? '☀️' : '🌙';
+  btn.setAttribute('data-theme-btn', '1');
+})();
+function toggleTheme(){
+  var cur = document.documentElement.getAttribute('data-theme') || 'light';
+  var next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  var btn = document.getElementById('globalThemeBtn');
+  if(btn) btn.textContent = next === 'dark' ? '☀️' : '🌙';
+  var pill = document.getElementById('themeToggle');
+  if(pill) pill.textContent = next === 'dark' ? '☀️' : '🌙';
+}
+document.addEventListener('DOMContentLoaded', function(){
+  var btn = document.getElementById('globalThemeBtn');
+  if(btn){var t=document.documentElement.getAttribute('data-theme')||'light'; btn.textContent=t==='dark'?'☀️':'🌙';}
+});
+</script>
+</body>
+</html>
