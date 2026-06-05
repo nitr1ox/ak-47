@@ -242,7 +242,7 @@ window.onunhandledrejection = function(e) {
       });
       let data;
       try { data = await r.json(); } catch { data = {}; }
-      if (!r.ok) { showVerifyAlert(data.error || 'Erreur'); btn.disabled = false; btn.innerHTML = 'Créer mon profil'; return; }
+      if (!r.ok) { showAlert(data.error || 'Erreur'); btn.disabled = false; btn.innerHTML = 'Créer mon profil'; return; }
       if (data.pending) {
         pendingEmail = email;
         const s1 = document.getElementById('step1');
