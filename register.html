@@ -191,6 +191,10 @@ window.onunhandledrejection = function(e) {
       <input type="password" id="password" placeholder="Minimum 8 caractères" autocomplete="new-password"/>
     </div>
     <div class="h-captcha" data-sitekey="33bac0e6-5324-485e-aa6a-595cdb466e0a" style="margin-bottom:12px;"></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+      <input type="checkbox" id="rememberMe" style="width:16px;height:16px;accent-color:#fff;cursor:pointer;"/>
+      <label for="rememberMe" style="font-size:13px;color:#888;cursor:pointer;">Se souvenir de moi (pas de vérification email)</label>
+    </div>
     <button class="btn btn-primary" id="submitBtn" onclick="doRegister()">Créer mon profil</button>
     <p style="font-size:11px;color:var(--gray-400);text-align:center;margin-top:10px;line-height:1.5;">
       En créant un compte, vous acceptez nos <a href="/terms" style="color:var(--gray-700)">Conditions</a> et notre <a href="/privacy" style="color:var(--gray-700)">Politique de confidentialité</a>.
@@ -236,13 +240,19 @@ window.onunhandledrejection = function(e) {
       if (typeof hcaptcha === 'undefined') return showAlert('Le captcha n\'est pas encore chargé, réessaie.');
       const captchaToken = hcaptcha.getResponse();
       if (!captchaToken) return showAlert('Veuillez compléter le captcha');
+      const rememberMe = document.getElementById('rememberMe').checked;
       const r = await fetch('https://ak47-backend.onrender.com/api/auth/register', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password, 'h-captcha-response': captchaToken })
+        body: JSON.stringify({ username, email, password, 'h-captcha-response': captchaToken, rememberMe })
       });
       let data;
       try { data = await r.json(); } catch { data = {}; }
       if (!r.ok) { showAlert(data.error || 'Erreur'); btn.disabled = false; btn.innerHTML = 'Créer mon profil'; return; }
+      if (data.success) {
+        showAlert('✅ Compte créé avec succès !');
+        setTimeout(() => { window.location.href = '/dashboard'; }, 1200);
+        return;
+      }
       if (data.pending) {
         pendingEmail = email;
         const s1 = document.getElementById('step1');
@@ -277,12 +287,15 @@ window.onunhandledrejection = function(e) {
         body: JSON.stringify({ email: pendingEmail, code })
       });
       const data = await r.json();
-      if (!r.ok) { showAlert(data.error || 'Erreur'); return; }
+      if (!r.ok) { showVerifyAlert(data.error || 'Erreur'); return; }
+      showVerifyAlert('✅ Compte créé avec succès !');
+      setTimeout(() => {
       localStorage.setItem('token', data.token);
       if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
       if (data.userId) localStorage.setItem('userId', data.userId);
       localStorage.setItem('username', data.username);
       window.location.href = '/dashboard';
+      }, 1200);
     } catch(e) { logError(e.message, e.stack); showAlert('Erreur: ' + e.message); }
     finally { btn.disabled = false; btn.textContent = 'Vérifier'; }
   }
