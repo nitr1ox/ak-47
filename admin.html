@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head><script>(function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
+<head>
+<script src="/error-logger.js"></script><script>(function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>ak-47.fr — Admin</title>
@@ -199,6 +200,23 @@
     ::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,.3); }
   </style>
+<script>
+function logError(msg, stack) {
+  try {
+    fetch("https://ak47-backend.onrender.com/api/log-error", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: msg, stack: stack || "", page: window.location.href, userAgent: navigator.userAgent })
+    }).catch(function() {});
+  } catch(e) {}
+}
+window.onerror = function(msg, src, line, col, err) {
+  logError(msg, err ? err.stack : src + ":" + line + ":" + col);
+};
+window.onunhandledrejection = function(e) {
+  logError("UnhandledPromise: " + (e.reason && e.reason.message || e.reason), e.reason && e.reason.stack);
+};
+</script>
 </head>
 <body>
 <button id="globalThemeBtn" onclick="toggleTheme()" title="Changer le thème" aria-label="Changer le thème">🌙</button>
