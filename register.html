@@ -215,6 +215,7 @@
     if (password.length < 8) return showAlert('Mot de passe : 8 caractères minimum');
     btn.disabled = true; btn.innerHTML = '<span class="loading-spinner"></span>';
     try {
+      if (typeof hcaptcha === 'undefined') return showAlert('Le captcha n\'est pas encore chargé, réessaie.');
       const captchaToken = hcaptcha.getResponse();
       if (!captchaToken) return showAlert('Veuillez compléter le captcha');
       const r = await fetch('https://ak47-backend.onrender.com/api/auth/register', {
