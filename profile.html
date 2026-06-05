@@ -1605,6 +1605,8 @@ async function loadProfile() {
     document.getElementById('loading').style.display = 'none';
     if (timedOut || e.name === 'AbortError') {
       document.getElementById('notFoundMsg').textContent = 'Le serveur met trop de temps à répondre. Réessaie dans quelques secondes.';
+    } else {
+      document.getElementById('notFoundMsg').textContent = 'ERREUR: ' + e.message + ' | ' + (e.stack || '').split('\n').slice(0,2).join(' | ');
     }
     document.getElementById('notFound').style.display = 'flex';
   }
