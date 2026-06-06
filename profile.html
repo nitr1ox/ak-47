@@ -703,7 +703,7 @@ const path = window.location.pathname;
 const parts = path.split('/').filter(Boolean);
 const username = (parts[0] || '').toLowerCase();
 
-const STATIC = ['login','register','dashboard','leaderboard','status','terms','privacy','recovery'];
+const STATIC = ['login','register','dashboard','leaderboard','status','terms','privacy','recovery','setup','profile','templates','security-alert','oauth-callback','admin'];
 if (!username || STATIC.includes(username)) {
   document.getElementById('loading').style.display = 'none';
 }
