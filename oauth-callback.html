@@ -61,6 +61,10 @@ window.onunhandledrejection = function(e) {
     const refreshToken = params.get('refreshToken');
     const userId       = params.get('userId');
     const error        = params.get('error');
+    // Effacer les tokens de l'URL immédiatement pour éviter les fuites (logs, referrer, historique)
+    if (token || refreshToken) {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
 
     function showError(msg) {
       document.getElementById('spinner').style.display = 'none';

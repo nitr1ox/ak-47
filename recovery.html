@@ -146,7 +146,7 @@ window.onunhandledrejection = function(e) {
 
     <div id="alert"></div>
     <div class="field"><label>Adresse email</label><input type="email" id="email" placeholder="email@exemple.fr"/></div>
-    <button class="btn btn-primary" onclick="document.getElementById(\"alert\").innerHTML=\"<div class=\\"alert alert-success\\">Si ce compte existe, un email vous a été envoyé.</div>\"">Envoyer le lien</button>
+    <button class="btn btn-primary" onclick="sendRecovery()">Envoyer le lien</button>
     <div class="form-footer" style="margin-top:14px;"><a href="/login">← Retour à la connexion</a></div>
   </div>
 </div>
@@ -168,6 +168,14 @@ function toggleTheme(){
   if(btn) btn.textContent = next === 'dark' ? '☀️' : '🌙';
   var pill = document.getElementById('themeToggle');
   if(pill) pill.textContent = next === 'dark' ? '☀️' : '🌙';
+}
+function sendRecovery() {
+  var email = document.getElementById('email').value.trim();
+  if (!email) {
+    document.getElementById('alert').innerHTML = '<div class="alert alert-error">Veuillez entrer votre adresse email.</div>';
+    return;
+  }
+  document.getElementById('alert').innerHTML = '<div class="alert alert-success">Si ce compte existe, un email vous a été envoyé.</div>';
 }
 document.addEventListener('DOMContentLoaded', function(){
   var btn = document.getElementById('globalThemeBtn');

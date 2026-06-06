@@ -335,6 +335,8 @@ function badgeTag(type) {
   return `<span class="badge-tag ${map[type] || ''}">${labels[type] || type}</span>`;
 }
 
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
 function renderLogs(logs) {
   const el = document.getElementById('logsBody');
   if (!logs.length) { el.innerHTML = '<div class="empty">Aucun log</div>'; return; }
@@ -344,9 +346,9 @@ function renderLogs(logs) {
       <tr>
         <td style="color:var(--gray-400);white-space:nowrap;">${fmt(l.created_at)}</td>
         <td>${badgeTag(l.type)}</td>
-        <td>${l.username ? `<a href="/${l.username}" target="_blank" style="color:var(--black);font-weight:600;">@${l.username}</a>` : '<span style="color:var(--gray-400);">—</span>'}</td>
-        <td style="color:var(--gray-500);">${l.detail || '—'}</td>
-        <td style="color:var(--gray-400);font-size:11px;">${l.ip || '—'}</td>
+        <td>${l.username ? `<a href="/${esc(l.username)}" target="_blank" style="color:var(--black);font-weight:600;">@${esc(l.username)}</a>` : '<span style="color:var(--gray-400);">—</span>'}</td>
+        <td style="color:var(--gray-500);">${esc(l.detail) || '—'}</td>
+        <td style="color:var(--gray-400);font-size:11px;">${esc(l.ip) || '—'}</td>
       </tr>`).join('')}
     </tbody>
   </table>`;
@@ -366,14 +368,14 @@ function renderUsers(users) {
         ? `<span style="font-size:12px;font-weight:600;color:var(--gray-600);">#${u.uid}</span>`
         : `<span style="font-size:11px;font-weight:600;color:#ef4444;background:#fef2f2;padding:2px 6px;border-radius:4px;">—</span>`;
       return `<tr>
-        <td><div class="user-cell"><div class="avatar-mini" style="background:${color}">${initial}</div><div><div style="font-weight:600;">@${u.username}</div><div style="font-size:11px;color:var(--gray-400);">${u.display_name || ''}</div></div></div></td>
+        <td><div class="user-cell"><div class="avatar-mini" style="background:${esc(color)}">${esc(initial)}</div><div><div style="font-weight:600;">@${esc(u.username)}</div><div style="font-size:11px;color:var(--gray-400);">${esc(u.display_name) || ''}</div></div></div></td>
         <td>${uidBadge}</td>
-        <td style="font-size:12px;color:var(--gray-500);">${u.email || '—'}</td>
-        <td>${u.discord_id ? `<span class="discord-tag">🎮 ${u.discord_id}</span>` : '<span style="color:var(--gray-400);">—</span>'}</td>
+        <td style="font-size:12px;color:var(--gray-500);">${esc(u.email) || '—'}</td>
+        <td>${u.discord_id ? `<span class="discord-tag">🎮 ${esc(u.discord_id)}</span>` : '<span style="color:var(--gray-400);">—</span>'}</td>
         <td style="font-size:11px;">${badges.map(b => b.emoji).join(' ') || '—'}</td>
         <td style="font-size:11px;">${(() => { try { return JSON.parse(u.roles||'[]').map(r => ROLES_MAP[r]||r).join(' '); } catch { return '—'; } })()||'—'}</td>
         <td style="font-size:11px;color:var(--gray-400);">${fmt(u.created_at)}</td>
-        <td style="display:flex;gap:6px;align-items:center;"><a class="btn-sm" href="https://ak-47.fr/${u.username}" target="_blank" style="background:var(--gray-100);color:var(--gray-700);text-decoration:none;">👁 Voir</a><button class="btn-sm" onclick="openRoleModal(this)" data-uid="${u.id}" data-uname="${u.username}" data-roles="${encodeURIComponent(u.roles||'[]')}" style="background:#f3f0ff;color:#7c3aed;">Rôles</button><button class="btn-sm btn-danger" onclick="deleteUserAdmin('${u.id}', '${u.username}')">Supprimer</button></td>
+        <td style="display:flex;gap:6px;align-items:center;"><a class="btn-sm" href="https://ak-47.fr/${esc(u.username)}" target="_blank" style="background:var(--gray-100);color:var(--gray-700);text-decoration:none;">👁 Voir</a><button class="btn-sm" onclick="openRoleModal(this)" data-uid="${esc(u.id)}" data-uname="${esc(u.username)}" data-roles="${encodeURIComponent(u.roles||'[]')}" style="background:#f3f0ff;color:#7c3aed;">Rôles</button><button class="btn-sm btn-danger" onclick="deleteUserAdmin('${esc(u.id)}', '${esc(u.username)}')">Supprimer</button></td>
       </tr>`;
     }).join('')}
     </tbody>
@@ -461,7 +463,7 @@ async function saveRoles() {
   });
   if (r.ok) {
     closeRoleModal();
-    loadData();
+    loadAll();
   } else {
     alert('Erreur lors de la sauvegarde');
   }
@@ -515,7 +517,7 @@ async function disableUser(id, uname) {
 async function deleteUserAdmin(id, uname) {
   if (!confirm(`Supprimer définitivement @${uname} ? Cette action est irréversible.`)) return;
   const r = await fetch(`${API}/api/admin/users/${id}`, { method: 'DELETE', headers: { Authorization: 'Bearer ' + token } });
-  if (r.ok) { loadData(); }
+  if (r.ok) { loadAll(); }
   else { const d = await r.json(); alert(d.error || 'Erreur'); }
 }
 

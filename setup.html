@@ -49,14 +49,14 @@ window.onunhandledrejection = function(e) {
   if (!token) window.location.href = '/login';
 
   let checkTimeout;
-  function checkUsername() {
+  window.checkUsername = function checkUsername() {
     const val = document.getElementById('username').value.trim();
     const status = document.getElementById('usernameStatus');
     clearTimeout(checkTimeout);
     if (val.length < 2) { status.textContent = ''; return; }
     checkTimeout = setTimeout(async () => {
       try {
-        const r = await fetch(`https://ak47-backend.onrender.com/api/user/check-username?username=${encodeURIComponent(val)}`
+        const r = await fetch(`https://ak47-backend.onrender.com/api/user/check-username?username=${encodeURIComponent(val)}`);
         const data = await r.json();
         if (data.available) {
           status.style.color = '#16a34a';
@@ -69,7 +69,7 @@ window.onunhandledrejection = function(e) {
     }, 400);
   }
 
-  async function doSetup() {
+  window.doSetup = async function doSetup() {
     const btn = document.getElementById('submitBtn');
     const username = document.getElementById('username').value.trim();
     if (!username || username.length < 2) return showAlert('Pseudo trop court (min 2 caractères)');

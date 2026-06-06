@@ -3356,7 +3356,7 @@ function tplDashRender() {
   if (!grid) return;
   const list = tplDashGetList();
   if (!list.length) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--gray-400);font-family:'JetBrains Mono',monospace;font-size:12px;">
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--gray-400);font-family:'JetBrains Mono',monospace;font-size:12px;">Aucun modèle disponible.</div>`;
     return;
   }
   grid.innerHTML = list.map((t, i) => {
@@ -3414,7 +3414,7 @@ async function tplDashLoad() {
     _tplDashData = await r.json();
     tplDashRender();
   } catch {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--gray-400);font-family:'JetBrains Mono',monospace;font-size:12px;">
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--gray-400);font-family:'JetBrains Mono',monospace;font-size:12px;">Erreur lors du chargement.</div>`;
   }
 }
 
