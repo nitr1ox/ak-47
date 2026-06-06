@@ -2,7 +2,6 @@
 /register     /register.html      200
 /dashboard    /dashboard.html     200
 /setup        /setup.html         200
-/profile      /profile.html       200
 /leaderboard  /leaderboard.html   200
 /templates        /templates.html         200
 /security-alert   /security-alert.html    200

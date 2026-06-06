@@ -701,7 +701,7 @@ window.onunhandledrejection = function(e) {
 const API = 'https://ak47-backend.onrender.com';
 const path = window.location.pathname;
 const parts = path.split('/').filter(Boolean);
-const username = (parts[0] || '').toLowerCase();
+const username = (parts[0] || '').toLowerCase().replace(/\.html$/, '');
 
 const STATIC = ['login','register','dashboard','leaderboard','status','terms','privacy','recovery','setup','profile','templates','security-alert','oauth-callback','admin'];
 if (!username || STATIC.includes(username)) {
