@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<script src="/error-logger.js"></script><script>(function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ak-47.fr</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/style.css"/>
+
+  <style id="fluid-global">
+    
+
+    
+    a, button, input, textarea, select,
+    [role="button"], [tabindex] {
+      transition: opacity .2s ease, color .2s ease, background .2s ease,
+                  border-color .2s ease, box-shadow .2s ease,
+                  transform .2s cubic-bezier(.34,1.56,.64,1) !important;
+    }
+
+    
+    html { scroll-behavior: smooth; }
+
+    
+    button:active, [role="button"]:active {
+      transform: scale(.96) !important;
+      transition-duration: .08s !important;
+    }
+
+    
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(0,0,0,.08) !important;
+      border-color: #000 !important;
+      transition: box-shadow .2s ease, border-color .2s ease !important;
+    }
+
+    
+    .section-card, .mblock, .profile-card {
+      transition: box-shadow .25s ease, transform .25s cubic-bezier(.22,1,.36,1) !important;
+    }
+    .section-card:hover, .mblock:hover {
+      box-shadow: 0 4px 20px rgba(0,0,0,.08) !important;
+      transform: translateY(-1px) !important;
+    }
+
+    
+    .tab {
+      transition: color .2s ease, border-color .2s ease !important;
+    }
+
+    
+    .icon-picker-overlay {
+      transition: opacity .25s ease !important;
+    }
+    .icon-picker-modal {
+      transition: transform .3s cubic-bezier(.34,1.56,.64,1), opacity .25s ease !important;
+    }
+
+    
+    .mdrop {
+      transition: border-color .2s ease, background .2s ease, box-shadow .2s ease !important;
+    }
+    .mdrop:hover {
+      box-shadow: 0 2px 12px rgba(0,0,0,.06) !important;
+    }
+
+    
+    .toast {
+      transition: opacity .25s ease, transform .25s cubic-bezier(.34,1.56,.64,1) !important;
+    }
+
+    
+    .mob-nav-btn {
+      transition: color .15s ease, transform .15s cubic-bezier(.34,1.56,.64,1) !important;
+    }
+    .mob-nav-btn:active { transform: scale(.9) !important; }
+    .mob-nav-btn.active { transform: scale(1.05) !important; }
+
+    
+    .badge {
+      transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s ease !important;
+    }
+    .badge:hover { transform: scale(1.06) !important; }
+
+    
+    .copy-btn:hover, .save-bar-btn:hover {
+      transform: translateY(-1px) !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,.12) !important;
+    }
+
+    
+    .ipick-btn {
+      transition: transform .2s cubic-bezier(.34,1.56,.64,1), border-color .15s, background .15s, box-shadow .2s !important;
+    }
+    .ipick-btn:hover { transform: translateY(-3px) scale(1.04) !important; }
+
+    
+    .mblock-chevron {
+      transition: transform .25s cubic-bezier(.34,1.56,.64,1) !important;
+    }
+
+    
+    .audio-src-tab {
+      transition: all .2s cubic-bezier(.34,1.56,.64,1) !important;
+    }
+    .audio-src-tab:hover { transform: translateY(-1px) !important; }
+
+    
+    nav a, .nav-link {
+      transition: color .2s ease, opacity .2s ease !important;
+    }
+
+    
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,.3); }
+  </style>
+<script>
+function logError(msg, stack) {
+  try {
+    fetch("https://ak47-backend.onrender.com/api/log-error", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: msg, stack: stack || "", page: window.location.href, userAgent: navigator.userAgent })
+    }).catch(function() {});
+  } catch(e) {}
+}
+window.onerror = function(msg, src, line, col, err) {
+  logError(msg, err ? err.stack : src + ":" + line + ":" + col);
+};
+window.onunhandledrejection = function(e) {
+  logError("UnhandledPromise: " + (e.reason && e.reason.message || e.reason), e.reason && e.reason.stack);
+};
+</script>
+</head>
+<body>
+<button id="globalThemeBtn" onclick="toggleTheme()" title="Changer le thème" aria-label="Changer le thème">🌙</button>
+
+<div class="page-shell">
+  <a href="/" class="logo-link">ak-47<span>.fr</span></a>
+  <div class="card card-sm">
+    <h1>Récupération</h1>
+    <p class="subtitle">Réinitialisez votre mot de passe.</p>
+
+    <div id="alert"></div>
+    <div class="field"><label>Adresse email</label><input type="email" id="email" placeholder="email@exemple.fr"/></div>
+    <button class="btn btn-primary" onclick="sendRecovery()">Envoyer le lien</button>
+    <div class="form-footer" style="margin-top:14px;"><a href="/login">← Retour à la connexion</a></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var btn = document.getElementById('globalThemeBtn');
+  if(!btn) return;
+  var t = document.documentElement.getAttribute('data-theme') || 'light';
+  btn.textContent = t === 'dark' ? '☀️' : '🌙';
+  btn.setAttribute('data-theme-btn', '1');
+})();
+function toggleTheme(){
+  var cur = document.documentElement.getAttribute('data-theme') || 'light';
+  var next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  var btn = document.getElementById('globalThemeBtn');
+  if(btn) btn.textContent = next === 'dark' ? '☀️' : '🌙';
+  var pill = document.getElementById('themeToggle');
+  if(pill) pill.textContent = next === 'dark' ? '☀️' : '🌙';
+}
+function sendRecovery() {
+  var email = document.getElementById('email').value.trim();
+  if (!email) {
+    document.getElementById('alert').innerHTML = '<div class="alert alert-error">Veuillez entrer votre adresse email.</div>';
+    return;
+  }
+  document.getElementById('alert').innerHTML = '<div class="alert alert-success">Si ce compte existe, un email vous a été envoyé.</div>';
+}
+document.addEventListener('DOMContentLoaded', function(){
+  var btn = document.getElementById('globalThemeBtn');
+  if(btn){var t=document.documentElement.getAttribute('data-theme')||'light'; btn.textContent=t==='dark'?'☀️':'🌙';}
+});
+</script>
+</body>
+</html>
