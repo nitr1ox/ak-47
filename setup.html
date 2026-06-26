@@ -53,7 +53,7 @@ window.onunhandledrejection = function(e) {
     const val = document.getElementById('username').value.trim();
     const status = document.getElementById('usernameStatus');
     clearTimeout(checkTimeout);
-    if (val.length < 2) { status.textContent = ''; return; }
+    if (val.length < 1) { status.textContent = ''; return; }
     checkTimeout = setTimeout(async () => {
       try {
         const r = await fetch(`https://ak47-backend.onrender.com/api/user/check-username?username=${encodeURIComponent(val)}`);
@@ -72,7 +72,7 @@ window.onunhandledrejection = function(e) {
   window.doSetup = async function doSetup() {
     const btn = document.getElementById('submitBtn');
     const username = document.getElementById('username').value.trim();
-    if (!username || username.length < 2) return showAlert('Pseudo trop court (min 2 caractères)');
+    if (!username || username.length < 1) return showAlert('Pseudo trop court (min 1 caractère)');
     if (!/^[a-zA-Z0-9_-]+$/.test(username)) return showAlert('Pseudo invalide (lettres, chiffres, _ et - uniquement)');
     btn.disabled = true; btn.innerHTML = '<span class="loading-spinner"></span>';
     try {

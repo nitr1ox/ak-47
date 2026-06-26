@@ -38,33 +38,26 @@
     .profile-card.entrance { animation: profileEntrance .6s cubic-bezier(.22,1,.36,1) both; }
     @keyframes profileEntrance { from { opacity:0; transform:translateY(24px) scale(.97); } to { opacity:1; transform:none; } }
 
-    
     .anim-fade { opacity: 0; transform: translateY(14px); transition: opacity .55s cubic-bezier(.22,1,.36,1), transform .55s cubic-bezier(.22,1,.36,1); }
     .anim-fade.visible { opacity: 1; transform: none; }
 
-    
     .profile-link { transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease, background .2s ease !important; }
     .profile-link:hover { transform: translateY(-5px) scale(1.04) !important; box-shadow: 0 10px 28px rgba(0,0,0,.16) !important; }
     .profile-link:active { transform: translateY(-2px) scale(1.01) !important; transition-duration: .1s !important; }
 
-    
     .social-icon-link { transition: transform .25s cubic-bezier(.34,1.56,.64,1), background .2s ease, box-shadow .2s ease !important; }
     .social-icon-link:hover { transform: translateY(-4px) scale(1.1) !important; box-shadow: 0 6px 20px rgba(0,0,0,.2) !important; }
     .social-icon-link:active { transform: scale(.95) !important; }
 
-    
     .profile-avatar { transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease !important; }
     .profile-avatar:hover { transform: scale(1.07) !important; box-shadow: 0 8px 30px rgba(0,0,0,.2) !important; }
 
-    
     .spotify-widget { transition: transform .25s cubic-bezier(.34,1.56,.64,1), opacity .2s ease !important; }
     .spotify-widget:hover { transform: translateY(-3px) scale(1.02) !important; opacity: 1 !important; }
 
-    
     .discord-card { transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease !important; }
     .discord-card:hover { transform: translateY(-3px) !important; box-shadow: 0 8px 24px rgba(0,0,0,.12) !important; }
 
-    
     #profileBg { transition: background .8s ease; }
     .profile-avatar.shine { position:relative; overflow:hidden; }
     .profile-avatar.shine::after { content:''; position:absolute; inset:0; background:linear-gradient(135deg,transparent 30%,rgba(255,255,255,.45) 50%,transparent 70%); transform:translateX(-100%); transition:transform .4s; border-radius:inherit; }
@@ -143,13 +136,11 @@
       box-shadow: 0 1px 2px rgba(0,0,0,.06);
     }
     .profile-link:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,.12); }
-    
+
     .profile-link-arrow { display: none; }
     .profile-link-icon { width: 24px; height: 24px; border-radius: 4px; object-fit: contain; }
     .profile-link-left { display: flex; align-items: center; justify-content: center; }
     .profile-link-fallback { font-size: 20px; }
-    
-    
 
     .profile-links.layout-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
     .profile-links.layout-buttons { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
@@ -167,7 +158,6 @@
 
     #audioPlayer { display: none; }
 
-    
     #enterOverlay {
       position: fixed; inset: 0; z-index: 99999;
       display: flex; flex-direction: column;
@@ -237,7 +227,6 @@
     }
     @keyframes blink { 0%,100%{opacity:.3} 50%{opacity:1} }
 
-    
     .music-player {
       display: none;
       position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px);
@@ -262,7 +251,6 @@
       opacity: 1;
     }
 
-    
     .mp-top {
       display: flex; align-items: center; gap: 12px;
       margin-bottom: 10px;
@@ -291,7 +279,6 @@
     .mp-play-btn:active { transform: scale(.95); }
     .mp-play-btn svg { width: 16px; height: 16px; fill: #000; flex-shrink: 0; }
 
-    
     .mp-progress-row {
       display: flex; align-items: center; gap: 8px;
       margin-bottom: 8px;
@@ -316,7 +303,6 @@
     }
     .mp-progress:hover .mp-progress-fill::after { transform: translateY(-50%) scale(1); }
 
-    
     .mp-bottom {
       display: flex; align-items: center; justify-content: space-between;
     }
@@ -329,7 +315,6 @@
     .mp-btn:hover { color: #fff; background: rgba(255,255,255,.08); }
     .mp-btn svg { width: 15px; height: 15px; fill: currentColor; }
 
-    
     .mp-vol-group { display: flex; align-items: center; gap: 6px; }
     .mp-vol-icon { color: rgba(255,255,255,.5); display: flex; align-items: center; cursor: pointer; }
     .mp-vol-icon svg { width: 14px; height: 14px; fill: currentColor; }
@@ -359,7 +344,6 @@
     .badge-og       { background: linear-gradient(135deg,#00c9a7,#007cf0); color: #fff; border-color: transparent; }
     .badge-vip      { background: linear-gradient(135deg,#f6c90e,#e6a817); color: #000; border-color: transparent; }
 
-    
     .discord-card {
       display: none;
       align-items: center; gap: 12px;
@@ -402,14 +386,11 @@
     }
     .dc-badge:hover { transform: scale(1.25); }
 
-    
     :root { --accent: #6366f1; }
 
-    
     .glow-avatar   { box-shadow: 0 0 12px var(--accent), 0 0 30px var(--accent,#6366f1)55 !important; }
     .glow-card     { box-shadow: 0 0 12px var(--accent), 0 0 30px var(--accent,#6366f1)55 !important; }
 
-    
     .profile-avatar { position: relative; }
 
     .dc-badge:hover::after {
@@ -422,7 +403,7 @@
     .dc-badge-verified { background: transparent; }
     .dc-username { font-size: 11px; color: #5865F2; margin-top: 1px; font-weight: 500; opacity: .85; }
     .dc-last-seen { font-size: 12px; color: #878a8f; margin-top: 2px; }
-  
+
     .profile-name-wrap {
       display: inline-flex; align-items: center; justify-content: center;
       gap: 6px; position: relative; cursor: default;
@@ -440,9 +421,7 @@
   </style>
 
   <style id="fluid-global">
-    
 
-    
     a, button, input, textarea, select,
     [role="button"], [tabindex] {
       transition: opacity .2s ease, color .2s ease, background .2s ease,
@@ -450,16 +429,13 @@
                   transform .2s cubic-bezier(.34,1.56,.64,1) !important;
     }
 
-    
     html { scroll-behavior: smooth; }
 
-    
     button:active, [role="button"]:active {
       transform: scale(.96) !important;
       transition-duration: .08s !important;
     }
 
-    
     input:focus, textarea:focus, select:focus {
       outline: none;
       box-shadow: 0 0 0 3px rgba(0,0,0,.08) !important;
@@ -467,7 +443,6 @@
       transition: box-shadow .2s ease, border-color .2s ease !important;
     }
 
-    
     .section-card, .mblock, .profile-card {
       transition: box-shadow .25s ease, transform .25s cubic-bezier(.22,1,.36,1) !important;
     }
@@ -476,12 +451,10 @@
       transform: translateY(-1px) !important;
     }
 
-    
     .tab {
       transition: color .2s ease, border-color .2s ease !important;
     }
 
-    
     .icon-picker-overlay {
       transition: opacity .25s ease !important;
     }
@@ -489,7 +462,6 @@
       transition: transform .3s cubic-bezier(.34,1.56,.64,1), opacity .25s ease !important;
     }
 
-    
     .mdrop {
       transition: border-color .2s ease, background .2s ease, box-shadow .2s ease !important;
     }
@@ -497,53 +469,44 @@
       box-shadow: 0 2px 12px rgba(0,0,0,.06) !important;
     }
 
-    
     .toast {
       transition: opacity .25s ease, transform .25s cubic-bezier(.34,1.56,.64,1) !important;
     }
 
-    
     .mob-nav-btn {
       transition: color .15s ease, transform .15s cubic-bezier(.34,1.56,.64,1) !important;
     }
     .mob-nav-btn:active { transform: scale(.9) !important; }
     .mob-nav-btn.active { transform: scale(1.05) !important; }
 
-    
     .badge {
       transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s ease !important;
     }
     .badge:hover { transform: scale(1.06) !important; }
 
-    
     .copy-btn:hover, .save-bar-btn:hover {
       transform: translateY(-1px) !important;
       box-shadow: 0 4px 12px rgba(0,0,0,.12) !important;
     }
 
-    
     .ipick-btn {
       transition: transform .2s cubic-bezier(.34,1.56,.64,1), border-color .15s, background .15s, box-shadow .2s !important;
     }
     .ipick-btn:hover { transform: translateY(-3px) scale(1.04) !important; }
 
-    
     .mblock-chevron {
       transition: transform .25s cubic-bezier(.34,1.56,.64,1) !important;
     }
 
-    
     .audio-src-tab {
       transition: all .2s cubic-bezier(.34,1.56,.64,1) !important;
     }
     .audio-src-tab:hover { transform: translateY(-1px) !important; }
 
-    
     nav a, .nav-link {
       transition: color .2s ease, opacity .2s ease !important;
     }
 
-    
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 3px; }
@@ -637,7 +600,7 @@ window.onunhandledrejection = function(e) {
     </div>
 
     <div class="music-player" id="audioBar">
-      
+
       <div class="mp-top">
         <div class="mp-thumb" id="mpThumb">
           <span class="mp-thumb-placeholder">♪</span>
@@ -651,7 +614,6 @@ window.onunhandledrejection = function(e) {
         </button>
       </div>
 
-      
       <div class="mp-progress-row">
         <span class="mp-time" id="mpCur">0:00</span>
         <div class="mp-progress" id="mpProgress">
@@ -660,7 +622,6 @@ window.onunhandledrejection = function(e) {
         <span class="mp-time right" id="mpTotal">0:00</span>
       </div>
 
-      
       <div class="mp-bottom">
         <div class="mp-seek-group">
           <button class="mp-btn" title="-10s" onclick="seekBack()">
@@ -701,9 +662,9 @@ window.onunhandledrejection = function(e) {
 const API = 'https://ak47-backend.onrender.com';
 const path = window.location.pathname;
 const parts = path.split('/').filter(Boolean);
-const username = (parts[0] || '').toLowerCase().replace(/\.html$/, '');
+const username = (parts[0] || '').toLowerCase();
 
-const STATIC = ['login','register','dashboard','leaderboard','status','terms','privacy','recovery','setup','profile','templates','security-alert','oauth-callback','admin'];
+const STATIC = ['login','register','dashboard','leaderboard','status','terms','privacy','recovery'];
 if (!username || STATIC.includes(username)) {
   document.getElementById('loading').style.display = 'none';
 }
@@ -834,15 +795,15 @@ async function loadProfile() {
     if (bgType === 'color') {
       document.body.style.background = bgValue;
       document.body.style.opacity = '';
-      
+
       const bgDiv = document.getElementById('profileBg');
       bgDiv.style.background = bgValue;
       bgDiv.style.opacity = bgOpacity;
       bgDiv.style.backgroundImage = '';
       document.body.style.background = bgValue;
-      
+
       if (bgOpacity < 1) {
-        
+
         const hex = bgValue.replace('#','');
         const r = parseInt(hex.slice(0,2),16), g = parseInt(hex.slice(2,4),16), b = parseInt(hex.slice(4,6),16);
         document.body.style.background = `rgba(${r},${g},${b},${bgOpacity})`;
@@ -880,12 +841,10 @@ async function loadProfile() {
       }
     }
 
-    
     if (user.text_color) {
       document.documentElement.style.setProperty('--profile-text-color', user.text_color);
     }
 
-    
     if (user.card_bg || user.card_opacity !== undefined) {
       const cardBg = user.card_bg || '#ffffff';
       const cardOpacity = user.card_opacity !== undefined ? user.card_opacity : 1;
@@ -937,19 +896,16 @@ async function loadProfile() {
       const bar = document.getElementById('audioBar');
       bar.classList.add('visible');
 
-      
       try {
         const customName = user.audio_name && user.audio_name.trim();
         document.getElementById('mpTitle').textContent = customName || 'Musique';
       } catch {}
 
-      
       const coverUrl = user.audio_cover_url || user.avatar_url;
       if (coverUrl) {
         document.getElementById('mpThumb').innerHTML = `<img src="${coverUrl}" alt="cover"/>`;
       }
 
-      
       player.addEventListener('timeupdate', () => {
         if (!player.duration) return;
         const pct = (player.currentTime / player.duration) * 100;
@@ -964,12 +920,11 @@ async function loadProfile() {
         player.currentTime = ((e.clientX - rect.left) / rect.width) * player.duration;
       });
 
-      
       _profileReady = true;
       if (_enterDone) {
         startMusicNow();
       }
-      
+
     }
 
     const pNameEl = document.getElementById('pName');
@@ -1035,11 +990,10 @@ async function loadProfile() {
       });
     }
 
-    
     (function buildDiscordCard() {
-      let oauth = {}; try { oauth = JSON.parse(user.oauth_meta || '{}'); } catch {}
-      const discordOauth = oauth.discord || null;
-      
+      // discord_public est un objet pré-extrait côté serveur (pas d'oauth_meta brut)
+      const discordOauth = user.discord_public || null;
+
       const hasBadges = badges && badges.length > 0;
       const hasDiscord = discordOauth || hasBadges || user.discord_id;
       if (!hasDiscord) return;
@@ -1047,11 +1001,10 @@ async function loadProfile() {
       const card = document.getElementById('discordCard');
       card.classList.add('visible');
 
-      
       const discordAvatarUrl = (discordOauth && discordOauth.avatar)
         ? `https://cdn.discordapp.com/avatars/${discordOauth.id}/${discordOauth.avatar}.png?size=128`
         : (user.avatar_url || null);
-      
+
       const discordUsername = (discordOauth && discordOauth.username) || user.discord_username || null;
       const discordDisplayName = (discordOauth && discordOauth.global_name) || user.discord_display_name || discordUsername || user.display_name || user.username;
       document.getElementById('dcName').textContent = discordDisplayName;
@@ -1072,10 +1025,8 @@ async function loadProfile() {
         letterEl.textContent = discordDisplayName.charAt(0).toUpperCase();
       }
 
-      
       const dcBadgesEl = document.getElementById('dcBadges');
 
-      
       const DISCORD_BADGE_SVGS = {
         discord:              { title: 'Connecté via Discord',       svg: `<svg viewBox="0 0 24 24" fill="#5865F2"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>` },
         staff:                { title: 'Discord Staff',              svg: `<svg viewBox="0 0 24 24"><rect width="24" height="24" rx="12" fill="#5865F2"/><path d="M12 4L5 7.5v4c0 3.9 3 7.4 7 8.5 4-1.1 7-4.6 7-8.5v-4L12 4zm-1 10.5H9.5v-5H11v5zm3 0h-1.5v-5H14v5z" fill="white"/></svg>` },
@@ -1107,7 +1058,6 @@ async function loadProfile() {
         certified_moderator:  { title: 'Discord Certified Moderator', svg: `<svg viewBox="0 0 24 24"><path d="M12 2L4 5v5c0 4.5 3.4 8.7 8 9.93C16.6 18.7 20 14.5 20 10V5L12 2z" fill="#5865F2"/><path d="M8.5 12l2.5 2.5 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>` },
       };
 
-      
       badges.forEach(b => {
         const meta = DISCORD_BADGE_SVGS[b.type];
         if (!meta) return;
@@ -1118,7 +1068,6 @@ async function loadProfile() {
         dcBadgesEl.appendChild(el);
       });
 
-      
       const updatedAt = user.last_seen || user.updated_at || user.created_at;
       if (updatedAt) {
         const diff = Math.floor(Date.now() / 1000) - updatedAt;
@@ -1130,7 +1079,6 @@ async function loadProfile() {
         else                     label = `vu il y a ${Math.floor(diff/86400)} jours`;
         document.getElementById('dcLastSeen').textContent = label;
 
-        
         const dot = document.getElementById('dcStatusDot');
         if (diff < 300)       { dot.className = 'dc-status-dot online'; }
         else if (diff < 3600) { dot.className = 'dc-status-dot idle'; }
@@ -1337,8 +1285,7 @@ async function loadProfile() {
     }
     if (user.use_discord_avatar) {
       try {
-        let oauth = {}; try { oauth = JSON.parse(user.oauth_meta || '{}'); } catch {}
-        const discordOauth = oauth.discord || null;
+        const discordOauth = user.discord_public || null;
         if (discordOauth && discordOauth.avatar && discordOauth.id) {
           const dcAvatarUrl = `https://cdn.discordapp.com/avatars/${discordOauth.id}/${discordOauth.avatar}.png?size=256`;
           const mainAvatar = document.querySelector('.profile-avatar');
@@ -1600,7 +1547,6 @@ async function loadProfile() {
 
     document.getElementById('profile').style.display = 'flex';
 
-    
     const animEls = [
       document.getElementById('pAvatar'),
       document.getElementById('pBadges'),
@@ -1710,7 +1656,7 @@ function escHtml(s)  { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;
 function escAttr(s)  { return String(s).replace(/"/g,'&quot;'); }
 
 (function initEnterOverlay() {
-  
+
   const container = document.getElementById('enterParticles');
   for (let i = 0; i < 35; i++) {
     const s = document.createElement('span');
@@ -1732,7 +1678,7 @@ function enterSite() {
   const overlay = document.getElementById('enterOverlay');
   overlay.classList.add('hidden');
   _enterDone = true;
-  
+
   if (_profileReady) startMusicNow();
 }
 window.enterSite = enterSite;
