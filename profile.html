@@ -79,6 +79,39 @@
     .profile-avatar.shape-rounded { border-radius: 20px; }
     .profile-avatar.shape-square   { border-radius: 6px; }
     .profile-avatar-img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; display: block; }
+    .status-dot {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 22%;
+      height: 22%;
+      min-width: 14px;
+      min-height: 14px;
+      max-width: 22px;
+      max-height: 22px;
+      border-radius: 50%;
+      border: 3px solid var(--bg-color, #fff);
+      box-sizing: border-box;
+      z-index: 2;
+    }
+    .status-dot.status-online  { background: #23a55a; }
+    .status-dot.status-idle    { background: #f0b232; }
+    .status-dot.status-dnd     { background: #f23f43; }
+    .status-dot.status-offline { background: #80848e; }
+    .dc-server-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 6px;
+      padding: 1px 6px 1px 4px;
+      background: rgba(128,132,142,0.3);
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .02em;
+      vertical-align: middle;
+    }
+    .dc-server-tag img { width: 12px; height: 12px; border-radius: 2px; }
 
     .profile-name { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; color: var(--profile-text-color); }
     .profile-bio  { font-size: 14px; color: var(--profile-text-color); opacity: 0.7; line-height: 1.5; max-width: 320px; margin: 0 auto; }
@@ -1002,12 +1035,28 @@ async function loadProfile() {
       card.classList.add('visible');
 
       const discordAvatarUrl = (discordOauth && discordOauth.avatar)
-        ? `https://cdn.discordapp.com/avatars/${discordOauth.id}/${discordOauth.avatar}.png?size=128`
+        ? `https://cdn.discordapp.com/avatars/${discordOauth.id}/${discordOauth.avatar}.${discordOauth.avatar.startsWith('a_') ? 'gif' : 'png'}?size=128`
         : (user.avatar_url || null);
 
       const discordUsername = (discordOauth && discordOauth.username) || user.discord_username || null;
       const discordDisplayName = (discordOauth && discordOauth.global_name) || user.discord_display_name || discordUsername || user.display_name || user.username;
       document.getElementById('dcName').textContent = discordDisplayName;
+
+      if (user.discord_tag && user.discord_tag.tag) {
+        const nameEl = document.getElementById('dcName');
+        const tagEl = document.createElement('span');
+        tagEl.className = 'dc-server-tag';
+        if (user.discord_tag.badge_url) {
+          const tagImg = document.createElement('img');
+          tagImg.src = user.discord_tag.badge_url;
+          tagImg.alt = '';
+          tagEl.appendChild(tagImg);
+        }
+        const tagText = document.createElement('span');
+        tagText.textContent = user.discord_tag.tag;
+        tagEl.appendChild(tagText);
+        nameEl.insertAdjacentElement('afterend', tagEl);
+      }
 
       const dcUsernameEl = document.getElementById('dcUsername');
       if (discordUsername) {
@@ -1287,7 +1336,8 @@ async function loadProfile() {
       try {
         const discordOauth = user.discord_public || null;
         if (discordOauth && discordOauth.avatar && discordOauth.id) {
-          const dcAvatarUrl = `https://cdn.discordapp.com/avatars/${discordOauth.id}/${discordOauth.avatar}.png?size=256`;
+          const isAnim = discordOauth.avatar.startsWith('a_');
+          const dcAvatarUrl = `https://cdn.discordapp.com/avatars/${discordOauth.id}/${discordOauth.avatar}.${isAnim ? 'gif' : 'png'}?size=256`;
           const mainAvatar = document.querySelector('.profile-avatar');
           if (mainAvatar) {
             if (mainAvatar.tagName === 'IMG') {
@@ -1303,6 +1353,20 @@ async function loadProfile() {
     if (user.discord_presence === false || user.discord_presence === 0) {
       const dcCard = document.getElementById('discordCard');
       if (dcCard) dcCard.style.display = 'none';
+    } else if (user.discord_status) {
+      const avatarBox = document.getElementById('pAvatar');
+      if (avatarBox) {
+        const STATUS_LABELS = {
+          online: 'En ligne',
+          idle: 'Inactif',
+          dnd: 'Ne pas déranger',
+          offline: 'Hors ligne'
+        };
+        const dot = document.createElement('div');
+        dot.className = `status-dot status-${user.discord_status}`;
+        dot.title = STATUS_LABELS[user.discord_status] || 'Hors ligne';
+        avatarBox.appendChild(dot);
+      }
     }
     document.documentElement.style.setProperty('--accent-color', accentColor);
     if (user.icon_color) {

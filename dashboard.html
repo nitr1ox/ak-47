@@ -506,7 +506,10 @@ window.onunhandledrejection = function(e) {
         <p style="font-size:13px;color:var(--gray-500);margin-bottom:16px;">Liez vos comptes tiers pour activer les badges, la synchronisation des rôles Discord et la connexion rapide.</p>
 
         <div id="connectedDiscordRow" style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--gray-200);border-radius:9px;margin-bottom:10px;">
-          <img src="https://cdn.simpleicons.org/discord/5865F2" alt="Discord" style="width:28px;height:28px;flex-shrink:0;"/>
+          <div style="position:relative;flex-shrink:0;width:36px;height:36px;">
+            <img src="https://cdn.simpleicons.org/discord/5865F2" alt="Discord" id="discordLogoIcon" style="width:36px;height:36px;"/>
+            <img id="discordAvatarIcon" alt="Avatar Discord" style="display:none;width:36px;height:36px;border-radius:50%;object-fit:cover;"/>
+          </div>
           <div style="flex:1;">
             <div style="font-size:13px;font-weight:600;">Discord</div>
             <div id="discordStatus" style="font-size:12px;color:var(--gray-400);margin-top:2px;">Non connecté</div>
@@ -1709,17 +1712,50 @@ function renderBadges() {
   card.style.display = 'block';
   container.style.display = 'flex';
   noBadges.style.display = 'none';
+  const BADGE_SVGS = {
+    discord:              `<svg viewBox="0 0 24 24" fill="#5865F2"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>`,
+    staff:                `<svg viewBox="0 0 24 24"><rect width="24" height="24" rx="12" fill="#5865F2"/><path d="M12 4L5 7.5v4c0 3.9 3 7.4 7 8.5 4-1.1 7-4.6 7-8.5v-4L12 4zm-1 10.5H9.5v-5H11v5zm3 0h-1.5v-5H14v5z" fill="white"/></svg>`,
+    partner:              `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#5865F2"/><path d="M7 12l3 3 7-7" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
+    hypesquad:            `<svg viewBox="0 0 24 24"><rect width="24" height="24" rx="12" fill="#f0b132"/><text x="12" y="17" font-size="13" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial">H</text></svg>`,
+    hypesquad_bravery:    `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_hbrav" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#9c59d1"/><stop offset="100%" stop-color="#6f3fad"/></linearGradient></defs><polygon points="12,3 22,21 2,21" fill="url(#db_hbrav)"/><text x="12" y="18" font-size="9" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial">B</text></svg>`,
+    hypesquad_brilliance: `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_hbril" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f47b67"/><stop offset="100%" stop-color="#e0543c"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#db_hbril)"/><text x="12" y="16" font-size="9" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial">Br</text></svg>`,
+    hypesquad_balance:    `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_hbal" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#45ddc0"/><stop offset="100%" stop-color="#2eb89d"/></linearGradient></defs><rect width="24" height="24" rx="12" fill="url(#db_hbal)"/><text x="12" y="16" font-size="9" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial">Ba</text></svg>`,
+    bug_hunter:           `<svg viewBox="0 0 24 24"><circle cx="12" cy="11" r="5" fill="#3ba55d"/><path d="M8.5 7C9.5 5 12 4.5 12 4.5S14.5 5 15.5 7" stroke="#3ba55d" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M7 9l-3-2M17 9l3-2M7 12l-3 1M17 12l3 1M8 16l-2 2M16 16l2 2" stroke="#3ba55d" stroke-width="1.5" stroke-linecap="round"/><ellipse cx="12" cy="11" rx="2" ry="3" fill="#57f287"/></svg>`,
+    bug_hunter_level_2:   `<svg viewBox="0 0 24 24"><circle cx="12" cy="11" r="5" fill="#c27c0e"/><path d="M8.5 7C9.5 5 12 4.5 12 4.5S14.5 5 15.5 7" stroke="#c27c0e" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M7 9l-3-2M17 9l3-2M7 12l-3 1M17 12l3 1M8 16l-2 2M16 16l2 2" stroke="#c27c0e" stroke-width="1.5" stroke-linecap="round"/><ellipse cx="12" cy="11" rx="2" ry="3" fill="#f0b132"/></svg>`,
+    early_supporter:      `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_es" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ff73fa"/><stop offset="100%" stop-color="#9c59c5"/></linearGradient></defs><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="url(#db_es)"/></svg>`,
+    verified_developer:   `<svg viewBox="0 0 24 24"><path d="M12 2L3 6v6c0 5.25 3.9 10.15 9 11.35C17.1 22.15 21 17.25 21 12V6L12 2z" fill="#5865F2"/><path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
+    active_developer:     `<svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-2 8 11-12h-7l2-8z" fill="#23a55a"/></svg>`,
+    certified_moderator:  `<svg viewBox="0 0 24 24"><path d="M12 2L4 5v5c0 4.5 3.4 8.7 8 9.93C16.6 18.7 20 14.5 20 10V5L12 2z" fill="#5865F2"/><path d="M8.5 12l2.5 2.5 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
+    legacy_username:      `<svg viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#5865F2"/><text x="12" y="16" font-size="11" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial">#</text></svg>`,
+    quest:                `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#f0b132"/><text x="12" y="17" font-size="13" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial">?</text></svg>`,
+    nitro:                `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_nitro" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f47fff"/><stop offset="100%" stop-color="#7289da"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#db_nitro)"/><text x="12" y="16.5" font-size="8.5" font-weight="900" text-anchor="middle" fill="white" font-family="Arial">NITRO</text></svg>`,
+    nitro_basic:          `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#7289da"/><text x="12" y="16.5" font-size="7" font-weight="900" text-anchor="middle" fill="white" font-family="Arial">BASIC</text></svg>`,
+    nitro_bronze:         `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_nbronze" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#cd7f32"/><stop offset="100%" stop-color="#a0522d"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#db_nbronze)"/><circle cx="12" cy="12" r="6" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="#fff"/></svg>`,
+    nitro_silver:         `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_nsilver" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#c0c0c0"/><stop offset="100%" stop-color="#808080"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#db_nsilver)"/><circle cx="12" cy="12" r="6" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="#fff"/></svg>`,
+    nitro_gold:           `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_ngold" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ffd700"/><stop offset="100%" stop-color="#ffa500"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#db_ngold)"/><circle cx="12" cy="12" r="6" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="#fff"/></svg>`,
+    nitro_platinum:       `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_nplat" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#4fc3f7"/><stop offset="100%" stop-color="#0288d1"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#db_nplat)"/><circle cx="12" cy="12" r="6" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="#fff"/></svg>`,
+    nitro_diamond:        `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_ndiamo" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ce93d8"/><stop offset="100%" stop-color="#7b1fa2"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#db_ndiamo)"/><circle cx="12" cy="12" r="6" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="#fff"/></svg>`,
+    nitro_emerald:        `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_nemer" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#66bb6a"/><stop offset="100%" stop-color="#2e7d32"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#db_nemer)"/><circle cx="12" cy="12" r="6" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="#fff"/></svg>`,
+    nitro_ruby:           `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_nruby" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ef5350"/><stop offset="100%" stop-color="#b71c1c"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#db_nruby)"/><circle cx="12" cy="12" r="6" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="#fff"/></svg>`,
+    nitro_opal:           `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_nopal" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f48fb1"/><stop offset="50%" stop-color="#ce93d8"/><stop offset="100%" stop-color="#80deea"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#db_nopal)"/><circle cx="12" cy="12" r="6" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="#fff"/></svg>`,
+    booster:              `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_boost" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ff73fa"/><stop offset="100%" stop-color="#f47fff"/></linearGradient></defs><path d="M12 2l2.5 7h7l-5.5 4 2 7L12 16l-6 4 2-7L2.5 9h7L12 2z" fill="url(#db_boost)"/></svg>`,
+    server:               `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#23a55a"/><path d="M7 12l3 3 7-7" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
+  };
   container.innerHTML = badges.map((b, i) => {
     const isHidden = hidden.includes(i);
-    let cls = 'badge';
-    if (b.type === 'nitro') cls += ' badge-nitro';
-    else if (b.type === 'discord') cls += ' badge-discord';
-    else if (b.type === 'server') {
-      cls += ' badge-server';
-      if (b.label === 'VIP') cls += ' vip';
-      if (b.label === 'Modérateur') cls += ' mod';
+    const svg = BADGE_SVGS[b.type] || '';
+    const label = b.label || b.type;
+    const eyeIcon = isHidden ? '🚫' : '👁️';
+    const opacity = isHidden ? '0.4' : '1';
+    const tooltip = isHidden ? 'Masqué — cliquer pour afficher' : 'Visible — cliquer pour masquer';
+    if (svg) {
+      return `<div onclick="toggleBadge(${i})" title="${tooltip}" style="display:inline-flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;opacity:${opacity};user-select:none;">
+        <div style="width:36px;height:36px;position:relative;" title="${label}">${svg.replace('<svg ', '<svg style="width:36px;height:36px;" ')}</div>
+        <span style="font-size:10px;color:var(--gray-500);max-width:52px;text-align:center;line-height:1.2;">${label}</span>
+        <span style="font-size:9px;">${eyeIcon}</span>
+      </div>`;
     }
-    return `<span class="${cls}" style="opacity:${isHidden ? '0.4' : '1'};cursor:pointer;user-select:none;" title="${isHidden ? 'Masqué — cliquer pour afficher' : 'Visible — cliquer pour masquer'}" onclick="toggleBadge(${i})">${b.emoji || ''} ${b.label} <span style="margin-left:3px;font-size:10px;">${isHidden ? '🚫' : '👁️'}</span></span>`;
+    return `<span class="badge" style="opacity:${opacity};cursor:pointer;user-select:none;" title="${tooltip}" onclick="toggleBadge(${i})">${b.emoji || ''} ${label} <span style="margin-left:3px;font-size:10px;">${eyeIcon}</span></span>`;
   }).join('');
 }
 
@@ -1841,6 +1877,13 @@ function renderConnectedAccounts() {
     if (discordConnectBtn) discordConnectBtn.style.display = 'none';
     if (discordDisconnectBtn) discordDisconnectBtn.style.display = 'inline-block';
     if (discordRefreshBtn) discordRefreshBtn.style.display = 'inline-block';
+    const discordAvatarIcon = document.getElementById('discordAvatarIcon');
+    const discordLogoIcon = document.getElementById('discordLogoIcon');
+    if (discordAvatarIcon && discordLogoIcon && userData.discord_public && userData.discord_public.avatar && userData.discord_public.id) {
+      discordAvatarIcon.src = `https://cdn.discordapp.com/avatars/${userData.discord_public.id}/${userData.discord_public.avatar}.png?size=64`;
+      discordAvatarIcon.style.display = 'block';
+      discordLogoIcon.style.display = 'none';
+    }
   } else {
     if (discordStatus) discordStatus.textContent = 'Non connecté';
     if (discordConnectBtn) discordConnectBtn.style.display = 'inline-block';
@@ -2404,7 +2447,7 @@ async function handleMedia(type, input) {
     input.value = ''; return;
   }
 
-  if (type === 'bg' || type === 'banner') {
+  if (type === 'bg' || type === 'banner' || type === 'cursor' || type === 'audio') {
 
     const previewData = URL.createObjectURL(file);
 
@@ -2423,6 +2466,28 @@ async function handleMedia(type, input) {
       const act = el('mactions-bg'); if (act) act.style.display = 'flex';
       setMblockStatus('bg', true, file.type === 'video/mp4' ? 'Vidéo ⏳' : 'Image ⏳');
       const desc = el('mdesc-bg'); if (desc) desc.textContent = file.name;
+    } else if (type === 'cursor') {
+      const img = el('cursorPreview');
+      if (img) { img.src = previewData; img.style.display = 'block'; }
+      const wrap = el('cursorPreviewWrap'); if (wrap) wrap.style.display = 'block';
+      const dz = el('cursorDropzone'); if (dz) dz.style.display = 'none';
+      const act = el('mactions-cursor'); if (act) act.style.display = 'flex';
+      setMblockStatus('cursor', true, 'Actif ⏳');
+      const desc = el('mdesc-cursor'); if (desc) desc.textContent = file.name;
+    } else if (type === 'audio') {
+      const audio = el('audioPreview');
+      if (audio) { audio.src = previewData; audio.style.display = 'block'; }
+      const dz = el('audioDropzone'); if (dz) dz.style.display = 'none';
+      const act = el('mactions-audio'); if (act) act.style.display = 'flex';
+      const meta = el('audioMeta'); if (meta) meta.style.display = 'block';
+      const nameInput = el('audioNameInput');
+      if (nameInput && !nameInput.value.trim()) {
+        const autoName = file.name.replace(/\.[^.]+$/, '');
+        nameInput.value = autoName;
+        pendingMedias.audio_name = autoName;
+      }
+      setMblockStatus('audio', true, 'Actif ⏳');
+      const desc = el('mdesc-audio'); if (desc) desc.textContent = file.name;
     }
 
     try {
@@ -2431,7 +2496,7 @@ async function handleMedia(type, input) {
       const isVideo = file.type === 'video/mp4';
       let uploadPayload = file;
       let uploadType = file.type;
-      if (!isVideo) {
+      if (type === 'bg' && !isVideo) {
         showAlert('mediasAlert', '⏳ Compression...');
         uploadPayload = await compressImageBlob(file, 2560, 1440, 0.85);
         uploadType = 'image/jpeg';
@@ -2458,6 +2523,10 @@ async function handleMedia(type, input) {
       if (type === 'bg') {
         pendingMedias.bg_type = isVideo ? 'video' : 'upload';
         setMblockStatus('bg', true, isVideo ? 'Vidéo ✓' : 'Image ✓');
+      } else if (type === 'cursor') {
+        setMblockStatus('cursor', true, 'Actif ✓');
+      } else if (type === 'audio') {
+        setMblockStatus('audio', true, 'Actif ✓');
       }
     } catch (err) {
       showAlert('mediasAlert', '❌ ' + (err.message || 'Erreur upload'));
@@ -2488,30 +2557,6 @@ async function handleMedia(type, input) {
     const act = el('mactions-avatar'); if (act) act.style.display = 'flex';
     setMblockStatus('avatar', true, 'Actif');
     const desc = el('mdesc-avatar'); if (desc) desc.textContent = file.name;
-
-  } else if (type === 'cursor') {
-    const img = el('cursorPreview');
-    if (img) { img.src = data; img.style.display = 'block'; }
-    const wrap = el('cursorPreviewWrap'); if (wrap) wrap.style.display = 'block';
-    const dz = el('cursorDropzone'); if (dz) dz.style.display = 'none';
-    const act = el('mactions-cursor'); if (act) act.style.display = 'flex';
-    setMblockStatus('cursor', true, 'Actif');
-    const desc = el('mdesc-cursor'); if (desc) desc.textContent = file.name;
-
-  } else if (type === 'audio') {
-    const audio = el('audioPreview');
-    if (audio) { audio.src = data; audio.style.display = 'block'; }
-    const dz = el('audioDropzone'); if (dz) dz.style.display = 'none';
-    const act = el('mactions-audio'); if (act) act.style.display = 'flex';
-    const meta = el('audioMeta'); if (meta) meta.style.display = 'block';
-    const nameInput = el('audioNameInput');
-    if (nameInput && !nameInput.value.trim()) {
-      const autoName = file.name.replace(/\.[^.]+$/, '');
-      nameInput.value = autoName;
-      pendingMedias.audio_name = autoName;
-    }
-    setMblockStatus('audio', true, 'Actif');
-    const desc = el('mdesc-audio'); if (desc) desc.textContent = file.name;
   }
 }
 
