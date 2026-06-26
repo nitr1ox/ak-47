@@ -34,7 +34,7 @@
     }
 
     #profile { display: none; flex-direction: column; align-items: center; padding: 0 20px 80px; min-height: 100vh; }
-    .profile-card { width: 100%; max-width: 480px; background: var(--card-bg); border-radius: 16px; padding: 8px; }
+    .profile-card { width: 100%; max-width: 480px; background: var(--card-bg); border-radius: 16px; padding: 8px; isolation: isolate; }
     .profile-card.entrance { animation: profileEntrance .6s cubic-bezier(.22,1,.36,1) both; }
     @keyframes profileEntrance { from { opacity:0; transform:translateY(24px) scale(.97); } to { opacity:1; transform:none; } }
 
@@ -959,12 +959,7 @@ async function loadProfile() {
     }
 
     const pHandleEl = document.getElementById('pHandle');
-    if (user.uid) {
-      pHandleEl.textContent = '#' + user.uid;
-      pHandleEl.style.display = 'block';
-    } else {
-      pHandleEl.style.display = 'none';
-    }
+    pHandleEl.style.display = 'none';
 
     if (user.show_member_since && user.created_at) {
       const ms = document.getElementById('pMemberSince');
@@ -1006,6 +1001,9 @@ async function loadProfile() {
 
       const card = document.getElementById('discordCard');
       card.classList.add('visible');
+      if (user.discord_card_opacity !== undefined && user.discord_card_opacity !== null) {
+        card.style.opacity = user.discord_card_opacity;
+      }
 
       const discordAvatarUrl = (discordOauth && discordOauth.avatar)
         ? `https://cdn.discordapp.com/avatars/${discordOauth.id}/${discordOauth.avatar}.${discordOauth.avatar.startsWith('a_') ? 'gif' : 'png'}?size=128`
@@ -1169,7 +1167,7 @@ async function loadProfile() {
         </a>`;
       }).join('');
     } else {
-      linksContainer.innerHTML = '<p style="text-align:center;color:var(--gray-400);font-size:13px;padding:20px;">Aucun lien pour l\'instant.</p>';
+      linksContainer.innerHTML = '';
     }
     if (user.location) {
       const locEl = document.createElement('div');
@@ -1194,8 +1192,10 @@ async function loadProfile() {
       });
     }
     if (user.profile_blur && user.profile_blur > 0) {
-      document.querySelector('.profile-card').style.backdropFilter = `blur(${user.profile_blur}px)`;
-      document.querySelector('.profile-card').style.webkitBackdropFilter = `blur(${user.profile_blur}px)`;
+      const card = document.querySelector('.profile-card');
+      card.style.backdropFilter = `blur(${user.profile_blur}px)`;
+      card.style.webkitBackdropFilter = `blur(${user.profile_blur}px)`;
+      card.style.zIndex = '0'; // Prevent backdrop-filter stacking context from leaking above page
     }
     if (user.invert_blocks) {
       document.querySelector('.profile-card').style.filter = 'invert(1) hue-rotate(180deg)';

@@ -1052,6 +1052,15 @@ window.onunhandledrejection = function(e) {
             onchange="pendingPerso.discord_presence=this.checked"/>
           <span style="font-size:13px;font-weight:500;">Activer la présence Discord</span>
         </label>
+        <div class="form-group" style="margin-top:14px;">
+          <label>Opacité de la card Discord</label>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <input type="range" id="discordCardOpacityRange" min="0" max="100" value="100"
+              style="flex:1;accent-color:#5865F2;"
+              oninput="el('discordCardOpacityVal').textContent=this.value+'%';pendingPerso.discord_card_opacity=this.value/100;"/>
+            <span id="discordCardOpacityVal" style="font-size:12px;color:var(--gray-500);min-width:36px;">100%</span>
+          </div>
+        </div>
       </div>
 
       <div class="section-card">
@@ -2537,7 +2546,18 @@ async function handleMedia(type, input) {
 
   let data;
   if (type === 'avatar') {
-    try { data = await compressImage(file, 400, 400, 0.90); }
+    try {
+      if (file.type === 'image/gif') {
+        // Preserve animated GIFs — skip compression (it would strip animation)
+        data = await new Promise((res, rej) => {
+          const r = new FileReader();
+          r.onload = e => res(e.target.result); r.onerror = rej;
+          r.readAsDataURL(file);
+        });
+      } else {
+        data = await compressImage(file, 400, 400, 0.90);
+      }
+    }
     catch { showAlert('mediasAlert', 'Impossible de lire cette image.'); return; }
   } else {
     data = await new Promise((res, rej) => {
@@ -2722,6 +2742,7 @@ let pendingPerso = {
   spotify_url: null,
   location: null,
   discord_presence: null,
+  discord_card_opacity: null,
   bg_effect: null,
   bg_effect_color: null,
   profile_blur: null,
@@ -2817,6 +2838,9 @@ function loadPersoUI() {
   if (el('persoLocation')) el('persoLocation').value = userData.location || '';
 
   el('discordPresenceToggle').checked = !!userData.discord_presence;
+  const discordCardOpacity = userData.discord_card_opacity !== undefined && userData.discord_card_opacity !== null ? userData.discord_card_opacity : 1;
+  el('discordCardOpacityRange').value = Math.round(discordCardOpacity * 100);
+  el('discordCardOpacityVal').textContent = Math.round(discordCardOpacity * 100) + '%';
   el('showMemberSinceToggle').checked = !!userData.show_member_since;
   el('showAvatarShineToggle').checked = !!userData.avatar_shine;
   el('profileEntranceToggle').checked = !!userData.profile_entrance;
@@ -3026,7 +3050,7 @@ async function savePerso() {
       profile_font: null, bio_font: null, bg_type: null, bg_value: null,
       bg_opacity: null, text_color: null, card_bg: null, card_opacity: null,
       banner_url: null, bg_url: null, social_links: null, spotify_url: null,
-      location: null, discord_presence: null, bg_effect: null, bg_effect_color: null,
+      location: null, discord_presence: null, discord_card_opacity: null, bg_effect: null, bg_effect_color: null,
       profile_blur: null, username_effect: null, glow_targets: null, accent_color: null,
       icon_color: null, monochrome_icons: null, animated_title: null,
       invert_blocks: null, use_discord_avatar: null, avatar_decoration: null,
