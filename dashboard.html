@@ -1204,9 +1204,10 @@ window.onunhandledrejection = function(e) {
       <div class="section-card">
         <div class="section-card-title">Décoration d'avatar</div>
         <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Ajoutez un cadre ou une décoration autour de votre avatar.</div>
-        <select id="avatarDecorationSelect" onchange="pendingPerso.avatar_decoration=this.value;"
+        <select id="avatarDecorationSelect" onchange="pendingPerso.avatar_decoration=this.value;document.getElementById('avatarBorderColorRow').style.display=this.value==='border_custom'?'flex':'none';"
           style="width:100%;max-width:280px;padding:9px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;font-family:inherit;outline:none;">
           <option value="none">Aucune décoration</option>
+          <option value="border_custom">Contour personnalisé</option>
           <option value="ring">Anneau simple</option>
           <option value="ring_accent">Anneau couleur d'accent</option>
           <option value="ring_rainbow">Anneau arc-en-ciel</option>
@@ -1215,6 +1216,13 @@ window.onunhandledrejection = function(e) {
           <option value="dots">Points autour</option>
           <option value="hexagon">Hexagone</option>
         </select>
+        <div id="avatarBorderColorRow" style="display:none;align-items:center;gap:10px;margin-top:12px;">
+          <label style="font-size:12px;font-weight:500;color:var(--gray-700);">Couleur du contour</label>
+          <input type="color" id="avatarBorderColorPicker" value="#ffffff"
+            oninput="pendingPerso.avatar_border_color=this.value;document.getElementById('avatarBorderColorHex').textContent=this.value;"
+            style="width:40px;height:36px;padding:2px;border:1px solid var(--gray-200);border-radius:6px;cursor:pointer;"/>
+          <span id="avatarBorderColorHex" style="font-size:12px;color:var(--gray-500);font-family:monospace;">#ffffff</span>
+        </div>
       </div>
 
       <div class="section-card">
@@ -2755,6 +2763,7 @@ let pendingPerso = {
   invert_blocks: null,
   use_discord_avatar: null,
   avatar_decoration: null,
+  avatar_border_color: null,
 };
 
 const GRADIENT_PRESETS = [
@@ -2879,6 +2888,12 @@ function loadPersoUI() {
   el('invertBlocksToggle').checked = !!userData.invert_blocks;
   el('useDiscordAvatarToggle').checked = !!userData.use_discord_avatar;
   el('avatarDecorationSelect').value = userData.avatar_decoration || 'none';
+  if ((userData.avatar_decoration || 'none') === 'border_custom') {
+    document.getElementById('avatarBorderColorRow').style.display = 'flex';
+    const bc = userData.avatar_border_color || '#ffffff';
+    document.getElementById('avatarBorderColorPicker').value = bc;
+    document.getElementById('avatarBorderColorHex').textContent = bc;
+  }
 }
 
 function switchBgTab(tab) {
@@ -3053,7 +3068,7 @@ async function savePerso() {
       location: null, discord_presence: null, discord_card_opacity: null, bg_effect: null, bg_effect_color: null,
       profile_blur: null, username_effect: null, glow_targets: null, accent_color: null,
       icon_color: null, monochrome_icons: null, animated_title: null,
-      invert_blocks: null, use_discord_avatar: null, avatar_decoration: null,
+      invert_blocks: null, use_discord_avatar: null, avatar_decoration: null, avatar_border_color: null,
       show_member_since: null, avatar_shine: null, profile_entrance: null, social_btn_style: null,
       hidden_roles: null,
     };

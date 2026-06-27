@@ -655,5 +655,69 @@ document.addEventListener('DOMContentLoaded', function(){
   </div>
 </div>
 
+  <div class="guild-card" style="margin-top:24px;">
+    <div class="section-title">🔨 Gestion des bans</div>
+    <div class="section-desc">Bannir ou débannir un utilisateur. Le profil affichera un message de ban avec la raison.</div>
+    <div style="display:flex;flex-direction:column;gap:12px;max-width:480px;margin-top:16px;">
+      <div style="display:flex;gap:8px;">
+        <input id="banUsername" type="text" placeholder="Username" style="flex:1;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;font-family:inherit;outline:none;"/>
+        <button onclick="lookupBan()" style="padding:9px 16px;background:var(--black);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Chercher</button>
+      </div>
+      <div id="banUserInfo" style="display:none;padding:12px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:8px;font-size:13px;"></div>
+      <textarea id="banReason" placeholder="Raison du ban..." rows="3" style="padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;font-family:inherit;outline:none;resize:vertical;"></textarea>
+      <div style="display:flex;gap:8px;">
+        <button onclick="banUser()" style="flex:1;padding:9px;background:#ef4444;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">🔨 Bannir</button>
+        <button onclick="unbanUser()" style="flex:1;padding:9px;background:#22c55e;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">✅ Débannir</button>
+      </div>
+      <div id="banMsg" style="font-size:13px;font-weight:500;display:none;"></div>
+    </div>
+  </div>
+
+  <script>
+  async function lookupBan() {
+    const username = document.getElementById('banUsername').value.trim();
+    if (!username) return;
+    const token = localStorage.getItem('ak47_access_token');
+    const r = await fetch(`${API}/api/admin/user/${username}`, { headers: { Authorization: 'Bearer ' + token } });
+    const info = document.getElementById('banUserInfo');
+    if (!r.ok) { info.style.display='block'; info.innerHTML='<span style="color:#ef4444">Utilisateur introuvable</span>'; return; }
+    const data = await r.json();
+    info.style.display = 'block';
+    info.innerHTML = data.banned
+      ? `<span style="color:#ef4444;font-weight:600;">🔨 Banni</span> — Raison : <em>${data.ban_reason || '—'}</em> — Le ${data.banned_at ? new Date(data.banned_at).toLocaleDateString('fr-FR') : '—'}`
+      : `<span style="color:#22c55e;font-weight:600;">✅ Pas banni</span>`;
+  }
+  async function banUser() {
+    const username = document.getElementById('banUsername').value.trim();
+    const reason = document.getElementById('banReason').value.trim();
+    const msg = document.getElementById('banMsg');
+    if (!username || !reason) { msg.style.display='block'; msg.style.color='#ef4444'; msg.textContent='Username et raison requis.'; return; }
+    const token = localStorage.getItem('ak47_access_token');
+    const r = await fetch(`${API}/api/admin/ban/${username}`, {
+      method: 'POST', headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reason })
+    });
+    const data = await r.json();
+    msg.style.display = 'block';
+    msg.style.color = r.ok ? '#22c55e' : '#ef4444';
+    msg.textContent = data.message || data.error;
+    if (r.ok) lookupBan();
+  }
+  async function unbanUser() {
+    const username = document.getElementById('banUsername').value.trim();
+    const msg = document.getElementById('banMsg');
+    if (!username) { msg.style.display='block'; msg.style.color='#ef4444'; msg.textContent='Username requis.'; return; }
+    const token = localStorage.getItem('ak47_access_token');
+    const r = await fetch(`${API}/api/admin/unban/${username}`, {
+      method: 'POST', headers: { Authorization: 'Bearer ' + token }
+    });
+    const data = await r.json();
+    msg.style.display = 'block';
+    msg.style.color = r.ok ? '#22c55e' : '#ef4444';
+    msg.textContent = data.message || data.error;
+    if (r.ok) lookupBan();
+  }
+  </script>
+
 </body>
 </html>
