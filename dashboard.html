@@ -1874,12 +1874,17 @@ function formatBytes(bytes) {
 }
 
 const ROLES_DEF = [
-  { id: 'owner',    label: 'Owner',      color: '#f59e0b', emoji: '👑' },
-  { id: 'og',       label: 'OG',         color: '#8b5cf6', emoji: '💎' },
-  { id: 'staff',    label: 'Staff',      color: '#3b82f6', emoji: '🛡️' },
-  { id: 'verified', label: 'Vérifié',    color: '#10b981', emoji: '✅' },
-  { id: 'premium',  label: 'Premium',    color: '#f43f5e', emoji: '⭐' },
-  { id: 'partner',  label: 'Partenaire', color: '#ec4899', emoji: '🤝' },
+  { id: 'owner',     label: 'Owner',          color: '#f59e0b', emoji: '👑', desc: 'Propriétaire du site' },
+  { id: 'og',        label: 'OG',             color: '#8b5cf6', emoji: '💎', desc: 'Supporter précoce de ak-47.fr' },
+  { id: 'staff',     label: 'Staff',          color: '#3b82f6', emoji: '🛡️', desc: 'Membre de l\'équipe ak-47.fr' },
+  { id: 'helper',    label: 'Helper',         color: '#06b6d4', emoji: '🤝', desc: 'Aide active la communauté' },
+  { id: 'verified',  label: 'Verified',       color: '#10b981', emoji: '✅', desc: 'Créateur de contenu ou compte vérifié' },
+  { id: 'premium',   label: 'Premium',        color: '#f43f5e', emoji: '⭐', desc: 'Abonné Premium ak-47.fr' },
+  { id: 'donor',     label: 'Donor',          color: '#a855f7', emoji: '💜', desc: 'A fait un don à ak-47.fr' },
+  { id: 'gifter',    label: 'Gifter',         color: '#ec4899', emoji: '🎁', desc: 'A offert un produit ak-47.fr' },
+  { id: 'booster',   label: 'Server Booster', color: '#ff73fa', emoji: '🚀', desc: 'Booste le serveur Discord ak-47.fr' },
+  { id: 'bug_hunter',label: 'Bug Hunter',     color: '#f97316', emoji: '🐛', desc: 'A signalé un bug à l\'équipe' },
+  { id: 'partner',   label: 'Partenaire',     color: '#14b8a6', emoji: '🤜', desc: 'Partenaire officiel ak-47.fr' },
 ];
 
 function renderRolesVisibility() {
@@ -1897,13 +1902,14 @@ function renderRolesVisibility() {
     const def = ROLES_DEF.find(r => r.id === roleId) || { id: roleId, label: roleId, color: '#888', emoji: '•' };
     const isVisible = !hidden.includes(roleId);
     return `<label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:8px 10px;border-radius:8px;border:1px solid var(--gray-200);background:${def.color}10;">
-      <input type="checkbox" value="${roleId}" ${isVisible ? 'checked' : ''} 
+      <input type="checkbox" value="${roleId}" ${isVisible ? 'checked' : ''}
         style="width:16px;height:16px;accent-color:${def.color};cursor:pointer;"
         onchange="toggleRoleVisibility('${roleId}', this.checked)"/>
       <span style="font-size:16px;">${def.emoji}</span>
       <div>
         <span style="font-size:13px;font-weight:600;color:${def.color};">${def.label}</span>
-        <div style="font-size:11px;color:var(--gray-500);">${isVisible ? 'Visible sur ton profil' : 'Masqué sur ton profil'}</div>
+        <div style="font-size:11px;color:var(--gray-400);">${def.desc || ''}</div>
+        <div style="font-size:10px;color:var(--gray-500);margin-top:1px;">${isVisible ? '👁 Visible sur ton profil' : '🙈 Masqué sur ton profil'}</div>
       </div>
     </label>`;
   }).join('');
@@ -3376,12 +3382,26 @@ function tplRender() {
           <span style="font-size:11px;color:var(--gray-400);">🔥 ${t.uses||0}</span>
         </div>
         <div style="display:flex;gap:8px;">
-          <button onclick="tplApply('${t.id}','${esc(t.name)}')" style="flex:1;background:var(--black);color:var(--white);border:none;border-radius:8px;padding:8px;font-size:12px;font-weight:600;cursor:pointer;">${getToken() ? 'Appliquer' : 'Se connecter'}</button>
-          ${isOwner ? `<button onclick="tplDelete('${t.id}')" style="background:var(--gray-100);color:var(--gray-600);border:none;border-radius:8px;padding:8px 12px;font-size:12px;cursor:pointer;">🗑</button>` : ''}
+          <button class="tpl-apply-btn" data-id="${esc(t.id)}" style="flex:1;background:var(--black);color:var(--white);border:none;border-radius:8px;padding:8px;font-size:12px;font-weight:600;cursor:pointer;">${getToken() ? 'Appliquer' : 'Se connecter'}</button>
+          ${isOwner ? `<button class="tpl-delete-btn" data-id="${esc(t.id)}" style="background:var(--gray-100);color:var(--gray-600);border:none;border-radius:8px;padding:8px 12px;font-size:12px;cursor:pointer;">🗑</button>` : ''}
         </div>
       </div>
     </div>`;
   }).join('');
+  // Délégation d'événements : on ne construit plus jamais d'attribut onclick avec des
+  // données utilisateur interpolées directement (id/nom de template). Échapper avec esc()
+  // ne suffit pas dans ce contexte : un guillemet simple casse la chaîne JS de l'attribut
+  // onclick, ce qui permettait une XSS stockée via le champ "nom" du modèle. On lit
+  // maintenant l'id depuis data-id (simple texte d'attribut, jamais interprété comme du code).
+  if (!grid.dataset.boundClick) {
+    grid.dataset.boundClick = '1';
+    grid.addEventListener('click', (e) => {
+      const applyBtn = e.target.closest('.tpl-apply-btn');
+      if (applyBtn) return tplApply(applyBtn.dataset.id);
+      const delBtn = e.target.closest('.tpl-delete-btn');
+      if (delBtn) return tplDelete(delBtn.dataset.id);
+    });
+  }
 }
 
 async function tplLoad() {
@@ -3394,16 +3414,17 @@ async function tplLoad() {
   }
 }
 
-async function tplApply(id, name) {
+async function tplApply(id) {
   const token = localStorage.getItem('token');
   if (!getToken()) { window.location.href = '/login'; return; }
+  const t = tplAll.find(t => t.id === id);
+  const name = t ? t.name : '';
   if (!confirm('Appliquer le modèle "' + name + '" ? Ton style actuel sera remplacé.')) return;
   try {
     const r = await apiFetch(API + '/api/templates/' + id + '/use', {
       method: 'POST', headers: { Authorization: 'Bearer ' + getToken() }
     });
     if (!r.ok) throw new Error();
-    const t = tplAll.find(t => t.id === id);
     if (t) t.uses = (t.uses || 0) + 1;
     tplRender();
     showToast('✓ Modèle "' + name + '" appliqué ! Recharge ton profil.');

@@ -379,12 +379,17 @@ function renderUsers(users) {
 }
 
 const AVAILABLE_ROLES = [
-  { id: 'owner',    label: 'Owner',      color: '#f59e0b', emoji: '👑' },
-  { id: 'og',       label: 'OG',         color: '#8b5cf6', emoji: '💎' },
-  { id: 'staff',    label: 'Staff',      color: '#3b82f6', emoji: '🛡️' },
-  { id: 'verified', label: 'Vérifié',    color: '#10b981', emoji: '✅' },
-  { id: 'premium',  label: 'Premium',    color: '#f43f5e', emoji: '⭐' },
-  { id: 'partner',  label: 'Partenaire', color: '#ec4899', emoji: '🤝' },
+  { id: 'owner',     label: 'Owner',          color: '#f59e0b', emoji: '👑', desc: 'Propriétaire du site' },
+  { id: 'og',        label: 'OG',             color: '#8b5cf6', emoji: '💎', desc: 'Supporter précoce de ak-47.fr' },
+  { id: 'staff',     label: 'Staff',          color: '#3b82f6', emoji: '🛡️', desc: 'Membre de l\'équipe ak-47.fr' },
+  { id: 'helper',    label: 'Helper',         color: '#06b6d4', emoji: '🤝', desc: 'Aide active la communauté' },
+  { id: 'verified',  label: 'Verified',       color: '#10b981', emoji: '✅', desc: 'Créateur de contenu ou compte vérifié' },
+  { id: 'premium',   label: 'Premium',        color: '#f43f5e', emoji: '⭐', desc: 'Abonné Premium ak-47.fr' },
+  { id: 'donor',     label: 'Donor',          color: '#a855f7', emoji: '💜', desc: 'A fait un don à ak-47.fr' },
+  { id: 'gifter',    label: 'Gifter',         color: '#ec4899', emoji: '🎁', desc: 'A offert un produit ak-47.fr' },
+  { id: 'booster',   label: 'Server Booster', color: '#ff73fa', emoji: '🚀', desc: 'Booste le serveur Discord ak-47.fr' },
+  { id: 'bug_hunter',label: 'Bug Hunter',     color: '#f97316', emoji: '🐛', desc: 'A signalé un bug à l\'équipe' },
+  { id: 'partner',   label: 'Partenaire',     color: '#14b8a6', emoji: '🤜', desc: 'Partenaire officiel ak-47.fr' },
 ];
 const ROLES_MAP = Object.fromEntries(AVAILABLE_ROLES.map(r => [r.id, r.emoji + ' ' + r.label]));
 
@@ -437,7 +442,10 @@ function openRoleModal(btn) {
     <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid var(--gray-200);cursor:pointer;background:${current.includes(r.id)?r.color+'15':''};">
       <input type="checkbox" value="${r.id}" ${current.includes(r.id)?'checked':''} style="width:16px;height:16px;accent-color:${r.color};">
       <span style="font-size:18px;">${r.emoji}</span>
-      <span style="font-weight:600;color:${r.color};">${r.label}</span>
+      <div>
+        <span style="font-weight:600;color:${r.color};">${r.label}</span>
+        <div style="font-size:11px;color:#888;margin-top:1px;">${r.desc||''}</div>
+      </div>
     </label>`).join('');
   document.getElementById('roleModal').style.display = 'flex';
 }
