@@ -273,6 +273,16 @@
       .mobile-bottom-nav { display: grid; }
       .dash-main { padding-bottom: 72px; }
     }
+    /* Bibliothèque de médias */
+    .media-lib-item { position:relative; border-radius:10px; overflow:hidden; background:var(--gray-100); aspect-ratio:1; }
+    .media-lib-item img, .media-lib-item video { width:100%; height:100%; object-fit:cover; display:block; }
+    .media-lib-item .media-lib-overlay { position:absolute; inset:0; background:rgba(0,0,0,.55); opacity:0; transition:opacity .18s; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; }
+    .media-lib-item:hover .media-lib-overlay { opacity:1; }
+    .media-lib-del { background:#ef4444; color:#fff; border:none; border-radius:6px; padding:5px 10px; font-size:11px; font-weight:600; cursor:pointer; transition:background .15s; }
+    .media-lib-del:hover { background:#dc2626; }
+    .media-lib-info { font-size:10px; color:rgba(255,255,255,.8); text-align:center; padding:0 6px; }
+    .media-lib-type { position:absolute; top:6px; left:6px; font-size:10px; background:rgba(0,0,0,.6); color:#fff; padding:2px 5px; border-radius:4px; pointer-events:none; }
+    .media-lib-src-badge { position:absolute; top:6px; right:6px; font-size:10px; background:rgba(99,102,241,.85); color:#fff; padding:2px 5px; border-radius:4px; pointer-events:none; }
   </style>
 
   <!-- ====== FACELIFT VISUEL — même structure/fonctions, affichage plus moderne et aéré ====== -->
@@ -857,6 +867,24 @@ window.onunhandledrejection = function(e) {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Bibliothèque de médias uploadés -->
+      <div class="mblock" id="mblock-library" style="margin-top:12px;">
+        <div class="mblock-head" onclick="toggleMblock('library')">
+          <div class="mblock-icon" style="background:var(--gray-100);font-size:18px;">📂</div>
+          <div class="mblock-meta">
+            <div class="mblock-title">Bibliothèque de médias</div>
+            <div class="mblock-desc" id="mdesc-library">Vos fichiers uploadés — images et vidéos</div>
+          </div>
+          <div class="mblock-status empty" id="mstatus-library">—</div>
+          <div class="mblock-chevron">▾</div>
+        </div>
+        <div class="mblock-body" id="mbody-library">
+          <div id="mediaLibraryLoader" style="text-align:center;padding:24px 0;color:var(--gray-400);font-size:13px;">Chargement…</div>
+          <div id="mediaLibraryEmpty" style="display:none;text-align:center;padding:24px 0;color:var(--gray-400);font-size:13px;">Aucun média uploadé.</div>
+          <div id="mediaLibraryGrid" style="display:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:14px;"></div>
         </div>
       </div>
 
@@ -2616,6 +2644,7 @@ function switchTab(name) {
   document.querySelectorAll('.sidebar-item').forEach(t => { if (t.getAttribute('onclick')?.includes(name)) t.classList.add('active'); });
   if (name === 'profile' || name === 'links') updatePreview();
   if (name === 'badges') renderBadgesTab();
+  if (name === 'medias') loadMediaLibrary();
 }
 
 ['displayName','bio','location','avatarColor'].forEach(id => {
@@ -2641,7 +2670,9 @@ function triggerUpload(inputId) {
 
 function toggleMblock(id) {
   const block = document.getElementById('mblock-' + id);
-  if (block) block.classList.toggle('open');
+  if (!block) return;
+  block.classList.toggle('open');
+  if (id === 'library' && block.classList.contains('open')) loadMediaLibrary();
 }
 
 function selectAudioSrc2(val) {
@@ -3061,6 +3092,110 @@ function loadMediasUI() {
     }
   });
 }
+
+// ─── Bibliothèque de médias ────────────────────────────────────────────────
+let mediaLibraryLoaded = false;
+
+async function loadMediaLibrary(force) {
+  if (mediaLibraryLoaded && !force) return;
+  const loader = el('mediaLibraryLoader');
+  const empty  = el('mediaLibraryEmpty');
+  const grid   = el('mediaLibraryGrid');
+  if (!grid) return;
+  if (loader) loader.style.display = 'block';
+  if (empty)  empty.style.display  = 'none';
+  grid.style.display = 'none';
+  grid.innerHTML = '';
+
+  try {
+    const r = await apiFetch(API + '/api/upload/files');
+    const data = await r.json();
+    if (loader) loader.style.display = 'none';
+
+    const files = data.files || [];
+    const status = el('mstatus-library');
+    if (status) {
+      if (files.length) {
+        status.textContent = files.length + ' fichier' + (files.length > 1 ? 's' : '');
+        status.className = 'mblock-status active';
+      } else {
+        status.textContent = '—';
+        status.className = 'mblock-status empty';
+      }
+    }
+
+    if (!files.length) { if (empty) empty.style.display = 'block'; return; }
+
+    grid.style.display = 'grid';
+    files.forEach((f, i) => {
+      const item = document.createElement('div');
+      item.className = 'media-lib-item';
+      if (f.filename) item.dataset.filename = f.filename;
+      item.dataset.source = f.source;
+
+      const typeEmoji = f.type === 'video' ? '🎬' : f.type === 'audio' ? '🎵' : '🖼️';
+      const typeWord  = f.type === 'video' ? 'Vidéo' : f.type === 'audio' ? 'Audio' : 'Image';
+      const sizeTxt = f.size != null
+        ? (f.size >= 1024*1024 ? (f.size/1024/1024).toFixed(1)+' Mo' : Math.round(f.size/1024)+' Ko')
+        : '';
+
+      let mediaEl;
+      if (f.type === 'audio') {
+        mediaEl = `<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:36px;background:var(--gray-100);">🎵</div>`;
+      } else if (f.type === 'video') {
+        mediaEl = `<video src="${esc(f.url)}" muted loop playsinline></video>`;
+      } else {
+        mediaEl = `<img src="${esc(f.url)}" alt="${esc(f.label||f.filename||'')}" loading="lazy"/>`;
+      }
+
+      const displayName = f.label || (f.filename ? f.filename.replace(/^background_\d+_\d+/, '…') : '');
+      const sourceBadge = f.source === 'profile'
+        ? `<span class="media-lib-src-badge">Profil</span>`
+        : '';
+      const delBtn = (f.source === 'local' && f.filename)
+        ? `<button class="media-lib-del" onclick="deleteMediaLibraryFile('${esc(f.filename)}', this)">🗑 Supprimer</button>`
+        : `<a class="media-lib-del" href="${esc(f.url)}" target="_blank" rel="noopener" style="text-decoration:none;padding:5px 10px;">↗ Ouvrir</a>`;
+
+      item.innerHTML = `
+        <span class="media-lib-type">${typeEmoji} ${typeWord}</span>
+        ${sourceBadge}
+        ${mediaEl}
+        <div class="media-lib-overlay">
+          <div class="media-lib-info">${esc(displayName)}</div>
+          ${sizeTxt ? `<div class="media-lib-info">${sizeTxt}</div>` : ''}
+          ${delBtn}
+        </div>`;
+      grid.appendChild(item);
+    });
+    mediaLibraryLoaded = true;
+  } catch(e) {
+    if (loader) { loader.textContent = 'Erreur de chargement.'; }
+  }
+}
+
+async function deleteMediaLibraryFile(filename, btn) {
+  if (!confirm('Supprimer ce fichier définitivement ?')) return;
+  btn.disabled = true;
+  btn.textContent = '…';
+  try {
+    const r = await apiFetch(API + '/api/upload/background/' + encodeURIComponent(filename), { method: 'DELETE' });
+    const data = await r.json();
+    if (data.ok) {
+      const item = document.querySelector(`.media-lib-item[data-filename="${CSS.escape(filename)}"]`);
+      if (item) item.remove();
+      mediaLibraryLoaded = false;
+      await loadMediaLibrary(true);
+      showToast('Fichier supprimé');
+    } else {
+      showToast(data.error || 'Erreur suppression');
+      btn.disabled = false; btn.textContent = '🗑 Supprimer';
+    }
+  } catch(e) {
+    showToast('Erreur réseau');
+    btn.disabled = false; btn.textContent = '🗑 Supprimer';
+  }
+}
+// ──────────────────────────────────────────────────────────────────────────────
 
 async function saveMedias() {
   const btn = el('saveMediasBtn');

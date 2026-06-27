@@ -1165,7 +1165,7 @@ async function loadProfile() {
       _showAudioPlayer = user.show_audio_player !== false;
       const player = document.getElementById('audioPlayer');
       player.src = user.audio_url;
-      player.volume = 0;
+      player.volume = 0.8;
       player.muted = false;
       const bar = document.getElementById('audioBar');
       if (_showAudioPlayer) bar.classList.add('visible');
@@ -2081,16 +2081,36 @@ document.getElementById('enterBtn').addEventListener('click', function(e){ e.sto
 function startMusicNow() {
   const player = document.getElementById('audioPlayer');
   if (!player || !player.src) return;
-  // Démarrer en muet par défaut
-  player.volume = 0;
-  audioMuted = true;
+  // Démarrer avec le son allumé (volume normal)
+  player.volume = 0.8;
+  audioMuted = false;
   updateVolSvg();
-  updateVolSlider(0);
+  updateVolSlider(0.8);
+  // Tentative de lecture avec son — si le navigateur bloque l'autoplay avec son,
+  // on retente en muet puis on démute dès la première interaction utilisateur
   player.play().then(() => {
     const icon = document.getElementById('mpPlayIcon');
     if (icon) icon.innerHTML = '<path d="M6 19h4V5H6zm8-14v14h4V5z"/>';
     audioPlaying = true;
-  }).catch(() => { audioPlaying = false; });
+  }).catch(() => {
+    // Autoplay bloqué avec son : on passe en muet temporairement
+    player.muted = true;
+    player.play().then(() => {
+      audioPlaying = true;
+      const icon = document.getElementById('mpPlayIcon');
+      if (icon) icon.innerHTML = '<path d="M6 19h4V5H6zm8-14v14h4V5z"/>';
+      // Démuter dès la première interaction
+      const unmute = () => {
+        player.muted = false;
+        player.volume = 0.8;
+        audioMuted = false;
+        updateVolSvg();
+        updateVolSlider(0.8);
+      };
+      document.addEventListener('click',   unmute, { once: true });
+      document.addEventListener('keydown', unmute, { once: true });
+    }).catch(() => { audioPlaying = false; });
+  });
   const bar = document.getElementById('audioBar');
   if (bar && !_showAudioPlayer) return;
   if (bar) {
