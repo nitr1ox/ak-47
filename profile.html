@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<script src="/error-logger.js"></script><script>(function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
+<script src="/error-logger.js"></script><script>(function(){var t=localStorage.getItem("theme")||"dark";document.documentElement.setAttribute("data-theme",t);})();</script>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>ak-47.fr</title>
   <link id="profileFont" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -423,14 +423,26 @@
       justify-content: center; margin: 8px 0 2px;
     }
     .ak-badge {
-      display: inline-flex; align-items: center; gap: 4px;
-      padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 600;
-      color: rgba(255,255,255,0.9);
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.15);
-      backdrop-filter: blur(6px);
-      cursor: default; white-space: nowrap;
+      width: 24px; height: 24px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; cursor: default; position: relative;
+      border-radius: 7px;
+      transition: transform .18s cubic-bezier(.34,1.56,.64,1);
     }
+    .ak-badge img {
+      width: 22px; height: 22px; object-fit: contain; display: block;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,.3));
+    }
+    .ak-badge:hover { transform: scale(1.35) translateY(-1px); z-index: 5; }
+    .ak-badge:hover::after {
+      content: attr(data-tip);
+      position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%);
+      background: rgba(15,15,18,.95); color: #fff; font-size: 10.5px; font-weight: 500;
+      white-space: nowrap; padding: 4px 9px; border-radius: 6px; pointer-events: none; z-index: 10;
+      box-shadow: 0 4px 12px rgba(0,0,0,.4); border: 1px solid rgba(255,255,255,.08);
+      animation: akTooltipIn .15s ease;
+    }
+    @keyframes akTooltipIn { from { opacity: 0; transform: translateX(-50%) translateY(3px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
 
     .discord-card {
       display: none;
@@ -680,36 +692,49 @@ window.onunhandledrejection = function(e) {
 <div id="profileBg"></div>
 <video id="profileBgVideo" muted loop playsinline style="position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;display:none;pointer-events:none;"></video>
 <!-- ── Contrôle son vidéo (affiché seulement si pas d'audio_url) ── -->
+<!-- Icône seule par défaut. Au survol (hover) : le slider de volume apparaît. Un clic sur l'icône mute/démute. -->
 <div id="bgVideoSoundBar" style="
   display:none; position:fixed; bottom:20px; right:20px; z-index:9999;
   background:rgba(0,0,0,.62); backdrop-filter:blur(14px);
-  border:1px solid rgba(255,255,255,.12); border-radius:14px;
-  padding:10px 14px; color:#fff; font-family:inherit;
-  align-items:center; gap:10px; min-width:170px;
+  border:1px solid rgba(255,255,255,.12); border-radius:50px;
+  color:#fff; font-family:inherit;
+  align-items:center; gap:0;
   box-shadow:0 4px 24px rgba(0,0,0,.4);
-  transition:opacity .2s;
+  height:40px; padding:0;
+  overflow:hidden;
+  width:40px;
+  transition:width .25s ease;
 ">
   <!-- Icône son cliquable (mute/unmute) -->
   <button id="bgVideoMuteBtn" onclick="toggleBgVideoMute()" title="Couper / Activer le son"
-    style="background:none;border:none;cursor:pointer;color:#fff;padding:0;display:flex;align-items:center;flex-shrink:0;">
+    style="background:none;border:none;cursor:pointer;color:#fff;padding:0;width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
     <svg id="bgVideoMuteIcon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
       <path d="M3 9v6h4l5 5V4L7 9H3z"/>
       <line x1="16" y1="9" x2="22" y2="15" stroke="currentColor" stroke-width="2"/>
       <line x1="22" y1="9" x2="16" y2="15" stroke="currentColor" stroke-width="2"/>
     </svg>
   </button>
-  <!-- Label -->
-  <span id="bgVideoSoundLabel" style="font-size:11px;font-weight:600;opacity:.75;white-space:nowrap;letter-spacing:.3px;">SON VIDÉO</span>
-  <!-- Slider volume -->
+  <!-- Slider volume (caché par défaut, révélé au survol via CSS ci-dessous) -->
   <input type="range" id="bgVideoVolSlider" min="0" max="1" step="0.02" value="0.8"
     oninput="setBgVideoVolume(this.value)"
     style="
-      flex:1; min-width:70px; height:3px; cursor:pointer;
+      flex:1; min-width:90px; height:3px; cursor:pointer;
       accent-color:#fff; background:rgba(255,255,255,.25);
       border-radius:3px; outline:none; border:none;
+      margin-right:14px;
+      opacity:0;
+      transition:opacity .2s ease;
     "
     title="Volume"/>
 </div>
+<style>
+  #bgVideoSoundBar:hover {
+    width: 150px;
+  }
+  #bgVideoSoundBar:hover #bgVideoVolSlider {
+    opacity: 1;
+  }
+</style>
 <audio id="audioPlayer" loop></audio>
 
 <div id="loading">
@@ -1018,16 +1043,17 @@ async function loadProfile() {
         vid.src = user.bg_url;
         vid.style.opacity = bgOpacity;
         vid.style.display = 'block';
-        vid.muted = true;
-        vid.volume = 0.8;
-        vid.play().catch(() => {
-          document.addEventListener('click', () => vid.play().catch(() => {}), { once: true });
-        });
-        // Affiche le contrôle son seulement si pas de musique custom
-        if (!user.audio_url) {
-          const bar = document.getElementById('bgVideoSoundBar');
-          bar.style.display = 'flex';
-          // Premier clic sur la page → démute automatiquement la vidéo
+        vid.volume = parseFloat(document.getElementById('bgVideoVolSlider').value) || 0.8;
+        // On tente d'abord l'autoplay AVEC le son directement.
+        vid.muted = false;
+        vid.play().then(() => {
+          _updateBgVideoIcon(false);
+        }).catch(() => {
+          // Le navigateur bloque l'autoplay avec son → on retente en muet,
+          // puis on démute automatiquement au premier clic/touche sur la page.
+          vid.muted = true;
+          _updateBgVideoIcon(true);
+          vid.play().catch(() => {});
           const autoUnmute = () => {
             if (vid.muted) {
               vid.muted = false;
@@ -1037,6 +1063,11 @@ async function loadProfile() {
           };
           document.addEventListener('click', autoUnmute, { once: true });
           document.addEventListener('keydown', autoUnmute, { once: true });
+        });
+        // Affiche le contrôle son seulement si pas de musique custom
+        if (!user.audio_url) {
+          const bar = document.getElementById('bgVideoSoundBar');
+          bar.style.display = 'flex';
         }
         const bg = document.getElementById('profileBg');
         bg.style.backgroundImage = '';
@@ -1221,7 +1252,11 @@ async function loadProfile() {
       if (!def) return;
       const el = document.createElement('span');
       el.className = 'ak-badge';
-      el.textContent = `${def.emoji} ${def.label}`;
+      el.setAttribute('data-tip', `${def.label} — ${def.desc}`);
+      const img = document.createElement('img');
+      img.src = '/logo.png';
+      img.alt = def.label;
+      el.appendChild(img);
       akBadgesEl.appendChild(el);
     });
 

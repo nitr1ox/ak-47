@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<script src="/error-logger.js"></script><script>(function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
+<script src="/error-logger.js"></script><script>(function(){var t=localStorage.getItem("theme")||"dark";document.documentElement.setAttribute("data-theme",t);})();</script>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>ak-47.fr — S'inscrire</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="/style.css"/>
-  <style>:root{--accent:#8b5e3c;--accent-light:#c4956a;--accent-dark:#5c3a1e;--accent-glow:rgba(139,94,60,.18);}[data-theme="dark"]{--accent:#c4956a;--accent-light:#e0b88a;--accent-dark:#d4a87a;}</style>
+  <style>:root{--accent:#c85f28;--accent-light:#eb8a2c;--accent-dark:#a54423;--accent-glow:rgba(200,95,40,.18);}[data-theme="dark"]{--accent:#eb8a2c;--accent-light:#f4a955;--accent-dark:#c85f28;}</style>
   <style>
     body { background: var(--gray-50); }
     .page-shell { background: radial-gradient(circle at 50% 0%, var(--gray-100), var(--gray-50) 60%); }
@@ -332,12 +332,12 @@ window.onunhandledrejection = function(e) {
 (function(){
   var btn = document.getElementById('globalThemeBtn');
   if(!btn) return;
-  var t = document.documentElement.getAttribute('data-theme') || 'light';
+  var t = document.documentElement.getAttribute('data-theme') || 'dark';
   btn.textContent = t === 'dark' ? '☀️' : '🌙';
   btn.setAttribute('data-theme-btn', '1');
 })();
 function toggleTheme(){
-  var cur = document.documentElement.getAttribute('data-theme') || 'light';
+  var cur = document.documentElement.getAttribute('data-theme') || 'dark';
   var next = cur === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
   localStorage.setItem('theme', next);

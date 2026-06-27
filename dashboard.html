@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<script src="/error-logger.js"></script><script>(function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
+<script src="/error-logger.js"></script><script>(function(){var t=localStorage.getItem("theme")||"dark";document.documentElement.setAttribute("data-theme",t);})();</script>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>ak-47.fr — Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="/style.css"/>
   <style>
-    /* ── Variables accent brun (héritées de style.css mais rappelées ici pour les inline) ── */
+    /* ── Variables accent orange (héritées de style.css mais rappelées ici pour les inline) ── */
     :root {
-      --accent:       #8b5e3c;
-      --accent-light: #c4956a;
-      --accent-dark:  #5c3a1e;
-      --accent-glow:  rgba(139,94,60,.18);
+      --accent:       #c85f28;
+      --accent-light: #eb8a2c;
+      --accent-dark:  #a54423;
+      --accent-glow:  rgba(200,95,40,.18);
     }
     [data-theme="dark"] {
-      --accent:       #c4956a;
-      --accent-light: #e0b88a;
-      --accent-dark:  #d4a87a;
-      --accent-glow:  rgba(196,149,106,.18);
+      --accent:       #eb8a2c;
+      --accent-light: #f4a955;
+      --accent-dark:  #c85f28;
+      --accent-glow:  rgba(235,138,44,.18);
     }
 
     .tab-bar { display: flex; gap: 2px; border-bottom: 1px solid var(--gray-200); margin-bottom: 28px; }
@@ -1953,7 +1953,7 @@ const ALL_BADGES_DEF = [
     id: 'helper', label: 'Helper', emoji: '🤝', color: '#06b6d4',
     desc: 'Soyez actif et aidez les utilisateurs de la communauté.',
     how: 'Rejoindre le Discord',
-    howUrl: 'https://discord.gg/ak47',
+    howUrl: 'https://discord.com/invite/g7MysUNQXs',
     howAction: null,
     category: 'communauté',
   },
@@ -1967,44 +1967,52 @@ const ALL_BADGES_DEF = [
   },
   {
     id: 'og', label: 'OG', emoji: '💎', color: '#8b5cf6',
-    desc: 'Soyez un supporter précoce d\'ak-47.fr (UID ≤ 1000).',
-    how: null,
+    desc: 'Attribué automatiquement aux 1000 premiers comptes créés (UID ≤ 1000).',
+    how: 'Automatique',
+    howUrl: null,
     category: 'spécial',
   },
   {
     id: 'premium', label: 'Premium', emoji: '⭐', color: '#f43f5e',
-    desc: 'Abonnez-vous au Premium.',
+    desc: 'Abonnez-vous au Premium, puis venez le confirmer sur le Discord.',
     how: 'Acheter',
     howUrl: '/premium',
+    howNote: 'Après achat, rejoins le Discord pour récupérer ton rôle',
+    howNoteUrl: 'https://discord.com/invite/g7MysUNQXs',
     category: 'achat',
   },
   {
     id: 'donor', label: 'Donor', emoji: '💜', color: '#a855f7',
-    desc: 'Faites un don d\'au moins 10 € à ak-47.fr.',
+    desc: 'Faites un don d\'au moins 10 € à ak-47.fr, puis venez le confirmer sur le Discord.',
     how: 'Donner',
     howUrl: '/donate',
+    howNote: 'Après le don, rejoins le Discord pour récupérer ton rôle',
+    howNoteUrl: 'https://discord.com/invite/g7MysUNQXs',
     category: 'achat',
   },
   {
     id: 'gifter', label: 'Gifter', emoji: '🎁', color: '#ec4899',
-    desc: 'Offrez un produit ak-47.fr à un autre utilisateur.',
+    desc: 'Offrez un produit ak-47.fr à un autre utilisateur, puis venez le confirmer sur le Discord.',
     how: 'Offrir',
     howUrl: '/premium',
+    howNote: 'Après l\'achat, rejoins le Discord pour récupérer ton rôle',
+    howNoteUrl: 'https://discord.com/invite/g7MysUNQXs',
     category: 'achat',
   },
   {
     id: 'booster', label: 'Server Booster', emoji: '🚀', color: '#ff73fa',
-    desc: 'Boostez le serveur Discord d\'ak-47.fr.',
-    how: 'Booster',
-    howUrl: 'https://discord.gg/ak47',
+    desc: 'Boostez le serveur Discord d\'ak-47.fr — vérifié automatiquement.',
+    how: 'Booster le Discord',
+    howUrl: 'https://discord.com/invite/g7MysUNQXs',
+    howNote: 'Ton rôle est attribué/retiré automatiquement selon ton statut de boost (vérifié à chaque connexion Discord)',
     category: 'communauté',
   },
   {
     id: 'bug_hunter', label: 'Bug Hunter', emoji: '🐛', color: '#f97316',
-    desc: 'Signalez un bug à l\'équipe ak-47.fr.',
-    how: 'Signaler',
-    howUrl: null,
-    howAction: "switchTab('profile')",
+    desc: 'Signalez un bug à l\'équipe ak-47.fr sur le Discord.',
+    how: 'Rejoindre le Discord',
+    howUrl: 'https://discord.com/invite/g7MysUNQXs',
+    howAction: null,
     category: 'communauté',
   },
   {
@@ -2090,6 +2098,7 @@ function renderBadgesTab() {
       <div style="flex:1;min-width:0;">
         <div style="font-size:13px;font-weight:700;color:${owned ? def.color : 'var(--gray-700)'};">${def.label}${owned ? ' <span style="font-size:10px;font-weight:500;color:'+def.color+';">✓ Obtenu</span>' : ''}</div>
         <div style="font-size:11px;color:var(--gray-500);margin-top:2px;line-height:1.4;">${def.desc}</div>
+        ${(!owned && def.howNote) ? `<div style="font-size:10px;color:#5865F2;margin-top:4px;line-height:1.4;">💬 ${def.howNote}${def.howNoteUrl ? ` — <a href="${def.howNoteUrl}" target="_blank" style="color:#5865F2;text-decoration:underline;">rejoindre le Discord</a>` : ''}</div>` : ''}
       </div>
       ${actionBtn ? `<div style="flex-shrink:0;">${actionBtn}</div>` : ''}
     </div>`;
@@ -3501,14 +3510,14 @@ async function publishTemplateFromDash(name, description) {
 </div>
 <script>
 function toggleTheme(){
-  var cur=document.documentElement.getAttribute("data-theme")||"light";
+  var cur=document.documentElement.getAttribute("data-theme")||"dark";
   var next=cur==="dark"?"light":"dark";
   document.documentElement.setAttribute("data-theme",next);
   localStorage.setItem("theme",next);
   document.getElementById("themeToggle").setAttribute("data-active", next);
 }
 function initThemeToggle(){
-  var cur=document.documentElement.getAttribute("data-theme")||"light";
+  var cur=document.documentElement.getAttribute("data-theme")||"dark";
   var btn=document.getElementById("themeToggle");
   if(btn) btn.setAttribute("data-active", cur);
 }

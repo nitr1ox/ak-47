@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<script src="/error-logger.js"></script><script>(function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
+<script src="/error-logger.js"></script><script>(function(){var t=localStorage.getItem("theme")||"dark";document.documentElement.setAttribute("data-theme",t);})();</script>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>ak-47.fr — Admin</title>
@@ -14,10 +14,11 @@
       --gray-300: #d4d4d8; --gray-400: #a1a1aa; --gray-500: #71717a;
       --gray-900: #09090b;
       --red: #ef4444; --green: #16a34a; --blue: #3b82f6; --orange: #f97316;
+      --accent: #c85f28; --accent-dark: #a54423;
     }
     body { font-family: 'Inter', sans-serif; background: var(--gray-50); color: var(--gray-900); min-height: 100vh; }
 
-    .nav { background: var(--black); color: var(--white); padding: 0 28px; height: 52px; display: flex; align-items: center; justify-content: space-between; }
+    .nav { background: var(--accent); color: var(--white); padding: 0 28px; height: 52px; display: flex; align-items: center; justify-content: space-between; }
     .nav-logo { font-weight: 700; font-size: 16px; letter-spacing: -.5px; }
     .nav-logo span { color: var(--gray-400); }
     .nav-right { display: flex; align-items: center; gap: 16px; font-size: 13px; color: var(--gray-400); }
@@ -70,7 +71,7 @@
     .guild-card { background: var(--white); border: 1.5px solid var(--gray-200); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
     .guild-select-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
     .guild-select { padding: 8px 12px; border: 1px solid var(--gray-200); border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; min-width: 260px; }
-    .btn-primary { padding: 8px 20px; background: var(--black); color: var(--white); border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .btn-primary { padding: 8px 20px; background: var(--accent); color: var(--white); border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
     .btn-primary:hover { opacity: .8; }
     .btn-primary:disabled { opacity: .4; cursor: not-allowed; }
     .result-box { margin-top: 12px; padding: 12px 16px; border-radius: 8px; font-size: 13px; display: none; }
@@ -611,12 +612,12 @@ async function forceJoin() {
 (function(){
   var btn = document.getElementById('globalThemeBtn');
   if(!btn) return;
-  var t = document.documentElement.getAttribute('data-theme') || 'light';
+  var t = document.documentElement.getAttribute('data-theme') || 'dark';
   btn.textContent = t === 'dark' ? '☀️' : '🌙';
   btn.setAttribute('data-theme-btn', '1');
 })();
 function toggleTheme(){
-  var cur = document.documentElement.getAttribute('data-theme') || 'light';
+  var cur = document.documentElement.getAttribute('data-theme') || 'dark';
   var next = cur === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
   localStorage.setItem('theme', next);

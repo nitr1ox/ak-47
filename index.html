@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<script src="/error-logger.js"></script><script>(function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
+<script src="/error-logger.js"></script><script>(function(){var t=localStorage.getItem("theme")||"dark";document.documentElement.setAttribute("data-theme",t);})();</script>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>ak-47.fr — Votre identité en ligne</title>
@@ -12,7 +12,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --black:   #000;
+      --black:   #0c0c0c;
       --white:   #fff;
       --gray-50:  #fafafa;
       --gray-100: #f4f4f5;
@@ -21,6 +21,9 @@
       --gray-500: #71717a;
       --gray-700: #3f3f46;
       --gray-900: #18181b;
+      --accent:        #c85f28;
+      --accent-light:  #eb8a2c;
+      --accent-dark:   #a54423;
       --radius: 8px;
     }
 
@@ -75,9 +78,9 @@
     }
     .btn-ghost:hover { background: var(--gray-100); border-color: var(--gray-300); }
     .btn-solid {
-      background: var(--black); color: var(--white);
+      background: var(--accent); color: var(--white);
     }
-    .btn-solid:hover { background: var(--gray-900); }
+    .btn-solid:hover { background: var(--accent-dark); }
     .btn-lg { padding: 11px 24px; font-size: 14px; border-radius: 9px; }
 
     .hero {
@@ -93,7 +96,7 @@
       font-size: 12px; font-weight: 500; color: var(--gray-700);
       margin-bottom: 28px;
     }
-    .hero-kicker-dot { width: 5px; height: 5px; background: var(--black); border-radius: 50%; }
+    .hero-kicker-dot { width: 5px; height: 5px; background: var(--accent); border-radius: 50%; }
 
     h1 {
       font-size: clamp(40px, 7vw, 72px);
@@ -207,7 +210,7 @@
       border-radius: 6px; display: flex; align-items: center; padding: 0 12px; gap: 8px;
       font-size: 11px; color: var(--gray-500);
     }
-    .mm-link-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--black); }
+    .mm-link-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
 
     .stats {
       border-top: 1px solid var(--gray-200);
@@ -244,7 +247,7 @@
     .feature-card:hover { background: var(--gray-50); }
     .feature-icon {
       width: 36px; height: 36px; border-radius: 7px;
-      background: var(--black); display: flex; align-items: center; justify-content: center;
+      background: var(--accent); display: flex; align-items: center; justify-content: center;
       margin-bottom: 16px;
     }
     .feature-icon svg { width: 18px; height: 18px; stroke: var(--white); fill: none; stroke-width: 2; }
@@ -282,8 +285,8 @@
     .cta-claim-prefix { padding: 0 12px; border-right: 1px solid rgba(255,255,255,.1); display: flex; align-items: center; font-size: 13px; color: rgba(255,255,255,.4); white-space: nowrap; }
     .cta-claim-input { flex: 1; background: transparent; border: none; padding: 12px; color: var(--white); font-size: 13px; font-family: 'Inter',sans-serif; outline: none; }
     .cta-claim-input::placeholder { color: rgba(255,255,255,.25); }
-    .cta-claim-btn { padding: 0 18px; background: var(--white); border: none; color: var(--black); font-size: 13px; font-weight: 700; cursor: pointer; transition: background .15s; }
-    .cta-claim-btn:hover { background: var(--gray-100); }
+    .cta-claim-btn { padding: 0 18px; background: var(--accent); border: none; color: var(--white); font-size: 13px; font-weight: 700; cursor: pointer; transition: background .15s; }
+    .cta-claim-btn:hover { background: var(--accent-dark); }
 
     footer {
       background: var(--white); border-top: 1px solid var(--gray-200);
@@ -353,7 +356,7 @@
       .footer-bottom { flex-direction: column; align-items: flex-start; gap: 8px; }
     }
 
-    [data-theme="dark"] { --black:#fff;--white:#0a0a0a;--gray-50:#111113;--gray-100:#1a1a1e;--gray-200:#2a2a2f;--gray-300:#3a3a40;--gray-400:#71717a;--gray-500:#a1a1aa;--gray-700:#d4d4d8;--gray-900:#fafafa; }
+    [data-theme="dark"] { --black:#fff;--white:#0a0a0a;--gray-50:#111113;--gray-100:#1a1a1e;--gray-200:#2a2a2f;--gray-300:#3a3a40;--gray-400:#71717a;--gray-500:#a1a1aa;--gray-700:#d4d4d8;--gray-900:#fafafa;--accent:#eb8a2c;--accent-light:#f4a955;--accent-dark:#c85f28; }
     [data-theme="dark"] nav { background: rgba(10,10,10,.95) !important; border-color: #2a2a2f !important; }
     [data-theme="dark"] .hero-kicker { background: #1a1a1e !important; border-color: #2a2a2f !important; }
 

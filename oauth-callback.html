@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<script src="/error-logger.js"></script><script>(function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);})();</script>
+<script src="/error-logger.js"></script><script>(function(){var t=localStorage.getItem("theme")||"dark";document.documentElement.setAttribute("data-theme",t);})();</script>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>ak-47.fr — Connexion...</title>
@@ -109,12 +109,12 @@ window.onunhandledrejection = function(e) {
 (function(){
   var btn = document.getElementById('globalThemeBtn');
   if(!btn) return;
-  var t = document.documentElement.getAttribute('data-theme') || 'light';
+  var t = document.documentElement.getAttribute('data-theme') || 'dark';
   btn.textContent = t === 'dark' ? '☀️' : '🌙';
   btn.setAttribute('data-theme-btn', '1');
 })();
 function toggleTheme(){
-  var cur = document.documentElement.getAttribute('data-theme') || 'light';
+  var cur = document.documentElement.getAttribute('data-theme') || 'dark';
   var next = cur === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
   localStorage.setItem('theme', next);

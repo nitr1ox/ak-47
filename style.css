@@ -1,24 +1,24 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  /* ── Palette Brun/Noir/Blanc ── */
-  --black:    #1a0f07;   /* brun très foncé, quasi-noir */
-  --white:    #fdf8f3;   /* blanc cassé chaud */
+  /* ── Palette AK-47 (logo) : Orange bois / Gris métal / Noir ── */
+  --black:    #0c0c0c;   /* noir du contour du logo */
+  --white:    #fdfaf6;   /* blanc cassé chaud */
 
-  /* Neutres chauds (remplacent les gray froids) */
-  --gray-50:  #faf5ef;
-  --gray-100: #f2e9de;
-  --gray-200: #e2d3c3;
-  --gray-300: #c9b49e;
-  --gray-400: #a08060;
-  --gray-500: #7a5c3e;
-  --gray-700: #4a3020;
-  --gray-900: #1a0f07;
+  /* Neutres chauds teintés métal/bois */
+  --gray-50:  #faf6f1;
+  --gray-100: #f0e6da;
+  --gray-200: #ddccb8;
+  --gray-300: #75727d;   /* gris métal du logo */
+  --gray-400: #5d5a64;
+  --gray-500: #46444c;
+  --gray-700: #2b2a30;
+  --gray-900: #0c0c0c;
 
-  /* Accent brun */
-  --accent:        #8b5e3c;   /* brun moyen principal */
-  --accent-light:  #c4956a;   /* brun clair / hover */
-  --accent-dark:   #5c3a1e;   /* brun foncé */
-  --accent-glow:   rgba(139,94,60,.18);
+  /* Accent orange (crosse en bois du logo) */
+  --accent:        #c85f28;   /* orange principal du logo */
+  --accent-light:  #eb8a2c;   /* orange clair / hover */
+  --accent-dark:   #a54423;   /* orange foncé / ombre */
+  --accent-glow:   rgba(200,95,40,.18);
 
   --green: #22c55e; --red: #ef4444;
   --radius: 8px;
@@ -284,20 +284,20 @@ input.error { border-color: var(--red); }
 
 /* ── Dark theme ── */
 [data-theme="dark"] {
-  --black:    #fdf8f3;
-  --white:    #160d06;
-  --gray-50:  #1e1208;
-  --gray-100: #2a1a0c;
-  --gray-200: #3d2610;
-  --gray-300: #5a3a1a;
-  --gray-400: #8a6040;
-  --gray-500: #b89070;
-  --gray-700: #d4b898;
-  --gray-900: #fdf8f3;
-  --accent:        #c4956a;
-  --accent-light:  #e0b88a;
-  --accent-dark:   #d4a87a;
-  --accent-glow:   rgba(196,149,106,.18);
+  --black:    #fdfaf6;
+  --white:    #14110d;
+  --gray-50:  #1c1813;
+  --gray-100: #2a2419;
+  --gray-200: #3a3226;
+  --gray-300: #75727d;
+  --gray-400: #948f9a;
+  --gray-500: #b3aeb8;
+  --gray-700: #ddd9e0;
+  --gray-900: #fdfaf6;
+  --accent:        #eb8a2c;
+  --accent-light:  #f4a955;
+  --accent-dark:   #c85f28;
+  --accent-glow:   rgba(235,138,44,.18);
 }
 [data-theme="dark"] .dash-nav {
   background: rgba(22,13,6,.92);
