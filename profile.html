@@ -831,7 +831,7 @@ window.onunhandledrejection = function(e) {
           <span class="mp-vol-icon" id="mpVolIcon" onclick="toggleMute()" title="Muet">
             <svg viewBox="0 0 24 24" id="mpVolSvg"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
           </span>
-          <input type="range" class="mp-vol-slider" id="mpVolSlider" min="0" max="1" step="0.02" value="0.7" oninput="setVolume(this.value)" title="Volume"/>
+          <input type="range" class="mp-vol-slider" id="mpVolSlider" min="0" max="1" step="0.02" value="0" oninput="setVolume(this.value)" title="Volume"/>
         </div>
       </div>
     </div>
@@ -1043,29 +1043,31 @@ async function loadProfile() {
         vid.src = user.bg_url;
         vid.style.opacity = bgOpacity;
         vid.style.display = 'block';
-        vid.volume = parseFloat(document.getElementById('bgVideoVolSlider').value) || 0.8;
-        // On tente d'abord l'autoplay AVEC le son directement.
-        vid.muted = false;
-        vid.play().then(() => {
-          _updateBgVideoIcon(false);
-        }).catch(() => {
-          // Le navigateur bloque l'autoplay avec son → on retente en muet,
-          // puis on démute automatiquement au premier clic/touche sur la page.
+        if (user.audio_url) {
+          // Son custom present -> video muee definitivement, pas de controle son video
           vid.muted = true;
-          _updateBgVideoIcon(true);
+          vid.volume = 0;
           vid.play().catch(() => {});
-          const autoUnmute = () => {
-            if (vid.muted) {
-              vid.muted = false;
-              vid.volume = parseFloat(document.getElementById('bgVideoVolSlider').value) || 0.8;
-              _updateBgVideoIcon(false);
-            }
-          };
-          document.addEventListener('click', autoUnmute, { once: true });
-          document.addEventListener('keydown', autoUnmute, { once: true });
-        });
-        // Affiche le contrôle son seulement si pas de musique custom
-        if (!user.audio_url) {
+        } else {
+          // Pas de son custom -> video avec son + controle volume affiche
+          vid.volume = parseFloat(document.getElementById('bgVideoVolSlider').value) || 0.8;
+          vid.muted = false;
+          vid.play().then(() => {
+            _updateBgVideoIcon(false);
+          }).catch(() => {
+            vid.muted = true;
+            _updateBgVideoIcon(true);
+            vid.play().catch(() => {});
+            const autoUnmute = () => {
+              if (vid.muted) {
+                vid.muted = false;
+                vid.volume = parseFloat(document.getElementById('bgVideoVolSlider').value) || 0.8;
+                _updateBgVideoIcon(false);
+              }
+            };
+            document.addEventListener('click', autoUnmute, { once: true });
+            document.addEventListener('keydown', autoUnmute, { once: true });
+          });
           const bar = document.getElementById('bgVideoSoundBar');
           bar.style.display = 'flex';
         }
@@ -1163,7 +1165,8 @@ async function loadProfile() {
       _showAudioPlayer = user.show_audio_player !== false;
       const player = document.getElementById('audioPlayer');
       player.src = user.audio_url;
-      player.volume = 0.7;
+      player.volume = 0;
+      player.muted = false;
       const bar = document.getElementById('audioBar');
       if (_showAudioPlayer) bar.classList.add('visible');
 
@@ -2078,6 +2081,11 @@ document.getElementById('enterBtn').addEventListener('click', function(e){ e.sto
 function startMusicNow() {
   const player = document.getElementById('audioPlayer');
   if (!player || !player.src) return;
+  // Démarrer en muet par défaut
+  player.volume = 0;
+  audioMuted = true;
+  updateVolSvg();
+  updateVolSlider(0);
   player.play().then(() => {
     const icon = document.getElementById('mpPlayIcon');
     if (icon) icon.innerHTML = '<path d="M6 19h4V5H6zm8-14v14h4V5z"/>';
