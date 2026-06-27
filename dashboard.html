@@ -404,10 +404,6 @@ window.onunhandledrejection = function(e) {
         <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
         Liens
       </a>
-      <a class="sidebar-item" onclick="switchTab('analytics')" href="#">
-        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Analytics
-      </a>
       <a class="sidebar-item" onclick="switchTab('medias')" href="#">
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
         Médias
@@ -437,6 +433,7 @@ window.onunhandledrejection = function(e) {
         <div class="stat-card"><div class="stat-card-val" id="sv-total">—</div><div class="stat-card-label">Vues totales</div></div>
         <div class="stat-card"><div class="stat-card-val" id="sv-today">—</div><div class="stat-card-label">Vues aujourd'hui</div></div>
         <div class="stat-card"><div class="stat-card-val" id="sv-7d">—</div><div class="stat-card-label">Vues 7 jours</div></div>
+        <div class="stat-card"><div class="stat-card-val" id="sv-30d">—</div><div class="stat-card-label">Vues 30 jours</div></div>
         <div class="stat-card"><div class="stat-card-val" id="sv-clicks">—</div><div class="stat-card-label">Clics sur liens</div></div>
 
       </div>
@@ -444,6 +441,9 @@ window.onunhandledrejection = function(e) {
       <div class="section-card">
         <div class="section-card-title">Vues profil — 30 derniers jours</div>
         <div class="chart-bars" id="chartBars"></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gray-400);margin-top:6px;">
+          <span id="chartDateStart"></span><span id="chartDateEnd"></span>
+        </div>
       </div>
 
       <div class="section-card">
@@ -572,30 +572,7 @@ window.onunhandledrejection = function(e) {
       </div>
     </div>
 
-    <div class="tab-content" id="tab-analytics">
-      <div class="dash-title">Analytics</div>
-      <div class="dash-subtitle">Analysez les performances de votre profil.</div>
 
-      <div class="stats-row">
-        <div class="stat-card"><div class="stat-card-val" id="av-total">—</div><div class="stat-card-label">Vues totales</div></div>
-        <div class="stat-card"><div class="stat-card-val" id="av-30d">—</div><div class="stat-card-label">Vues 30 jours</div></div>
-        <div class="stat-card"><div class="stat-card-val" id="av-7d">—</div><div class="stat-card-label">Vues 7 jours</div></div>
-        <div class="stat-card"><div class="stat-card-val" id="av-today">—</div><div class="stat-card-label">Vues aujourd'hui</div></div>
-      </div>
-
-      <div class="section-card">
-        <div class="section-card-title">Vues par jour — 30 derniers jours</div>
-        <div class="chart-bars" id="analyticsChart" style="height:100px;"></div>
-        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gray-400);margin-top:6px;">
-          <span id="chartDateStart"></span><span id="chartDateEnd"></span>
-        </div>
-      </div>
-
-      <div class="section-card">
-        <div class="section-card-title">Liens les plus cliqués</div>
-        <div id="analyticsTopLinks"></div>
-      </div>
-    </div>
 
       <div class="section-card" id="badgesCard" style="display:none">
         <div class="section-card-title">Tes badges Discord</div>
@@ -1666,7 +1643,6 @@ async function loadAnalytics() {
     _analyticsRetries = 0;
     renderStats();
     renderChart('chartBars', analyticsData.daily, 80);
-    renderChart('analyticsChart', analyticsData.daily, 100);
     renderTopLinks();
   } catch(e) {
     console.error('[analytics] echec', e);
@@ -1682,18 +1658,17 @@ async function loadAnalytics() {
     analyticsData = { total_views:0, total_clicks:0, views_today:0, views_7d:0, views_30d:0, clicks_7d:0, daily:[], top_links:[] };
     renderStats();
     renderChart('chartBars', [], 80);
-    renderChart('analyticsChart', [], 100);
     renderTopLinks();
   }
 }
 
 function renderStats() {
   const d = analyticsData;
-  ['sv-total','av-total'].forEach(id => el(id).textContent = fmt(d.total_views));
-  ['sv-today','av-today'].forEach(id => el(id).textContent = fmt(d.views_today));
-  ['sv-7d','av-7d'].forEach(id => el(id).textContent = fmt(d.views_7d));
+  el('sv-total').textContent = fmt(d.total_views);
+  el('sv-today').textContent = fmt(d.views_today);
+  el('sv-7d').textContent = fmt(d.views_7d);
+  el('sv-30d').textContent = fmt(d.views_30d);
   el('sv-clicks').textContent = fmt(d.total_clicks);
-  el('av-30d').textContent = fmt(d.views_30d);
   if (d.daily?.length) {
     el('chartDateStart').textContent = fmtDate(d.daily[0].day);
     el('chartDateEnd').textContent = fmtDate(d.daily[d.daily.length-1].day);
@@ -1713,13 +1688,12 @@ function renderChart(containerId, daily, height) {
 
 function renderTopLinks() {
   const data = analyticsData;
-  ['topLinksContainer','analyticsTopLinks'].forEach(id => {
-    const container = el(id);
-    if (!data.top_links?.length) { container.innerHTML = '<div class="empty-state">Aucun clic enregistré.</div>'; return; }
-    container.innerHTML = `<table class="table"><thead><tr><th>Lien</th><th>URL</th><th>Clics</th></tr></thead><tbody>
-      ${data.top_links.map(l => `<tr><td><strong>${esc(l.link_title||'—')}</strong></td><td style="color:var(--gray-400);font-size:12px;">${esc(l.link_url.slice(0,40))}${l.link_url.length>40?'…':''}</td><td><strong>${l.clicks}</strong></td></tr>`).join('')}
-    </tbody></table>`;
-  });
+  const container = el('topLinksContainer');
+  if (!container) return;
+  if (!data.top_links?.length) { container.innerHTML = '<div class="empty-state">Aucun clic enregistré.</div>'; return; }
+  container.innerHTML = `<table class="table"><thead><tr><th>Lien</th><th>URL</th><th>Clics</th></tr></thead><tbody>
+    ${data.top_links.map(l => `<tr><td><strong>${esc(l.link_title||'—')}</strong></td><td style="color:var(--gray-400);font-size:12px;">${esc(l.link_url.slice(0,40))}${l.link_url.length>40?'…':''}</td><td><strong>${l.clicks}</strong></td></tr>`).join('')}
+  </tbody></table>`;
 }
 
 function renderBadges() {
@@ -3186,7 +3160,7 @@ document.addEventListener("DOMContentLoaded",function(){
     <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
     Liens
   </button>
-  <button class="mob-nav-btn" onclick="switchTab('analytics');setMobActive(this)">
+  <button class="mob-nav-btn" onclick="switchTab('overview');setMobActive(this)">
     <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
     Stats
   </button>
