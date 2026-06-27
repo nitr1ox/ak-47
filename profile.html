@@ -96,11 +96,8 @@
     .profile-name { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; color: var(--profile-text-color); position: relative; display: inline-block; }
 
     
-    .uid-tooltip {
-      position: absolute;
-      bottom: calc(100% + 10px);
-      left: 50%;
-      transform: translateX(-50%) translateY(4px);
+    #uid-floating-tooltip {
+      position: fixed;
       background: rgba(10,10,10,0.92);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
@@ -111,8 +108,22 @@
       pointer-events: none;
       opacity: 0;
       transition: opacity 0.18s ease, transform 0.18s ease;
-      z-index: 99;
+      z-index: 9999;
       box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+      transform: translateY(4px);
+    }
+    #uid-floating-tooltip.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    #uid-floating-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: rgba(10,10,10,0.92);
     }
     .uid-tooltip-label {
       font-size: 10px;
@@ -131,20 +142,6 @@
       letter-spacing: 0.02em;
       display: block;
       line-height: 1;
-    }
-    
-    .uid-tooltip::after {
-      content: '';
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      border: 5px solid transparent;
-      border-top-color: rgba(10,10,10,0.92);
-    }
-    .profile-name:hover .uid-tooltip {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
     }
     .profile-bio  { font-size: 14px; color: var(--profile-text-color); opacity: 0.7; line-height: 1.5; max-width: 320px; margin: 0 auto; }
     .profile-handle { font-size: 12px; color: var(--gray-400); margin-top: 6px; }
@@ -423,14 +420,15 @@
       justify-content: center; margin: 8px 0 2px;
     }
     .ak-badge {
-      width: 24px; height: 24px;
+      width: 34px; height: 34px;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0; cursor: default; position: relative;
       border-radius: 7px;
+      background: transparent;
       transition: transform .18s cubic-bezier(.34,1.56,.64,1);
     }
     .ak-badge img {
-      width: 22px; height: 22px; object-fit: contain; display: block;
+      width: 32px; height: 32px; object-fit: contain; display: block;
       filter: drop-shadow(0 1px 2px rgba(0,0,0,.3));
     }
     .ak-badge:hover { transform: scale(1.35) translateY(-1px); z-index: 5; }
@@ -515,13 +513,14 @@
     }
     .dc-badges { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
     .dc-badge {
-      width: 24px; height: 24px;
+      width: 34px; height: 34px;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0; cursor: default; position: relative;
       transition: transform .18s cubic-bezier(.34,1.56,.64,1), filter .18s ease;
       border-radius: 7px;
+      background: transparent;
     }
-    .dc-badge img { width: 22px; height: 22px; object-fit: contain; display: block; image-rendering: -webkit-optimize-contrast;
+    .dc-badge img { width: 32px; height: 32px; object-fit: contain; display: block; image-rendering: -webkit-optimize-contrast;
       filter: drop-shadow(0 1px 2px rgba(0,0,0,.3)); }
     .dc-badge:hover { transform: scale(1.35) translateY(-1px); z-index: 5; }
     .dc-badge.dc-badge-nitro::before {
@@ -1346,16 +1345,40 @@ async function loadProfile() {
     const pNameEl = document.getElementById('pName');
 
     
-    const uidTooltipHtml = user.uid
-      ? `<span class="uid-tooltip"><span class="uid-tooltip-label">UID</span><span class="uid-tooltip-value">#${user.uid.toLocaleString('fr-FR')}</span></span>`
-      : '';
-
     const firstLink = (user.links && user.links.length) ? user.links[0] : null;
     if (firstLink) {
-      pNameEl.innerHTML = `<a class="profile-name-wrap has-link" href="${escAttr(firstLink.url)}" target="_blank" rel="noopener" onclick="trackClick(${JSON.stringify(user.username)}, ${JSON.stringify(firstLink.url)}, ${JSON.stringify(firstLink.title || '')})">${escHtml(user.display_name || user.username)}<svg class="profile-name-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>${uidTooltipHtml}`;
+      pNameEl.innerHTML = `<a class="profile-name-wrap has-link" href="${escAttr(firstLink.url)}" target="_blank" rel="noopener" onclick="trackClick(${JSON.stringify(user.username)}, ${JSON.stringify(firstLink.url)}, ${JSON.stringify(firstLink.title || '')})">${escHtml(user.display_name || user.username)}<svg class="profile-name-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>`;
       pNameEl.style.cursor = 'default';
     } else {
-      pNameEl.innerHTML = escHtml(user.display_name || user.username) + uidTooltipHtml;
+      pNameEl.innerHTML = escHtml(user.display_name || user.username);
+    }
+
+    // Tooltip UID flottant sur hover du pseudo
+    if (user.uid) {
+      let uidTip = document.getElementById('uid-floating-tooltip');
+      if (!uidTip) {
+        uidTip = document.createElement('div');
+        uidTip.id = 'uid-floating-tooltip';
+        uidTip.innerHTML = `<span class="uid-tooltip-label">UID</span><span class="uid-tooltip-value">#${user.uid.toLocaleString('fr-FR')}</span>`;
+        document.body.appendChild(uidTip);
+      }
+      pNameEl.addEventListener('mouseenter', function() {
+        const rect = pNameEl.getBoundingClientRect();
+        const tipW = uidTip.offsetWidth || 120;
+        uidTip.style.left = (rect.left + rect.width / 2 - tipW / 2) + 'px';
+        uidTip.style.top = (rect.top - uidTip.offsetHeight - 14 + window.scrollY) + 'px';
+        uidTip.classList.add('visible');
+        // Recalcul après rendu pour centrer correctement
+        requestAnimationFrame(() => {
+          const tipW2 = uidTip.offsetWidth;
+          const tipH2 = uidTip.offsetHeight;
+          uidTip.style.left = (rect.left + rect.width / 2 - tipW2 / 2) + 'px';
+          uidTip.style.top = (rect.top + window.scrollY - tipH2 - 14) + 'px';
+        });
+      });
+      pNameEl.addEventListener('mouseleave', function() {
+        uidTip.classList.remove('visible');
+      });
     }
     const bioEl = document.getElementById('pBio');
     bioEl.textContent = user.bio || '';
