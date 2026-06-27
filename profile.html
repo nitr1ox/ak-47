@@ -359,14 +359,35 @@
 
     .discord-card {
       display: none;
-      align-items: center; gap: 12px;
-      background: #1a1a1e; border-radius: 14px;
-      padding: 12px 16px; margin: 16px auto 0;
+      align-items: center; gap: 14px;
+      background:
+        radial-gradient(120% 140% at 0% 0%, rgba(88,101,242,.18), transparent 60%),
+        linear-gradient(160deg, #1f1f24 0%, #17171a 100%);
+      border-radius: 16px;
+      padding: 14px 18px; margin: 16px auto 0;
       max-width: 360px; width: 100%;
-      border: 1px solid rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 4px 24px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04);
+      position: relative; overflow: hidden;
+      animation: dcCardIn .35s cubic-bezier(.22,1,.36,1);
+    }
+    @keyframes dcCardIn {
+      from { opacity: 0; transform: translateY(6px) scale(.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .discord-card::before {
+      content: ''; position: absolute; inset: 0; border-radius: 16px;
+      background: linear-gradient(135deg, rgba(88,101,242,.5), transparent 40%, transparent 60%, rgba(88,101,242,.25));
+      opacity: .25; pointer-events: none; mix-blend-mode: screen;
     }
     .discord-card.visible { display: flex; }
     .dc-avatar-wrap { position: relative; flex-shrink: 0; }
+    .dc-avatar-wrap::after {
+      content: ''; position: absolute; inset: -3px; border-radius: 50%;
+      background: linear-gradient(135deg, #5865F2, #8b5cf6, #5865F2);
+      z-index: -1; opacity: 0; transition: opacity .25s ease;
+    }
+    .discord-card:hover .dc-avatar-wrap::after { opacity: .9; filter: blur(2px); }
     .dc-avatar {
       width: 46px; height: 46px; border-radius: 50%;
       object-fit: cover; display: block;
@@ -379,26 +400,39 @@
       font-size: 18px; font-weight: 700;
     }
     .dc-status-dot {
-      position: absolute; bottom: 1px; right: 1px;
-      width: 12px; height: 12px; border-radius: 50%;
-      border: 2px solid #1a1a1e;
+      position: absolute; bottom: -1px; right: -1px;
+      width: 13px; height: 13px; border-radius: 50%;
+      border: 2.5px solid #1a1a1e;
+      box-shadow: 0 0 6px currentColor;
     }
-    .dc-status-dot.online  { background: #23a559; }
-    .dc-status-dot.idle    { background: #f0b232; }
-    .dc-status-dot.dnd     { background: #f23f43; }
-    .dc-status-dot.offline { background: #80848e; }
+    .dc-status-dot.online  { background: #23a559; color: #23a559; }
+    .dc-status-dot.idle    { background: #f0b232; color: #f0b232; }
+    .dc-status-dot.dnd     { background: #f23f43; color: #f23f43; }
+    .dc-status-dot.offline { background: #80848e; color: transparent; box-shadow: none; }
     .dc-body { flex: 1; min-width: 0; }
-    .dc-name-row { display: flex; align-items: center; gap: 6px; }
-    .dc-name { font-size: 15px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .dc-badges { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
+    .dc-name-row { display: flex; align-items: center; gap: 7px; }
+    .dc-name {
+      font-size: 15px; font-weight: 700; color: #fff;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      letter-spacing: .1px;
+    }
+    .dc-badges { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
     .dc-badge {
-      width: 22px; height: 22px;
+      width: 24px; height: 24px;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0; cursor: default; position: relative;
-      transition: transform 0.15s ease;
+      transition: transform .18s cubic-bezier(.34,1.56,.64,1), filter .18s ease;
+      border-radius: 7px;
     }
-    .dc-badge img { width: 22px; height: 22px; object-fit: contain; display: block; image-rendering: -webkit-optimize-contrast; }
-    .dc-badge:hover { transform: scale(1.3); z-index: 5; }
+    .dc-badge img { width: 22px; height: 22px; object-fit: contain; display: block; image-rendering: -webkit-optimize-contrast;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,.3)); }
+    .dc-badge:hover { transform: scale(1.35) translateY(-1px); z-index: 5; }
+    .dc-badge.dc-badge-nitro::before {
+      content: ''; position: absolute; inset: -3px; border-radius: 9px;
+      background: radial-gradient(circle, rgba(244,127,255,.45), transparent 70%);
+      opacity: 0; transition: opacity .2s ease; z-index: -1;
+    }
+    .dc-badge.dc-badge-nitro:hover::before { opacity: 1; }
 
     :root { --accent: #6366f1; }
 
@@ -409,13 +443,16 @@
 
     .dc-badge:hover::after {
       content: attr(title);
-      position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
-      background: rgba(0,0,0,.85); color: #fff; font-size: 10px; white-space: nowrap;
-      padding: 2px 6px; border-radius: 4px; pointer-events: none; z-index: 10;
+      position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%);
+      background: rgba(15,15,18,.95); color: #fff; font-size: 10.5px; font-weight: 500;
+      white-space: nowrap; padding: 4px 9px; border-radius: 6px; pointer-events: none; z-index: 10;
+      box-shadow: 0 4px 12px rgba(0,0,0,.4); border: 1px solid rgba(255,255,255,.08);
+      animation: dcTooltipIn .15s ease;
     }
+    @keyframes dcTooltipIn { from { opacity: 0; transform: translateX(-50%) translateY(3px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
     .dc-badge svg { width: 16px; height: 16px; }
     .dc-badge-verified { background: transparent; }
-    .dc-username { font-size: 11px; color: #5865F2; margin-top: 1px; font-weight: 500; opacity: .85; }
+    .dc-username { font-size: 11px; color: #8a93f5; margin-top: 1px; font-weight: 500; opacity: .9; }
     .dc-last-seen { font-size: 12px; color: #878a8f; margin-top: 2px; }
 
     .profile-name-wrap {
@@ -556,6 +593,19 @@ window.onunhandledrejection = function(e) {
 
 <div id="profileBg"></div>
 <video id="profileBgVideo" muted loop playsinline style="position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;display:none;pointer-events:none;"></video>
+<button id="bgVideoMuteBtn" onclick="toggleBgVideoMute()" title="Activer le son de la vidéo" onmouseover="this.style.background='rgba(0,0,0,.75)';this.style.transform='scale(1.08)'" onmouseout="this.style.background='rgba(0,0,0,.55)';this.style.transform='scale(1)'" style="
+  display:none; position:fixed; bottom:20px; right:20px; z-index:9999;
+  width:40px; height:40px; border-radius:50%; border:none; cursor:pointer;
+  background:rgba(0,0,0,.55); backdrop-filter:blur(8px); color:#fff;
+  align-items:center; justify-content:center;
+  transition: background .15s ease, transform .15s ease;
+">
+  <svg id="bgVideoMuteIcon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+    <path d="M3 9v6h4l5 5V4L7 9H3z"/>
+    <line x1="16" y1="9" x2="22" y2="15" stroke="currentColor" stroke-width="2"/>
+    <line x1="22" y1="9" x2="16" y2="15" stroke="currentColor" stroke-width="2"/>
+  </svg>
+</button>
 <audio id="audioPlayer" loop></audio>
 
 <div id="loading">
@@ -783,8 +833,18 @@ async function loadProfile() {
     document.getElementById('loading').style.display = 'none';
 
     if (!r.ok) {
+      document.getElementById('loading').style.display = 'none';
+      if (r.status === 429) {
+        document.getElementById('notFoundMsg').textContent = 'Trop de rechargements rapides. Attends quelques secondes et réessaie.';
+        document.title = 'Trop de requêtes — ak-47.fr';
+      } else if (r.status >= 500) {
+        document.getElementById('notFoundMsg').textContent = 'Le serveur a un souci temporaire. Réessaie dans quelques secondes.';
+        document.title = 'Erreur serveur — ak-47.fr';
+      } else {
+        document.getElementById('notFoundMsg').textContent = 'Ce profil n\'existe pas sur ak-47.fr.';
+        document.title = 'Profil introuvable — ak-47.fr';
+      }
       document.getElementById('notFound').style.display = 'flex';
-      document.title = 'Profil introuvable — ak-47.fr';
       return;
     }
 
@@ -858,6 +918,8 @@ async function loadProfile() {
 
           document.addEventListener('click', () => vid.play().catch(() => {}), { once: true });
         });
+        const muteBtn = document.getElementById('bgVideoMuteBtn');
+        muteBtn.style.display = 'flex';
         const bg = document.getElementById('profileBg');
         bg.style.backgroundImage = '';
       } else {
@@ -912,7 +974,40 @@ async function loadProfile() {
     }
 
     if (user.cursor_url) {
-      document.body.style.cursor = `url(${JSON.stringify(user.cursor_url)}), auto`;
+      (function initCustomCursor(src) {
+        document.documentElement.style.cursor = 'none';
+        // Sécurité : neutralise tout cursor:auto/pointer posé inline par d'autres éléments
+        const killCursors = document.createElement('style');
+        killCursors.textContent = '* { cursor: none !important; }';
+        document.head.appendChild(killCursors);
+
+        const cursorEl = document.createElement('img');
+        cursorEl.src = src;
+        cursorEl.alt = '';
+        cursorEl.setAttribute('aria-hidden', 'true');
+        cursorEl.style.cssText = `
+          position: fixed; top: 0; left: 0; width: 32px; height: 32px;
+          pointer-events: none; z-index: 999999; transform: translate(-2px, -2px);
+          will-change: transform; image-rendering: -webkit-optimize-contrast;
+        `;
+        document.body.appendChild(cursorEl);
+
+        let x = -100, y = -100;
+        window.addEventListener('mousemove', (e) => {
+          x = e.clientX; y = e.clientY;
+          cursorEl.style.transform = `translate(${x - 2}px, ${y - 2}px)`;
+        }, { passive: true });
+
+        document.addEventListener('mouseleave', () => { cursorEl.style.opacity = '0'; });
+        document.addEventListener('mouseenter', () => { cursorEl.style.opacity = '1'; });
+
+        // Sur mobile/tactile il n'y a pas de curseur — on évite de polluer l'écran
+        if (window.matchMedia('(pointer: coarse)').matches) {
+          cursorEl.style.display = 'none';
+          document.documentElement.style.cursor = '';
+          killCursors.remove();
+        }
+      })(user.cursor_url);
     }
 
     if (user.audio_url) {
@@ -1107,6 +1202,7 @@ async function loadProfile() {
         if (!meta) return;
         const el = document.createElement('span');
         el.className = 'dc-badge';
+        if (b.type && b.type.startsWith('nitro')) el.className += ' dc-badge-nitro';
         el.title = b.label || meta.title;
         if (meta.img) {
           const img = document.createElement('img');
@@ -1679,6 +1775,29 @@ function toggleMute() {
     updateVolSlider(0);
   }
   updateVolSvg();
+}
+
+function toggleBgVideoMute() {
+  const vid = document.getElementById('profileBgVideo');
+  const btn = document.getElementById('bgVideoMuteBtn');
+  const icon = document.getElementById('bgVideoMuteIcon');
+  if (!vid) return;
+
+  if (vid.muted) {
+    vid.muted = false;
+    // Évite que la musique custom et le son de la vidéo jouent en même temps
+    const player = document.getElementById('audioPlayer');
+    if (player && !player.paused) player.pause();
+    // Le clic sur ce bouton compte comme interaction utilisateur,
+    // donc le navigateur autorise désormais la lecture avec son
+    vid.play().catch(() => {});
+    icon.innerHTML = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
+    btn.title = 'Couper le son de la vidéo';
+  } else {
+    vid.muted = true;
+    icon.innerHTML = '<path d="M3 9v6h4l5 5V4L7 9H3z"/><line x1="16" y1="9" x2="22" y2="15" stroke="currentColor" stroke-width="2"/><line x1="22" y1="9" x2="16" y2="15" stroke="currentColor" stroke-width="2"/>';
+    btn.title = 'Activer le son de la vidéo';
+  }
 }
 
 function toggleAudio() {
