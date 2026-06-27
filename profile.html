@@ -418,46 +418,19 @@
     .badge-vip      { background: linear-gradient(135deg,#f6c90e,#e6a817); color: #000; border-color: transparent; }
 
     /* ── Badges ak-47.fr ── */
-    .ak-badges-row { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin: 6px 0 2px; }
+    .ak-badges-row {
+      display: flex; flex-wrap: wrap; gap: 5px;
+      justify-content: center; margin: 8px 0 2px;
+    }
     .ak-badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 4px 11px; border-radius: 20px; font-size: 11px; font-weight: 700;
-      border: 1px solid transparent; cursor: default;
-      transition: transform .15s, box-shadow .15s;
-      position: relative;
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 600;
+      color: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      backdrop-filter: blur(6px);
+      cursor: default; white-space: nowrap;
     }
-    .ak-badge:hover { transform: translateY(-1px) scale(1.04); }
-    /* tooltip description au hover */
-    .ak-badge[data-desc]:hover::after {
-      content: attr(data-desc);
-      position: absolute; bottom: calc(100% + 7px); left: 50%;
-      transform: translateX(-50%);
-      background: rgba(10,10,10,0.92); color: #fff;
-      font-size: 10px; font-weight: 500; white-space: nowrap;
-      padding: 4px 9px; border-radius: 6px; pointer-events: none;
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    }
-    .ak-badge[data-desc]:hover::before {
-      content: '';
-      position: absolute; bottom: calc(100% + 3px); left: 50%;
-      transform: translateX(-50%);
-      border: 4px solid transparent;
-      border-top-color: rgba(10,10,10,0.92);
-      pointer-events: none;
-    }
-    /* couleurs par rôle */
-    .ak-badge-owner     { background: linear-gradient(135deg,#f59e0b,#d97706); color: #000; box-shadow: 0 0 8px #f59e0b66; }
-    .ak-badge-og        { background: linear-gradient(135deg,#8b5cf6,#6d28d9); color: #fff; }
-    .ak-badge-staff     { background: linear-gradient(135deg,#3b82f6,#1d4ed8); color: #fff; }
-    .ak-badge-helper    { background: linear-gradient(135deg,#06b6d4,#0284c7); color: #fff; }
-    .ak-badge-verified  { background: linear-gradient(135deg,#10b981,#059669); color: #fff; }
-    .ak-badge-premium   { background: linear-gradient(135deg,#f43f5e,#be123c); color: #fff; box-shadow: 0 0 6px #f43f5e55; }
-    .ak-badge-donor     { background: linear-gradient(135deg,#a855f7,#7e22ce); color: #fff; }
-    .ak-badge-gifter    { background: linear-gradient(135deg,#ec4899,#be185d); color: #fff; }
-    .ak-badge-booster   { background: linear-gradient(135deg,#ff73fa,#c026d3); color: #fff; box-shadow: 0 0 6px #ff73fa55; }
-    .ak-badge-bug_hunter{ background: linear-gradient(135deg,#f97316,#c2410c); color: #fff; }
-    .ak-badge-partner   { background: linear-gradient(135deg,#14b8a6,#0f766e); color: #fff; }
 
     .discord-card {
       display: none;
@@ -750,6 +723,7 @@ window.onunhandledrejection = function(e) {
     <div class="profile-top">
       <div class="profile-avatar" id="pAvatar"></div>
       <div class="profile-name" id="pName"></div>
+      <div class="ak-badges-row" id="akBadges"></div>
       <div class="profile-bio"  id="pBio"></div>
       <div class="profile-handle" id="pHandle"></div>
       <div class="profile-member-since" id="pMemberSince" style="display:none;font-size:11px;color:var(--gray-400);margin-top:4px;"></div>
@@ -774,7 +748,6 @@ window.onunhandledrejection = function(e) {
         </div>
         <div class="dc-username" id="dcUsername" style="display:none"></div>
         <div class="badges-row" id="pBadges"></div>
-        <div class="ak-badges-row" id="akBadges"></div>
         <div class="dc-last-seen" id="dcLastSeen"></div>
       </div>
     </div>
@@ -1221,9 +1194,8 @@ async function loadProfile() {
       const def = AK_ROLES_DEF.find(r => r.id === roleId);
       if (!def) return;
       const el = document.createElement('span');
-      el.className = `ak-badge ak-badge-${roleId}`;
-      el.setAttribute('data-desc', def.desc);
-      el.innerHTML = `${def.emoji} ${def.label}`;
+      el.className = 'ak-badge';
+      el.textContent = `${def.emoji} ${def.label}`;
       akBadgesEl.appendChild(el);
     });
 
