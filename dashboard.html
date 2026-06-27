@@ -7,10 +7,24 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="/style.css"/>
   <style>
+    /* ── Variables accent brun (héritées de style.css mais rappelées ici pour les inline) ── */
+    :root {
+      --accent:       #8b5e3c;
+      --accent-light: #c4956a;
+      --accent-dark:  #5c3a1e;
+      --accent-glow:  rgba(139,94,60,.18);
+    }
+    [data-theme="dark"] {
+      --accent:       #c4956a;
+      --accent-light: #e0b88a;
+      --accent-dark:  #d4a87a;
+      --accent-glow:  rgba(196,149,106,.18);
+    }
+
     .tab-bar { display: flex; gap: 2px; border-bottom: 1px solid var(--gray-200); margin-bottom: 28px; }
     .tab { padding: 8px 16px; font-size: 13px; font-weight: 500; color: var(--gray-500); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .15s; }
-    .tab:hover { color: var(--black); }
-    .tab.active { color: var(--black); border-bottom-color: var(--black); }
+    .tab:hover { color: var(--accent-dark); }
+    .tab.active { color: var(--accent-dark); border-bottom-color: var(--accent); }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
@@ -33,7 +47,7 @@
 .tpl-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,.1); }
 .save-bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; margin-top: 16px; }
     .save-bar-msg { font-size: 13px; color: var(--gray-500); }
-    .save-bar-btn { padding: 8px 20px; background: var(--black); color: var(--white); border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s; }
+    .save-bar-btn { padding: 8px 20px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%); color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s; }
     .save-bar-btn:hover { background: var(--gray-900); }
     .save-bar-btn:disabled { background: var(--gray-300); cursor: not-allowed; }
 
@@ -43,10 +57,10 @@
     .empty-state { text-align: center; padding: 32px 20px; color: var(--gray-400); font-size: 13px; }
     .empty-state svg { width: 36px; height: 36px; margin: 0 auto 10px; display: block; stroke: var(--gray-300); fill: none; }
 
-    .toast { position: fixed; bottom: 24px; right: 24px; background: var(--black); color: var(--white); padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 500; z-index: 999; opacity: 0; transform: translateY(8px); transition: all .2s; pointer-events: none; }
+    .toast { position: fixed; bottom: 24px; right: 24px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%); color: #fff; padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 500; z-index: 999; opacity: 0; transform: translateY(8px); transition: all .2s; pointer-events: none; }
     .toast.show { opacity: 1; transform: translateY(0); }
 
-    .add-link-open-btn { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--black); color: var(--white); border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s; }
+    .add-link-open-btn { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%); color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s; }
     .add-link-open-btn:hover { background: #222; }
     .add-link-open-btn svg { width: 16px; height: 16px; }
 
@@ -215,7 +229,7 @@
       transition: all .15s; color: var(--gray-500); background: var(--gray-50);
     }
     .audio-src-tab:hover { border-color: var(--gray-400); color: var(--gray-700); }
-    .audio-src-tab.sel { border-color: var(--black); background: var(--black); color: var(--white); }
+    .audio-src-tab.sel { border-color: var(--black); background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%); color: #fff; }
 
     .audio-meta-row { display: grid; grid-template-columns: 1fr 100px; gap: 12px; margin-top: 14px; align-items: start; }
     .audio-meta-cover {
@@ -236,7 +250,7 @@
     .badge { display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid rgba(0,0,0,.08); }
     .badge-discord { background:#5865F2;color:#fff;border-color:#5865F2; }
     .badge-nitro { background:linear-gradient(135deg,#f47fff,#7289da);color:#fff;border-color:transparent; }
-    .badge-server { background:#000;color:#fff;border-color:#000; }
+    .badge-server { background:var(--accent-dark,#5c3a1e);color:#fff;border-color:#000; }
     .badge-server.vip { background:linear-gradient(135deg,#f6c90e,#e6a817);color:#000;border-color:transparent; }
     .badge-server.mod { background:#e74c3c;color:#fff;border-color:transparent; }
 
@@ -284,7 +298,7 @@
     }
     .sidebar-item:hover { background: var(--gray-100); }
     .sidebar-item.active {
-      background: var(--black); color: var(--white);
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%); color: #fff;
       box-shadow: 0 4px 14px rgba(0,0,0,.18); border-color: transparent;
     }
     .sidebar-item.active svg { stroke: var(--white); }
@@ -491,6 +505,10 @@ window.onunhandledrejection = function(e) {
       <a class="sidebar-item" onclick="switchTab('templates')" href="#">
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>
         Modèles
+      </a>
+      <a class="sidebar-item" onclick="switchTab('badges')" href="#">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Badges
       </a>
       <a class="sidebar-item" id="adminLink" href="/admin" style="display:none;color:#ef4444;">
         <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -883,15 +901,15 @@ window.onunhandledrejection = function(e) {
         <div class="section-card-title">Forme de l'avatar</div>
         <div style="display:flex;gap:12px;flex-wrap:wrap;">
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:500;">
-            <input type="radio" name="avatarShape" value="circle" onchange="pendingPerso.avatar_shape='circle'" style="accent-color:#000"/>
+            <input type="radio" name="avatarShape" value="circle" onchange="pendingPerso.avatar_shape='circle'" style="accent-color:var(--accent)"/>
             <div style="width:36px;height:36px;border-radius:50%;background:#000;"></div> Rond
           </label>
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:500;">
-            <input type="radio" name="avatarShape" value="rounded" onchange="pendingPerso.avatar_shape='rounded'" style="accent-color:#000"/>
+            <input type="radio" name="avatarShape" value="rounded" onchange="pendingPerso.avatar_shape='rounded'" style="accent-color:var(--accent)"/>
             <div style="width:36px;height:36px;border-radius:12px;background:#000;"></div> Arrondi
           </label>
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:500;">
-            <input type="radio" name="avatarShape" value="square" onchange="pendingPerso.avatar_shape='square'" style="accent-color:#000"/>
+            <input type="radio" name="avatarShape" value="square" onchange="pendingPerso.avatar_shape='square'" style="accent-color:var(--accent)"/>
             <div style="width:36px;height:36px;border-radius:4px;background:#000;"></div> Carré
           </label>
         </div>
@@ -943,7 +961,7 @@ window.onunhandledrejection = function(e) {
           <label style="font-size:12px;font-weight:600;color:var(--gray-700);display:block;margin-bottom:6px;">Opacité du fond</label>
           <div style="display:flex;align-items:center;gap:10px;">
             <input type="range" id="bgOpacityRange" min="0" max="100" value="100"
-              style="flex:1;accent-color:#000;"
+              style="flex:1;accent-color:var(--accent);"
               oninput="el('bgOpacityVal').textContent=this.value+'%';pendingPerso.bg_opacity=this.value/100;"/>
             <span id="bgOpacityVal" style="font-size:12px;color:var(--gray-500);min-width:36px;">100%</span>
           </div>
@@ -979,7 +997,7 @@ window.onunhandledrejection = function(e) {
             <label>Opacité de la card</label>
             <div style="display:flex;align-items:center;gap:8px;">
               <input type="range" id="cardOpacityRange" min="0" max="100" value="100"
-                style="flex:1;accent-color:#000;"
+                style="flex:1;accent-color:var(--accent);"
                 oninput="el('cardOpacityVal').textContent=this.value+'%';pendingPerso.card_opacity=this.value/100;"/>
               <span id="cardOpacityVal" style="font-size:12px;color:var(--gray-500);min-width:36px;">100%</span>
             </div>
@@ -991,7 +1009,7 @@ window.onunhandledrejection = function(e) {
         <div class="section-card-title">Disposition des liens</div>
         <div style="display:flex;gap:12px;flex-wrap:wrap;">
           <label style="cursor:pointer;font-size:13px;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:6px;">
-            <input type="radio" name="linkLayout" value="list" onchange="pendingPerso.link_layout='list'" style="accent-color:#000"/>
+            <input type="radio" name="linkLayout" value="list" onchange="pendingPerso.link_layout='list'" style="accent-color:var(--accent)"/>
             <div style="width:80px;height:60px;border:2px solid var(--gray-200);border-radius:8px;padding:6px;display:flex;flex-direction:column;gap:4px;">
               <div style="height:12px;background:#e4e4e7;border-radius:4px;"></div>
               <div style="height:12px;background:#e4e4e7;border-radius:4px;"></div>
@@ -1000,7 +1018,7 @@ window.onunhandledrejection = function(e) {
             Liste
           </label>
           <label style="cursor:pointer;font-size:13px;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:6px;">
-            <input type="radio" name="linkLayout" value="grid" onchange="pendingPerso.link_layout='grid'" style="accent-color:#000"/>
+            <input type="radio" name="linkLayout" value="grid" onchange="pendingPerso.link_layout='grid'" style="accent-color:var(--accent)"/>
             <div style="width:80px;height:60px;border:2px solid var(--gray-200);border-radius:8px;padding:6px;display:grid;grid-template-columns:1fr 1fr;gap:4px;">
               <div style="background:#e4e4e7;border-radius:4px;"></div>
               <div style="background:#e4e4e7;border-radius:4px;"></div>
@@ -1010,7 +1028,7 @@ window.onunhandledrejection = function(e) {
             Grille
           </label>
           <label style="cursor:pointer;font-size:13px;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:6px;">
-            <input type="radio" name="linkLayout" value="buttons" onchange="pendingPerso.link_layout='buttons'" style="accent-color:#000"/>
+            <input type="radio" name="linkLayout" value="buttons" onchange="pendingPerso.link_layout='buttons'" style="accent-color:var(--accent)"/>
             <div style="width:80px;height:60px;border:2px solid var(--gray-200);border-radius:8px;padding:8px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;justify-content:center;">
               <div style="height:14px;width:34px;background:#e4e4e7;border-radius:100px;"></div>
               <div style="height:14px;width:30px;background:#e4e4e7;border-radius:100px;"></div>
@@ -1048,13 +1066,13 @@ window.onunhandledrejection = function(e) {
           <div class="form-group">
             <label>Arrondi des coins</label>
             <input type="range" id="btnRadiusRange" min="0" max="50" value="10"
-              style="width:100%;accent-color:#000;"
+              style="width:100%;accent-color:var(--accent);"
               oninput="el('btnRadiusVal').textContent=this.value+'px';updateBtnStyle()"/>
             <span id="btnRadiusVal" style="font-size:12px;color:var(--gray-500);">10px</span>
           </div>
         </div>
         <div style="display:flex;gap:8px;margin-top:4px;margin-bottom:4px;flex-wrap:wrap;">
-          <button onclick="applyLinkPreset('dark')"   style="padding:5px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;background:#000;color:#fff;">⬛ Sombre</button>
+          <button onclick="applyLinkPreset('dark')"   style="padding:5px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;background:var(--accent-dark,#5c3a1e);color:#fff;">⬛ Sombre</button>
           <button onclick="applyLinkPreset('light')"  style="padding:5px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;background:#fff;color:#000;">⬜ Clair</button>
           <button onclick="applyLinkPreset('glass')"  style="padding:5px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;background:rgba(255,255,255,0.15);color:#555;backdrop-filter:blur(4px);">🔮 Verre</button>
           <button onclick="applyLinkPreset('accent')" style="padding:5px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;background:#6366f1;color:#fff;">🎨 Accent</button>
@@ -1153,7 +1171,7 @@ window.onunhandledrejection = function(e) {
         <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Applique un effet de flou (glassmorphism) sur la card de profil.</div>
         <div style="display:flex;align-items:center;gap:10px;">
           <input type="range" id="profileBlurRange" min="0" max="20" value="0"
-            style="flex:1;max-width:260px;accent-color:#000;"
+            style="flex:1;max-width:260px;accent-color:var(--accent);"
             oninput="pendingPerso.profile_blur=parseInt(this.value);el('profileBlurVal').textContent=this.value+'px';"/>
           <span id="profileBlurVal" style="font-size:12px;color:var(--gray-500);min-width:36px;">0px</span>
         </div>
@@ -1180,22 +1198,22 @@ window.onunhandledrejection = function(e) {
         <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Choisissez les éléments sur lesquels appliquer l'effet glow (utilise la couleur d'accent).</div>
         <div style="display:flex;flex-direction:column;gap:8px;">
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
-            <input type="checkbox" value="avatar" style="accent-color:#000;" onchange="updateGlowTargets()"/> Avatar
+            <input type="checkbox" value="avatar" style="accent-color:var(--accent);" onchange="updateGlowTargets()"/> Avatar
           </label>
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
-            <input type="checkbox" id="glowUsername" value="username" style="accent-color:#000;" onchange="updateGlowTargets()"/> Pseudo (username)
+            <input type="checkbox" id="glowUsername" value="username" style="accent-color:var(--accent);" onchange="updateGlowTargets()"/> Pseudo (username)
           </label>
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
-            <input type="checkbox" id="glowNetworks" value="networks" style="accent-color:#000;" onchange="updateGlowTargets()"/> Réseaux sociaux
+            <input type="checkbox" id="glowNetworks" value="networks" style="accent-color:var(--accent);" onchange="updateGlowTargets()"/> Réseaux sociaux
           </label>
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
-            <input type="checkbox" id="glowBadges" value="badges" style="accent-color:#000;" onchange="updateGlowTargets()"/> Badges
+            <input type="checkbox" id="glowBadges" value="badges" style="accent-color:var(--accent);" onchange="updateGlowTargets()"/> Badges
           </label>
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
-            <input type="checkbox" id="glowCard" value="card" style="accent-color:#000;" onchange="updateGlowTargets()"/> Card de profil
+            <input type="checkbox" id="glowCard" value="card" style="accent-color:var(--accent);" onchange="updateGlowTargets()"/> Card de profil
           </label>
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
-            <input type="checkbox" id="glowLinks" value="links" style="accent-color:#000;" onchange="updateGlowTargets()"/> Liens
+            <input type="checkbox" id="glowLinks" value="links" style="accent-color:var(--accent);" onchange="updateGlowTargets()"/> Liens
           </label>
         </div>
       </div>
@@ -1241,7 +1259,7 @@ window.onunhandledrejection = function(e) {
         <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Paramètres visuels supplémentaires pour personnaliser l'apparence de votre profil.</div>
         <div style="display:flex;flex-direction:column;gap:14px;">
           <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
-            <input type="checkbox" id="monochromeIconsToggle" style="width:16px;height:16px;accent-color:#000;cursor:pointer;"
+            <input type="checkbox" id="monochromeIconsToggle" style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;"
               onchange="pendingPerso.monochrome_icons=this.checked"/>
             <div>
               <span style="font-size:13px;font-weight:500;">Icônes monochrome</span>
@@ -1249,7 +1267,7 @@ window.onunhandledrejection = function(e) {
             </div>
           </label>
           <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
-            <input type="checkbox" id="animatedTitleToggle" style="width:16px;height:16px;accent-color:#000;cursor:pointer;"
+            <input type="checkbox" id="animatedTitleToggle" style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;"
               onchange="pendingPerso.animated_title=this.checked"/>
             <div>
               <span style="font-size:13px;font-weight:500;">Titre animé</span>
@@ -1257,7 +1275,7 @@ window.onunhandledrejection = function(e) {
             </div>
           </label>
           <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
-            <input type="checkbox" id="invertBlocksToggle" style="width:16px;height:16px;accent-color:#000;cursor:pointer;"
+            <input type="checkbox" id="invertBlocksToggle" style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;"
               onchange="pendingPerso.invert_blocks=this.checked"/>
             <div>
               <span style="font-size:13px;font-weight:500;">Inverser les blocs</span>
@@ -1308,7 +1326,7 @@ window.onunhandledrejection = function(e) {
         </div>
         <div style="display:flex;flex-direction:column;gap:14px;">
           <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
-            <input type="checkbox" id="showMemberSinceToggle" style="width:16px;height:16px;accent-color:#000;cursor:pointer;"
+            <input type="checkbox" id="showMemberSinceToggle" style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;"
               onchange="pendingPerso.show_member_since=this.checked"/>
             <div>
               <span style="font-size:13px;font-weight:500;">Membre depuis</span>
@@ -1316,7 +1334,7 @@ window.onunhandledrejection = function(e) {
             </div>
           </label>
           <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
-            <input type="checkbox" id="showAvatarShineToggle" style="width:16px;height:16px;accent-color:#000;cursor:pointer;"
+            <input type="checkbox" id="showAvatarShineToggle" style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;"
               onchange="pendingPerso.avatar_shine=this.checked"/>
             <div>
               <span style="font-size:13px;font-weight:500;">Effet shine sur l'avatar</span>
@@ -1324,7 +1342,7 @@ window.onunhandledrejection = function(e) {
             </div>
           </label>
           <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
-            <input type="checkbox" id="profileEntranceToggle" style="width:16px;height:16px;accent-color:#000;cursor:pointer;"
+            <input type="checkbox" id="profileEntranceToggle" style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;"
               onchange="pendingPerso.profile_entrance=this.checked"/>
             <div>
               <span style="font-size:13px;font-weight:500;">Animation d'entrée</span>
@@ -1358,22 +1376,22 @@ window.onunhandledrejection = function(e) {
         <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Forme des icônes de réseaux sociaux sur votre profil.</div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
           <label style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font-size:11px;font-weight:600;color:var(--gray-600);">
-            <input type="radio" name="socialBtnStyle" value="circle" onchange="pendingPerso.social_btn_style='circle'" style="accent-color:#000;"/>
+            <input type="radio" name="socialBtnStyle" value="circle" onchange="pendingPerso.social_btn_style='circle'" style="accent-color:var(--accent);"/>
             <span style="width:36px;height:36px;border-radius:50%;background:var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:16px;">●</span>
             Rond
           </label>
           <label style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font-size:11px;font-weight:600;color:var(--gray-600);">
-            <input type="radio" name="socialBtnStyle" value="square" onchange="pendingPerso.social_btn_style='square'" style="accent-color:#000;"/>
+            <input type="radio" name="socialBtnStyle" value="square" onchange="pendingPerso.social_btn_style='square'" style="accent-color:var(--accent);"/>
             <span style="width:36px;height:36px;border-radius:6px;background:var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:16px;">■</span>
             Carré
           </label>
           <label style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font-size:11px;font-weight:600;color:var(--gray-600);">
-            <input type="radio" name="socialBtnStyle" value="pill" onchange="pendingPerso.social_btn_style='pill'" style="accent-color:#000;"/>
+            <input type="radio" name="socialBtnStyle" value="pill" onchange="pendingPerso.social_btn_style='pill'" style="accent-color:var(--accent);"/>
             <span style="width:48px;height:28px;border-radius:999px;background:var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:12px;">pill</span>
             Pill
           </label>
           <label style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font-size:11px;font-weight:600;color:var(--gray-600);">
-            <input type="radio" name="socialBtnStyle" value="ghost" onchange="pendingPerso.social_btn_style='ghost'" style="accent-color:#000;"/>
+            <input type="radio" name="socialBtnStyle" value="ghost" onchange="pendingPerso.social_btn_style='ghost'" style="accent-color:var(--accent);"/>
             <span style="width:36px;height:36px;border-radius:50%;border:2px solid var(--gray-400);background:transparent;display:flex;align-items:center;justify-content:center;font-size:16px;">○</span>
             Ghost
           </label>
@@ -1396,7 +1414,7 @@ window.onunhandledrejection = function(e) {
           <div class="dash-title" style="margin-bottom:2px;">Modèles</div>
           <div style="font-size:11px;color:var(--gray-400);font-family:'JetBrains Mono',monospace;letter-spacing:.3px;">applique le style d'un autre profil en un clic</div>
         </div>
-        <button onclick="tplDashOpenPublish()" style="display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--black);color:var(--white);border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Rajdhani',sans-serif;letter-spacing:1px;text-transform:uppercase;">+ Publier mon style</button>
+        <button onclick="tplDashOpenPublish()" style="display:flex;align-items:center;gap:6px;padding:8px 16px;background:linear-gradient(135deg,var(--accent) 0%,var(--accent-dark) 100%);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Rajdhani',sans-serif;letter-spacing:1px;text-transform:uppercase;">+ Publier mon style</button>
       </div>
 
       <div style="display:flex;gap:4px;border-bottom:1px solid var(--gray-200);margin-bottom:20px;overflow-x:auto;">
@@ -1442,9 +1460,38 @@ window.onunhandledrejection = function(e) {
           </div>
           <div style="display:flex;gap:8px;justify-content:flex-end;">
             <button onclick="tplDashClosePublish()" style="padding:9px 16px;background:var(--gray-100);color:var(--gray-700);border:1px solid var(--gray-200);border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">Annuler</button>
-            <button id="tplDashPublishBtn" onclick="tplDashPublish()" style="padding:9px 16px;background:var(--black);color:var(--white);border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">Publier</button>
+            <button id="tplDashPublishBtn" onclick="tplDashPublish()" style="padding:9px 16px;background:linear-gradient(135deg,var(--accent) 0%,var(--accent-dark) 100%);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">Publier</button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         TAB — BADGES
+    ════════════════════════════════════════════════════ -->
+    <div class="tab-content" id="tab-badges">
+      <div class="dash-title">Badges</div>
+      <div class="dash-subtitle">Tous les insignes du site — découvrez comment débloquer les vôtres.</div>
+
+      <!-- Résumé badges débloqués -->
+      <div class="section-card" id="badgesSummaryCard">
+        <div class="section-card-title">Vos badges</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:14px;">
+          Cliquez sur l'œil pour afficher ou masquer un badge sur votre profil public.
+        </div>
+        <div id="myBadgesContainer" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
+        <div id="myBadgesEmpty" style="display:none;font-size:13px;color:var(--gray-400);padding:12px 0;">
+          Vous n'avez encore aucun badge. Consultez la liste ci-dessous pour savoir comment les obtenir.
+        </div>
+      </div>
+
+      <!-- Tous les badges -->
+      <div class="section-card">
+        <div class="section-card-title" style="margin-bottom:4px;">Tous les insignes</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:18px;">
+          <span id="badgesUnlockCount" style="font-weight:700;color:var(--black);">0</span> débloqué(s) sur <span id="badgesTotalCount" style="font-weight:700;">0</span>
+        </div>
+        <div id="allBadgesGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;"></div>
       </div>
     </div>
 
@@ -1886,6 +1933,194 @@ const ROLES_DEF = [
   { id: 'bug_hunter',label: 'Bug Hunter',     color: '#f97316', emoji: '🐛', desc: 'A signalé un bug à l\'équipe' },
   { id: 'partner',   label: 'Partenaire',     color: '#14b8a6', emoji: '🤜', desc: 'Partenaire officiel ak-47.fr' },
 ];
+
+// ─── BADGES PAGE ─────────────────────────────────────────────────────────────
+
+const ALL_BADGES_DEF = [
+  {
+    id: 'owner', label: 'Owner', emoji: '👑', color: '#f59e0b',
+    desc: 'Propriétaire du site.',
+    how: null, // non attribuable
+    category: 'équipe',
+  },
+  {
+    id: 'staff', label: 'Staff', emoji: '🛡️', color: '#3b82f6',
+    desc: 'Faites partie de l\'équipe staff d\'ak-47.fr.',
+    how: null,
+    category: 'équipe',
+  },
+  {
+    id: 'helper', label: 'Helper', emoji: '🤝', color: '#06b6d4',
+    desc: 'Soyez actif et aidez les utilisateurs de la communauté.',
+    how: 'Rejoindre le Discord',
+    howUrl: 'https://discord.gg/ak47',
+    howAction: null,
+    category: 'communauté',
+  },
+  {
+    id: 'verified', label: 'Verified', emoji: '✅', color: '#10b981',
+    desc: 'Achetez-le ou soyez un créateur de contenu reconnu.',
+    how: 'Débloquer',
+    howUrl: null,
+    howAction: null,
+    category: 'spécial',
+  },
+  {
+    id: 'og', label: 'OG', emoji: '💎', color: '#8b5cf6',
+    desc: 'Soyez un supporter précoce d\'ak-47.fr (UID ≤ 1000).',
+    how: null,
+    category: 'spécial',
+  },
+  {
+    id: 'premium', label: 'Premium', emoji: '⭐', color: '#f43f5e',
+    desc: 'Abonnez-vous au Premium.',
+    how: 'Acheter',
+    howUrl: '/premium',
+    category: 'achat',
+  },
+  {
+    id: 'donor', label: 'Donor', emoji: '💜', color: '#a855f7',
+    desc: 'Faites un don d\'au moins 10 € à ak-47.fr.',
+    how: 'Donner',
+    howUrl: '/donate',
+    category: 'achat',
+  },
+  {
+    id: 'gifter', label: 'Gifter', emoji: '🎁', color: '#ec4899',
+    desc: 'Offrez un produit ak-47.fr à un autre utilisateur.',
+    how: 'Offrir',
+    howUrl: '/premium',
+    category: 'achat',
+  },
+  {
+    id: 'booster', label: 'Server Booster', emoji: '🚀', color: '#ff73fa',
+    desc: 'Boostez le serveur Discord d\'ak-47.fr.',
+    how: 'Booster',
+    howUrl: 'https://discord.gg/ak47',
+    category: 'communauté',
+  },
+  {
+    id: 'bug_hunter', label: 'Bug Hunter', emoji: '🐛', color: '#f97316',
+    desc: 'Signalez un bug à l\'équipe ak-47.fr.',
+    how: 'Signaler',
+    howUrl: null,
+    howAction: "switchTab('profile')",
+    category: 'communauté',
+  },
+  {
+    id: 'partner', label: 'Partenaire', emoji: '🤜', color: '#14b8a6',
+    desc: 'Partenaire officiel ak-47.fr.',
+    how: null,
+    category: 'équipe',
+  },
+];
+
+function renderBadgesTab() {
+  let userRoles = [];
+  try { userRoles = JSON.parse(userData.roles || '[]'); } catch {}
+  let hiddenRoles = [];
+  try { hiddenRoles = JSON.parse(userData.hidden_roles || '[]'); } catch {}
+
+  // Résumé "vos badges"
+  const myContainer = document.getElementById('myBadgesContainer');
+  const myEmpty = document.getElementById('myBadgesEmpty');
+  document.getElementById('badgesUnlockCount').textContent = userRoles.length;
+  document.getElementById('badgesTotalCount').textContent = ALL_BADGES_DEF.length;
+
+  if (!userRoles.length) {
+    myContainer.style.display = 'none';
+    myEmpty.style.display = 'block';
+  } else {
+    myContainer.style.display = 'flex';
+    myEmpty.style.display = 'none';
+    myContainer.innerHTML = userRoles.map(roleId => {
+      const def = ALL_BADGES_DEF.find(b => b.id === roleId) || { id: roleId, label: roleId, color: '#888', emoji: '•', desc: '' };
+      const visible = !hiddenRoles.includes(roleId);
+      const eyeIcon = visible
+        ? `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`
+        : `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+      return `<div onclick="toggleBadgeRole('${roleId}')" title="${visible ? 'Masquer sur le profil' : 'Afficher sur le profil'}" style="
+          display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;cursor:pointer;
+          border:1.5px solid ${def.color}40;background:${def.color}12;
+          opacity:${visible ? 1 : 0.45};transition:opacity .2s,transform .15s;user-select:none;
+        " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+        <span style="font-size:20px;">${def.emoji}</span>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:${def.color};">${def.label}</div>
+          <div style="font-size:10px;color:var(--gray-500);margin-top:1px;display:flex;align-items:center;gap:3px;">
+            ${eyeIcon} ${visible ? 'Visible' : 'Masqué'}
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // Grille tous les badges
+  const grid = document.getElementById('allBadgesGrid');
+  grid.innerHTML = ALL_BADGES_DEF.map(def => {
+    const owned = userRoles.includes(def.id);
+    const visible = owned && !hiddenRoles.includes(def.id);
+
+    let actionBtn = '';
+    if (owned) {
+      const eyeLabel = visible ? '👁 Visible' : '🙈 Masqué';
+      actionBtn = `<button onclick="toggleBadgeRole('${def.id}')" style="
+          padding:6px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;
+          border:1.5px solid ${def.color};background:transparent;color:${def.color};white-space:nowrap;
+        ">${eyeLabel}</button>`;
+    } else if (def.how) {
+      const clickAttr = def.howAction
+        ? `onclick="${def.howAction}"`
+        : def.howUrl
+          ? `onclick="window.open('${def.howUrl}','_blank')" `
+          : '';
+      actionBtn = `<button ${clickAttr} style="
+          padding:6px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;
+          border:1.5px solid var(--gray-300);background:var(--gray-100);color:var(--gray-600);white-space:nowrap;
+        ">${def.how}</button>`;
+    }
+
+    return `<div style="
+        display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;
+        border:1.5px solid ${owned ? def.color + '50' : 'var(--gray-200)'};
+        background:${owned ? def.color + '0d' : 'var(--gray-50)'};
+        opacity:${owned ? 1 : 0.72};transition:transform .15s;
+      " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+      <span style="font-size:28px;min-width:36px;text-align:center;">${def.emoji}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:700;color:${owned ? def.color : 'var(--gray-700)'};">${def.label}${owned ? ' <span style="font-size:10px;font-weight:500;color:'+def.color+';">✓ Obtenu</span>' : ''}</div>
+        <div style="font-size:11px;color:var(--gray-500);margin-top:2px;line-height:1.4;">${def.desc}</div>
+      </div>
+      ${actionBtn ? `<div style="flex-shrink:0;">${actionBtn}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+async function toggleBadgeRole(roleId) {
+  let hidden = [];
+  try { hidden = JSON.parse(userData.hidden_roles || '[]'); } catch {}
+  if (hidden.includes(roleId)) {
+    hidden = hidden.filter(r => r !== roleId);
+  } else {
+    hidden.push(roleId);
+  }
+  const newVal = JSON.stringify(hidden);
+  try {
+    const token = localStorage.getItem('auth_token');
+    await fetch(`${API}/api/user/profile`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ hidden_roles: newVal }),
+    });
+    userData.hidden_roles = newVal;
+    pendingPerso.hidden_roles = newVal;
+    renderBadgesTab();
+    renderRolesVisibility();
+    showToast('Visibilité du badge mise à jour.');
+  } catch {
+    showToast('Erreur lors de la mise à jour.');
+  }
+}
 
 function renderRolesVisibility() {
   let userRoles = [];
@@ -2371,6 +2606,7 @@ function switchTab(name) {
   el('tab-' + name).classList.add('active');
   document.querySelectorAll('.sidebar-item').forEach(t => { if (t.getAttribute('onclick')?.includes(name)) t.classList.add('active'); });
   if (name === 'profile' || name === 'links') updatePreview();
+  if (name === 'badges') renderBadgesTab();
 }
 
 ['displayName','bio','location','avatarColor'].forEach(id => {
@@ -3382,7 +3618,7 @@ function tplRender() {
           <span style="font-size:11px;color:var(--gray-400);">🔥 ${t.uses||0}</span>
         </div>
         <div style="display:flex;gap:8px;">
-          <button class="tpl-apply-btn" data-id="${esc(t.id)}" style="flex:1;background:var(--black);color:var(--white);border:none;border-radius:8px;padding:8px;font-size:12px;font-weight:600;cursor:pointer;">${getToken() ? 'Appliquer' : 'Se connecter'}</button>
+          <button class="tpl-apply-btn" data-id="${esc(t.id)}" style="flex:1;background:linear-gradient(135deg,var(--accent) 0%,var(--accent-dark) 100%);color:#fff;border:none;border-radius:8px;padding:8px;font-size:12px;font-weight:600;cursor:pointer;">${getToken() ? 'Appliquer' : 'Se connecter'}</button>
           ${isOwner ? `<button class="tpl-delete-btn" data-id="${esc(t.id)}" style="background:var(--gray-100);color:var(--gray-600);border:none;border-radius:8px;padding:8px 12px;font-size:12px;cursor:pointer;">🗑</button>` : ''}
         </div>
       </div>
@@ -3584,7 +3820,7 @@ function tplDashRender() {
         </div>
         <div style="display:flex;gap:8px;align-items:center;">
           <button onclick="tplDashApply('${t.id}','${tplDashEsc(t.name).replace(/'/g,"\'")}')"
-            style="flex:1;padding:9px 12px;background:var(--black);color:var(--white);border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Rajdhani',sans-serif;letter-spacing:1px;text-transform:uppercase;transition:opacity .15s;"
+            style="flex:1;padding:9px 12px;background:linear-gradient(135deg,var(--accent) 0%,var(--accent-dark) 100%);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Rajdhani',sans-serif;letter-spacing:1px;text-transform:uppercase;transition:opacity .15s;"
             >
             Utiliser le modèle
           </button>

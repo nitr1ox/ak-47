@@ -679,19 +679,37 @@ window.onunhandledrejection = function(e) {
 
 <div id="profileBg"></div>
 <video id="profileBgVideo" muted loop playsinline style="position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;display:none;pointer-events:none;"></video>
-<button id="bgVideoMuteBtn" onclick="toggleBgVideoMute()" title="Activer le son de la vidéo" onmouseover="this.style.background='rgba(0,0,0,.75)';this.style.transform='scale(1.08)'" onmouseout="this.style.background='rgba(0,0,0,.55)';this.style.transform='scale(1)'" style="
+<!-- ── Contrôle son vidéo (affiché seulement si pas d'audio_url) ── -->
+<div id="bgVideoSoundBar" style="
   display:none; position:fixed; bottom:20px; right:20px; z-index:9999;
-  width:40px; height:40px; border-radius:50%; border:none; cursor:pointer;
-  background:rgba(0,0,0,.55); backdrop-filter:blur(8px); color:#fff;
-  align-items:center; justify-content:center;
-  transition: background .15s ease, transform .15s ease;
+  background:rgba(0,0,0,.62); backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.12); border-radius:14px;
+  padding:10px 14px; color:#fff; font-family:inherit;
+  align-items:center; gap:10px; min-width:170px;
+  box-shadow:0 4px 24px rgba(0,0,0,.4);
+  transition:opacity .2s;
 ">
-  <svg id="bgVideoMuteIcon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-    <path d="M3 9v6h4l5 5V4L7 9H3z"/>
-    <line x1="16" y1="9" x2="22" y2="15" stroke="currentColor" stroke-width="2"/>
-    <line x1="22" y1="9" x2="16" y2="15" stroke="currentColor" stroke-width="2"/>
-  </svg>
-</button>
+  <!-- Icône son cliquable (mute/unmute) -->
+  <button id="bgVideoMuteBtn" onclick="toggleBgVideoMute()" title="Couper / Activer le son"
+    style="background:none;border:none;cursor:pointer;color:#fff;padding:0;display:flex;align-items:center;flex-shrink:0;">
+    <svg id="bgVideoMuteIcon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+      <path d="M3 9v6h4l5 5V4L7 9H3z"/>
+      <line x1="16" y1="9" x2="22" y2="15" stroke="currentColor" stroke-width="2"/>
+      <line x1="22" y1="9" x2="16" y2="15" stroke="currentColor" stroke-width="2"/>
+    </svg>
+  </button>
+  <!-- Label -->
+  <span id="bgVideoSoundLabel" style="font-size:11px;font-weight:600;opacity:.75;white-space:nowrap;letter-spacing:.3px;">SON VIDÉO</span>
+  <!-- Slider volume -->
+  <input type="range" id="bgVideoVolSlider" min="0" max="1" step="0.02" value="0.8"
+    oninput="setBgVideoVolume(this.value)"
+    style="
+      flex:1; min-width:70px; height:3px; cursor:pointer;
+      accent-color:#fff; background:rgba(255,255,255,.25);
+      border-radius:3px; outline:none; border:none;
+    "
+    title="Volume"/>
+</div>
 <audio id="audioPlayer" loop></audio>
 
 <div id="loading">
@@ -1001,16 +1019,24 @@ async function loadProfile() {
         vid.style.opacity = bgOpacity;
         vid.style.display = 'block';
         vid.muted = true;
+        vid.volume = 0.8;
         vid.play().catch(() => {
-
           document.addEventListener('click', () => vid.play().catch(() => {}), { once: true });
         });
-        // Le bouton de son vidéo n'apparaît que si aucun son custom n'est déjà actif.
-        // Si l'utilisateur a un audio_url, on ne permet pas d'activer aussi le son
-        // de la vidéo, pour éviter les deux sons en même temps.
+        // Affiche le contrôle son seulement si pas de musique custom
         if (!user.audio_url) {
-          const muteBtn = document.getElementById('bgVideoMuteBtn');
-          muteBtn.style.display = 'flex';
+          const bar = document.getElementById('bgVideoSoundBar');
+          bar.style.display = 'flex';
+          // Premier clic sur la page → démute automatiquement la vidéo
+          const autoUnmute = () => {
+            if (vid.muted) {
+              vid.muted = false;
+              vid.volume = parseFloat(document.getElementById('bgVideoVolSlider').value) || 0.8;
+              _updateBgVideoIcon(false);
+            }
+          };
+          document.addEventListener('click', autoUnmute, { once: true });
+          document.addEventListener('keydown', autoUnmute, { once: true });
         }
         const bg = document.getElementById('profileBg');
         bg.style.backgroundImage = '';
@@ -1909,31 +1935,52 @@ function toggleMute() {
   updateVolSvg();
 }
 
+function _updateBgVideoIcon(muted) {
+  const icon = document.getElementById('bgVideoMuteIcon');
+  const slider = document.getElementById('bgVideoVolSlider');
+  if (!icon) return;
+  if (muted || (slider && parseFloat(slider.value) === 0)) {
+    icon.innerHTML = '<path d="M3 9v6h4l5 5V4L7 9H3z"/><line x1="16" y1="9" x2="22" y2="15" stroke="currentColor" stroke-width="2"/><line x1="22" y1="9" x2="16" y2="15" stroke="currentColor" stroke-width="2"/>';
+    document.getElementById('bgVideoMuteBtn').title = 'Activer le son';
+  } else {
+    icon.innerHTML = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
+    document.getElementById('bgVideoMuteBtn').title = 'Couper le son';
+  }
+}
+
 function toggleBgVideoMute() {
   const vid = document.getElementById('profileBgVideo');
-  const btn = document.getElementById('bgVideoMuteBtn');
-  const icon = document.getElementById('bgVideoMuteIcon');
   if (!vid) return;
+  const slider = document.getElementById('bgVideoVolSlider');
+  const vol = slider ? parseFloat(slider.value) : 0.8;
 
-  // Sécurité supplémentaire : si une musique custom est active, on ne laisse
-  // jamais activer le son de la vidéo en même temps (un seul son à la fois).
-  const player = document.getElementById('audioPlayer');
-  if (player && player.src && !player.paused) return;
-
-  if (vid.muted) {
+  if (vid.muted || vol === 0) {
+    // Démuter
     vid.muted = false;
-    // Évite que la musique custom et le son de la vidéo jouent en même temps
-    if (player && !player.paused) player.pause();
-    // Le clic sur ce bouton compte comme interaction utilisateur,
-    // donc le navigateur autorise désormais la lecture avec son
+    const newVol = vol === 0 ? 0.8 : vol;
+    vid.volume = newVol;
+    if (slider) slider.value = newVol;
     vid.play().catch(() => {});
-    icon.innerHTML = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
-    btn.title = 'Couper le son de la vidéo';
+    _updateBgVideoIcon(false);
   } else {
+    // Muter
     vid.muted = true;
-    icon.innerHTML = '<path d="M3 9v6h4l5 5V4L7 9H3z"/><line x1="16" y1="9" x2="22" y2="15" stroke="currentColor" stroke-width="2"/><line x1="22" y1="9" x2="16" y2="15" stroke="currentColor" stroke-width="2"/>';
-    btn.title = 'Activer le son de la vidéo';
+    _updateBgVideoIcon(true);
   }
+}
+
+function setBgVideoVolume(val) {
+  const vid = document.getElementById('profileBgVideo');
+  if (!vid) return;
+  const v = parseFloat(val);
+  vid.volume = v;
+  if (v === 0) {
+    vid.muted = true;
+  } else {
+    vid.muted = false;
+    vid.play().catch(() => {});
+  }
+  _updateBgVideoIcon(v === 0);
 }
 
 function toggleAudio() {
