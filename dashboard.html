@@ -261,6 +261,82 @@
     }
   </style>
 
+  <!-- ====== FACELIFT VISUEL — même structure/fonctions, affichage plus moderne et aéré ====== -->
+  <style>
+    body { background: var(--gray-50); }
+
+    .dash-nav {
+      backdrop-filter: blur(10px);
+      background: color-mix(in srgb, var(--white) 85%, transparent);
+    }
+
+    .dash-layout { grid-template-columns: 248px 1fr; gap: 0; }
+
+    .dash-sidebar {
+      background: var(--white);
+      border-right: 1px solid var(--gray-100);
+      padding: 24px 14px;
+    }
+    .sidebar-label { padding: 0 12px; margin-bottom: 10px; }
+    .sidebar-item {
+      padding: 10px 12px; border-radius: 10px; margin-bottom: 2px;
+      font-weight: 600; gap: 11px;
+    }
+    .sidebar-item:hover { background: var(--gray-100); }
+    .sidebar-item.active {
+      background: var(--black); color: var(--white);
+      box-shadow: 0 4px 14px rgba(0,0,0,.18); border-color: transparent;
+    }
+    .sidebar-item.active svg { stroke: var(--white); }
+    .sidebar-item svg { width: 16px; height: 16px; }
+
+    .dash-main { padding: 36px 40px; max-width: 1180px; }
+
+    .dash-title { font-size: 24px; letter-spacing: -0.7px; }
+    .dash-subtitle { margin-bottom: 32px; }
+
+    /* Cartes stats — version "aérée" avec accent et icône */
+    .stats-row { gap: 14px; }
+    .stat-card {
+      background: var(--white); border: 1px solid var(--gray-100);
+      border-radius: 16px; padding: 20px 18px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.03);
+      transition: transform .15s, box-shadow .15s;
+      position: relative; overflow: hidden;
+    }
+    .stat-card::before {
+      content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%;
+      background: var(--black); opacity: .08;
+    }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,.08); }
+    .stat-card-val { font-size: 26px; letter-spacing: -0.8px; }
+    .stat-card-label { margin-top: 4px; font-weight: 500; }
+
+    /* Cartes de section — bords doux, ombre légère au lieu d'une simple bordure */
+    .section-card {
+      background: var(--white); border: 1px solid var(--gray-100);
+      border-radius: 16px; padding: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.04);
+      margin-bottom: 20px;
+    }
+    .section-card-title {
+      font-size: 14px; letter-spacing: -0.1px;
+      padding-bottom: 14px; margin-bottom: 18px;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .chart-card { border-radius: 16px; }
+
+    .link-item { border-radius: 12px; }
+    .preview-link, .preview-header { border-radius: 12px; }
+
+    .save-bar { border-radius: 12px; }
+
+    [data-theme="dark"] .dash-nav { background: color-mix(in srgb, var(--white) 6%, transparent); }
+    [data-theme="dark"] .dash-sidebar { background: var(--gray-50); }
+    [data-theme="dark"] .stat-card, [data-theme="dark"] .section-card { box-shadow: none; }
+  </style>
+
   <style id="fluid-global">
 
     a, button, input, textarea, select,
@@ -719,6 +795,15 @@ window.onunhandledrejection = function(e) {
                 <button id="audioCoverRemove" style="display:none;font-size:11px;color:#ef4444;background:none;border:none;cursor:pointer;padding:2px 0;margin-top:4px;" onclick="removeAudioCover(event)">✕ Retirer</button>
               </div>
             </div>
+          </div>
+
+          <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--gray-100);">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" id="showAudioPlayerToggle" checked style="width:16px;height:16px;accent-color:var(--black);cursor:pointer;"
+                onchange="pendingMedias.show_audio_player=this.checked"/>
+              <span style="font-size:13px;font-weight:500;">Afficher le lecteur sur le profil</span>
+            </label>
+            <div style="font-size:11px;color:var(--gray-400);margin-top:4px;margin-left:26px;">Si désactivé, le morceau reste configuré mais la barre de lecture n'apparaît pas sur votre page publique.</div>
           </div>
 
         </div>
@@ -1447,7 +1532,7 @@ if (!getToken()) window.location.href = '/login';
 let userData = null;
 let analyticsData = null;
 let pendingLinks = null;
-let pendingMedias = { avatar_url: null, bg_url: null, bg_type: null, audio_url: null, audio_name: null, audio_cover_url: null, cursor_url: null };
+let pendingMedias = { avatar_url: null, bg_url: null, bg_type: null, audio_url: null, audio_name: null, audio_cover_url: null, cursor_url: null, show_audio_player: null };
 
 const SOCIALS = [
   { id:'snapchat',   label:'Snapchat',   color:'#FFFC00', icon:'https://cdn.simpleicons.org/snapchat/FFFC00',    base:'https://snapchat.com/add/',       placeholder:'Ton pseudo Snapchat' },
@@ -1639,7 +1724,6 @@ async function loadAnalytics() {
       daily:        Array.isArray(raw.daily)     ? raw.daily     : [],
       top_links:    Array.isArray(raw.top_links) ? raw.top_links : [],
     };
-    console.log('[analytics] données reçues ✅', analyticsData);
     _analyticsRetries = 0;
     renderStats();
     renderChart('chartBars', analyticsData.daily, 80);
@@ -2040,7 +2124,7 @@ function renderLinks() {
     return;
   }
   list.innerHTML = pendingLinks.map((l,i) => {
-    const icon = getLinkIcon(l.url);
+    const icon = l.img_url || getLinkIcon(l.url);
     const iconHtml = icon
       ? `<img src="${icon}" alt="" style="width:22px;height:22px;border-radius:5px;object-fit:contain;flex-shrink:0;" onerror="this.style.display='none'"/>`
       : `<span style="width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🔗</span>`;
@@ -2176,8 +2260,21 @@ function openIconManual() {
   closeIconInput();
   el('ipmTitle').value = '';
   el('ipmUrl').value = '';
+  el('ipmImg').value = '';
+  el('ipmImgPreview').style.display = 'none';
   el('iconManualPanel').classList.add('active');
   setTimeout(() => el('ipmTitle').focus(), 50);
+}
+
+function previewIpmImg(val) {
+  const preview = el('ipmImgPreview');
+  if (val && (val.startsWith('http://') || val.startsWith('https://') || val.startsWith('data:image/'))) {
+    preview.src = val;
+    preview.style.display = 'block';
+    preview.onerror = () => { preview.style.display = 'none'; };
+  } else {
+    preview.style.display = 'none';
+  }
 }
 
 function closeIconManual() {
@@ -2191,7 +2288,10 @@ function confirmManualLink() {
   if (pendingLinks.length >= 20) { closeIconPicker(); showAlert('linksAlert', 'Maximum 20 liens'); return; }
   let finalUrl = url;
   if (!url.toLowerCase().startsWith('http') && !url.toLowerCase().startsWith('mailto:')) finalUrl = 'https://' + url;
-  pendingLinks.push({ title, url: finalUrl });
+  const imgUrl = el('ipmImg').value.trim() || null;
+  const linkObj = { title, url: finalUrl };
+  if (imgUrl) linkObj.img_url = imgUrl;
+  pendingLinks.push(linkObj);
   closeIconPicker();
   el('linksAlert').innerHTML = '';
   renderLinks(); updatePreview();
@@ -2676,6 +2776,9 @@ function loadMediasUI() {
     pendingMedias.audio_name = userData.audio_name;
   }
 
+  const sapToggle = el('showAudioPlayerToggle');
+  if (sapToggle) sapToggle.checked = userData.show_audio_player !== false;
+
   if (userData.audio_cover_url) {
     const img = el('audioCoverPreview');
     if (img) { img.src = userData.audio_cover_url; img.style.display = 'block'; }
@@ -2716,7 +2819,7 @@ async function saveMedias() {
     const data = await r.json();
     if (!r.ok) { showAlert('mediasAlert', data.error || 'Erreur'); showToast('❌ ' + (data.error || 'Erreur lors de la sauvegarde')); return; }
     userData = data;
-    pendingMedias = { avatar_url: null, bg_url: null, bg_type: null, audio_url: null, audio_name: null, audio_cover_url: null, cursor_url: null };
+    pendingMedias = { avatar_url: null, bg_url: null, bg_type: null, audio_url: null, audio_name: null, audio_cover_url: null, cursor_url: null, show_audio_player: null };
     el('mediasAlert').innerHTML = '';
     if (data.audio_name !== undefined) {
       const ni = el('audioNameInput');
@@ -3124,6 +3227,10 @@ async function publishTemplateFromDash(name, description) {
     <div class="icon-picker-manual-panel" id="iconManualPanel">
       <input placeholder="Titre" id="ipmTitle" maxlength="60" style="max-width:140px;" onkeydown="if(event.key==='Enter')confirmManualLink()"/>
       <input placeholder="https://..." id="ipmUrl" maxlength="500" onkeydown="if(event.key==='Enter')confirmManualLink()"/>
+      <div style="display:flex;align-items:center;gap:6px;width:100%;">
+        <input placeholder="Image (URL optionnelle)" id="ipmImg" maxlength="2000" style="flex:1;font-size:12px;" onkeydown="if(event.key==='Enter')confirmManualLink()" oninput="previewIpmImg(this.value)"/>
+        <img id="ipmImgPreview" src="" alt="" style="width:28px;height:28px;border-radius:6px;object-fit:cover;display:none;flex-shrink:0;"/>
+      </div>
       <button class="ipm-add" onclick="confirmManualLink()">Ajouter</button>
       <button class="ipin-cancel" onclick="closeIconManual()">✕</button>
     </div>

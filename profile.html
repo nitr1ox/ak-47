@@ -1032,11 +1032,12 @@ async function loadProfile() {
     }
 
     if (user.audio_url) {
+      _showAudioPlayer = user.show_audio_player !== false;
       const player = document.getElementById('audioPlayer');
       player.src = user.audio_url;
       player.volume = 0.7;
       const bar = document.getElementById('audioBar');
-      bar.classList.add('visible');
+      if (_showAudioPlayer) bar.classList.add('visible');
 
       try {
         const customName = user.audio_name && user.audio_name.trim();
@@ -1315,7 +1316,7 @@ async function loadProfile() {
     const links = user.links || [];
     if (links.length) {
       linksContainer.innerHTML = links.map(l => {
-        const icon = getLinkIcon(l.url);
+        const icon = l.img_url || getLinkIcon(l.url);
         const iconHtml = icon
           ? `<img class="profile-link-icon" src="${icon}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><span class="profile-link-fallback" style="display:none">${escHtml(l.title.charAt(0))}</span>`
           : `<span class="profile-link-fallback">${escHtml(l.title.charAt(0))}</span>`;
@@ -1755,6 +1756,7 @@ async function loadProfile() {
 let audioPlaying = false;
 let audioMuted = false;
 let lastVolume = 0.7;
+let _showAudioPlayer = true;
 
 function fmtTime(s) {
   if (isNaN(s) || !isFinite(s)) return '0:00';
@@ -1899,6 +1901,7 @@ function startMusicNow() {
     audioPlaying = true;
   }).catch(() => { audioPlaying = false; });
   const bar = document.getElementById('audioBar');
+  if (bar && !_showAudioPlayer) return;
   if (bar) {
     setTimeout(() => bar.classList.add('shown'), 600);
     setTimeout(() => initAudioBarAutoHide(bar), 600);

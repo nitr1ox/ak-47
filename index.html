@@ -358,6 +358,16 @@
     [data-theme="dark"] .hero-kicker { background: #1a1a1e !important; border-color: #2a2a2f !important; }
 
   </style>
+  <style>
+    .btn-solid { border-radius: 10px; box-shadow: 0 6px 16px -4px rgba(0,0,0,.18); transition: transform .15s, box-shadow .15s, background .15s; }
+    .btn-solid:hover { transform: translateY(-1px); box-shadow: 0 10px 24px -4px rgba(0,0,0,.22); }
+    .btn-ghost { border-radius: 10px; }
+    .feature-card { border-radius: 14px; transition: transform .2s, box-shadow .2s, background .2s; }
+    .feature-card:hover { transform: translateY(-3px); box-shadow: 0 14px 36px rgba(0,0,0,.08); }
+    .cta-bottom { border-radius: 24px; margin: 0 16px; }
+    .cta-claim { border-radius: 12px; overflow: hidden; }
+    .cta-claim-btn { border-radius: 0 12px 12px 0; }
+  </style>
 
   <style id="fluid-global">
 
@@ -492,41 +502,6 @@ window.onunhandledrejection = function(e) {
       <div class="hero-claim-prefix">ak-47.fr/</div>
       <input class="hero-claim-input" type="text" placeholder="votre-pseudo" id="claimInput"/>
       <button class="hero-claim-btn" onclick="claim()">Réserver →</button>
-    </div>
-  </div>
-  <div class="hero-mockup">
-    <div class="mockup-bar">
-      <div class="mockup-dot r"></div>
-      <div class="mockup-dot y"></div>
-      <div class="mockup-dot g"></div>
-      <div class="mockup-url">ak-47.fr/dashboard</div>
-    </div>
-    <div class="mockup-body">
-      <div class="mockup-sidebar">
-        <div class="ms-item active"><span class="ms-dot"></span> Vue d'ensemble</div>
-        <div class="ms-item"><span class="ms-dot"></span> Mon profil</div>
-        <div class="ms-item"><span class="ms-dot"></span> Liens</div>
-        <div class="ms-item"><span class="ms-dot"></span> Analytics</div>
-        <div class="ms-item"><span class="ms-dot"></span> Apparence</div>
-      </div>
-      <div class="mockup-main">
-        <div class="mm-profile">
-          <div class="mm-avatar">AK</div>
-          <div>
-            <div class="mm-name">ak-47.fr/votre-pseudo</div>
-            <div class="mm-handle">Profil actif · Gratuit</div>
-          </div>
-        </div>
-        <div class="mm-stats">
-          <div class="mm-stat"><div class="mm-stat-val" id="mock-views">—</div><div class="mm-stat-label">Vues profil</div></div>
-          <div class="mm-stat"><div class="mm-stat-val" id="mock-clicks">—</div><div class="mm-stat-label">Clics liens</div></div>
-        </div>
-        <div class="mm-links">
-          <div class="mm-link"><span class="mm-link-dot"></span>Twitch — twitch.tv/votre-pseudo</div>
-          <div class="mm-link"><span class="mm-link-dot"></span>Discord — discord.gg/votre-serveur</div>
-          <div class="mm-link"><span class="mm-link-dot"></span>Instagram — @votre-pseudo</div>
-        </div>
-      </div>
     </div>
   </div>
 </section>

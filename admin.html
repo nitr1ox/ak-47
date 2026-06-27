@@ -89,6 +89,20 @@
       .table th:nth-child(6), .table td:nth-child(6) { display: none; }
     }
   </style>
+  <style>
+    body { background: linear-gradient(180deg, var(--gray-50), var(--white) 320px); }
+    .nav { backdrop-filter: blur(8px); }
+    .stat-card {
+      border-radius: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.03);
+      transition: transform .15s, box-shadow .15s;
+    }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,.07); }
+    .stat-value { letter-spacing: -.6px; }
+    .tabs { border-radius: 11px; padding: 4px; }
+    .tab-btn { border-radius: 8px; font-weight: 600; }
+    .table-card { border-radius: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.03); }
+    .table-header { padding: 18px 20px; }
+  </style>
 
   <style id="fluid-global">
 
