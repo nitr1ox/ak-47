@@ -672,6 +672,7 @@ window.onunhandledrejection = function(e) {
       <input type="file" id="audioFile"     accept="audio/*"            onchange="handleMedia('audio', this)"  style="display:none"/>
       <input type="file" id="audioCoverFile" accept="image/*"           onchange="handleAudioCover(this)"       style="display:none"/>
       <input type="file" id="cursorFile"    accept="image/*,.cur,.ani"  onchange="handleMedia('cursor', this)" style="display:none"/>
+      <input type="file" id="linkImgFile"  accept="image/*"            onchange="handleLinkImg(this)"          style="display:none"/>
 
       <div class="mblock" id="mblock-avatar">
         <div class="mblock-head" onclick="toggleMblock('avatar')">
@@ -2256,25 +2257,39 @@ function confirmIconLink() {
   showToast('Lien ajouté ✓');
 }
 
+let _pendingLinkImgUrl = null;
+
 function openIconManual() {
   closeIconInput();
   el('ipmTitle').value = '';
   el('ipmUrl').value = '';
-  el('ipmImg').value = '';
-  el('ipmImgPreview').style.display = 'none';
+  removeLinkImg();
   el('iconManualPanel').classList.add('active');
   setTimeout(() => el('ipmTitle').focus(), 50);
 }
 
-function previewIpmImg(val) {
-  const preview = el('ipmImgPreview');
-  if (val && (val.startsWith('http://') || val.startsWith('https://') || val.startsWith('data:image/'))) {
-    preview.src = val;
+async function handleLinkImg(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { showAlert('linksAlert', 'Image trop lourde (max 5 Mo)'); input.value = ''; return; }
+  try {
+    const data = await compressImage(file, 128, 128, 0.85);
+    _pendingLinkImgUrl = data;
+    const preview = el('ipmImgPreview');
+    preview.src = data;
     preview.style.display = 'block';
-    preview.onerror = () => { preview.style.display = 'none'; };
-  } else {
-    preview.style.display = 'none';
-  }
+    el('linkImgRemoveBtn').style.display = 'block';
+    el('linkImgLabel').textContent = file.name.length > 20 ? file.name.slice(0,18)+'…' : file.name;
+  } catch { showAlert('linksAlert', 'Impossible de lire cette image.'); }
+  input.value = '';
+}
+
+function removeLinkImg() {
+  _pendingLinkImgUrl = null;
+  el('ipmImgPreview').style.display = 'none';
+  el('ipmImgPreview').src = '';
+  el('linkImgRemoveBtn').style.display = 'none';
+  el('linkImgLabel').textContent = 'Image du lien (optionnel)';
 }
 
 function closeIconManual() {
@@ -2288,7 +2303,7 @@ function confirmManualLink() {
   if (pendingLinks.length >= 20) { closeIconPicker(); showAlert('linksAlert', 'Maximum 20 liens'); return; }
   let finalUrl = url;
   if (!url.toLowerCase().startsWith('http') && !url.toLowerCase().startsWith('mailto:')) finalUrl = 'https://' + url;
-  const imgUrl = el('ipmImg').value.trim() || null;
+  const imgUrl = _pendingLinkImgUrl || null;
   const linkObj = { title, url: finalUrl };
   if (imgUrl) linkObj.img_url = imgUrl;
   pendingLinks.push(linkObj);
@@ -3227,9 +3242,15 @@ async function publishTemplateFromDash(name, description) {
     <div class="icon-picker-manual-panel" id="iconManualPanel">
       <input placeholder="Titre" id="ipmTitle" maxlength="60" style="max-width:140px;" onkeydown="if(event.key==='Enter')confirmManualLink()"/>
       <input placeholder="https://..." id="ipmUrl" maxlength="500" onkeydown="if(event.key==='Enter')confirmManualLink()"/>
-      <div style="display:flex;align-items:center;gap:6px;width:100%;">
-        <input placeholder="Image (URL optionnelle)" id="ipmImg" maxlength="2000" style="flex:1;font-size:12px;" onkeydown="if(event.key==='Enter')confirmManualLink()" oninput="previewIpmImg(this.value)"/>
-        <img id="ipmImgPreview" src="" alt="" style="width:28px;height:28px;border-radius:6px;object-fit:cover;display:none;flex-shrink:0;"/>
+      <div style="display:flex;align-items:center;gap:8px;width:100%;margin-top:2px;">
+        <button type="button" onclick="triggerUpload('linkImgFile')" style="display:flex;align-items:center;gap:6px;padding:7px 12px;border:1px dashed var(--gray-300);border-radius:8px;background:var(--gray-50);font-size:12px;color:var(--gray-600);cursor:pointer;flex:1;white-space:nowrap;">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span id="linkImgLabel">Image du lien (optionnel)</span>
+        </button>
+        <div style="position:relative;flex-shrink:0;" id="linkImgPreviewWrap" style="display:none;">
+          <img id="ipmImgPreview" src="" alt="" style="width:36px;height:36px;border-radius:8px;object-fit:cover;display:none;border:1px solid var(--gray-200);"/>
+          <button type="button" onclick="removeLinkImg()" id="linkImgRemoveBtn" style="display:none;position:absolute;top:-6px;right:-6px;width:16px;height:16px;border-radius:50%;background:#ef4444;border:none;color:#fff;font-size:10px;cursor:pointer;line-height:16px;text-align:center;">✕</button>
+        </div>
       </div>
       <button class="ipm-add" onclick="confirmManualLink()">Ajouter</button>
       <button class="ipin-cancel" onclick="closeIconManual()">✕</button>
