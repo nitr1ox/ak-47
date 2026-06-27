@@ -52,8 +52,6 @@
     .profile-avatar { transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease !important; }
     .profile-avatar:hover { transform: scale(1.07) !important; box-shadow: 0 8px 30px rgba(0,0,0,.2) !important; }
 
-    .spotify-embed-wrap { width: 100%; margin-bottom: 10px; cursor: pointer; }
-    .spotify-embed-wrap iframe { pointer-events: auto; }
     .spotify-widget { transition: transform .25s cubic-bezier(.34,1.56,.64,1), opacity .2s ease !important; }
     .spotify-widget:hover { transform: translateY(-3px) scale(1.02) !important; opacity: 1 !important; }
 
@@ -774,14 +772,6 @@ const SOCIAL_META = {
   monero:     { emoji: 'ɱ',  label: 'Monero',        base: '', crypto: true },
 };
 
-// Returns a Spotify embed URL if the link is an embeddable Spotify resource, null otherwise
-function getSpotifyEmbedUrl(url) {
-  if (!url) return null;
-  const m = url.match(/open\.spotify\.com\/(track|album|playlist|episode|show)\/([A-Za-z0-9]+)/);
-  if (!m) return null;
-  return `https://open.spotify.com/embed/${m[1]}/${m[2]}?utm_source=generator&theme=0`;
-}
-
 function getLinkIcon(url) {
   if (!url) return null;
   const u = url.toLowerCase();
@@ -1326,22 +1316,6 @@ async function loadProfile() {
     const links = user.links || [];
     if (links.length) {
       linksContainer.innerHTML = links.map(l => {
-        // Detect Spotify embeddable links (track, album, playlist, episode)
-        const spotifyEmbed = getSpotifyEmbedUrl(l.url);
-        if (spotifyEmbed) {
-          return `
-          <div class="spotify-embed-wrap" onclick="trackClick(${JSON.stringify(user.username)}, ${JSON.stringify(l.url)}, ${JSON.stringify(l.title)})">
-            <iframe
-              src="${escAttr(spotifyEmbed)}"
-              width="100%"
-              height="152"
-              frameborder="0"
-              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-              loading="lazy"
-              style="border-radius:12px;display:block;"
-            ></iframe>
-          </div>`;
-        }
         const icon = l.img_url || getLinkIcon(l.url);
         const iconHtml = icon
           ? `<img class="profile-link-icon" src="${icon}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><span class="profile-link-fallback" style="display:none">${escHtml(l.title.charAt(0))}</span>`

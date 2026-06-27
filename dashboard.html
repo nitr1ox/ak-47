@@ -1584,13 +1584,6 @@ const SOCIALS = [
 
 let activeSocial = null;
 
-function getSpotifyEmbedUrl(url) {
-  if (!url) return null;
-  const m = url.match(/open\.spotify\.com\/(track|album|playlist|episode|show)\/([A-Za-z0-9]+)/);
-  if (!m) return null;
-  return `https://open.spotify.com/embed/${m[1]}/${m[2]}?utm_source=generator&theme=0`;
-}
-
 function getLinkIcon(url) {
   if (!url) return null;
   const u = url.toLowerCase();
@@ -2118,13 +2111,9 @@ function updatePreview() {
   av.textContent = name.charAt(0).toUpperCase();
   el('previewName').textContent = name;
   el('previewBio').textContent = bio;
-  const linksHtml = (pendingLinks||[]).map(l => {
-    const spotifyEmbed = getSpotifyEmbedUrl(l.url);
-    if (spotifyEmbed) {
-      return `<iframe src="${esc(spotifyEmbed)}" width="100%" height="80" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" style="border-radius:8px;display:block;margin-bottom:6px;"></iframe>`;
-    }
-    return `<a class="preview-link" href="${esc(l.url)}" target="_blank"><span class="preview-link-dot"></span>${esc(l.title)}</a>`;
-  }).join('');
+  const linksHtml = (pendingLinks||[]).map(l =>
+    `<a class="preview-link" href="${esc(l.url)}" target="_blank"><span class="preview-link-dot"></span>${esc(l.title)}</a>`
+  ).join('');
   el('previewLinks').innerHTML = linksHtml || '<div style="padding:12px;font-size:13px;color:var(--gray-400);text-align:center">Aucun lien ajouté</div>';
 }
 
@@ -2136,20 +2125,16 @@ function renderLinks() {
     return;
   }
   list.innerHTML = pendingLinks.map((l,i) => {
-    const isSpotifyEmbed = !!getSpotifyEmbedUrl(l.url);
     const icon = l.img_url || getLinkIcon(l.url);
     const iconHtml = icon
       ? `<img src="${icon}" alt="" style="width:22px;height:22px;border-radius:5px;object-fit:contain;flex-shrink:0;" onerror="this.style.display='none'"/>`
       : `<span style="width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🔗</span>`;
-    const spotifyBadge = isSpotifyEmbed
-      ? `<span style="font-size:10px;font-weight:700;background:#1DB954;color:#fff;padding:2px 6px;border-radius:99px;flex-shrink:0;letter-spacing:.4px;">EMBED</span>`
-      : '';
     return `
     <div class="link-item">
       <span class="link-item-drag">⠿</span>
       ${iconHtml}
       <div class="link-item-info">
-        <div class="link-item-title" style="display:flex;align-items:center;gap:6px;">${esc(l.title)} ${spotifyBadge}</div>
+        <div class="link-item-title">${esc(l.title)}</div>
         <div class="link-item-url">${esc(l.url)}</div>
       </div>
       <div class="link-item-actions">
