@@ -192,7 +192,7 @@ window.onunhandledrejection = function(e) {
           <div class="lb-user">
             <div class="lb-av" style="background:${color}">${initials}</div>
             <div>
-              <div class="lb-name">${esc(u.display_name || u.username)}</div>
+              <div class="lb-name" title="ID : #${u.uid || '—'}">${esc(u.display_name || u.username)}</div>
               <div class="lb-handle">ak-47.fr/${esc(u.username)}</div>
             </div>
           </div>
