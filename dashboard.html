@@ -1061,6 +1061,17 @@ window.onunhandledrejection = function(e) {
             <span id="discordCardOpacityVal" style="font-size:12px;color:var(--gray-500);min-width:36px;">100%</span>
           </div>
         </div>
+        <div class="form-group" style="margin-top:14px;">
+          <label>Couleur de la card Discord</label>
+          <div style="font-size:12px;color:var(--gray-500);margin-bottom:8px;">Par défaut, la card est en gris neutre. Vous pouvez la personnaliser ici.</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <input type="color" id="discordCardColorPicker" value="#1a1a1e"
+              style="width:44px;height:38px;padding:2px;border:1px solid var(--gray-200);border-radius:6px;cursor:pointer;"
+              oninput="pendingPerso.discord_card_color=this.value;el('discordCardColorHex').textContent=this.value;"/>
+            <span id="discordCardColorHex" style="font-size:13px;color:var(--gray-500);">#1a1a1e</span>
+            <button onclick="resetDiscordCardColor()" style="padding:7px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:12px;background:transparent;cursor:pointer;color:var(--gray-500);">Réinitialiser</button>
+          </div>
+        </div>
       </div>
 
       <div class="section-card">
@@ -1883,6 +1894,13 @@ function clearSpotify() {
   el('savePersoBtn').style.background = 'var(--accent)';
 }
 
+function resetDiscordCardColor() {
+  const def = '#1a1a1e';
+  el('discordCardColorPicker').value = def;
+  el('discordCardColorHex').textContent = def;
+  pendingPerso.discord_card_color = null;
+}
+
 function renderConnectedAccounts() {
 
   const discordStatus = document.getElementById('discordStatus');
@@ -1942,6 +1960,9 @@ async function disconnectDiscord() {
     if (r.ok) {
       userData.discord_id = null;
       userData.discord_badges = '[]';
+      userData.discord_public = null;
+      userData.discord_username = null;
+      userData.discord_display_name = null;
       renderConnectedAccounts();
       renderBadges();
       showToast('Compte Discord délié ✓');
@@ -2751,6 +2772,7 @@ let pendingPerso = {
   location: null,
   discord_presence: null,
   discord_card_opacity: null,
+  discord_card_color: null,
   bg_effect: null,
   bg_effect_color: null,
   profile_blur: null,
@@ -2848,6 +2870,9 @@ function loadPersoUI() {
 
   el('discordPresenceToggle').checked = !!userData.discord_presence;
   const discordCardOpacity = userData.discord_card_opacity !== undefined && userData.discord_card_opacity !== null ? userData.discord_card_opacity : 1;
+  const discordCardColor = userData.discord_card_color || '#1a1a1e';
+  el('discordCardColorPicker').value = discordCardColor;
+  el('discordCardColorHex').textContent = discordCardColor;
   el('discordCardOpacityRange').value = Math.round(discordCardOpacity * 100);
   el('discordCardOpacityVal').textContent = Math.round(discordCardOpacity * 100) + '%';
   el('showMemberSinceToggle').checked = !!userData.show_member_since;
@@ -3065,7 +3090,7 @@ async function savePerso() {
       profile_font: null, bio_font: null, bg_type: null, bg_value: null,
       bg_opacity: null, text_color: null, card_bg: null, card_opacity: null,
       banner_url: null, bg_url: null, social_links: null, spotify_url: null,
-      location: null, discord_presence: null, discord_card_opacity: null, bg_effect: null, bg_effect_color: null,
+      location: null, discord_presence: null, discord_card_opacity: null, discord_card_color: null, bg_effect: null, bg_effect_color: null,
       profile_blur: null, username_effect: null, glow_targets: null, accent_color: null,
       icon_color: null, monochrome_icons: null, animated_title: null,
       invert_blocks: null, use_discord_avatar: null, avatar_decoration: null, avatar_border_color: null,

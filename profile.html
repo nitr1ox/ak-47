@@ -360,8 +360,9 @@
     .discord-card {
       display: none;
       align-items: center; gap: 14px;
+      --dc-accent: #6b6e76;
       background:
-        radial-gradient(120% 140% at 0% 0%, rgba(88,101,242,.18), transparent 60%),
+        radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--dc-accent) 22%, transparent), transparent 60%),
         linear-gradient(160deg, #1f1f24 0%, #17171a 100%);
       border-radius: 16px;
       padding: 14px 18px; margin: 16px auto 0;
@@ -377,14 +378,14 @@
     }
     .discord-card::before {
       content: ''; position: absolute; inset: 0; border-radius: 16px;
-      background: linear-gradient(135deg, rgba(88,101,242,.5), transparent 40%, transparent 60%, rgba(88,101,242,.25));
+      background: linear-gradient(135deg, color-mix(in srgb, var(--dc-accent) 50%, transparent), transparent 40%, transparent 60%, color-mix(in srgb, var(--dc-accent) 25%, transparent));
       opacity: .25; pointer-events: none; mix-blend-mode: screen;
     }
     .discord-card.visible { display: flex; }
     .dc-avatar-wrap { position: relative; flex-shrink: 0; }
     .dc-avatar-wrap::after {
       content: ''; position: absolute; inset: -3px; border-radius: 50%;
-      background: linear-gradient(135deg, #5865F2, #8b5cf6, #5865F2);
+      background: linear-gradient(135deg, var(--dc-accent), color-mix(in srgb, var(--dc-accent) 60%, white), var(--dc-accent));
       z-index: -1; opacity: 0; transition: opacity .25s ease;
     }
     .discord-card:hover .dc-avatar-wrap::after { opacity: .9; filter: blur(2px); }
@@ -395,7 +396,7 @@
     }
     .dc-avatar-letter {
       width: 46px; height: 46px; border-radius: 50%;
-      background: #5865F2; color: #fff;
+      background: var(--dc-accent); color: #fff;
       display: flex; align-items: center; justify-content: center;
       font-size: 18px; font-weight: 700;
     }
@@ -452,7 +453,7 @@
     @keyframes dcTooltipIn { from { opacity: 0; transform: translateX(-50%) translateY(3px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
     .dc-badge svg { width: 16px; height: 16px; }
     .dc-badge-verified { background: transparent; }
-    .dc-username { font-size: 11px; color: #8a93f5; margin-top: 1px; font-weight: 500; opacity: .9; }
+    .dc-username { font-size: 11px; color: color-mix(in srgb, var(--dc-accent, #6b6e76) 70%, white); margin-top: 1px; font-weight: 500; opacity: .9; }
     .dc-last-seen { font-size: 12px; color: #878a8f; margin-top: 2px; }
 
     .profile-name-wrap {
@@ -918,8 +919,13 @@ async function loadProfile() {
 
           document.addEventListener('click', () => vid.play().catch(() => {}), { once: true });
         });
-        const muteBtn = document.getElementById('bgVideoMuteBtn');
-        muteBtn.style.display = 'flex';
+        // Le bouton de son vidéo n'apparaît que si aucun son custom n'est déjà actif.
+        // Si l'utilisateur a un audio_url, on ne permet pas d'activer aussi le son
+        // de la vidéo, pour éviter les deux sons en même temps.
+        if (!user.audio_url) {
+          const muteBtn = document.getElementById('bgVideoMuteBtn');
+          muteBtn.style.display = 'flex';
+        }
         const bg = document.getElementById('profileBg');
         bg.style.backgroundImage = '';
       } else {
@@ -1118,6 +1124,10 @@ async function loadProfile() {
       card.classList.add('visible');
       if (user.discord_card_opacity !== undefined && user.discord_card_opacity !== null) {
         card.style.opacity = user.discord_card_opacity;
+      }
+      // Couleur de la card : gris neutre par défaut, personnalisable depuis le dashboard
+      if (user.discord_card_color) {
+        card.style.setProperty('--dc-accent', user.discord_card_color);
       }
 
       const discordAvatarUrl = (discordOauth && discordOauth.avatar)
@@ -1783,10 +1793,14 @@ function toggleBgVideoMute() {
   const icon = document.getElementById('bgVideoMuteIcon');
   if (!vid) return;
 
+  // Sécurité supplémentaire : si une musique custom est active, on ne laisse
+  // jamais activer le son de la vidéo en même temps (un seul son à la fois).
+  const player = document.getElementById('audioPlayer');
+  if (player && player.src && !player.paused) return;
+
   if (vid.muted) {
     vid.muted = false;
     // Évite que la musique custom et le son de la vidéo jouent en même temps
-    const player = document.getElementById('audioPlayer');
     if (player && !player.paused) player.pause();
     // Le clic sur ce bouton compte comme interaction utilisateur,
     // donc le navigateur autorise désormais la lecture avec son
@@ -1866,7 +1880,47 @@ function startMusicNow() {
     audioPlaying = true;
   }).catch(() => { audioPlaying = false; });
   const bar = document.getElementById('audioBar');
-  if (bar) setTimeout(() => bar.classList.add('shown'), 600);
+  if (bar) {
+    setTimeout(() => bar.classList.add('shown'), 600);
+    setTimeout(() => initAudioBarAutoHide(bar), 600);
+  }
+}
+
+function initAudioBarAutoHide(bar) {
+  const HIDE_DELAY = 3000;      // temps d'inactivité avant de cacher la barre
+  const PROXIMITY_PX = 140;     // distance depuis le bas de l'écran qui réaffiche la barre
+  let hideTimer = null;
+
+  function scheduleHide() {
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => bar.classList.remove('shown'), HIDE_DELAY);
+  }
+
+  function showBar() {
+    clearTimeout(hideTimer);
+    bar.classList.add('shown');
+    scheduleHide();
+  }
+
+  // Réapparition dès que la souris s'approche du bas de l'écran
+  window.addEventListener('mousemove', (e) => {
+    const distFromBottom = window.innerHeight - e.clientY;
+    if (distFromBottom <= PROXIMITY_PX) {
+      showBar();
+    }
+  }, { passive: true });
+
+  // Rester affiché tant que la souris est sur le lecteur lui-même
+  bar.addEventListener('mouseenter', () => clearTimeout(hideTimer));
+  bar.addEventListener('mouseleave', scheduleHide);
+
+  // Sur tactile, pas de "souris qui s'approche" — on garde la barre visible
+  if (window.matchMedia('(pointer: coarse)').matches) {
+    clearTimeout(hideTimer);
+    return;
+  }
+
+  scheduleHide();
 }
 
 loadProfile();
