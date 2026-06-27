@@ -133,6 +133,36 @@ window.onunhandledrejection = function(e) {
   logError("UnhandledPromise: " + (e.reason && e.reason.message || e.reason), e.reason && e.reason.stack);
 };
 </script>
+
+<script>
+(function() {
+  const CURRENT_PAGE = typeof MAINTENANCE_EXEMPT !== 'undefined' ? MAINTENANCE_EXEMPT : false;
+  if (CURRENT_PAGE) return; 
+  const API_BASE = typeof API !== 'undefined' ? API : 'https://ak47-backend.onrender.com';
+  
+  const token = localStorage.getItem('auth_token') || localStorage.getItem('token');
+  fetch(API_BASE + '/api/stats/maintenance')
+    .then(r => r.json())
+    .then(d => {
+      if (!d.maintenance || !d.maintenance.enabled) return;
+      
+      if (token) {
+        fetch(API_BASE + '/api/admin/maintenance', { headers: { Authorization: 'Bearer ' + token } })
+          .then(r => { if (r.ok) return; else redirect(); })
+          .catch(redirect);
+      } else {
+        redirect();
+      }
+    })
+    .catch(() => {});
+  function redirect() {
+    if (window.location.pathname !== '/maintenance' && window.location.pathname !== '/maintenance.html') {
+      window.location.href = '/maintenance';
+    }
+  }
+})();
+</script>
+
 </head>
 <body>
 <button id="globalThemeBtn" onclick="toggleTheme()" title="Changer le thème" aria-label="Changer le thème">🌙</button>

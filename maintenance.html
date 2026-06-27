@@ -40,6 +40,7 @@
     .icon { box-shadow: 0 6px 18px rgba(0,0,0,.06); }
     .status { box-shadow: 0 1px 2px rgba(0,0,0,.02); }
   </style>
+<script>const MAINTENANCE_EXEMPT = true;</script>
 </head>
 <body>
   <div class="container">
@@ -58,10 +59,25 @@
   </footer>
 
   <script>
-    // Si déjà connecté en tant qu'admin → redirige vers /admin
-    const token = localStorage.getItem('token');
+    const API = 'https://ak47-backend.onrender.com';
+    
+    fetch(API + '/api/stats/maintenance')
+      .then(r => r.json())
+      .then(d => {
+        if (d.maintenance && d.maintenance.message) {
+          const p = document.querySelector('p');
+          if (p) p.textContent = d.maintenance.message;
+        }
+        
+        if (!d.maintenance || !d.maintenance.enabled) {
+          window.location.href = '/';
+        }
+      }).catch(() => {});
+
+    
+    const token = localStorage.getItem('auth_token') || localStorage.getItem('token');
     if (token) {
-      fetch('/api/admin/stats', { headers: { Authorization: 'Bearer ' + token } })
+      fetch(API + '/api/admin/maintenance', { headers: { Authorization: 'Bearer ' + token } })
         .then(r => { if (r.ok) window.location.href = '/admin'; })
         .catch(() => {});
     }

@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="/style.css"/>
   <style>
-    /* ── Variables accent orange (héritées de style.css mais rappelées ici pour les inline) ── */
+    
     :root {
       --accent:       #c85f28;
       --accent-light: #eb8a2c;
@@ -273,7 +273,7 @@
       .mobile-bottom-nav { display: grid; }
       .dash-main { padding-bottom: 72px; }
     }
-    /* Bibliothèque de médias */
+    
     .media-lib-item { position:relative; border-radius:10px; overflow:hidden; background:var(--gray-100); aspect-ratio:1; }
     .media-lib-item img, .media-lib-item video { width:100%; height:100%; object-fit:cover; display:block; }
     .media-lib-item .media-lib-overlay { position:absolute; inset:0; background:rgba(0,0,0,.55); opacity:0; transition:opacity .18s; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; }
@@ -285,7 +285,7 @@
     .media-lib-src-badge { position:absolute; top:6px; right:6px; font-size:10px; background:rgba(99,102,241,.85); color:#fff; padding:2px 5px; border-radius:4px; pointer-events:none; }
   </style>
 
-  <!-- ====== FACELIFT VISUEL — même structure/fonctions, affichage plus moderne et aéré ====== -->
+  
   <style>
     body { background: var(--gray-50); }
 
@@ -319,7 +319,7 @@
     .dash-title { font-size: 24px; letter-spacing: -0.7px; }
     .dash-subtitle { margin-bottom: 32px; }
 
-    /* Cartes stats — version "aérée" avec accent et icône */
+    
     .stats-row { gap: 14px; }
     .stat-card {
       background: var(--white); border: 1px solid var(--gray-100);
@@ -336,7 +336,7 @@
     .stat-card-val { font-size: 26px; letter-spacing: -0.8px; }
     .stat-card-label { margin-top: 4px; font-weight: 500; }
 
-    /* Cartes de section — bords doux, ombre légère au lieu d'une simple bordure */
+    
     .section-card {
       background: var(--white); border: 1px solid var(--gray-100);
       border-radius: 16px; padding: 24px;
@@ -470,8 +470,152 @@ window.onunhandledrejection = function(e) {
   logError("UnhandledPromise: " + (e.reason && e.reason.message || e.reason), e.reason && e.reason.stack);
 };
 </script>
+
+<script>
+(function() {
+  const CURRENT_PAGE = typeof MAINTENANCE_EXEMPT !== 'undefined' ? MAINTENANCE_EXEMPT : false;
+  if (CURRENT_PAGE) return; 
+  const API_BASE = typeof API !== 'undefined' ? API : 'https://ak47-backend.onrender.com';
+  
+  const token = localStorage.getItem('auth_token') || localStorage.getItem('token');
+  fetch(API_BASE + '/api/stats/maintenance')
+    .then(r => r.json())
+    .then(d => {
+      if (!d.maintenance || !d.maintenance.enabled) return;
+      
+      if (token) {
+        fetch(API_BASE + '/api/admin/maintenance', { headers: { Authorization: 'Bearer ' + token } })
+          .then(r => { if (r.ok) return; else redirect(); })
+          .catch(redirect);
+      } else {
+        redirect();
+      }
+    })
+    .catch(() => {});
+  function redirect() {
+    if (window.location.pathname !== '/maintenance' && window.location.pathname !== '/maintenance.html') {
+      window.location.href = '/maintenance';
+    }
+  }
+})();
+</script>
+
 </head>
 <body>
+<script>const ANNOUNCEMENT_PAGE_TYPE = "dashboard";</script>
+
+<style>
+#global-announcement {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 99999;
+  padding: 10px 48px 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  animation: slideDown .3s ease;
+  cursor: default;
+  line-height: 1.4;
+}
+@keyframes slideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+#global-announcement .ann-close {
+  position: absolute;
+  right: 14px; top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,.2);
+  border: none; color: #fff;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  font-size: 14px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+#global-announcement .ann-close:hover { background: rgba(255,255,255,.35); }
+#global-announcement .ann-timer {
+  font-size: 11px;
+  font-weight: 400;
+  opacity: .75;
+  margin-left: 10px;
+}
+body.has-announcement { padding-top: 44px; }
+</style>
+<div id="global-announcement">
+  <span id="ann-message"></span>
+  <span id="ann-timer" class="ann-timer"></span>
+  <button class="ann-close" onclick="dismissAnnouncement()" title="Fermer">✕</button>
+</div>
+<script>
+(function() {
+  const PAGE_TYPE = typeof ANNOUNCEMENT_PAGE_TYPE !== 'undefined' ? ANNOUNCEMENT_PAGE_TYPE : 'public';
+  const API_BASE = typeof API !== 'undefined' ? API : 'https://ak47-backend.onrender.com';
+  let annTimer = null;
+  let annCountdown = null;
+
+  async function loadAnnouncement() {
+    try {
+      const r = await fetch(API_BASE + '/api/stats/announcement');
+      const d = await r.json();
+      if (!d.announcement) return;
+      const ann = d.announcement;
+      
+      if (ann.target === 'dashboard' && PAGE_TYPE !== 'dashboard') return;
+      if (ann.target === 'public' && PAGE_TYPE !== 'public') return;
+      showAnnouncement(ann);
+    } catch {}
+  }
+
+  function showAnnouncement(ann) {
+    const el = document.getElementById('global-announcement');
+    const msgEl = document.getElementById('ann-message');
+    const timerEl = document.getElementById('ann-timer');
+    if (!el || !msgEl) return;
+
+    
+    const dismissed = sessionStorage.getItem('ann_dismissed');
+    if (dismissed === String(ann.created_at)) return;
+
+    el.style.background = ann.color || '#5865F2';
+    el.style.display = 'block';
+    msgEl.textContent = ann.message;
+    document.body.classList.add('has-announcement');
+
+    
+    if (ann.expires_at) {
+      let remaining = Math.max(0, Math.floor((ann.expires_at - Date.now()) / 1000));
+      function updateTimer() {
+        remaining = Math.max(0, Math.floor((ann.expires_at - Date.now()) / 1000));
+        if (remaining <= 0) { hideAnnouncement(); return; }
+        timerEl.textContent = `(${remaining}s)`;
+      }
+      updateTimer();
+      annCountdown = setInterval(updateTimer, 1000);
+    }
+  }
+
+  function hideAnnouncement() {
+    const el = document.getElementById('global-announcement');
+    if (el) el.style.display = 'none';
+    document.body.classList.remove('has-announcement');
+    if (annCountdown) clearInterval(annCountdown);
+  }
+
+  window.dismissAnnouncement = function() {
+    
+    fetch(API_BASE + '/api/stats/announcement').then(r => r.json()).then(d => {
+      if (d.announcement) sessionStorage.setItem('ann_dismissed', String(d.announcement.created_at));
+    }).catch(() => {});
+    hideAnnouncement();
+  };
+
+  document.addEventListener('DOMContentLoaded', loadAnnouncement);
+})();
+</script>
 
 <nav class="dash-nav">
   <a href="/" class="dash-nav-brand" style="display:inline-flex;align-items:center;"><img src="/logo.png" alt="ak-47.fr" style="height:22px;width:22px;object-fit:contain;margin-right:6px;vertical-align:middle;filter:var(--logo-filter,none);">ak-47<span>.fr</span></a>
@@ -676,8 +820,6 @@ window.onunhandledrejection = function(e) {
       </div>
     </div>
 
-
-
       <div class="section-card" id="badgesCard" style="display:none">
         <div class="section-card-title">Tes badges Discord</div>
         <div class="section-card-desc">Clique sur l'œil pour masquer/afficher un badge sur ta page publique.</div>
@@ -870,7 +1012,7 @@ window.onunhandledrejection = function(e) {
         </div>
       </div>
 
-      <!-- Bibliothèque de médias uploadés -->
+      
       <div class="mblock" id="mblock-library" style="margin-top:12px;">
         <div class="mblock-head" onclick="toggleMblock('library')">
           <div class="mblock-icon" style="background:var(--gray-100);font-size:18px;">📂</div>
@@ -1494,14 +1636,12 @@ window.onunhandledrejection = function(e) {
       </div>
     </div>
 
-    <!-- ═══════════════════════════════════════════════════
-         TAB — BADGES
-    ════════════════════════════════════════════════════ -->
+    
     <div class="tab-content" id="tab-badges">
       <div class="dash-title">Badges</div>
       <div class="dash-subtitle">Tous les insignes du site — découvrez comment débloquer les vôtres.</div>
 
-      <!-- Résumé badges débloqués -->
+      
       <div class="section-card" id="badgesSummaryCard">
         <div class="section-card-title">Vos badges</div>
         <div style="font-size:12px;color:var(--gray-500);margin-bottom:14px;">
@@ -1513,7 +1653,7 @@ window.onunhandledrejection = function(e) {
         </div>
       </div>
 
-      <!-- Tous les badges -->
+      
       <div class="section-card">
         <div class="section-card-title" style="margin-bottom:4px;">Tous les insignes</div>
         <div style="font-size:12px;color:var(--gray-500);margin-bottom:18px;">
@@ -1547,7 +1687,6 @@ function startHeartbeat() {
   setInterval(beat, 30000);
 }
 
-// --- Gestion access token + refresh token ---
 function getToken()        { return localStorage.getItem('token'); }
 function getRefreshToken() { return localStorage.getItem('refreshToken'); }
 function getUserId()       { return localStorage.getItem('userId'); }
@@ -1570,7 +1709,6 @@ async function refreshAccessToken() {
   } catch { logout(); return null; }
 }
 
-// Wrapper fetch qui auto-refresh si 401
 async function apiFetch(url, options = {}) {
   let token = getToken();
   options.headers = options.headers || {};
@@ -1962,13 +2100,11 @@ const ROLES_DEF = [
   { id: 'partner',   label: 'Partenaire',     color: '#14b8a6', emoji: '🤜', desc: 'Partenaire officiel ak-47.fr' },
 ];
 
-// ─── BADGES PAGE ─────────────────────────────────────────────────────────────
-
 const ALL_BADGES_DEF = [
   {
     id: 'owner', label: 'Owner', emoji: '👑', color: '#f59e0b',
     desc: 'Propriétaire du site.',
-    how: null, // non attribuable
+    how: null, 
     category: 'équipe',
   },
   {
@@ -2057,7 +2193,7 @@ function renderBadgesTab() {
   let hiddenRoles = [];
   try { hiddenRoles = JSON.parse(userData.hidden_roles || '[]'); } catch {}
 
-  // Résumé "vos badges"
+  
   const myContainer = document.getElementById('myBadgesContainer');
   const myEmpty = document.getElementById('myBadgesEmpty');
   document.getElementById('badgesUnlockCount').textContent = userRoles.length;
@@ -2091,7 +2227,7 @@ function renderBadgesTab() {
     }).join('');
   }
 
-  // Grille tous les badges
+  
   const grid = document.getElementById('allBadgesGrid');
   grid.innerHTML = ALL_BADGES_DEF.map(def => {
     const owned = userRoles.includes(def.id);
@@ -3768,11 +3904,11 @@ function tplRender() {
       </div>
     </div>`;
   }).join('');
-  // Délégation d'événements : on ne construit plus jamais d'attribut onclick avec des
-  // données utilisateur interpolées directement (id/nom de template). Échapper avec esc()
-  // ne suffit pas dans ce contexte : un guillemet simple casse la chaîne JS de l'attribut
-  // onclick, ce qui permettait une XSS stockée via le champ "nom" du modèle. On lit
-  // maintenant l'id depuis data-id (simple texte d'attribut, jamais interprété comme du code).
+  
+  
+  
+  
+  
   if (!grid.dataset.boundClick) {
     grid.dataset.boundClick = '1';
     grid.addEventListener('click', (e) => {

@@ -115,8 +115,153 @@
     ::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,.3); }
   </style>
+
+<script>
+(function() {
+  const CURRENT_PAGE = typeof MAINTENANCE_EXEMPT !== 'undefined' ? MAINTENANCE_EXEMPT : false;
+  if (CURRENT_PAGE) return; 
+  const API_BASE = typeof API !== 'undefined' ? API : 'https://ak47-backend.onrender.com';
+  
+  const token = localStorage.getItem('auth_token') || localStorage.getItem('token');
+  fetch(API_BASE + '/api/stats/maintenance')
+    .then(r => r.json())
+    .then(d => {
+      if (!d.maintenance || !d.maintenance.enabled) return;
+      
+      if (token) {
+        fetch(API_BASE + '/api/admin/maintenance', { headers: { Authorization: 'Bearer ' + token } })
+          .then(r => { if (r.ok) return; else redirect(); })
+          .catch(redirect);
+      } else {
+        redirect();
+      }
+    })
+    .catch(() => {});
+  function redirect() {
+    if (window.location.pathname !== '/maintenance' && window.location.pathname !== '/maintenance.html') {
+      window.location.href = '/maintenance';
+    }
+  }
+})();
+</script>
+
 </head>
 <body>
+<script>const ANNOUNCEMENT_PAGE_TYPE = "public";</script>
+
+<style>
+#global-announcement {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 99999;
+  padding: 10px 48px 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  animation: slideDown .3s ease;
+  cursor: default;
+  line-height: 1.4;
+}
+@keyframes slideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+#global-announcement .ann-close {
+  position: absolute;
+  right: 14px; top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,.2);
+  border: none; color: #fff;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  font-size: 14px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+#global-announcement .ann-close:hover { background: rgba(255,255,255,.35); }
+#global-announcement .ann-timer {
+  font-size: 11px;
+  font-weight: 400;
+  opacity: .75;
+  margin-left: 10px;
+}
+body.has-announcement { padding-top: 44px; }
+</style>
+<div id="global-announcement">
+  <span id="ann-message"></span>
+  <span id="ann-timer" class="ann-timer"></span>
+  <button class="ann-close" onclick="dismissAnnouncement()" title="Fermer">✕</button>
+</div>
+<script>
+(function() {
+  const PAGE_TYPE = typeof ANNOUNCEMENT_PAGE_TYPE !== 'undefined' ? ANNOUNCEMENT_PAGE_TYPE : 'public';
+  const API_BASE = typeof API !== 'undefined' ? API : 'https://ak47-backend.onrender.com';
+  let annTimer = null;
+  let annCountdown = null;
+
+  async function loadAnnouncement() {
+    try {
+      const r = await fetch(API_BASE + '/api/stats/announcement');
+      const d = await r.json();
+      if (!d.announcement) return;
+      const ann = d.announcement;
+      
+      if (ann.target === 'dashboard' && PAGE_TYPE !== 'dashboard') return;
+      if (ann.target === 'public' && PAGE_TYPE !== 'public') return;
+      showAnnouncement(ann);
+    } catch {}
+  }
+
+  function showAnnouncement(ann) {
+    const el = document.getElementById('global-announcement');
+    const msgEl = document.getElementById('ann-message');
+    const timerEl = document.getElementById('ann-timer');
+    if (!el || !msgEl) return;
+
+    
+    const dismissed = sessionStorage.getItem('ann_dismissed');
+    if (dismissed === String(ann.created_at)) return;
+
+    el.style.background = ann.color || '#5865F2';
+    el.style.display = 'block';
+    msgEl.textContent = ann.message;
+    document.body.classList.add('has-announcement');
+
+    
+    if (ann.expires_at) {
+      let remaining = Math.max(0, Math.floor((ann.expires_at - Date.now()) / 1000));
+      function updateTimer() {
+        remaining = Math.max(0, Math.floor((ann.expires_at - Date.now()) / 1000));
+        if (remaining <= 0) { hideAnnouncement(); return; }
+        timerEl.textContent = `(${remaining}s)`;
+      }
+      updateTimer();
+      annCountdown = setInterval(updateTimer, 1000);
+    }
+  }
+
+  function hideAnnouncement() {
+    const el = document.getElementById('global-announcement');
+    if (el) el.style.display = 'none';
+    document.body.classList.remove('has-announcement');
+    if (annCountdown) clearInterval(annCountdown);
+  }
+
+  window.dismissAnnouncement = function() {
+    
+    fetch(API_BASE + '/api/stats/announcement').then(r => r.json()).then(d => {
+      if (d.announcement) sessionStorage.setItem('ann_dismissed', String(d.announcement.created_at));
+    }).catch(() => {});
+    hideAnnouncement();
+  };
+
+  document.addEventListener('DOMContentLoaded', loadAnnouncement);
+})();
+</script>
+
 <button id="globalThemeBtn" onclick="toggleTheme()" title="Changer le thème" aria-label="Changer le thème">🌙</button>
 
 <div class="page-shell">

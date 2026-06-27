@@ -1,10 +1,10 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  /* ── Palette AK-47 DARK MODE PAR DÉFAUT ── */
-  --black:    #fdfaf6;   /* texte principal (inversé sur fond noir) */
-  --white:    #0a0806;   /* fond principal : noir profond */
+  
+  --black:    #fdfaf6;   
+  --white:    #0a0806;   
 
-  /* Neutres sombres – inspirés métal/bois du logo */
+  
   --gray-50:  #111009;
   --gray-100: #1c1812;
   --gray-200: #2e2820;
@@ -14,14 +14,14 @@
   --gray-700: #d4cfda;
   --gray-900: #fdfaf6;
 
-  /* Accent orange bois – couleurs logo amplifiées */
-  --accent:        #eb8a2c;   /* orange vif logo */
-  --accent-light:  #f4a955;   /* orange clair / hover */
-  --accent-dark:   #c85f28;   /* orange sombre / ombres */
+  
+  --accent:        #eb8a2c;   
+  --accent-light:  #f4a955;   
+  --accent-dark:   #c85f28;   
   --accent-glow:   rgba(235,138,44,.22);
   --accent-glow2:  rgba(235,138,44,.08);
 
-  /* Métal du logo */
+  
   --metal:         #6b6870;
   --metal-light:   #908d98;
 
@@ -138,7 +138,6 @@ input.error { border-color: var(--red); }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── Navbar ── */
 .dash-nav {
   position: sticky; top: 0; z-index: 50;
   background: rgba(10,8,6,.92); backdrop-filter: blur(12px);
@@ -163,7 +162,6 @@ input.error { border-color: var(--red); }
 .dash-btn-sm.logout { color: var(--red); border-color: #7f1d1d; }
 .dash-btn-sm.logout:hover { background: #2a1010; }
 
-/* ── Layout ── */
 .dash-layout { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 52px); }
 .dash-sidebar {
   border-right: 1px solid var(--gray-200); padding: 20px 12px;
@@ -194,7 +192,6 @@ input.error { border-color: var(--red); }
 .dash-title { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 4px; color: var(--accent); }
 .dash-subtitle { font-size: 13px; color: var(--gray-400); margin-bottom: 28px; }
 
-/* ── Stats ── */
 .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 28px; }
 .stat-card {
   background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-200) 100%);
@@ -207,7 +204,6 @@ input.error { border-color: var(--red); }
 .stat-card-change.up   { color: var(--green); }
 .stat-card-change.down { color: var(--red); }
 
-/* ── Chart ── */
 .chart-card { border: 1px solid var(--gray-200); border-radius: 9px; padding: 20px; margin-bottom: 24px; background: var(--gray-100); }
 .chart-title { font-size: 13px; font-weight: 600; margin-bottom: 16px; color: var(--gray-700); }
 .chart-bars { display: flex; align-items: flex-end; gap: 3px; height: 80px; }
@@ -218,7 +214,6 @@ input.error { border-color: var(--red); }
 }
 .chart-bar:hover { opacity: .7; }
 
-/* ── Links ── */
 .links-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
 .link-item {
   display: flex; align-items: center; gap: 10px;
@@ -236,7 +231,6 @@ input.error { border-color: var(--red); }
 .link-action-btn.delete:hover { background: #2a1010; }
 .link-action-btn.delete:hover svg { stroke: var(--red); }
 
-/* ── Profile preview ── */
 .profile-preview { border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; }
 .preview-header {
   padding: 24px; text-align: center; border-bottom: 1px solid var(--gray-200);
@@ -261,7 +255,6 @@ input.error { border-color: var(--red); }
 .preview-link:hover { background: var(--gray-200); border-color: rgba(235,138,44,.3); }
 .preview-link-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
 
-/* ── Table ── */
 .table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .table th {
   text-align: left; font-size: 11px; font-weight: 600;
@@ -288,7 +281,6 @@ input.error { border-color: var(--red); }
   .btn { font-size: 13px; }
 }
 
-/* ── Light theme (optionnel via toggle) ── */
 [data-theme="light"] {
   --black:    #0c0c0c;
   --white:    #fdfaf6;
@@ -327,7 +319,6 @@ input.error { border-color: var(--red); }
 [data-theme="light"] .link-item { background: var(--gray-50); }
 [data-theme="light"] .preview-link { background: var(--gray-50); }
 
-/* ── Theme toggle ── */
 .theme-pill-toggle {
   display: flex; align-items: center; gap: 6px;
   background: var(--gray-200); border: 1px solid var(--gray-300);
@@ -357,7 +348,6 @@ input.error { border-color: var(--red); }
 .theme-pill-toggle[data-active="light"] .tpt-track { background: var(--accent-light); }
 .theme-pill-toggle[data-active="light"] .tpt-thumb { transform: translateX(0); }
 
-/* ── Global theme btn ── */
 #globalThemeBtn {
   position: fixed; bottom: 20px; right: 20px; z-index: 9999;
   width: 40px; height: 40px; border-radius: 50%;
@@ -372,7 +362,6 @@ input.error { border-color: var(--red); }
   box-shadow: 0 4px 18px rgba(235,138,44,.35);
 }
 
-/* ── Discord btn ── */
 .discord-invite-btn {
   display: inline-flex; align-items: center; gap: 7px;
   padding: 8px 16px; border-radius: 8px; background: #5865F2;

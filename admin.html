@@ -62,7 +62,6 @@ body {
   overflow-x: hidden;
 }
 
-/* ─── SIDEBAR ─────────────────────────────────────── */
 .sidebar {
   width: var(--sidebar-w);
   background: var(--surface);
@@ -141,7 +140,6 @@ body {
 }
 .sidebar-footer-btn:hover { background: var(--surface-3); color: var(--text); }
 
-/* ─── MAIN ─────────────────────────────────────── */
 .main {
   margin-left: var(--sidebar-w);
   flex: 1; min-width: 0;
@@ -173,7 +171,6 @@ body {
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
 
-/* ─── STATS ─────────────────────────────────────── */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -214,7 +211,6 @@ body {
   font-weight: 500;
 }
 
-/* ─── CARDS ─────────────────────────────────────── */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -233,7 +229,6 @@ body {
 .card-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
 .card-body { padding: 20px; }
 
-/* ─── TABLES ─────────────────────────────────────── */
 .table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 thead { position: sticky; top: 52px; z-index: 10; }
@@ -261,7 +256,6 @@ tbody tr:hover td { background: var(--surface-2); }
   color: var(--text-3); font-size: 13px;
 }
 
-/* ─── BADGES ─────────────────────────────────────── */
 .badge {
   display: inline-flex; align-items: center;
   padding: 2px 8px; border-radius: 20px;
@@ -272,7 +266,6 @@ tbody tr:hover td { background: var(--surface-2); }
 .badge-error    { background: var(--red-dim); color: var(--red); }
 .badge-action   { background: var(--yellow-dim); color: var(--yellow); }
 
-/* ─── BUTTONS ─────────────────────────────────────── */
 .btn {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 7px 14px; border-radius: var(--radius-sm);
@@ -293,7 +286,6 @@ tbody tr:hover td { background: var(--surface-2); }
 .btn-purple:hover { background: var(--purple); color: #fff; }
 .btn-sm { padding: 4px 10px; font-size: 11px; }
 
-/* ─── INPUTS ─────────────────────────────────────── */
 input, select, textarea {
   background: var(--surface-2);
   border: 1px solid var(--border);
@@ -316,7 +308,6 @@ input:focus, select:focus, textarea:focus {
 .form-input { padding: 9px 12px; width: 100%; }
 .form-group { margin-bottom: 14px; }
 
-/* ─── USER CELL ─────────────────────────────────────── */
 .user-cell { display: flex; align-items: center; gap: 10px; }
 .avatar {
   width: 30px; height: 30px; border-radius: 50%;
@@ -328,7 +319,6 @@ input:focus, select:focus, textarea:focus {
 .discord-tag { font-size: 11px; color: #5865F2; font-weight: 600; }
 .mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
 
-/* ─── GUILD CARD ─────────────────────────────────────── */
 .guild-select-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 14px; }
 .guild-select { padding: 9px 12px; min-width: 260px; }
 .result-box {
@@ -338,7 +328,6 @@ input:focus, select:focus, textarea:focus {
 .result-ok  { background: var(--green-dim); color: var(--green); }
 .result-err { background: var(--red-dim); color: var(--red); }
 
-/* ─── BAN SECTION ─────────────────────────────────────── */
 .ban-form {
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 16px; max-width: 700px;
@@ -350,7 +339,6 @@ input:focus, select:focus, textarea:focus {
   background: var(--surface-2); display: none;
 }
 
-/* ─── ROLES ─────────────────────────────────────── */
 .roles-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -378,7 +366,6 @@ input:focus, select:focus, textarea:focus {
 }
 .role-user-row:last-child { border-bottom: none; }
 
-/* ─── MODALS ─────────────────────────────────────── */
 .modal-overlay {
   display: none; position: fixed; inset: 0;
   background: rgba(0,0,0,.6); z-index: 1000;
@@ -391,6 +378,7 @@ input:focus, select:focus, textarea:focus {
   border: 1px solid var(--border-strong);
   border-radius: 16px; padding: 28px;
   width: 420px; max-width: 95vw;
+  max-height: 90vh; display: flex; flex-direction: column;
   box-shadow: 0 20px 60px rgba(0,0,0,.5);
   animation: modalIn .2s cubic-bezier(.34,1.56,.64,1);
 }
@@ -413,7 +401,6 @@ input:focus, select:focus, textarea:focus {
   display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px;
 }
 
-/* ─── ROLE CHECKBOXES ─────────────────────────────────────── */
 .role-checkbox-list { display: flex; flex-direction: column; gap: 8px; }
 .role-checkbox-item {
   display: flex; align-items: center; gap: 12px;
@@ -431,7 +418,6 @@ input:focus, select:focus, textarea:focus {
 .role-item-label { font-weight: 600; font-size: 13px; }
 .role-item-desc { font-size: 11px; color: var(--text-3); margin-top: 1px; }
 
-/* ─── MOBILE SIDEBAR ─────────────────────────────────────── */
 .sidebar-overlay {
   display: none; position: fixed; inset: 0;
   background: rgba(0,0,0,.6); z-index: 99;
@@ -461,16 +447,13 @@ input:focus, select:focus, textarea:focus {
   th:nth-child(n+5), td:nth-child(n+5) { display: none; }
 }
 
-/* ─── SCROLLBAR ─────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
 
-/* ─── TRANSITIONS ─────────────────────────────────────── */
 button, a, input, select, textarea { transition: all .15s ease; }
 button:active:not(:disabled) { transform: scale(.97); }
 
-/* ─── TOAST ─────────────────────────────────────── */
 .toast-container {
   position: fixed; bottom: 24px; right: 24px; z-index: 2000;
   display: flex; flex-direction: column; gap: 8px; pointer-events: none;
@@ -487,10 +470,10 @@ button:active:not(:disabled) { transform: scale(.97); }
 .toast.err { border-color: var(--red); color: var(--red); background: var(--red-dim); }
 @keyframes toastIn { from { opacity: 0; transform: translateX(20px); } }
 </style>
+<script>const MAINTENANCE_EXEMPT = true;</script>
 </head>
 <body>
 
-<!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-logo">
     <div>
@@ -538,6 +521,12 @@ button:active:not(:disabled) { transform: scale(.97); }
     <button class="nav-item" onclick="openBroadcastModal()" id="nav-broadcast">
       <span class="nav-icon">📧</span> Mail groupé
     </button>
+    <button class="nav-item" onclick="switchTab('announcement')" id="nav-announcement">
+      <span class="nav-icon">📢</span> Annonce
+    </button>
+    <button class="nav-item" onclick="switchTab('maintenance')" id="nav-maintenance">
+      <span class="nav-icon">🔧</span> Maintenance
+    </button>
   </nav>
 
   <div class="sidebar-footer">
@@ -548,7 +537,6 @@ button:active:not(:disabled) { transform: scale(.97); }
 
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
-<!-- MAIN -->
 <main class="main">
   <header class="topbar">
     <div style="display:flex;align-items:center;gap:12px;">
@@ -562,7 +550,7 @@ button:active:not(:disabled) { transform: scale(.97); }
 
   <div class="content">
 
-    <!-- ─── OVERVIEW ─── -->
+    
     <div class="tab-panel active" id="tab-overview">
       <div class="stats-grid" id="statsGrid">
         <div class="stat-card">
@@ -597,7 +585,7 @@ button:active:not(:disabled) { transform: scale(.97); }
         </div>
       </div>
 
-      <!-- Recent logs on overview -->
+      
       <div class="card">
         <div class="card-header">
           <div>
@@ -612,7 +600,7 @@ button:active:not(:disabled) { transform: scale(.97); }
       </div>
     </div>
 
-    <!-- ─── LOGS ─── -->
+    
     <div class="tab-panel" id="tab-logs">
       <div class="card">
         <div class="card-header">
@@ -637,7 +625,7 @@ button:active:not(:disabled) { transform: scale(.97); }
       </div>
     </div>
 
-    <!-- ─── USERS ─── -->
+    
     <div class="tab-panel" id="tab-users">
       <div class="card">
         <div class="card-header">
@@ -655,7 +643,7 @@ button:active:not(:disabled) { transform: scale(.97); }
       </div>
     </div>
 
-    <!-- ─── ROLES ─── -->
+    
     <div class="tab-panel" id="tab-roles">
       <div class="card" style="margin-bottom:20px;">
         <div class="card-header">
@@ -672,7 +660,7 @@ button:active:not(:disabled) { transform: scale(.97); }
       </div>
     </div>
 
-    <!-- ─── BANS ─── -->
+    
     <div class="tab-panel" id="tab-bans">
       <div class="card">
         <div class="card-header">
@@ -709,7 +697,7 @@ button:active:not(:disabled) { transform: scale(.97); }
       </div>
     </div>
 
-    <!-- ─── DISCORD ─── -->
+    
     <div class="tab-panel" id="tab-discord">
       <div class="card">
         <div class="card-header">
@@ -732,20 +720,147 @@ button:active:not(:disabled) { transform: scale(.97); }
       </div>
     </div>
 
-  </div><!-- /content -->
+  </div>
 </main>
 
-<!-- TOAST CONTAINER -->
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- ROLE MODAL -->
+    
+    <div class="tab-panel" id="tab-announcement">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">📢 Annonce globale</div>
+            <div class="card-desc">Affiche une bande en haut du site pour tous les visiteurs</div>
+          </div>
+        </div>
+
+        
+        <div id="ann-active-block" style="display:none;margin-bottom:20px;padding:14px 16px;border-radius:10px;border:1.5px solid var(--border-strong);background:var(--surface-2);">
+          <div style="font-size:12px;color:var(--text-2);margin-bottom:6px;font-weight:600;">ANNONCE EN COURS</div>
+          <div id="ann-active-preview" style="font-size:14px;font-weight:600;margin-bottom:8px;"></div>
+          <div id="ann-active-meta" style="font-size:12px;color:var(--text-3);"></div>
+          <button onclick="deleteAnnouncement()" class="btn btn-red" style="margin-top:12px;font-size:12px;padding:6px 14px;">🗑 Supprimer l'annonce</button>
+        </div>
+        <div id="ann-none-block" style="font-size:13px;color:var(--text-3);margin-bottom:20px;display:none;">Aucune annonce active.</div>
+
+        
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div class="form-group">
+            <label class="form-label">Message</label>
+            <input class="form-input" id="ann-message" type="text" placeholder="Ex: Maintenance prévue ce soir à 22h..." maxlength="200"/>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <div class="form-group" style="flex:1;min-width:160px;">
+              <label class="form-label">Cible</label>
+              <select class="form-input" id="ann-target">
+                <option value="all">Tout le site</option>
+                <option value="dashboard">Dashboard uniquement</option>
+                <option value="public">Pages publiques uniquement</option>
+              </select>
+            </div>
+            <div class="form-group" style="flex:1;min-width:160px;">
+              <label class="form-label">Durée</label>
+              <select class="form-input" id="ann-duration">
+                <option value="0">Permanent (jusqu'à suppression)</option>
+                <option value="5">5 secondes</option>
+                <option value="10">10 secondes</option>
+                <option value="30">30 secondes</option>
+                <option value="60">1 minute</option>
+                <option value="300">5 minutes</option>
+                <option value="600">10 minutes</option>
+                <option value="1800">30 minutes</option>
+                <option value="3600">1 heure</option>
+              </select>
+            </div>
+            <div class="form-group" style="min-width:120px;">
+              <label class="form-label">Couleur</label>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">
+                <button onclick="selectAnnColor(this,'#5865F2')" class="ann-color-btn" data-color="#5865F2" style="background:#5865F2;width:28px;height:28px;border-radius:6px;border:2px solid transparent;cursor:pointer;" title="Bleu Discord"></button>
+                <button onclick="selectAnnColor(this,'#10b981')" class="ann-color-btn" data-color="#10b981" style="background:#10b981;width:28px;height:28px;border-radius:6px;border:2px solid transparent;cursor:pointer;" title="Vert"></button>
+                <button onclick="selectAnnColor(this,'#f59e0b')" class="ann-color-btn" data-color="#f59e0b" style="background:#f59e0b;width:28px;height:28px;border-radius:6px;border:2px solid transparent;cursor:pointer;" title="Orange"></button>
+                <button onclick="selectAnnColor(this,'#ef4444')" class="ann-color-btn" data-color="#ef4444" style="background:#ef4444;width:28px;height:28px;border-radius:6px;border:2px solid transparent;cursor:pointer;" title="Rouge"></button>
+                <button onclick="selectAnnColor(this,'#8b5cf6')" class="ann-color-btn" data-color="#8b5cf6" style="background:#8b5cf6;width:28px;height:28px;border-radius:6px;border:2px solid transparent;cursor:pointer;" title="Violet"></button>
+                <button onclick="selectAnnColor(this,'#000000')" class="ann-color-btn" data-color="#000000" style="background:#000;width:28px;height:28px;border-radius:6px;border:2px solid transparent;cursor:pointer;" title="Noir"></button>
+              </div>
+              <input type="hidden" id="ann-color" value="#5865F2"/>
+            </div>
+          </div>
+          
+          <div>
+            <label class="form-label" style="margin-bottom:6px;">Aperçu</label>
+            <div id="ann-preview-bar" style="padding:10px 16px;border-radius:8px;background:#5865F2;color:#fff;font-size:13px;font-weight:600;text-align:center;transition:background .2s;">
+              Tapez un message pour voir l'aperçu
+            </div>
+          </div>
+          <div id="ann-result" style="min-height:16px;font-size:13px;"></div>
+          <div>
+            <button class="btn btn-purple" onclick="sendAnnouncement()" style="padding:10px 24px;">📢 Publier l'annonce</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="tab-panel" id="tab-maintenance">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">🔧 Mode maintenance</div>
+            <div class="card-desc">Redirige tous les visiteurs vers la page de maintenance (admins exemptés)</div>
+          </div>
+        </div>
+
+        
+        <div id="maint-status-block" style="display:flex;align-items:center;gap:12px;padding:16px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface-2);margin-bottom:20px;">
+          <div id="maint-dot" style="width:12px;height:12px;border-radius:50%;background:var(--green);flex-shrink:0;"></div>
+          <div>
+            <div id="maint-status-label" style="font-weight:700;font-size:14px;">Site en ligne</div>
+            <div id="maint-status-meta" style="font-size:12px;color:var(--text-3);margin-top:2px;">Aucune maintenance en cours</div>
+          </div>
+          <div style="margin-left:auto;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <div id="maint-toggle-wrap" style="position:relative;width:44px;height:24px;">
+                <input type="checkbox" id="maint-toggle" onchange="toggleMaintenance(this)" style="opacity:0;width:0;height:0;position:absolute;"/>
+                <span id="maint-toggle-track" style="position:absolute;inset:0;border-radius:24px;background:var(--border-strong);transition:background .2s;cursor:pointer;" onclick="document.getElementById('maint-toggle').click()"></span>
+                <span id="maint-toggle-thumb" style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s;pointer-events:none;"></span>
+              </div>
+              <span id="maint-toggle-label" style="font-size:13px;font-weight:600;">Désactivé</span>
+            </label>
+          </div>
+        </div>
+
+        
+        <div class="form-group">
+          <label class="form-label">Message affiché aux visiteurs</label>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+            <button type="button" class="maint-preset" onclick="setMaintPreset('Le site est temporairement indisponible. On revient très bientôt.')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface-2);cursor:pointer;color:var(--text-2);">Général</button>
+            <button type="button" class="maint-preset" onclick="setMaintPreset('Maintenance technique en cours. Merci de revenir dans quelques minutes.')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface-2);cursor:pointer;color:var(--text-2);">Technique</button>
+            <button type="button" class="maint-preset" onclick="setMaintPreset('Mise à jour en cours. Le site sera de retour très prochainement.')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface-2);cursor:pointer;color:var(--text-2);">Mise à jour</button>
+            <button type="button" class="maint-preset" onclick="setMaintPreset('Problème technique détecté. Nos équipes travaillent à le résoudre.')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface-2);cursor:pointer;color:var(--text-2);">Incident</button>
+          </div>
+          <textarea class="form-input" id="maint-message" rows="3" style="resize:vertical;" placeholder="Le site est temporairement indisponible. On revient très bientôt.">Le site est temporairement indisponible. On revient très bientôt.</textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Raison interne <span style="font-size:11px;color:var(--text-3);font-weight:400;">(visible uniquement dans le panel admin)</span></label>
+          <input class="form-input" id="maint-reason" type="text" placeholder="Ex: déploiement v2.1, migration BDD, fix critique..." maxlength="200"/>
+        </div>
+        <div id="maint-result" style="min-height:16px;font-size:13px;margin-top:8px;"></div>
+        <div style="margin-top:12px;padding:12px 14px;border-radius:8px;background:var(--yellow-dim);border:1px solid var(--yellow);font-size:12px;color:var(--yellow);">
+          ⚠️ Les admins connectés ne sont <strong>pas</strong> redirigés et peuvent continuer à accéder au site normalement.
+        </div>
+      </div>
+    </div>
+
 <div class="modal-overlay" id="roleModal">
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title">Rôles · <span id="roleModalTitle"></span></div>
       <button class="modal-close" onclick="closeRoleModal()">✕</button>
     </div>
-    <div class="role-checkbox-list" id="roleCheckboxes"></div>
+    <div style="overflow-y: auto; flex: 1; margin: 0 -4px; padding: 0 4px;">
+      <div class="role-checkbox-list" id="roleCheckboxes"></div>
+    </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeRoleModal()">Annuler</button>
       <button class="btn btn-purple" onclick="saveRoles()">Sauvegarder</button>
@@ -753,7 +868,6 @@ button:active:not(:disabled) { transform: scale(.97); }
   </div>
 </div>
 
-<!-- BROADCAST MODAL -->
 <div class="modal-overlay" id="broadcastModal">
   <div class="modal modal-lg">
     <div class="modal-header">
@@ -791,7 +905,6 @@ const username = localStorage.getItem('username');
 
 if (!token) window.location.href = '/login';
 
-// ─── INIT ───
 document.getElementById('sidebarName').textContent = username || '—';
 document.getElementById('sidebarAvatar').textContent = (username || '?').charAt(0).toUpperCase();
 
@@ -800,10 +913,8 @@ document.getElementById('sidebarAvatar').textContent = (username || '?').charAt(
   document.getElementById('themeBtn').textContent = t === 'dark' ? '☀️' : '🌙';
 })();
 
-// ─── STATE ───
 let allLogs = [], allUsers = [], currentTab = 'overview';
 
-// ─── TABS ───
 const TAB_TITLES = {
   overview: 'Tableau de bord', logs: 'Journal d\'activité',
   users: 'Utilisateurs', roles: 'Rôles', bans: 'Bans', discord: 'Discord',
@@ -817,10 +928,11 @@ function switchTab(tab) {
   if (navEl) navEl.classList.add('active');
   document.getElementById('pageHeading').textContent = TAB_TITLES[tab] || tab;
   if (tab === 'roles') renderRolesTab();
+  if (tab === 'announcement') loadAnnouncementTab();
+  if (tab === 'maintenance') loadMaintenanceTab();
   closeSidebar();
 }
 
-// ─── SIDEBAR ───
 function openSidebar() {
   document.getElementById('sidebar').classList.add('open');
   document.getElementById('sidebarOverlay').classList.add('open');
@@ -830,7 +942,6 @@ function closeSidebar() {
   document.getElementById('sidebarOverlay').classList.remove('open');
 }
 
-// ─── TOAST ───
 function toast(msg, type = 'ok') {
   const c = document.getElementById('toastContainer');
   const el = document.createElement('div');
@@ -840,7 +951,6 @@ function toast(msg, type = 'ok') {
   setTimeout(() => el.remove(), 3500);
 }
 
-// ─── THEME ───
 function toggleTheme() {
   const cur = document.documentElement.getAttribute('data-theme') || 'dark';
   const next = cur === 'dark' ? 'light' : 'dark';
@@ -849,7 +959,6 @@ function toggleTheme() {
   document.getElementById('themeBtn').textContent = next === 'dark' ? '☀️' : '🌙';
 }
 
-// ─── FORMAT ───
 function fmt(ts) {
   if (!ts) return '—';
   const d = new Date(ts * 1000);
@@ -935,7 +1044,7 @@ function renderUsers(users) {
         <td class="mono" style="font-size:11px;color:var(--text-3);white-space:nowrap;">${fmt(u.created_at)}</td>
         <td>
           <div style="display:flex;gap:6px;">
-            <a class="btn btn-ghost btn-sm" href="https://ak-47.fr/${esc(u.username)}" target="_blank">👁</a>
+            <a class="btn btn-ghost btn-sm" href="https:
             <button class="btn btn-purple btn-sm"
               onclick="openRoleModal(this)"
               data-uid="${esc(u.id)}"
@@ -954,7 +1063,6 @@ function filterUsers(q) {
   renderUsers(s ? allUsers.filter(u => (u.username||'').includes(s)||(u.email||'').includes(s)||(u.display_name||'').includes(s)) : allUsers);
 }
 
-// ─── ROLE MODAL ───
 let roleModalUser = null;
 function openRoleModal(btn) {
   const id = btn.dataset.uid, uname = btn.dataset.uname;
@@ -988,7 +1096,6 @@ async function saveRoles() {
   else toast('Erreur lors de la sauvegarde', 'err');
 }
 
-// ─── BROADCAST MODAL ───
 function openBroadcastModal() { document.getElementById('broadcastModal').classList.add('open'); }
 function closeBroadcastModal() { document.getElementById('broadcastModal').classList.remove('open'); }
 async function sendBroadcast() {
@@ -1016,7 +1123,6 @@ async function sendBroadcast() {
   finally { btn.disabled = false; btn.textContent = 'Envoyer'; }
 }
 
-// ─── ROLES TAB ───
 async function renderRolesTab() {
   const container = document.getElementById('rolesContainer');
   container.innerHTML = '<div class="loading-state">Chargement...</div>';
@@ -1045,7 +1151,6 @@ async function renderRolesTab() {
     </div>`).join('');
 }
 
-// ─── BANS ───
 async function lookupBan() {
   const uname = document.getElementById('banUsername').value.trim();
   if (!uname) return;
@@ -1088,7 +1193,6 @@ async function unbanUser() {
   if (r.ok) { lookupBan(); toast('Utilisateur débanni'); }
 }
 
-// ─── DELETE USER ───
 async function deleteUserAdmin(id, uname) {
   if (!confirm(`Supprimer définitivement @${uname} ? Cette action est irréversible.`)) return;
   const r = await fetch(`${API}/api/admin/users/${id}`, { method: 'DELETE', headers: { Authorization: 'Bearer ' + token } });
@@ -1096,7 +1200,6 @@ async function deleteUserAdmin(id, uname) {
   else { const d = await r.json(); toast(d.error || 'Erreur', 'err'); }
 }
 
-// ─── LOAD ALL ───
 async function loadAll() {
   try {
     const [statsR, logsR, usersR] = await Promise.all([
@@ -1130,7 +1233,6 @@ async function loadAll() {
   }
 }
 
-// ─── GUILD ───
 async function loadGuilds() {
   try {
     const r = await fetch(`${API}/api/admin/bot-guilds`, { headers: { Authorization: 'Bearer ' + token } });
@@ -1178,9 +1280,173 @@ async function forceJoin() {
   btn.disabled = false; btn.textContent = '🚀 Faire rejoindre tous';
 }
 
-// ─── START ───
 loadAll();
 loadGuilds();
+
+function setMaintPreset(text) {
+  document.getElementById('maint-message').value = text;
+}
+async function loadMaintenanceTab() {
+  try {
+    const r = await fetch(`${API}/api/admin/maintenance`, { headers: { Authorization: 'Bearer ' + token } });
+    const d = await r.json();
+    const m = d.maintenance;
+    const toggle = document.getElementById('maint-toggle');
+    const track = document.getElementById('maint-toggle-track');
+    const thumb = document.getElementById('maint-toggle-thumb');
+    const dot = document.getElementById('maint-dot');
+    const label = document.getElementById('maint-status-label');
+    const meta = document.getElementById('maint-status-meta');
+    const toggleLabel = document.getElementById('maint-toggle-label');
+
+    if (m && m.enabled) {
+      toggle.checked = true;
+      track.style.background = '#ef4444';
+      thumb.style.transform = 'translateX(20px)';
+      dot.style.background = '#ef4444';
+      label.textContent = '⚠️ Maintenance active';
+      label.style.color = '#ef4444';
+      meta.textContent = `Activée par @${m.started_by || '?'}${m.reason ? ' · Raison : ' + m.reason : ''} — Message : "${m.message}"`;
+      if (m.reason) document.getElementById('maint-reason').value = m.reason;
+      toggleLabel.textContent = 'Activé';
+      if (document.getElementById('maint-message').value === 'Le site est temporairement indisponible. On revient très bientôt.') {
+        document.getElementById('maint-message').value = m.message || '';
+      }
+    } else {
+      toggle.checked = false;
+      track.style.background = 'var(--border-strong)';
+      thumb.style.transform = 'translateX(0)';
+      dot.style.background = 'var(--green)';
+      label.textContent = 'Site en ligne';
+      label.style.color = '';
+      meta.textContent = 'Aucune maintenance en cours';
+      toggleLabel.textContent = 'Désactivé';
+    }
+  } catch(e) { console.error(e); }
+}
+
+async function toggleMaintenance(checkbox) {
+  const enabled = checkbox.checked;
+  const message = document.getElementById('maint-message').value.trim()
+    || 'Le site est temporairement indisponible. On revient très bientôt.';
+  const reason = document.getElementById('maint-reason').value.trim();
+  const resultEl = document.getElementById('maint-result');
+
+  if (enabled && !confirm('⚠️ Activer le mode maintenance ? Tous les visiteurs seront redirigés.')) {
+    checkbox.checked = false;
+    return;
+  }
+
+  try {
+    const r = await fetch(`${API}/api/admin/maintenance`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ enabled, message, reason }),
+    });
+    const d = await r.json();
+    if (d.ok) {
+      toast(enabled ? '🔧 Maintenance activée' : '✅ Site remis en ligne');
+      resultEl.innerHTML = enabled
+        ? '<span style="color:#ef4444;">🔧 Mode maintenance activé — les visiteurs sont redirigés</span>'
+        : '<span style="color:var(--green);">✅ Site remis en ligne</span>';
+      setTimeout(() => { resultEl.innerHTML = ''; loadMaintenanceTab(); }, 2000);
+    }
+  } catch {
+    toast('Erreur réseau');
+    checkbox.checked = !enabled;
+  }
+}
+
+let selectedAnnColor = '#5865F2';
+
+function selectAnnColor(btn, color) {
+  selectedAnnColor = color;
+  document.getElementById('ann-color').value = color;
+  document.querySelectorAll('.ann-color-btn').forEach(b => b.style.border = '2px solid transparent');
+  btn.style.border = '2px solid #fff';
+  btn.style.outline = '2px solid ' + color;
+  updateAnnPreview();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  
+  const firstBtn = document.querySelector('.ann-color-btn');
+  if (firstBtn) selectAnnColor(firstBtn, '#5865F2');
+
+  const msgInput = document.getElementById('ann-message');
+  if (msgInput) msgInput.addEventListener('input', updateAnnPreview);
+});
+
+function updateAnnPreview() {
+  const msg = document.getElementById('ann-message')?.value || '';
+  const bar = document.getElementById('ann-preview-bar');
+  if (!bar) return;
+  bar.style.background = selectedAnnColor;
+  bar.textContent = msg || 'Tapez un message pour voir l\'aperçu';
+}
+
+async function loadAnnouncementTab() {
+  try {
+    const r = await fetch(`${API}/api/admin/announcement`, { headers: { Authorization: 'Bearer ' + token } });
+    const d = await r.json();
+    const ann = d.announcement;
+    const activeBlock = document.getElementById('ann-active-block');
+    const noneBlock = document.getElementById('ann-none-block');
+    if (ann) {
+      activeBlock.style.display = 'block';
+      noneBlock.style.display = 'none';
+      activeBlock.style.borderColor = ann.color || '#5865F2';
+      document.getElementById('ann-active-preview').textContent = ann.message;
+      document.getElementById('ann-active-preview').style.color = ann.color || '#5865F2';
+      const targets = { all: 'Tout le site', dashboard: 'Dashboard uniquement', public: 'Pages publiques' };
+      const expStr = ann.expires_at ? `· Expire dans ${Math.max(0,Math.round((ann.expires_at - Date.now())/1000))}s` : '· Permanente';
+      document.getElementById('ann-active-meta').textContent = `Cible : ${targets[ann.target]||ann.target} ${expStr}`;
+    } else {
+      activeBlock.style.display = 'none';
+      noneBlock.style.display = 'block';
+    }
+  } catch(e) { console.error(e); }
+}
+
+async function sendAnnouncement() {
+  const message = document.getElementById('ann-message').value.trim();
+  const target = document.getElementById('ann-target').value;
+  const duration = parseInt(document.getElementById('ann-duration').value);
+  const color = document.getElementById('ann-color').value || selectedAnnColor;
+  const resultEl = document.getElementById('ann-result');
+
+  if (!message) { resultEl.innerHTML = '<span style="color:var(--red);">❌ Message requis</span>'; return; }
+
+  try {
+    const r = await fetch(`${API}/api/admin/announcement`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ message, target, duration, color }),
+    });
+    const d = await r.json();
+    if (d.ok) {
+      resultEl.innerHTML = '<span style="color:var(--green);">✅ Annonce publiée !</span>';
+      document.getElementById('ann-message').value = '';
+      updateAnnPreview();
+      setTimeout(() => { resultEl.innerHTML = ''; loadAnnouncementTab(); }, 1500);
+      toast('Annonce publiée !');
+    } else {
+      resultEl.innerHTML = `<span style="color:var(--red);">❌ ${d.error}</span>`;
+    }
+  } catch { resultEl.innerHTML = '<span style="color:var(--red);">❌ Erreur réseau</span>'; }
+}
+
+async function deleteAnnouncement() {
+  if (!confirm('Supprimer l\'annonce en cours ?')) return;
+  try {
+    const r = await fetch(`${API}/api/admin/announcement`, {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer ' + token },
+    });
+    const d = await r.json();
+    if (d.ok) { toast('Annonce supprimée'); loadAnnouncementTab(); }
+  } catch { toast('Erreur réseau'); }
+}
 </script>
 </body>
 </html>
