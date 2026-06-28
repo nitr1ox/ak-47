@@ -474,7 +474,7 @@ window.onunhandledrejection = function(e) {
   if (CURRENT_PAGE) return;
   const API_BASE = typeof API !== 'undefined' ? API : 'https://ak47-backend.onrender.com';
 
-  const token = localStorage.getItem('auth_token') || localStorage.getItem('token');
+  const token = localStorage.getItem('token');
   fetch(API_BASE + '/api/stats/maintenance')
     .then(r => r.json())
     .then(d => {
@@ -2402,7 +2402,7 @@ async function toggleBadgeRole(roleId) {
   }
   const newVal = JSON.stringify(hidden);
   try {
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem('token');
     await fetch(`${API}/api/user/profile`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
