@@ -34,6 +34,33 @@
     .lb-views { font-size:13px;font-weight:600;color:var(--gray-700); }
     .empty { text-align:center;padding:48px 24px;color:var(--gray-400);font-size:14px; }
     .loading { text-align:center;padding:48px 24px;color:var(--gray-400);font-size:14px; }
+
+    .tabs { display:flex;gap:4px;margin-bottom:32px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:10px;padding:4px; }
+    .tab-btn { flex:1;padding:8px 0;font-size:13px;font-weight:600;border:none;background:transparent;border-radius:7px;cursor:pointer;color:var(--gray-500);transition:all .15s; }
+    .tab-btn.active { background:var(--white);color:var(--black);box-shadow:0 1px 4px rgba(0,0,0,.08); }
+
+    .role-filters { display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px; }
+    .role-btn { display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:999px;border:1px solid var(--gray-200);background:transparent;font-size:12px;font-weight:600;cursor:pointer;color:var(--gray-600);transition:all .15s; }
+    .role-btn:hover { border-color:var(--gray-400); }
+    .role-btn.active { background:var(--black);color:var(--white);border-color:var(--black); }
+
+    .role-section { margin-bottom:28px; }
+    .role-section-title { font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gray-400);margin-bottom:10px;display:flex;align-items:center;gap:8px; }
+    .role-section-title span { font-size:16px; }
+    .role-users { display:flex;flex-direction:column;gap:4px; }
+    .role-user-row { display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;background:var(--gray-50);border:1px solid var(--gray-100);text-decoration:none;color:inherit;transition:background .12s; }
+    .role-user-row:hover { background:var(--gray-100); }
+    .role-user-av { width:32px;height:32px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0; }
+    .role-user-name { font-size:13px;font-weight:600; }
+    .role-user-handle { font-size:11px;color:var(--gray-400); }
+    .role-empty { text-align:center;padding:28px;color:var(--gray-300);font-size:13px;border:1px dashed var(--gray-200);border-radius:10px; }
+    .see-more-btn { margin-top:8px;width:100%;padding:9px;border-radius:8px;border:1px solid var(--gray-200);background:transparent;font-size:12px;font-weight:600;color:var(--gray-500);cursor:pointer;transition:all .15s; }
+    .see-more-btn:hover { background:var(--gray-50);color:var(--black);border-color:var(--gray-400); }
+
+    [data-theme="dark"] .tab-btn.active { background:#1a1a1a; }
+    [data-theme="dark"] .role-btn.active { background:#fff;color:#000;border-color:#fff; }
+    [data-theme="dark"] .role-user-row { background:#111;border-color:#222; }
+    [data-theme="dark"] .role-user-row:hover { background:#1a1a1a; }
     @media (max-width: 500px) {
       .lb-nav { padding: 0 14px; }
       .page { padding: 36px 14px; }
@@ -316,21 +343,121 @@ body.has-announcement { padding-top: 44px; }
   <div class="page-tag">Classement</div>
   <h1>Top profils</h1>
   <p class="subtitle">Les profils les plus visités sur ak-47.fr.</p>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('leaderboard', this)">🏆 Classement</button>
+    <button class="tab-btn" onclick="showTab('list', this)">📋 Liste</button>
+  </div>
+
+  <div id="tab-leaderboard">
   <div class="lb-table">
     <div class="lb-header">
       <span>#</span><span>Utilisateur</span><span>Vues</span>
     </div>
     <div id="lbBody"><div class="loading">Chargement…</div></div>
   </div>
+  </div>
+
+  <div id="tab-list" style="display:none;">
+    <div class="role-filters" id="roleFilters"></div>
+    <div id="listBody"><div class="loading">Chargement…</div></div>
+  </div>
 </div>
 <script>
   const rankClass = r => r===1?'gold':r===2?'silver':r===3?'bronze':'';
   const rankIcon  = r => r===1?'🥇':r===2?'🥈':r===3?'🥉':r;
-
   function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+  const ROLES_DEF = [
+    { id:'owner',   label:'Owner',      emoji:'👑' },
+    { id:'staff',   label:'Staff',      emoji:'🛡️' },
+    { id:'helper',  label:'Helper',     emoji:'🤝' },
+    { id:'verified',label:'Vérifié',    emoji:'✅' },
+    { id:'premium', label:'Premium',    emoji:'⭐' },
+    { id:'donor',   label:'Donor',      emoji:'💜' },
+    { id:'booster', label:'Booster',    emoji:'🚀' },
+    { id:'partner', label:'Partenaire', emoji:'🤜' },
+  ];
+
+  let allUsers = [];
+  let activeRole = null;
+
+  function showTab(name, btn) {
+    document.getElementById('tab-leaderboard').style.display = name === 'leaderboard' ? '' : 'none';
+    document.getElementById('tab-list').style.display = name === 'list' ? '' : 'none';
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (name === 'list' && allUsers.length) renderList(activeRole);
+  }
+
+  function buildRoleFilters() {
+    const container = document.getElementById('roleFilters');
+    container.innerHTML = '';
+    ROLES_DEF.forEach(r => {
+      const hasUsers = allUsers.some(u => { try { return JSON.parse(u.roles||'[]').includes(r.id); } catch { return false; } });
+      if (!hasUsers) return;
+      const btn = document.createElement('button');
+      btn.className = 'role-btn' + (activeRole === r.id ? ' active' : '');
+      btn.innerHTML = `${r.emoji} ${r.label}`;
+      btn.onclick = () => {
+        activeRole = activeRole === r.id ? null : r.id;
+        document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+        if (activeRole) btn.classList.add('active');
+        renderList(activeRole);
+      };
+      container.appendChild(btn);
+    });
+  }
+
+  function renderList(roleFilter) {
+    const body = document.getElementById('listBody');
+    const rolesToShow = roleFilter ? ROLES_DEF.filter(r => r.id === roleFilter) : ROLES_DEF;
+    body.innerHTML = '';
+    rolesToShow.forEach(r => {
+      const users = allUsers.filter(u => { try { return JSON.parse(u.roles||'[]').includes(r.id); } catch { return false; } });
+      if (!users.length) return;
+      const section = document.createElement('div');
+      section.className = 'role-section';
+      section.dataset.role = r.id;
+      section.dataset.shown = '10';
+      section.dataset.total = users.length;
+      section.innerHTML = `<div class="role-section-title"><span>${r.emoji}</span>${r.label} <span style="color:var(--gray-300);font-weight:400">(${users.length})</span></div><div class="role-users" id="ru-${r.id}"></div><div id="rm-${r.id}"></div>`;
+      body.appendChild(section);
+      renderRoleUsers(r.id, users, 10);
+    });
+    if (!body.innerHTML) body.innerHTML = '<div class="role-empty">Aucun membre avec ce rôle.</div>';
+  }
+
+  function renderRoleUsers(roleId, users, shown) {
+    const container = document.getElementById('ru-' + roleId);
+    const moreWrap  = document.getElementById('rm-' + roleId);
+    container.innerHTML = users.slice(0, shown).map(u => {
+      const initials = esc((u.display_name || u.username).slice(0,2).toUpperCase());
+      const color = /^#[0-9a-fA-F]{3,6}$/.test(u.avatar_color||'') ? u.avatar_color : '#18181b';
+      return `<a href="/${esc(u.username)}" class="role-user-row">
+        <div class="role-user-av" style="background:${color}">${initials}</div>
+        <div>
+          <div class="role-user-name">${esc(u.display_name || u.username)}</div>
+          <div class="role-user-handle">ak-47.fr/${esc(u.username)}</div>
+        </div>
+      </a>`;
+    }).join('');
+
+    moreWrap.innerHTML = '';
+    if (shown < users.length) {
+      const next = shown < 100 ? 100 : shown + 100;
+      const label = next >= users.length ? `Voir tous (${users.length})` : `Voir plus (${Math.min(next, users.length)} / ${users.length})`;
+      const btn = document.createElement('button');
+      btn.className = 'see-more-btn';
+      btn.textContent = label;
+      btn.onclick = () => renderRoleUsers(roleId, users, Math.min(next, users.length));
+      moreWrap.appendChild(btn);
+    }
+  }
+
   fetch('https://ak47-backend.onrender.com/api/leaderboard')
     .then(r => r.json())
     .then(users => {
+      allUsers = users;
       if (!users.length) {
         document.getElementById('lbBody').innerHTML = '<div class="empty">Aucun profil pour le moment. Sois le premier !</div>';
         return;
@@ -351,6 +478,7 @@ body.has-announcement { padding-top: 44px; }
           <div class="lb-views">${u.total_views.toLocaleString('fr-FR')}</div>
         </a>`;
       }).join('');
+      buildRoleFilters();
     })
     .catch(() => {
       document.getElementById('lbBody').innerHTML = '<div class="empty">Impossible de charger le classement.</div>';

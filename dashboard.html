@@ -285,7 +285,6 @@
     .media-lib-src-badge { position:absolute; top:6px; right:6px; font-size:10px; background:rgba(99,102,241,.85); color:#fff; padding:2px 5px; border-radius:4px; pointer-events:none; }
   </style>
 
-  
   <style>
     body { background: var(--gray-50); }
 
@@ -319,7 +318,6 @@
     .dash-title { font-size: 24px; letter-spacing: -0.7px; }
     .dash-subtitle { margin-bottom: 32px; }
 
-    
     .stats-row { gap: 14px; }
     .stat-card {
       background: var(--white); border: 1px solid var(--gray-100);
@@ -336,7 +334,6 @@
     .stat-card-val { font-size: 26px; letter-spacing: -0.8px; }
     .stat-card-label { margin-top: 4px; font-weight: 500; }
 
-    
     .section-card {
       background: var(--white); border: 1px solid var(--gray-100);
       border-radius: 16px; padding: 24px;
@@ -576,7 +573,6 @@ body.has-announcement { padding-top: 44px; }
     const timerEl = document.getElementById('ann-timer');
     if (!el || !msgEl) return;
 
-    
     const dismissed = sessionStorage.getItem('ann_dismissed');
     if (dismissed === String(ann.created_at)) return;
 
@@ -585,7 +581,6 @@ body.has-announcement { padding-top: 44px; }
     msgEl.textContent = ann.message;
     document.body.classList.add('has-announcement');
 
-    
     if (ann.expires_at) {
       let remaining = Math.max(0, Math.floor((ann.expires_at - Date.now()) / 1000));
       function updateTimer() {
@@ -1012,7 +1007,6 @@ body.has-announcement { padding-top: 44px; }
         </div>
       </div>
 
-      
       <div class="mblock" id="mblock-library" style="margin-top:12px;">
         <div class="mblock-head" onclick="toggleMblock('library')">
           <div class="mblock-icon" style="background:var(--gray-100);font-size:18px;">📂</div>
@@ -1636,12 +1630,10 @@ body.has-announcement { padding-top: 44px; }
       </div>
     </div>
 
-    
     <div class="tab-content" id="tab-badges">
       <div class="dash-title">Badges</div>
       <div class="dash-subtitle">Tous les insignes du site — découvrez comment débloquer les vôtres.</div>
 
-      
       <div class="section-card" id="badgesSummaryCard">
         <div class="section-card-title">Vos badges</div>
         <div style="font-size:12px;color:var(--gray-500);margin-bottom:14px;">
@@ -1653,7 +1645,6 @@ body.has-announcement { padding-top: 44px; }
         </div>
       </div>
 
-      
       <div class="section-card">
         <div class="section-card-title" style="margin-bottom:4px;">Tous les insignes</div>
         <div style="font-size:12px;color:var(--gray-500);margin-bottom:18px;">
@@ -2193,7 +2184,6 @@ function renderBadgesTab() {
   let hiddenRoles = [];
   try { hiddenRoles = JSON.parse(userData.hidden_roles || '[]'); } catch {}
 
-  
   const myContainer = document.getElementById('myBadgesContainer');
   const myEmpty = document.getElementById('myBadgesEmpty');
   document.getElementById('badgesUnlockCount').textContent = userRoles.length;
@@ -2227,7 +2217,6 @@ function renderBadgesTab() {
     }).join('');
   }
 
-  
   const grid = document.getElementById('allBadgesGrid');
   grid.innerHTML = ALL_BADGES_DEF.map(def => {
     const owned = userRoles.includes(def.id);
@@ -2533,7 +2522,10 @@ function updatePreview() {
 
 function renderLinks() {
   const list = el('linksList');
-  el('linkCount').textContent = `(${pendingLinks.length}/20)`;
+  let userRoles = []; try { userRoles = JSON.parse(userData.roles || '[]'); } catch {}
+  const isPremium = userRoles.some(r => ['premium', 'owner', 'staff'].includes(r));
+  const maxLinks = isPremium ? 20 : 5;
+  el('linkCount').textContent = `(${pendingLinks.length}/${maxLinks}${isPremium ? ' — Premium' : ''})`;
   if (!pendingLinks.length) {
     list.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>Aucun lien. Ajoutez-en un ci-dessous.</div>';
     return;
@@ -2656,7 +2648,9 @@ function confirmIconLink() {
   if (!activeSocial) return;
   let val = el('ipinVal').value.trim();
   if (!val) { el('ipinVal').focus(); return; }
-  if (pendingLinks.length >= 20) { closeIconPicker(); showAlert('linksAlert', 'Maximum 20 liens'); return; }
+  let _roles1 = []; try { _roles1 = JSON.parse(userData.roles||'[]'); } catch {}
+  const _max1 = _roles1.some(r=>['premium','owner','staff'].includes(r)) ? 20 : 5;
+  if (pendingLinks.length >= _max1) { closeIconPicker(); showAlert('linksAlert', `Maximum ${_max1} liens${_max1===5?' (Premium requis pour plus)':''}`); return; }
   let url = val;
   const valLower = val.toLowerCase();
   if (activeSocial.base && !valLower.startsWith('http') && !valLower.startsWith('mailto:')) {
@@ -2736,7 +2730,9 @@ function addLink() {
   const url = el('newLinkUrl').value.trim();
   if (!title) return showAlert('linksAlert', 'Le titre est requis');
   if (!url) return showAlert('linksAlert', "L'URL est requise");
-  if (pendingLinks.length >= 20) return showAlert('linksAlert', 'Maximum 20 liens');
+  let _roles3 = []; try { _roles3 = JSON.parse(userData.roles||'[]'); } catch {}
+  const _max3 = _roles3.some(r=>['premium','owner','staff'].includes(r)) ? 20 : 5;
+  if (pendingLinks.length >= _max3) return showAlert('linksAlert', `Maximum ${_max3} liens${_max3===5?' (Premium requis pour plus)':''}`);
   let finalUrl = url;
   if (!url.toLowerCase().startsWith('http://') && !url.toLowerCase().startsWith('https://')) finalUrl = 'https://' + url;
   pendingLinks.push({ title, url: finalUrl });
@@ -3084,7 +3080,6 @@ async function handleMedia(type, input) {
   if (type === 'avatar') {
     try {
       if (file.type === 'image/gif') {
-        // Preserve animated GIFs — skip compression (it would strip animation)
         data = await new Promise((res, rej) => {
           const r = new FileReader();
           r.onload = e => res(e.target.result); r.onerror = rej;
@@ -3229,7 +3224,6 @@ function loadMediasUI() {
   });
 }
 
-// ─── Bibliothèque de médias ────────────────────────────────────────────────
 let mediaLibraryLoaded = false;
 
 async function loadMediaLibrary(force) {
@@ -3331,7 +3325,6 @@ async function deleteMediaLibraryFile(filename, btn) {
     btn.disabled = false; btn.textContent = '🗑 Supprimer';
   }
 }
-// ──────────────────────────────────────────────────────────────────────────────
 
 async function saveMedias() {
   const btn = el('saveMediasBtn');
@@ -3904,10 +3897,6 @@ function tplRender() {
       </div>
     </div>`;
   }).join('');
-  
-  
-  
-  
   
   if (!grid.dataset.boundClick) {
     grid.dataset.boundClick = '1';

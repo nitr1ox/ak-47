@@ -550,7 +550,6 @@ button:active:not(:disabled) { transform: scale(.97); }
 
   <div class="content">
 
-    
     <div class="tab-panel active" id="tab-overview">
       <div class="stats-grid" id="statsGrid">
         <div class="stat-card">
@@ -585,7 +584,6 @@ button:active:not(:disabled) { transform: scale(.97); }
         </div>
       </div>
 
-      
       <div class="card">
         <div class="card-header">
           <div>
@@ -600,7 +598,6 @@ button:active:not(:disabled) { transform: scale(.97); }
       </div>
     </div>
 
-    
     <div class="tab-panel" id="tab-logs">
       <div class="card">
         <div class="card-header">
@@ -625,7 +622,6 @@ button:active:not(:disabled) { transform: scale(.97); }
       </div>
     </div>
 
-    
     <div class="tab-panel" id="tab-users">
       <div class="card">
         <div class="card-header">
@@ -643,7 +639,6 @@ button:active:not(:disabled) { transform: scale(.97); }
       </div>
     </div>
 
-    
     <div class="tab-panel" id="tab-roles">
       <div class="card" style="margin-bottom:20px;">
         <div class="card-header">
@@ -660,7 +655,6 @@ button:active:not(:disabled) { transform: scale(.97); }
       </div>
     </div>
 
-    
     <div class="tab-panel" id="tab-bans">
       <div class="card">
         <div class="card-header">
@@ -697,7 +691,6 @@ button:active:not(:disabled) { transform: scale(.97); }
       </div>
     </div>
 
-    
     <div class="tab-panel" id="tab-discord">
       <div class="card">
         <div class="card-header">
@@ -725,7 +718,6 @@ button:active:not(:disabled) { transform: scale(.97); }
 
 <div class="toast-container" id="toastContainer"></div>
 
-    
     <div class="tab-panel" id="tab-announcement">
       <div class="card">
         <div class="card-header">
@@ -735,7 +727,6 @@ button:active:not(:disabled) { transform: scale(.97); }
           </div>
         </div>
 
-        
         <div id="ann-active-block" style="display:none;margin-bottom:20px;padding:14px 16px;border-radius:10px;border:1.5px solid var(--border-strong);background:var(--surface-2);">
           <div style="font-size:12px;color:var(--text-2);margin-bottom:6px;font-weight:600;">ANNONCE EN COURS</div>
           <div id="ann-active-preview" style="font-size:14px;font-weight:600;margin-bottom:8px;"></div>
@@ -744,7 +735,6 @@ button:active:not(:disabled) { transform: scale(.97); }
         </div>
         <div id="ann-none-block" style="font-size:13px;color:var(--text-3);margin-bottom:20px;display:none;">Aucune annonce active.</div>
 
-        
         <div style="display:flex;flex-direction:column;gap:14px;">
           <div class="form-group">
             <label class="form-label">Message</label>
@@ -801,7 +791,6 @@ button:active:not(:disabled) { transform: scale(.97); }
       </div>
     </div>
 
-    
     <div class="tab-panel" id="tab-maintenance">
       <div class="card">
         <div class="card-header">
@@ -811,7 +800,6 @@ button:active:not(:disabled) { transform: scale(.97); }
           </div>
         </div>
 
-        
         <div id="maint-status-block" style="display:flex;align-items:center;gap:12px;padding:16px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface-2);margin-bottom:20px;">
           <div id="maint-dot" style="width:12px;height:12px;border-radius:50%;background:var(--green);flex-shrink:0;"></div>
           <div>
@@ -830,7 +818,6 @@ button:active:not(:disabled) { transform: scale(.97); }
           </div>
         </div>
 
-        
         <div class="form-group">
           <label class="form-label">Message affiché aux visiteurs</label>
           <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
@@ -971,7 +958,6 @@ function badgeTag(type) {
   return `<span class="badge ${map[type]||''}">${labels[type]||type}</span>`;
 }
 
-// ─── LOGS ───
 function renderLogsTable(logs, containerId) {
   const el = document.getElementById(containerId);
   if (!logs.length) { el.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>Aucun log trouvé</div>'; return; }
@@ -996,7 +982,6 @@ function filterLogs() {
 }
 function searchLogs(q) { filterLogs(); }
 
-// ─── USERS ───
 const AVAILABLE_ROLES = [
   { id: 'owner', label: 'Owner', color: '#f59e0b', emoji: '👑', desc: 'Propriétaire du site' },
   { id: 'og', label: 'OG', color: '#8b5cf6', emoji: '💎', desc: 'Supporter précoce de ak-47.fr' },
