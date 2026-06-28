@@ -1734,7 +1734,7 @@ async function loadProfile() {
     } else {
       linksContainer.innerHTML = '';
     }
-    if (user.location) {
+    if (user.location && !user.hide_location) {
       const locEl = document.createElement('div');
       locEl.style.cssText = 'font-size:12px;color:var(--profile-text-color);opacity:0.5;margin-top:4px;';
       locEl.textContent = '📍 ' + user.location;
@@ -1823,6 +1823,12 @@ async function loadProfile() {
       }
       document.head.appendChild(styleTag);
     }
+
+    function bgToHex(rgb) {
+      const m = rgb.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (!m) return null;
+      return '#' + [m[1],m[2],m[3]].map(n => parseInt(n).toString(16).padStart(2,'0')).join('');
+    }
     const glowTargets = [];
     try { glowTargets.push(...(user.glow_targets || '').split(',').map(s=>s.trim()).filter(Boolean)); } catch {}
     if (glowTargets.length) {
@@ -1838,6 +1844,26 @@ async function loadProfile() {
       if (glowTargets.includes('links'))    css += `.profile-link { box-shadow: ${glowVal}; }`;
       glowStyle.textContent = css;
       document.head.appendChild(glowStyle);
+    }
+    // Badge glow per-badge-color
+    const badgeGlowIntensity = user.badge_glow_intensity || 0;
+    if (badgeGlowIntensity > 0) {
+      const spread = Math.round(badgeGlowIntensity * 0.15);
+      const blur1  = Math.round(badgeGlowIntensity * 0.10);
+      const blur2  = Math.round(badgeGlowIntensity * 0.25);
+      const alpha1 = Math.min(0.99, badgeGlowIntensity / 100 * 1.2).toFixed(2);
+      const alpha2 = Math.min(0.60, badgeGlowIntensity / 100 * 0.7).toFixed(2);
+      // Apply to .badge elements (role badges with def.color)
+      const badgeEls = document.querySelectorAll('.badge');
+      badgeEls.forEach(b => {
+        const bg = window.getComputedStyle(b).backgroundColor;
+        const hex = bgToHex(bg);
+        if (hex) b.style.boxShadow = `0 0 ${blur1}px ${spread}px ${hex}${Math.round(parseFloat(alpha1)*255).toString(16).padStart(2,'0')}, 0 0 ${blur2}px ${spread*2}px ${hex}${Math.round(parseFloat(alpha2)*255).toString(16).padStart(2,'0')}`;
+      });
+      // Apply to ak-badge images (icon badges)
+      document.querySelectorAll('.ak-badge img, .dc-badge img').forEach(img => {
+        img.style.filter = `drop-shadow(0 0 ${blur1}px rgba(255,255,255,${alpha1})) drop-shadow(0 0 ${blur2}px rgba(255,255,255,${alpha2}))`;
+      });
     }
     const avatarDeco = user.avatar_decoration || 'none';
     if (avatarDeco !== 'none') {

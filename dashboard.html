@@ -1117,6 +1117,16 @@ body.has-announcement { padding-top: 44px; }
               oninput="pendingPerso.location=this.value"/>
           </div>
         </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0 0;margin-top:8px;border-top:1px solid var(--gray-200);">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--black);">Masquer la localisation</div>
+            <div style="font-size:11px;color:var(--gray-500);margin-top:2px;">La localisation ne sera pas visible sur ton profil public.</div>
+          </div>
+          <label class="toggle-switch" style="flex-shrink:0;margin-left:16px;">
+            <input type="checkbox" id="hideLocationToggle" onchange="pendingPerso.hide_location=this.checked;"/>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
       </div>
 
       <div class="section-card">
@@ -1766,6 +1776,24 @@ body.has-announcement { padding-top: 44px; }
             <input type="checkbox" id="glowEffectToggle" onchange="saveGlowPref(this.checked)">
             <span class="toggle-slider"></span>
           </label>
+        </div>
+      </div>
+
+      <!-- Glow badges -->
+      <div class="section-card" style="margin-bottom:16px;">
+        <div class="section-card-title">
+          <span>✨ Glow des badges</span>
+        </div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:14px;">Ajoute un effet lumineux autour de tes badges, dans la couleur de chaque badge.</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:13px;font-weight:600;color:var(--black);">Intensité du glow</div>
+          <span id="badgeGlowVal" style="font-size:12px;font-weight:700;color:var(--accent);min-width:32px;text-align:right;">0</span>
+        </div>
+        <input type="range" id="badgeGlowSlider" min="0" max="100" step="5" value="0"
+          style="width:100%;accent-color:var(--accent);cursor:pointer;"
+          oninput="document.getElementById('badgeGlowVal').textContent=this.value; pendingPerso.badge_glow_intensity=parseInt(this.value);"/>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--gray-400);margin-top:4px;">
+          <span>Aucun</span><span>Subtil</span><span>Fort</span>
         </div>
       </div>
 
@@ -3736,6 +3764,8 @@ let pendingPerso = {
   use_discord_avatar: null,
   avatar_decoration: null,
   avatar_border_color: null,
+  hide_location: null,
+  badge_glow_intensity: null,
 };
 
 const GRADIENT_PRESETS = [
@@ -3817,6 +3847,10 @@ function loadPersoUI() {
   el('cardOpacityRange').value = Math.round(cardOpacity * 100);
   el('cardOpacityVal').textContent = Math.round(cardOpacity * 100) + '%';
   if (el('persoLocation')) el('persoLocation').value = userData.location || '';
+  if (el('hideLocationToggle')) el('hideLocationToggle').checked = !!userData.hide_location;
+  const glowIntensity = userData.badge_glow_intensity || 0;
+  if (el('badgeGlowSlider')) { el('badgeGlowSlider').value = glowIntensity; }
+  if (el('badgeGlowVal')) el('badgeGlowVal').textContent = glowIntensity;
 
   el('discordPresenceToggle').checked = !!userData.discord_presence;
   const discordCardOpacity = userData.discord_card_opacity !== undefined && userData.discord_card_opacity !== null ? userData.discord_card_opacity : 1;
@@ -4451,7 +4485,7 @@ async function tplDashLoad() {
   if (!grid) return;
   grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--gray-400);font-family:'JetBrains Mono',monospace;font-size:12px;">Chargement…</div>`;
   try {
-    const r = await apiFetch(API + '/api/templates', { headers: token ? { Authorization: 'Bearer ' + getToken() } : {} });
+    const r = await apiFetch(API + '/api/templates', { headers: { Authorization: 'Bearer ' + getToken() } });
     if (!r.ok) throw new Error();
     _tplDashData = await r.json();
     tplDashRender();
@@ -4463,7 +4497,7 @@ async function tplDashLoad() {
 async function tplDashApply(id, name) {
   if (!confirm(`Appliquer "${name}" ? Ton style actuel sera remplacé.`)) return;
   try {
-    const r = await fetch(`${API}/api/templates/${id}/use`, { method:'POST', headers:{ Authorization:'Bearer '+token } });
+    const r = await fetch(`${API}/api/templates/${id}/use`, { method:'POST', headers:{ Authorization:'Bearer '+getToken() } });
     if (!r.ok) throw new Error();
     const t = _tplDashData.find(t => t.id === id);
     if (t) t.uses = (t.uses||0)+1;
@@ -4477,7 +4511,7 @@ async function tplDashApply(id, name) {
 async function tplDashDelete(id) {
   if (!confirm('Supprimer ce modèle ?')) return;
   try {
-    const r = await fetch(`${API}/api/templates/${id}`, { method:'DELETE', headers:{ Authorization:'Bearer '+token } });
+    const r = await fetch(`${API}/api/templates/${id}`, { method:'DELETE', headers:{ Authorization:'Bearer '+getToken() } });
     if (!r.ok) throw new Error();
     _tplDashData = _tplDashData.filter(t => t.id !== id);
     tplDashRender();
