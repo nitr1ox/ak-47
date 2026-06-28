@@ -353,7 +353,7 @@ body.has-announcement { padding-top: 44px; }
       if (!captchaToken) return showAlert('Veuillez compléter le captcha');
       const r = await fetch('https://ak47-backend.onrender.com/api/auth/login', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ login, password, 'h-captcha-response': captchaToken })
+        body: JSON.stringify({ login, password, 'h-captcha-response': captchaToken, rememberMe: true })
       });
       const data = await r.json();
       if (!r.ok) { showAlert(data.error || 'Erreur'); return; }
