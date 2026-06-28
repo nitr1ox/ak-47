@@ -303,7 +303,9 @@
     .sidebar-label { padding: 0 12px; margin-bottom: 10px; }
     .sidebar-item {
       padding: 10px 12px; border-radius: 10px; margin-bottom: 2px;
-      font-weight: 600; gap: 11px;
+      font-weight: 600; gap: 11px; display: flex; align-items: center;
+      text-decoration: none; color: inherit; cursor: pointer;
+      transition: background .15s;
     }
     .sidebar-item:hover { background: var(--gray-100); }
     .sidebar-item.active {
@@ -311,7 +313,33 @@
       box-shadow: 0 4px 14px rgba(0,0,0,.18); border-color: transparent;
     }
     .sidebar-item.active svg { stroke: var(--white); }
-    .sidebar-item svg { width: 16px; height: 16px; }
+    .sidebar-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+    /* Expandable groups */
+    .sidebar-group { margin-bottom: 2px; }
+    .sidebar-group-header {
+      display: flex; align-items: center; gap: 11px;
+      padding: 10px 12px; border-radius: 10px;
+      font-weight: 600; cursor: pointer;
+      transition: background .15s; color: inherit; user-select: none;
+    }
+    .sidebar-group-header:hover { background: var(--gray-100); }
+    .sidebar-group-header.open { color: var(--accent); }
+    .sidebar-group-header svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .sidebar-group-chevron { margin-left: auto; width: 14px !important; height: 14px !important; transition: transform .2s; }
+    .sidebar-group-header.open .sidebar-group-chevron { transform: rotate(180deg); }
+    .sidebar-sublist { overflow: hidden; max-height: 0; transition: max-height .25s ease; padding-left: 10px; }
+    .sidebar-sublist.open { max-height: 300px; }
+    .sidebar-subitem {
+      display: flex; align-items: center; gap: 9px;
+      padding: 8px 12px; border-radius: 8px; margin-bottom: 1px;
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      text-decoration: none; color: inherit;
+      transition: background .15s;
+    }
+    .sidebar-subitem:hover { background: var(--gray-100); }
+    .sidebar-subitem.active { background: var(--gray-100); color: var(--accent); font-weight: 600; }
+    .sidebar-subitem svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .sidebar-divider { height: 1px; background: var(--gray-100); margin: 8px 12px; }
 
     .dash-main { padding: 36px 40px; max-width: 1180px; }
 
@@ -648,47 +676,76 @@ body.has-announcement { padding-top: 44px; }
 
   <aside class="dash-sidebar">
     <div class="sidebar-section">
-      <div class="sidebar-label">Navigation</div>
+
+      <!-- 1. Vue d'ensemble -->
       <a class="sidebar-item active" onclick="switchTab('overview')" href="#">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         Vue d'ensemble
       </a>
-      <a class="sidebar-item" onclick="switchTab('profile')" href="#">
-        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        Mon profil
-      </a>
-      <a class="sidebar-item" onclick="switchTab('links')" href="#">
-        <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
-        Liens
-      </a>
-      <a class="sidebar-item" onclick="switchTab('medias')" href="#">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-        Médias
-      </a>
-      <a class="sidebar-item" onclick="switchTab('perso')" href="#">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M2 12h2M20 12h2M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41"/></svg>
-        Personnalisation
-      </a>
-      <a class="sidebar-item" onclick="switchTab('templates')" href="#">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>
-        Modèles
-      </a>
-      <a class="sidebar-item" onclick="switchTab('badges')" href="#">
-        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        Badges
-      </a>
+
+      <!-- 2. Moi (profil + paramètres) -->
+      <div class="sidebar-group" id="group-moi">
+        <div class="sidebar-group-header" onclick="toggleGroup('moi')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Moi
+          <svg class="sidebar-group-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="sidebar-sublist" id="sublist-moi">
+          <a class="sidebar-subitem" onclick="switchTab('profile')" href="#">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Mon profil
+          </a>
+          <a class="sidebar-subitem" onclick="switchTab('settings')" href="#">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            Paramètres
+          </a>
+        </div>
+      </div>
+
+      <!-- 3. Personnaliser (liens, médias, perso, modèles, badges) -->
+      <div class="sidebar-group" id="group-perso">
+        <div class="sidebar-group-header" onclick="toggleGroup('perso')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          Personnaliser
+          <svg class="sidebar-group-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="sidebar-sublist" id="sublist-perso">
+          <a class="sidebar-subitem" onclick="switchTab('links')" href="#">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+            Liens
+          </a>
+          <a class="sidebar-subitem" onclick="switchTab('medias')" href="#">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Médias
+          </a>
+          <a class="sidebar-subitem" onclick="switchTab('perso')" href="#">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M2 12h2M20 12h2M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41"/></svg>
+            Personnalisation
+          </a>
+          <a class="sidebar-subitem" onclick="switchTab('templates')" href="#">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>
+            Modèles
+          </a>
+          <a class="sidebar-subitem" onclick="switchTab('badges')" href="#">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Badges
+          </a>
+        </div>
+      </div>
+
+      <!-- 4. Shop -->
       <a class="sidebar-item" href="/shop.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
         Shop
       </a>
-      <a class="sidebar-item" onclick="switchTab('settings')" href="#">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        Paramètres
-      </a>
+
+      <!-- 5. Admin (caché, visible seulement pour les admins) -->
+      <div class="sidebar-divider"></div>
       <a class="sidebar-item" id="adminLink" href="/admin" style="display:none;color:#ef4444;">
-        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         Admin
       </a>
+
     </div>
   </aside>
 
@@ -1650,9 +1707,14 @@ body.has-announcement { padding-top: 44px; }
 
       <!-- Rôles du site -->
       <div class="section-card" id="badgesSummaryCard">
-        <div class="section-card-title">Vos badges du site</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+          <div class="section-card-title" style="margin-bottom:0;">Vos badges du site</div>
+          <button id="saveBadgeOrderBtn" onclick="saveBadgeOrder()" style="display:none;padding:7px 16px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--accent) 0%,var(--accent-dark) 100%);color:#fff;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.5px;gap:6px;align-items:center;">
+            💾 Sauvegarder l'ordre
+          </button>
+        </div>
         <div style="font-size:12px;color:var(--gray-500);margin-bottom:14px;">
-          Cliquez sur l'œil pour afficher ou masquer un badge sur votre profil public.
+          Cliquez sur l'œil pour afficher/masquer un badge. <strong>Glissez-déposez</strong> pour changer l'ordre d'affichage.
         </div>
         <div id="myBadgesContainer" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
         <div id="myBadgesEmpty" style="display:none;font-size:13px;color:var(--gray-400);padding:12px 0;">
@@ -2307,33 +2369,44 @@ const BADGE_SVGS = {
 function renderBadgesTab() {
   let userRoles = [];
   try { userRoles = JSON.parse(userData.roles || '[]'); } catch {}
+  // Apply saved badge order
+  let badgeOrder = [];
+  try { badgeOrder = JSON.parse(userData.badge_order || '[]'); } catch {}
+  if (badgeOrder.length) {
+    userRoles = [...badgeOrder.filter(id => userRoles.includes(id)), ...userRoles.filter(id => !badgeOrder.includes(id))];
+  }
   let hiddenRoles = [];
   try { hiddenRoles = JSON.parse(userData.hidden_roles || '[]'); } catch {}
 
   const myContainer = document.getElementById('myBadgesContainer');
   const myEmpty = document.getElementById('myBadgesEmpty');
+  const saveBtn = document.getElementById('saveBadgeOrderBtn');
   document.getElementById('badgesUnlockCount').textContent = userRoles.length;
   document.getElementById('badgesTotalCount').textContent = ALL_BADGES_DEF.length;
 
   if (!userRoles.length) {
     myContainer.style.display = 'none';
     myEmpty.style.display = 'block';
+    if (saveBtn) saveBtn.style.display = 'none';
   } else {
     myContainer.style.display = 'flex';
     myEmpty.style.display = 'none';
-    myContainer.innerHTML = userRoles.map(roleId => {
+    if (saveBtn) saveBtn.style.display = userRoles.length > 1 ? 'flex' : 'none';
+    myContainer.innerHTML = userRoles.map((roleId, idx) => {
       const def = ALL_BADGES_DEF.find(b => b.id === roleId) || { id: roleId, label: roleId, color: '#888', emoji: '•', desc: '' };
       const visible = !hiddenRoles.includes(roleId);
       const eyeIcon = visible
         ? `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`
         : `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
-      return `<div onclick="toggleBadgeRole('${roleId}')" title="${visible ? 'Masquer sur le profil' : 'Afficher sur le profil'}" style="
-          display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;cursor:pointer;
+      return `<div class="badge-drag-item" draggable="true" data-role-id="${roleId}" data-idx="${idx}" style="
+          display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;cursor:grab;
           border:1.5px solid ${def.color}40;background:${def.color}12;
-          opacity:${visible ? 1 : 0.45};transition:opacity .2s,transform .15s;user-select:none;
+          opacity:${visible ? 1 : 0.45};transition:opacity .2s,transform .15s,box-shadow .15s;user-select:none;
+          position:relative;
         " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
-        <span style="font-size:20px;">${def.emoji}</span>
-        <div>
+        <span style="font-size:8px;color:var(--gray-400);position:absolute;top:3px;right:5px;letter-spacing:1px;" title="Glisser pour réordonner">⠿</span>
+        <span style="font-size:20px;" onclick="toggleBadgeRole('${roleId}')">${def.emoji}</span>
+        <div onclick="toggleBadgeRole('${roleId}')" title="${visible ? 'Masquer sur le profil' : 'Afficher sur le profil'}">
           <div style="font-size:13px;font-weight:700;color:${def.color};">${def.label}</div>
           <div style="font-size:10px;color:var(--gray-500);margin-top:1px;display:flex;align-items:center;gap:3px;">
             ${eyeIcon} ${visible ? 'Visible' : 'Masqué'}
@@ -2341,6 +2414,7 @@ function renderBadgesTab() {
         </div>
       </div>`;
     }).join('');
+    initBadgeDrag();
   }
 
 
@@ -2442,6 +2516,81 @@ async function toggleBadgeRole(roleId) {
     showToast('Visibilité du badge mise à jour.');
   } catch {
     showToast('Erreur lors de la mise à jour.');
+  }
+}
+
+function initBadgeDrag() {
+  const container = document.getElementById('myBadgesContainer');
+  if (!container) return;
+  let dragSrc = null;
+
+  container.querySelectorAll('.badge-drag-item').forEach(item => {
+    item.addEventListener('dragstart', e => {
+      dragSrc = item;
+      item.style.opacity = '0.4';
+      item.style.boxShadow = '0 0 0 2px var(--accent)';
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    item.addEventListener('dragend', () => {
+      item.style.opacity = '';
+      item.style.boxShadow = '';
+      container.querySelectorAll('.badge-drag-item').forEach(i => i.classList.remove('drag-over'));
+    });
+    item.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      container.querySelectorAll('.badge-drag-item').forEach(i => i.classList.remove('drag-over'));
+      if (item !== dragSrc) {
+        item.style.outline = '2px dashed var(--accent)';
+        item.style.outlineOffset = '2px';
+      }
+    });
+    item.addEventListener('dragleave', () => {
+      item.style.outline = '';
+    });
+    item.addEventListener('drop', e => {
+      e.preventDefault();
+      item.style.outline = '';
+      if (!dragSrc || dragSrc === item) return;
+      const items = [...container.querySelectorAll('.badge-drag-item')];
+      const fromIdx = items.indexOf(dragSrc);
+      const toIdx = items.indexOf(item);
+      if (fromIdx < toIdx) {
+        container.insertBefore(dragSrc, item.nextSibling);
+      } else {
+        container.insertBefore(dragSrc, item);
+      }
+      // Show save button
+      const saveBtn = document.getElementById('saveBadgeOrderBtn');
+      if (saveBtn) { saveBtn.style.display = 'flex'; saveBtn.style.animation = 'none'; }
+    });
+  });
+}
+
+async function saveBadgeOrder() {
+  const container = document.getElementById('myBadgesContainer');
+  if (!container) return;
+  const order = [...container.querySelectorAll('.badge-drag-item')].map(el => el.dataset.roleId);
+  const saveBtn = document.getElementById('saveBadgeOrderBtn');
+  if (saveBtn) { saveBtn.textContent = '⏳ Sauvegarde…'; saveBtn.disabled = true; }
+  try {
+    const r = await fetch(`${API}/api/user/profile`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + getToken() },
+      body: JSON.stringify({ badge_order: JSON.stringify(order) }),
+    });
+    if (r.ok) {
+      userData.badge_order = JSON.stringify(order);
+      showToast('✅ Ordre des badges sauvegardé !');
+      if (saveBtn) { saveBtn.innerHTML = '✅ Sauvegardé'; saveBtn.disabled = false; }
+      setTimeout(() => { if (saveBtn) { saveBtn.innerHTML = '💾 Sauvegarder l\'ordre'; } }, 2000);
+    } else {
+      showToast('Erreur lors de la sauvegarde.');
+      if (saveBtn) { saveBtn.innerHTML = '💾 Sauvegarder l\'ordre'; saveBtn.disabled = false; }
+    }
+  } catch {
+    showToast('Erreur réseau.');
+    if (saveBtn) { saveBtn.innerHTML = '💾 Sauvegarder l\'ordre'; saveBtn.disabled = false; }
   }
 }
 
@@ -2930,11 +3079,43 @@ function copyUrl() {
   navigator.clipboard.writeText(url).then(() => showToast('URL copiée ✓'));
 }
 
+function toggleGroup(name) {
+  const header = document.querySelector('#group-' + name + ' .sidebar-group-header');
+  const sublist = document.getElementById('sublist-' + name);
+  if (!header || !sublist) return;
+  const isOpen = sublist.classList.contains('open');
+  if (isOpen) {
+    sublist.classList.remove('open');
+    header.classList.remove('open');
+  } else {
+    sublist.classList.add('open');
+    header.classList.add('open');
+  }
+}
+
+function openGroupForTab(name) {
+  // Moi group: profile, settings
+  if (['profile','settings'].includes(name)) {
+    const sublist = document.getElementById('sublist-moi');
+    const header = document.querySelector('#group-moi .sidebar-group-header');
+    if (sublist) { sublist.classList.add('open'); header && header.classList.add('open'); }
+  }
+  // Personnaliser group: links, medias, perso, templates, badges
+  if (['links','medias','perso','templates','badges'].includes(name)) {
+    const sublist = document.getElementById('sublist-perso');
+    const header = document.querySelector('#group-perso .sidebar-group-header');
+    if (sublist) { sublist.classList.add('open'); header && header.classList.add('open'); }
+  }
+}
+
 function switchTab(name) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.sidebar-item').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.sidebar-subitem').forEach(t => t.classList.remove('active'));
   el('tab-' + name).classList.add('active');
   document.querySelectorAll('.sidebar-item').forEach(t => { if (t.getAttribute('onclick')?.includes(name)) t.classList.add('active'); });
+  document.querySelectorAll('.sidebar-subitem').forEach(t => { if (t.getAttribute('onclick')?.includes(name)) t.classList.add('active'); });
+  openGroupForTab(name);
   if (name === 'profile' || name === 'links') updatePreview();
   if (name === 'badges') renderBadgesTab();
   if (name === 'medias') loadMediaLibrary();
@@ -4350,7 +4531,11 @@ switchTab = function(name) {
 
 function loadSettingsTab() {
   const u = window._currentUser;
-  if (!u) return;
+  if (!u) {
+    // Utilisateur pas encore chargé, on retente dans 500ms
+    setTimeout(loadSettingsTab, 500);
+    return;
+  }
   const av = document.getElementById('settingsAvatar');
   const un = document.getElementById('settingsUsername');
   const em = document.getElementById('settingsEmail');
