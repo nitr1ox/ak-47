@@ -254,6 +254,51 @@
     .feature-title { font-weight: 600; font-size: 14px; margin-bottom: 6px; letter-spacing: -0.2px; }
     .feature-desc { font-size: 13px; color: var(--gray-500); line-height: 1.6; }
 
+    /* ── Pricing ── */
+    .pricing { max-width: 860px; margin: 0 auto; padding: 80px 24px; }
+    .pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .plan-card {
+      border: 1px solid var(--gray-200); border-radius: 14px;
+      padding: 32px 28px; background: var(--white);
+      display: flex; flex-direction: column; gap: 0;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .plan-card:hover { transform: translateY(-3px); box-shadow: 0 14px 36px rgba(0,0,0,.07); }
+    .plan-card.premium {
+      border-color: #f43f5e50;
+      background: linear-gradient(135deg, #fff5f7 0%, #fff 60%);
+      box-shadow: 0 0 0 1px #f43f5e20, 0 8px 32px rgba(244,63,94,.08);
+    }
+    .plan-card.premium:hover { box-shadow: 0 0 0 1px #f43f5e40, 0 14px 40px rgba(244,63,94,.14); }
+    .plan-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+      padding: 4px 10px; border-radius: 20px; margin-bottom: 20px; width: fit-content;
+    }
+    .plan-badge.free { background: var(--gray-100); color: var(--gray-500); }
+    .plan-badge.prem { background: #f43f5e15; color: #f43f5e; }
+    .plan-price { font-size: 38px; font-weight: 800; letter-spacing: -2px; margin-bottom: 4px; line-height: 1; }
+    .plan-price span { font-size: 16px; font-weight: 500; color: var(--gray-400); letter-spacing: 0; }
+    .plan-period { font-size: 12px; color: var(--gray-400); margin-bottom: 24px; }
+    .plan-divider { height: 1px; background: var(--gray-200); margin-bottom: 24px; }
+    .plan-features { list-style: none; padding: 0; margin: 0 0 28px; display: flex; flex-direction: column; gap: 11px; }
+    .plan-features li { display: flex; align-items: flex-start; gap: 10px; font-size: 13.5px; color: var(--gray-700); line-height: 1.4; }
+    .plan-features li .chk { flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+    .plan-features li .chk.yes { background: #10b98120; color: #10b981; font-size: 11px; font-weight: 900; }
+    .plan-features li .chk.no  { background: var(--gray-100); color: var(--gray-400); font-size: 11px; }
+    .plan-features li .chk.star { background: #f43f5e15; color: #f43f5e; font-size: 11px; }
+    .plan-btn {
+      margin-top: auto; padding: 13px 20px; border-radius: 9px; border: none;
+      font-size: 14px; font-weight: 700; cursor: pointer; text-decoration: none;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: opacity .15s, transform .1s;
+    }
+    .plan-btn:hover { opacity: .88; transform: translateY(-1px); }
+    .plan-btn.free-btn { background: var(--gray-100); color: var(--gray-700); border: 1px solid var(--gray-200); }
+    .plan-btn.prem-btn { background: #f43f5e; color: #fff; }
+    .plan-price-loading { opacity: .4; font-size: 28px; }
+    @media (max-width: 600px) { .pricing-grid { grid-template-columns: 1fr; } .pricing { padding: 56px 16px; } }
+
     .faq-section { max-width: 680px; margin: 0 auto; padding: 80px 24px; }
     .faq-list { border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; }
     .faq-item { border-bottom: 1px solid var(--gray-200); }
@@ -699,6 +744,60 @@ body.has-announcement { padding-top: 44px; }
   </div>
 </div>
 
+<!-- ── Pricing ───────────────────────────────────────────────────────────── -->
+<div id="pricing" class="pricing">
+  <div class="section-label">Tarifs</div>
+  <h2 class="section-title">Gratuit ou Premium.</h2>
+  <p class="section-sub">L'essentiel est gratuit pour toujours. Le Premium débloque les fonctionnalités avancées.</p>
+
+  <div class="pricing-grid">
+
+    <!-- Plan Gratuit -->
+    <div class="plan-card">
+      <div class="plan-badge free">Gratuit</div>
+      <div class="plan-price">0 <span>€</span></div>
+      <div class="plan-period">Pour toujours</div>
+      <div class="plan-divider"></div>
+      <ul class="plan-features">
+        <li><span class="chk yes">✓</span> Profil public personnalisable</li>
+        <li><span class="chk yes">✓</span> Jusqu'à 5 liens</li>
+        <li><span class="chk yes">✓</span> Analytics basiques (vues & clics)</li>
+        <li><span class="chk yes">✓</span> Connexion Google & Discord</li>
+        <li><span class="chk yes">✓</span> Badge OG (1000 premiers)</li>
+        <li><span class="chk yes">✓</span> Classement public</li>
+        <li><span class="chk no">✗</span> <span style="color:var(--gray-400);">Liens illimités</span></li>
+        <li><span class="chk no">✗</span> <span style="color:var(--gray-400);">Badge Premium ⭐</span></li>
+        <li><span class="chk no">✗</span> <span style="color:var(--gray-400);">Effets de pseudo</span></li>
+        <li><span class="chk no">✗</span> <span style="color:var(--gray-400);">Sections supplémentaires</span></li>
+        <li><span class="chk no">✗</span> <span style="color:var(--gray-400);">Priorité support</span></li>
+      </ul>
+      <a href="/register.html" class="plan-btn free-btn">Créer un compte gratuit</a>
+    </div>
+
+    <!-- Plan Premium -->
+    <div class="plan-card premium">
+      <div class="plan-badge prem">⭐ Premium</div>
+      <div class="plan-price" id="premiumPriceDisplay"><span class="plan-price-loading">…</span></div>
+      <div class="plan-period">par mois · rôle attribué automatiquement</div>
+      <div class="plan-divider"></div>
+      <ul class="plan-features">
+        <li><span class="chk yes">✓</span> Tout ce qui est inclus dans Gratuit</li>
+        <li><span class="chk star">⭐</span> <strong>Liens illimités</strong> (jusqu'à 20)</li>
+        <li><span class="chk star">⭐</span> <strong>Badge Premium</strong> sur votre profil</li>
+        <li><span class="chk star">⭐</span> <strong>Effets de pseudo</strong> (dégradé, glow…)</li>
+        <li><span class="chk star">⭐</span> <strong>Sections supplémentaires</strong> sur le profil</li>
+        <li><span class="chk star">⭐</span> <strong>Analytics avancées</strong></li>
+        <li><span class="chk star">⭐</span> <strong>Priorité support</strong> Discord</li>
+        <li><span class="chk star">⭐</span> Accès aux futures fonctionnalités en avant-première</li>
+      </ul>
+      <a id="premiumBuyBtn" href="https://ak-47shop.mysellauth.com/product/ak-47fr-prenium" target="_blank" class="plan-btn prem-btn">
+        🛒 Acheter le Premium
+      </a>
+    </div>
+
+  </div>
+</div>
+
 <div id="faq" class="faq-section">
   <div class="section-label">FAQ</div>
   <h2 class="section-title">Questions fréquentes.</h2>
@@ -710,7 +809,7 @@ body.has-announcement { padding-top: 44px; }
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)">C'est vraiment gratuit ?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
-      <div class="faq-a"><div class="faq-a-inner">Oui, entièrement et définitivement gratuit. Il n'y a pas de plan payant, pas de limite de liens, pas de fonctionnalité cachée derrière un abonnement.</div></div>
+      <div class="faq-a"><div class="faq-a-inner">L'essentiel est gratuit pour toujours : profil, liens, analytics, classement. Le plan Premium (5 €/mois) débloque les fonctionnalités avancées comme les liens illimités, les effets de pseudo et le badge exclusif ⭐.</div></div>
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)">Combien de temps pour configurer ?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
@@ -803,6 +902,29 @@ body.has-announcement { padding-top: 44px; }
     el.style.opacity='0'; el.style.transform='translateY(12px)'; el.style.transition='opacity .4s ease, transform .4s ease';
     obs.observe(el);
   });
+</script>
+
+<script>
+// ── Prix Premium dynamique ────────────────────────────────────────────────────
+(async function loadPremiumPrice() {
+  const el = document.getElementById('premiumPriceDisplay');
+  const btn = document.getElementById('premiumBuyBtn');
+  try {
+    const res = await fetch('https://ak47-backend.onrender.com/api/sellauth/prices');
+    if (!res.ok) throw new Error();
+    const prices = await res.json();
+    const premium = prices.find(p => p.role === 'premium' || p.slug === 'ak-47fr-prenium');
+    if (premium) {
+      const formatted = premium.price_eur.toFixed(2).replace('.', ',');
+      el.innerHTML = `${formatted} <span>€</span>`;
+      if (premium.url) btn.href = premium.url;
+    } else {
+      el.innerHTML = `5,00 <span>€</span>`;
+    }
+  } catch {
+    el.innerHTML = `5,00 <span>€</span>`;
+  }
+})();
 </script>
 
 <a href="https://discord.gg/g7MysUNQXs" target="_blank" rel="noopener"

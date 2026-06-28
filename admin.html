@@ -498,6 +498,9 @@ button:active:not(:disabled) { transform: scale(.97); }
       <span class="nav-icon">📋</span> Logs
       <span class="nav-badge" id="errBadge">0</span>
     </button>
+    <button class="nav-item" onclick="switchTab('keys')" id="nav-keys">
+      <span class="nav-icon">🔑</span> Redeem Keys
+    </button>
   </nav>
 
   <nav class="nav-section">
@@ -791,7 +794,79 @@ button:active:not(:disabled) { transform: scale(.97); }
       </div>
     </div>
 
-    <div class="tab-panel" id="tab-maintenance">
+    
+    <div class="tab-panel" id="tab-keys">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">🔑 Génération de clés Redeem</div>
+            <div class="card-desc">Génère des clés à distribuer sur Sellauth — attribuent automatiquement un rôle à l'utilisateur.</div>
+          </div>
+        </div>
+
+        <!-- Formulaire de génération -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;align-items:end;margin-bottom:24px;flex-wrap:wrap;">
+          <div class="form-group" style="margin:0;">
+            <label class="form-label">Rôle à attribuer</label>
+            <select class="form-input" id="keyRole">
+              <option value="premium">⭐ Premium</option>
+              <option value="donor">💝 Donor</option>
+              <option value="og">💎 OG</option>
+              <option value="partner">🤝 Partenaire</option>
+              <option value="verified">✅ Vérifié</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin:0;">
+            <label class="form-label">Durée</label>
+            <select class="form-input" id="keyDuration">
+              <option value="1d">1 jour</option>
+              <option value="1w">1 semaine</option>
+              <option value="1m" selected>1 mois</option>
+              <option value="1y">1 an</option>
+              <option value="lifetime">À vie</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin:0;">
+            <label class="form-label">Quantité (max 50)</label>
+            <input class="form-input" type="number" id="keyCount" value="1" min="1" max="50">
+          </div>
+          <button class="btn btn-primary" onclick="generateKeys()" id="keyGenBtn" style="height:42px;white-space:nowrap;">
+            ✨ Générer
+          </button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+          <div class="form-group" style="margin:0;">
+            <label class="form-label">Note (optionnelle)</label>
+            <input class="form-input" type="text" id="keyNote" placeholder="ex: Sellauth batch #1 — Premium">
+          </div>
+          <div class="form-group" style="margin:0;">
+            <label class="form-label">Montant payé par clé (€) — pour le leaderboard donateurs</label>
+            <input class="form-input" type="number" id="keyAmount" step="0.01" min="0" placeholder="ex: 5.00">
+          </div>
+        </div>
+
+        <!-- Résultat génération -->
+        <div id="keyGenResult" style="display:none;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:24px;">
+          <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--green);">✅ Clés générées</div>
+          <div id="keyGenList" style="display:flex;flex-direction:column;gap:6px;"></div>
+          <button onclick="copyAllKeys()" class="btn btn-ghost btn-sm" style="margin-top:12px;font-size:12px;">📋 Tout copier</button>
+        </div>
+
+        <!-- Liste des keys existantes -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div style="font-size:13px;font-weight:600;">Clés existantes</div>
+          <button onclick="loadKeysList()" class="btn btn-ghost btn-sm" style="font-size:12px;">🔄 Actualiser</button>
+        </div>
+        <div style="margin-bottom:12px;">
+          <input class="form-input" type="text" id="keysSearch" placeholder="🔍 Filtrer par clé ou rôle..." oninput="filterKeys()" style="font-size:13px;">
+        </div>
+        <div id="keysList" style="min-height:80px;">
+          <div class="loading-state">Chargement...</div>
+        </div>
+      </div>
+    </div>
+
+<div class="tab-panel" id="tab-maintenance">
       <div class="card">
         <div class="card-header">
           <div>
@@ -1431,6 +1506,153 @@ async function deleteAnnouncement() {
     const d = await r.json();
     if (d.ok) { toast('Annonce supprimée'); loadAnnouncementTab(); }
   } catch { toast('Erreur réseau'); }
+}
+</script>
+
+<script>
+
+let _allKeys = [];
+
+const SHOP_PRICES_EUR = { verified: 2.00, premium: 5.00, donor: 2.00, og: 10.00, partner: 0 };
+document.addEventListener('DOMContentLoaded', () => {
+  const roleSel = document.getElementById('keyRole');
+  const amountInput = document.getElementById('keyAmount');
+  if (roleSel && amountInput) {
+    const suggest = () => { amountInput.value = (SHOP_PRICES_EUR[roleSel.value] ?? 0).toFixed(2); };
+    roleSel.addEventListener('change', suggest);
+    suggest();
+  }
+});
+
+async function generateKeys() {
+  const role = document.getElementById('keyRole').value;
+  const duration = document.getElementById('keyDuration').value;
+  const count = parseInt(document.getElementById('keyCount').value) || 1;
+  const note = document.getElementById('keyNote').value.trim();
+  const amount = parseFloat(document.getElementById('keyAmount').value) || 0;
+  const btn = document.getElementById('keyGenBtn');
+  btn.disabled = true; btn.textContent = '...';
+
+  try {
+    const r = await fetch(API + '/api/redeem/admin/generate', {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ role, duration, count, note, amount }),
+    });
+    const d = await r.json();
+    if (!r.ok) { adminToast(d.error || 'Erreur', 'red'); return; }
+
+    const res = document.getElementById('keyGenResult');
+    const list = document.getElementById('keyGenList');
+    list.innerHTML = d.keys.map(k => `
+      <div style="display:flex;align-items:center;gap:8px;">
+        <code style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:13px;letter-spacing:.5px;color:var(--text);">${k}</code>
+        <button onclick="navigator.clipboard.writeText('${k}');this.textContent='✓';setTimeout(()=>this.textContent='📋',1200);" style="background:none;border:none;cursor:pointer;font-size:14px;">📋</button>
+      </div>`).join('');
+    res.style.display = 'block';
+    window._lastGeneratedKeys = d.keys;
+    loadKeysList();
+    adminToast(`${d.count} clé(s) générée(s) !`, 'green');
+  } catch { adminToast('Erreur réseau', 'red'); }
+  finally { btn.disabled = false; btn.textContent = '✨ Générer'; }
+}
+
+function copyAllKeys() {
+  const keys = window._lastGeneratedKeys || [];
+  navigator.clipboard.writeText(keys.join('\n'));
+  adminToast('Clés copiées !', 'green');
+}
+
+async function loadKeysList() {
+  const el = document.getElementById('keysList');
+  if (!el) return;
+  el.innerHTML = '<div class="loading-state">Chargement...</div>';
+  try {
+    const r = await fetch(API + '/api/redeem/admin/list', {
+      credentials: 'include',
+      headers: { Authorization: 'Bearer ' + token },
+    });
+    _allKeys = await r.json();
+    renderKeysList(_allKeys);
+  } catch { el.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div>Erreur chargement</div>'; }
+}
+
+function filterKeys() {
+  const q = document.getElementById('keysSearch').value.toLowerCase();
+  renderKeysList(_allKeys.filter(k => k.key.toLowerCase().includes(q) || k.role.toLowerCase().includes(q) || (k.note||'').toLowerCase().includes(q)));
+}
+
+function renderKeysList(keys) {
+  const el = document.getElementById('keysList');
+  if (!keys.length) { el.innerHTML = '<div class="empty-state"><div class="empty-icon">🔑</div>Aucune clé</div>'; return; }
+
+  const ROLE_EMOJI = { premium:'⭐', donor:'💝', og:'💎', partner:'🤝', verified:'✅', owner:'👑', staff:'🛡️' };
+  el.innerHTML = `
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <thead>
+        <tr style="border-bottom:1px solid var(--border);color:var(--text-3);">
+          <th style="text-align:left;padding:8px 10px;font-weight:500;">Clé</th>
+          <th style="text-align:left;padding:8px 10px;font-weight:500;">Rôle</th>
+          <th style="text-align:left;padding:8px 10px;font-weight:500;">Durée</th>
+          <th style="text-align:left;padding:8px 10px;font-weight:500;">Statut</th>
+          <th style="text-align:left;padding:8px 10px;font-weight:500;">Note</th>
+          <th style="text-align:left;padding:8px 10px;font-weight:500;">Montant</th>
+          <th style="padding:8px 10px;"></th>
+        </tr>
+      </thead>
+      <tbody>
+        ${keys.map(k => `
+          <tr style="border-bottom:1px solid var(--border);transition:background .1s;" onmouseover="this.style.background='var(--surface-2)'" onmouseout="this.style.background=''">
+            <td style="padding:10px;font-family:monospace;font-size:12px;color:var(--text);">
+              <span style="display:flex;align-items:center;gap:6px;">
+                ${k.key}
+                <button onclick="navigator.clipboard.writeText('${k.key}');adminToast('Copié !','green');" style="background:none;border:none;cursor:pointer;font-size:11px;color:var(--text-3);">📋</button>
+              </span>
+            </td>
+            <td style="padding:10px;">${ROLE_EMOJI[k.role]||'🏅'} ${k.role}</td>
+            <td style="padding:10px;font-size:12px;color:var(--text-2);">${k.duration_label||'—'}</td>
+            <td style="padding:10px;">
+              ${k.used
+                ? `<span style="color:var(--text-3);font-size:12px;">✓ Utilisée</span>`
+                : `<span style="color:var(--green);font-weight:600;font-size:12px;">● Disponible</span>`}
+            </td>
+            <td style="padding:10px;color:var(--text-3);font-size:12px;">${k.note||'—'}</td>
+            <td style="padding:10px;color:var(--text-2);font-size:12px;">${k.amount_eur ? k.amount_eur.toFixed(2) + ' €' : '—'}</td>
+            <td style="padding:10px;text-align:right;">
+              ${!k.used ? `<button onclick="deleteKey('${k.id}')" style="background:var(--red-dim);color:var(--red);border:none;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;">✕</button>` : ''}
+            </td>
+          </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+async function deleteKey(keyId) {
+  if (!confirm('Supprimer cette clé ?')) return;
+  try {
+    const r = await fetch(API + '/api/redeem/admin/' + keyId, {
+      method: 'DELETE', credentials: 'include',
+      headers: { Authorization: 'Bearer ' + token },
+    });
+    if (r.ok) { adminToast('Clé supprimée', 'green'); loadKeysList(); }
+    else adminToast('Erreur suppression', 'red');
+  } catch { adminToast('Erreur réseau', 'red'); }
+}
+
+// Charger les keys quand on ouvre l'onglet
+const _adminSwitchOrig = switchTab;
+switchTab = function(tab) {
+  _adminSwitchOrig(tab);
+  if (tab === 'keys') loadKeysList();
+};
+
+function adminToast(msg, type) {
+  const t = document.getElementById('toastContainer');
+  if (!t) { alert(msg); return; }
+  const el = document.createElement('div');
+  el.className = 'toast toast-' + (type === 'green' ? 'success' : 'error');
+  el.textContent = msg;
+  t.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
 }
 </script>
 </body>

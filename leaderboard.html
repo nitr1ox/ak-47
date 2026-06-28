@@ -345,6 +345,7 @@ body.has-announcement { padding-top: 44px; }
   <p class="subtitle">Les profils les plus visités sur ak-47.fr.</p>
   <div class="tabs">
     <button class="tab-btn active" onclick="showTab('leaderboard', this)">🏆 Classement</button>
+    <button class="tab-btn" onclick="showTab('donate', this)">💰 Top Donateurs</button>
     <button class="tab-btn" onclick="showTab('list', this)">📋 Liste</button>
   </div>
 
@@ -354,6 +355,15 @@ body.has-announcement { padding-top: 44px; }
       <span>#</span><span>Utilisateur</span><span>Vues</span>
     </div>
     <div id="lbBody"><div class="loading">Chargement…</div></div>
+  </div>
+  </div>
+
+  <div id="tab-donate" style="display:none;">
+  <div class="lb-table">
+    <div class="lb-header">
+      <span>#</span><span>Utilisateur</span><span>Montant</span>
+    </div>
+    <div id="donateBody"><div class="loading">Chargement…</div></div>
   </div>
   </div>
 
@@ -380,13 +390,49 @@ body.has-announcement { padding-top: 44px; }
 
   let allUsers = [];
   let activeRole = null;
+  let donorsLoaded = false;
 
   function showTab(name, btn) {
     document.getElementById('tab-leaderboard').style.display = name === 'leaderboard' ? '' : 'none';
+    document.getElementById('tab-donate').style.display = name === 'donate' ? '' : 'none';
     document.getElementById('tab-list').style.display = name === 'list' ? '' : 'none';
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     if (name === 'list' && allUsers.length) renderList(activeRole);
+    if (name === 'donate' && !donorsLoaded) loadDonors();
+  }
+
+  function loadDonors() {
+    donorsLoaded = true;
+    fetch('https://ak47-backend.onrender.com/api/leaderboard/donate')
+      .then(r => r.json())
+      .then(donors => {
+        if (!donors.length) {
+          document.getElementById('donateBody').innerHTML = '<div class="empty">Aucun achat Premium pour le moment. Sois le premier ! 🛒</div>';
+          return;
+        }
+        document.getElementById('donateBody').innerHTML = donors.map((u, i) => {
+          const rank = i + 1;
+          const initials = esc((u.display_name || u.username).slice(0,2).toUpperCase());
+          const color = /^#[0-9a-fA-F]{3,6}$/.test(u.avatar_color||'') ? u.avatar_color : '#18181b';
+          const amount = u.total_donated_eur.toFixed(2).replace('.', ',') + ' €';
+          const isPremium = rank <= 3;
+          return `<a href="/${esc(u.username)}" class="lb-row">
+            <div class="lb-rank ${rankClass(rank)}">${rankIcon(rank)}</div>
+            <div class="lb-user">
+              <div class="lb-av" style="background:${color};${isPremium ? 'box-shadow:0 0 10px 3px '+color+'80;' : ''}">${initials}</div>
+              <div>
+                <div class="lb-name" title="ID : #${u.uid || '—'}">${esc(u.display_name || u.username)} ${u.is_premium ? '<span style="font-size:12px;" title="Premium">⭐</span>' : ''}</div>
+                <div class="lb-handle">ak-47.fr/${esc(u.username)}</div>
+              </div>
+            </div>
+            <div class="lb-views" style="color:#f43f5e;font-weight:700;">${amount}</div>
+          </a>`;
+        }).join('');
+      })
+      .catch(() => {
+        document.getElementById('donateBody').innerHTML = '<div class="empty">Impossible de charger le classement.</div>';
+      });
   }
 
   function buildRoleFilters() {

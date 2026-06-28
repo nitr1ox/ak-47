@@ -333,6 +333,26 @@ body.has-announcement { padding-top: 44px; }
     <div class="form-footer" style="margin-top:10px;"><a href="/recovery">Mot de passe oublié ?</a></div>
     <div class="divider"></div>
     <div class="form-footer">Pas encore de compte ? <a href="/register">S'inscrire gratuitement</a></div>
+
+    <div id="verifyLoginStep" style="display:none;">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="font-size:32px;margin-bottom:10px;">🔐</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:6px;">Vérification requise</div>
+        <div style="font-size:13px;color:var(--gray-500);" id="verifyLoginDesc">Un code a été envoyé à ton adresse email.</div>
+      </div>
+      <div id="alertVerify"></div>
+      <div class="field">
+        <label>Code de vérification</label>
+        <input type="text" id="verifyLoginCode" placeholder="123456" maxlength="6" inputmode="numeric"
+          style="text-align:center;font-size:20px;letter-spacing:6px;font-family:monospace;"
+          oninput="this.value=this.value.replace(/[^0-9]/g,'')" onkeydown="if(event.key==='Enter')doVerifyLogin()">
+      </div>
+      <button class="btn btn-primary" onclick="doVerifyLogin()" id="verifyLoginBtn">Confirmer</button>
+      <div class="form-footer" style="margin-top:10px;text-align:center;">
+        <a href="#" onclick="resendLoginCode();return false;">Renvoyer le code</a>
+      </div>
+    </div>
+
   </div>
 </div>
 <script>
@@ -340,6 +360,22 @@ body.has-announcement { padding-top: 44px; }
 
   const urlError = new URLSearchParams(window.location.search).get('error');
   if (urlError) document.getElementById('alert').innerHTML = `<div class="alert alert-error">${decodeURIComponent(urlError)}</div>`;
+
+  let _pendingLoginEmail = null;
+
+  function showLoginForm() {
+    document.getElementById('verifyLoginStep').style.display = 'none';
+    document.querySelectorAll('.field, .h-captcha, #submitBtn, .form-footer, .divider, .oauth-btn, .divider-text').forEach(el => el.style.display = '');
+  }
+  function showVerifyStep(email) {
+    _pendingLoginEmail = email;
+    document.querySelectorAll('.field, .h-captcha, #submitBtn, .form-footer, .divider, .oauth-btn, .divider-text').forEach(el => el.style.display = 'none');
+    document.getElementById('alert').innerHTML = '';
+    const desc = document.getElementById('verifyLoginDesc');
+    if (desc) desc.textContent = `Un code a été envoyé à ${email.replace(/(.{2}).*(@.*)/, '$1***$2')}`;
+    document.getElementById('verifyLoginStep').style.display = 'block';
+    setTimeout(() => document.getElementById('verifyLoginCode')?.focus(), 100);
+  }
 
   async function doLogin() {
     const btn = document.getElementById('submitBtn');
@@ -350,13 +386,14 @@ body.has-announcement { padding-top: 44px; }
     btn.innerHTML = '<span class="loading-spinner"></span>';
     try {
       const captchaToken = hcaptcha.getResponse();
-      if (!captchaToken) return showAlert('Veuillez compléter le captcha');
+      if (!captchaToken) { btn.disabled = false; btn.innerHTML = 'Se connecter'; return showAlert('Veuillez compléter le captcha'); }
       const r = await fetch('https://ak47-backend.onrender.com/api/auth/login', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ login, password, 'h-captcha-response': captchaToken, rememberMe: true })
+        method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ login, password, 'h-captcha-response': captchaToken })
       });
       const data = await r.json();
       if (!r.ok) { showAlert(data.error || 'Erreur'); return; }
+      if (data.pending_login) { showVerifyStep(data.email); return; }
       localStorage.setItem('token', data.token);
       localStorage.setItem('refreshToken', data.refreshToken);
       localStorage.setItem('username', data.username);
@@ -366,10 +403,45 @@ body.has-announcement { padding-top: 44px; }
     finally { btn.disabled = false; btn.innerHTML = 'Se connecter'; }
   }
 
+  async function doVerifyLogin() {
+    const code = document.getElementById('verifyLoginCode').value.trim();
+    const btn = document.getElementById('verifyLoginBtn');
+    if (!code || code.length < 6) return showVerifyAlert('Entre le code à 6 chiffres');
+    btn.disabled = true; btn.textContent = '...';
+    try {
+      const r = await fetch('https://ak47-backend.onrender.com/api/auth/verify-login', {
+        method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: _pendingLoginEmail, code }),
+      });
+      const data = await r.json();
+      if (!r.ok) { showVerifyAlert(data.error || 'Erreur'); return; }
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('refreshToken', data.refreshToken);
+      localStorage.setItem('username', data.username);
+      if (data.userId) localStorage.setItem('userId', data.userId);
+      window.location.href = '/dashboard';
+    } catch { showVerifyAlert('Erreur réseau'); }
+    finally { btn.disabled = false; btn.textContent = 'Confirmer'; }
+  }
+
+  async function resendLoginCode() {
+    if (!_pendingLoginEmail) return;
+    try {
+      await fetch('https://ak47-backend.onrender.com/api/auth/resend-code', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: _pendingLoginEmail }),
+      });
+      showVerifyAlert('Code renvoyé !', 'ok');
+    } catch { showVerifyAlert('Erreur réseau'); }
+  }
+
   function showAlert(msg) {
     document.getElementById('alert').innerHTML = `<div class="alert alert-error">${msg}</div>`;
   }
-  document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  function showVerifyAlert(msg, type) {
+    document.getElementById('alertVerify').innerHTML = `<div class="alert alert-${type === 'ok' ? 'success' : 'error'}">${msg}</div>`;
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') { if (_pendingLoginEmail) doVerifyLogin(); else doLogin(); } });
 </script>
 
 <script>

@@ -659,6 +659,14 @@ body.has-announcement { padding-top: 44px; }
         <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
         Badges
       </a>
+      <a class="sidebar-item" href="/shop.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        Shop
+      </a>
+      <a class="sidebar-item" onclick="switchTab('settings')" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Paramètres
+      </a>
       <a class="sidebar-item" id="adminLink" href="/admin" style="display:none;color:#ef4444;">
         <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         Admin
@@ -814,18 +822,6 @@ body.has-announcement { padding-top: 44px; }
         <button class="save-bar-btn" id="saveLinksBtn" onclick="saveLinks()">Sauvegarder les liens</button>
       </div>
     </div>
-
-      <div class="section-card" id="badgesCard" style="display:none">
-        <div class="section-card-title">Tes badges Discord</div>
-        <div class="section-card-desc">Clique sur l'œil pour masquer/afficher un badge sur ta page publique.</div>
-        <div id="dashBadges" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;"></div>
-        <div id="noBadges" style="font-size:13px;color:var(--gray-400);margin-top:8px;display:none;">
-          Aucun badge pour l'instant — connecte-toi via Discord pour les synchroniser.
-        </div>
-        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
-          <button id="syncDiscordBtn" onclick="syncDiscord()" style="padding:6px 14px;border-radius:8px;border:none;background:#5865F2;color:#fff;font-size:12px;font-weight:600;cursor:pointer;">🔄 Actualiser mes rôles</button>
-        </div>
-      </div>
 
     <div class="tab-content" id="tab-medias">
       <div class="dash-title">Médias</div>
@@ -1632,10 +1628,11 @@ body.has-announcement { padding-top: 44px; }
 
     <div class="tab-content" id="tab-badges">
       <div class="dash-title">Badges</div>
-      <div class="dash-subtitle">Tous les insignes du site — découvrez comment débloquer les vôtres.</div>
+      <div class="dash-subtitle">Tous vos insignes — rôles du site et badges Discord.</div>
 
+      <!-- Rôles du site -->
       <div class="section-card" id="badgesSummaryCard">
-        <div class="section-card-title">Vos badges</div>
+        <div class="section-card-title">Vos badges du site</div>
         <div style="font-size:12px;color:var(--gray-500);margin-bottom:14px;">
           Cliquez sur l'œil pour afficher ou masquer un badge sur votre profil public.
         </div>
@@ -1645,12 +1642,109 @@ body.has-announcement { padding-top: 44px; }
         </div>
       </div>
 
+      <!-- Badges Discord -->
+      <div class="section-card" id="discordBadgesCard">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
+          <div>
+            <div class="section-card-title" style="margin-bottom:2px;">Vos badges Discord</div>
+            <div style="font-size:12px;color:var(--gray-500);">Cliquez sur l'œil pour masquer/afficher un badge sur votre profil public.</div>
+          </div>
+          <button id="syncDiscordBtn" onclick="syncDiscord()" style="padding:6px 14px;border-radius:8px;border:none;background:#5865F2;color:#fff;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;">🔄 Actualiser</button>
+        </div>
+        <div id="dashBadges" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
+        <div id="noBadges" style="font-size:13px;color:var(--gray-400);padding:8px 0;display:none;">
+          Aucun badge Discord — connectez-vous via Discord pour les synchroniser.
+        </div>
+      </div>
+
+      <!-- Catalogue complet -->
       <div class="section-card">
         <div class="section-card-title" style="margin-bottom:4px;">Tous les insignes</div>
         <div style="font-size:12px;color:var(--gray-500);margin-bottom:18px;">
           <span id="badgesUnlockCount" style="font-weight:700;color:var(--black);">0</span> débloqué(s) sur <span id="badgesTotalCount" style="font-weight:700;">0</span>
         </div>
         <div id="allBadgesGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;"></div>
+      </div>
+    </div>
+
+
+    <div class="tab-content" id="tab-settings">
+      <div class="dash-title">Paramètres</div>
+      <div class="dash-subtitle">Gérez votre compte et vos accès.</div>
+
+      <!-- Compte -->
+      <div class="section-card" style="margin-bottom:16px;">
+        <div class="section-card-title">
+          <span>👤 Informations du compte</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--gray-200);margin-bottom:14px;">
+          <div id="settingsAvatar" style="width:52px;height:52px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;flex-shrink:0;">?</div>
+          <div>
+            <div id="settingsUsername" style="font-size:15px;font-weight:700;color:var(--black);margin-bottom:2px;">—</div>
+            <div id="settingsEmail" style="font-size:12px;color:var(--gray-500);">—</div>
+          </div>
+          <div id="settingsUID" style="margin-left:auto;font-size:11px;color:var(--gray-400);font-family:monospace;background:var(--gray-100);border-radius:5px;padding:4px 8px;">#—</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <button onclick="openChangePassword()" class="save-bar-btn" style="width:100%;padding:10px 0;border-radius:8px;font-size:13px;">
+            🔑 Changer le mot de passe
+          </button>
+          <button onclick="openChangeEmail()" class="save-bar-btn" style="width:100%;padding:10px 0;border-radius:8px;font-size:13px;background:linear-gradient(135deg,#3b82f6,#2563eb);">
+            ✉️ Changer l'adresse e-mail
+          </button>
+        </div>
+      </div>
+
+      <!-- Redeem Key -->
+      <div class="section-card" style="margin-bottom:16px;">
+        <div class="section-card-title">
+          <span>🎁 Activer une clé</span>
+          <span style="font-size:11px;color:var(--gray-400);font-weight:400;">Clé obtenue sur notre Sellauth</span>
+        </div>
+        <p style="font-size:13px;color:var(--gray-500);margin-bottom:14px;">
+          Entre ta clé d'activation pour débloquer un rôle <strong>Premium</strong> ou <strong>Donor</strong> sur le site.
+        </p>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input type="text" id="redeemKeyInput" placeholder="AK47-XXXXXX-XXXXXX-XXXXXX"
+            style="flex:1;padding:10px 14px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;font-family:'JetBrains Mono','Courier New',monospace;background:var(--white);color:var(--black);outline:none;letter-spacing:.5px;"
+            oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')claimKey()">
+          <button onclick="claimKey()" id="redeemBtn" class="save-bar-btn" style="padding:10px 20px;white-space:nowrap;border-radius:8px;font-size:13px;">
+            Activer
+          </button>
+        </div>
+        <div id="redeemMsg" style="margin-top:10px;font-size:13px;display:none;padding:10px 14px;border-radius:7px;"></div>
+      </div>
+
+      <!-- Historique des clés activées -->
+      <div class="section-card" style="margin-bottom:16px;">
+        <div class="section-card-title">
+          <span>📜 Historique des clés activées</span>
+        </div>
+        <div id="keyHistoryList" style="font-size:13px;color:var(--gray-500);">Chargement...</div>
+      </div>
+
+      <!-- Sessions actives -->
+      <div class="section-card" style="margin-bottom:16px;">
+        <div class="section-card-title">
+          <span>🔒 Sessions actives</span>
+          <span id="revokeOthersBtn" onclick="revokeOtherSessions()" style="font-size:11px;color:#ef4444;font-weight:600;cursor:pointer;">Déconnecter tous les autres appareils</span>
+        </div>
+        <p style="font-size:13px;color:var(--gray-500);margin-bottom:14px;">
+          Liste des appareils actuellement connectés à ton compte. Tu peux révoquer l'accès à tout moment.
+        </p>
+        <div id="sessionsList" style="font-size:13px;color:var(--gray-500);">Chargement...</div>
+      </div>
+
+      <!-- Zone danger -->
+      <div class="section-card" style="border-color:#fecaca;">
+        <div class="section-card-title" style="color:#ef4444;">⚠️ Zone dangereuse</div>
+        <p style="font-size:13px;color:var(--gray-500);margin-bottom:14px;">
+          La suppression de votre compte est définitive. Toutes vos données seront effacées.
+        </p>
+        <button onclick="confirmDeleteAccount()" style="padding:9px 18px;background:none;border:1px solid #fca5a5;color:#ef4444;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;" onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='none'">
+          🗑 Supprimer mon compte
+        </button>
       </div>
     </div>
 
@@ -1858,6 +1952,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('overviewDate').textContent = new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   startHeartbeat();
 
+  // ── Chargement des prix dynamiques SellAuth ──
+  try {
+    const pricesRes = await fetch(API + '/api/sellauth/prices');
+    if (pricesRes.ok) {
+      const prices = await pricesRes.json();
+      prices.forEach(p => {
+        // Mettre à jour ALL_BADGES_DEF
+        const badge = ALL_BADGES_DEF.find(b => b._sellauth_slug === p.slug || b.id === p.role);
+        if (badge) badge.priceEur = p.price_eur;
+        // Mettre à jour ROLES_DEF aussi
+        const role = ROLES_DEF.find(r => r.id === p.role);
+        if (role) role.priceEur = p.price_eur;
+      });
+    }
+  } catch (e) { /* fail silently, prix par défaut utilisés */ }
+
   const analyticsPromise = new Promise(resolve => {
     if (_backendReady) { resolve(loadAnalytics()); }
     else { _analyticsWaiting = true;  resolve(); }
@@ -1985,70 +2095,8 @@ function renderTopLinks() {
   </tbody></table>`;
 }
 
-function renderBadges() {
-  const card = document.getElementById('badgesCard');
-  const container = document.getElementById('dashBadges');
-  const noBadges = document.getElementById('noBadges');
-  if (!card || !container) return;
-  let badges = [];
-  try { badges = JSON.parse(userData.discord_badges || '[]'); } catch {}
-  let hidden = [];
-  try { hidden = JSON.parse(userData.hidden_badges || '[]'); } catch {}
-  if (!userData.discord_id || badges.length === 0) {
-    card.style.display = 'block';
-    container.style.display = 'none';
-    noBadges.style.display = 'block';
-    return;
-  }
-  card.style.display = 'block';
-  container.style.display = 'flex';
-  noBadges.style.display = 'none';
-  const BADGE_SVGS = {
-    discord:              `<svg viewBox="0 0 24 24" fill="#5865F2"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>`,
-    staff:                `<svg viewBox="0 0 24 24"><rect width="24" height="24" rx="12" fill="#5865F2"/><path d="M12 4L5 7.5v4c0 3.9 3 7.4 7 8.5 4-1.1 7-4.6 7-8.5v-4L12 4zm-1 10.5H9.5v-5H11v5zm3 0h-1.5v-5H14v5z" fill="white"/></svg>`,
-    partner:              `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#5865F2"/><path d="M7 12l3 3 7-7" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
-    hypesquad:            `<svg viewBox="0 0 24 24"><rect width="24" height="24" rx="12" fill="#f0b132"/><text x="12" y="17" font-size="13" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial">H</text></svg>`,
-    hypesquad_bravery:    `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_hbrav" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#9c59d1"/><stop offset="100%" stop-color="#6f3fad"/></linearGradient></defs><polygon points="12,3 22,21 2,21" fill="url(#db_hbrav)"/><text x="12" y="18" font-size="9" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial">B</text></svg>`,
-    hypesquad_brilliance: `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_hbril" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f47b67"/><stop offset="100%" stop-color="#e0543c"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#db_hbril)"/><text x="12" y="16" font-size="9" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial">Br</text></svg>`,
-    hypesquad_balance:    `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_hbal" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#45ddc0"/><stop offset="100%" stop-color="#2eb89d"/></linearGradient></defs><rect width="24" height="24" rx="12" fill="url(#db_hbal)"/><text x="12" y="16" font-size="9" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial">Ba</text></svg>`,
-    bug_hunter:           `<svg viewBox="0 0 24 24"><circle cx="12" cy="11" r="5" fill="#3ba55d"/><path d="M8.5 7C9.5 5 12 4.5 12 4.5S14.5 5 15.5 7" stroke="#3ba55d" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M7 9l-3-2M17 9l3-2M7 12l-3 1M17 12l3 1M8 16l-2 2M16 16l2 2" stroke="#3ba55d" stroke-width="1.5" stroke-linecap="round"/><ellipse cx="12" cy="11" rx="2" ry="3" fill="#57f287"/></svg>`,
-    bug_hunter_level_2:   `<svg viewBox="0 0 24 24"><circle cx="12" cy="11" r="5" fill="#c27c0e"/><path d="M8.5 7C9.5 5 12 4.5 12 4.5S14.5 5 15.5 7" stroke="#c27c0e" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M7 9l-3-2M17 9l3-2M7 12l-3 1M17 12l3 1M8 16l-2 2M16 16l2 2" stroke="#c27c0e" stroke-width="1.5" stroke-linecap="round"/><ellipse cx="12" cy="11" rx="2" ry="3" fill="#f0b132"/></svg>`,
-    early_supporter:      `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_es" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ff73fa"/><stop offset="100%" stop-color="#9c59c5"/></linearGradient></defs><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="url(#db_es)"/></svg>`,
-    verified_developer:   `<svg viewBox="0 0 24 24"><path d="M12 2L3 6v6c0 5.25 3.9 10.15 9 11.35C17.1 22.15 21 17.25 21 12V6L12 2z" fill="#5865F2"/><path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
-    active_developer:     `<svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-2 8 11-12h-7l2-8z" fill="#23a55a"/></svg>`,
-    certified_moderator:  `<svg viewBox="0 0 24 24"><path d="M12 2L4 5v5c0 4.5 3.4 8.7 8 9.93C16.6 18.7 20 14.5 20 10V5L12 2z" fill="#5865F2"/><path d="M8.5 12l2.5 2.5 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
-    legacy_username:      `<svg viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#5865F2"/><text x="12" y="16" font-size="11" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial">#</text></svg>`,
-    quest:                `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#f0b132"/><text x="12" y="17" font-size="13" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial">?</text></svg>`,
-    nitro:                `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_nitro" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f47fff"/><stop offset="100%" stop-color="#7289da"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#db_nitro)"/><text x="12" y="16.5" font-size="8.5" font-weight="900" text-anchor="middle" fill="white" font-family="Arial">NITRO</text></svg>`,
-    nitro_basic:          `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#7289da"/><text x="12" y="16.5" font-size="7" font-weight="900" text-anchor="middle" fill="white" font-family="Arial">BASIC</text></svg>`,
-    nitro_bronze:         `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_nbronze" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#cd7f32"/><stop offset="100%" stop-color="#a0522d"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#db_nbronze)"/><circle cx="12" cy="12" r="6" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="#fff"/></svg>`,
-    nitro_silver:         `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_nsilver" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#c0c0c0"/><stop offset="100%" stop-color="#808080"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#db_nsilver)"/><circle cx="12" cy="12" r="6" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="#fff"/></svg>`,
-    nitro_gold:           `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_ngold" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ffd700"/><stop offset="100%" stop-color="#ffa500"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#db_ngold)"/><circle cx="12" cy="12" r="6" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="#fff"/></svg>`,
-    nitro_platinum:       `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_nplat" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#4fc3f7"/><stop offset="100%" stop-color="#0288d1"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#db_nplat)"/><circle cx="12" cy="12" r="6" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="#fff"/></svg>`,
-    nitro_diamond:        `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_ndiamo" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ce93d8"/><stop offset="100%" stop-color="#7b1fa2"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#db_ndiamo)"/><circle cx="12" cy="12" r="6" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="#fff"/></svg>`,
-    nitro_emerald:        `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_nemer" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#66bb6a"/><stop offset="100%" stop-color="#2e7d32"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#db_nemer)"/><circle cx="12" cy="12" r="6" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="#fff"/></svg>`,
-    nitro_ruby:           `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_nruby" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ef5350"/><stop offset="100%" stop-color="#b71c1c"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#db_nruby)"/><circle cx="12" cy="12" r="6" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="#fff"/></svg>`,
-    nitro_opal:           `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_nopal" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f48fb1"/><stop offset="50%" stop-color="#ce93d8"/><stop offset="100%" stop-color="#80deea"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#db_nopal)"/><circle cx="12" cy="12" r="6" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="#fff"/></svg>`,
-    booster:              `<svg viewBox="0 0 24 24"><defs><linearGradient id="db_boost" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ff73fa"/><stop offset="100%" stop-color="#f47fff"/></linearGradient></defs><path d="M12 2l2.5 7h7l-5.5 4 2 7L12 16l-6 4 2-7L2.5 9h7L12 2z" fill="url(#db_boost)"/></svg>`,
-    server:               `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#23a55a"/><path d="M7 12l3 3 7-7" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
-  };
-  container.innerHTML = badges.map((b, i) => {
-    const isHidden = hidden.includes(i);
-    const svg = BADGE_SVGS[b.type] || '';
-    const label = b.label || b.type;
-    const eyeIcon = isHidden ? '🚫' : '👁️';
-    const opacity = isHidden ? '0.4' : '1';
-    const tooltip = isHidden ? 'Masqué — cliquer pour afficher' : 'Visible — cliquer pour masquer';
-    if (svg) {
-      return `<div onclick="toggleBadge(${i})" title="${tooltip}" style="display:inline-flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;opacity:${opacity};user-select:none;">
-        <div style="width:36px;height:36px;position:relative;" title="${label}">${svg.replace('<svg ', '<svg style="width:36px;height:36px;" ')}</div>
-        <span style="font-size:10px;color:var(--gray-500);max-width:52px;text-align:center;line-height:1.2;">${label}</span>
-        <span style="font-size:9px;">${eyeIcon}</span>
-      </div>`;
-    }
-    return `<span class="badge" style="opacity:${opacity};cursor:pointer;user-select:none;" title="${tooltip}" onclick="toggleBadge(${i})">${b.emoji || ''} ${label} <span style="margin-left:3px;font-size:10px;">${eyeIcon}</span></span>`;
-  }).join('');
-}
+// renderBadges est maintenant un alias vers renderBadgesTab (tout est dans l'onglet Badges)
+function renderBadges() { renderBadgesTab(); }
 
 async function toggleBadge(index) {
   let hidden = [];
@@ -2066,7 +2114,8 @@ async function toggleBadge(index) {
     });
     const data = await r.json();
     userData.hidden_badges = data.hidden_badges !== undefined ? data.hidden_badges : JSON.stringify(hidden);
-    renderBadges();
+    renderBadgesTab();
+    showToast('Visibilité du badge mise à jour.');
   } catch { showToast('Erreur réseau'); }
 }
 
@@ -2114,8 +2163,8 @@ const ALL_BADGES_DEF = [
   },
   {
     id: 'verified', label: 'Verified', emoji: '✅', color: '#10b981',
-    desc: 'Achetez-le ou soyez un créateur de contenu reconnu.',
-    how: 'Débloquer',
+    desc: 'Réservé aux comptes reconnus ou créateurs de contenu (pas encore en vente).',
+    how: null,
     howUrl: null,
     howAction: null,
     category: 'spécial',
@@ -2129,27 +2178,26 @@ const ALL_BADGES_DEF = [
   },
   {
     id: 'premium', label: 'Premium', emoji: '⭐', color: '#f43f5e',
-    desc: 'Abonnez-vous au Premium, puis venez le confirmer sur le Discord.',
+    desc: 'Abonnez-vous au Premium — rôle attribué automatiquement après paiement.',
     how: 'Acheter',
-    howUrl: '/premium',
-    howNote: 'Après achat, rejoins le Discord pour récupérer ton rôle',
-    howNoteUrl: 'https://discord.com/invite/g7MysUNQXs',
+    howUrl: 'https://ak-47shop.mysellauth.com/product/ak-47fr-prenium',
+    howNote: 'Ton rôle est attribué automatiquement à l\'email utilisé lors de l\'achat',
+    priceEur: 5.00,   // valeur initiale — mise à jour dynamiquement via /api/sellauth/prices
+    _sellauth_slug: 'ak-47fr-prenium',
     category: 'achat',
   },
   {
     id: 'donor', label: 'Donor', emoji: '💜', color: '#a855f7',
-    desc: 'Faites un don d\'au moins 10 € à ak-47.fr, puis venez le confirmer sur le Discord.',
-    how: 'Donner',
-    howUrl: '/donate',
-    howNote: 'Après le don, rejoins le Discord pour récupérer ton rôle',
-    howNoteUrl: 'https://discord.com/invite/g7MysUNQXs',
+    desc: 'Faites un don à ak-47.fr (pas encore en vente — bientôt disponible).',
+    how: null,
+    howUrl: null,
     category: 'achat',
   },
   {
     id: 'gifter', label: 'Gifter', emoji: '🎁', color: '#ec4899',
     desc: 'Offrez un produit ak-47.fr à un autre utilisateur, puis venez le confirmer sur le Discord.',
     how: 'Offrir',
-    howUrl: '/premium',
+    howUrl: '/shop.html',
     howNote: 'Après l\'achat, rejoins le Discord pour récupérer ton rôle',
     howNoteUrl: 'https://discord.com/invite/g7MysUNQXs',
     category: 'achat',
@@ -2177,6 +2225,27 @@ const ALL_BADGES_DEF = [
     category: 'équipe',
   },
 ];
+
+const BADGE_SVGS = {
+  discord:              `<svg viewBox="0 0 24 24" fill="#5865F2"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>`,
+  staff:                `<svg viewBox="0 0 24 24"><rect width="24" height="24" rx="12" fill="#5865F2"/><path d="M12 4L5 7.5v4c0 3.9 3 7.4 7 8.5 4-1.1 7-4.6 7-8.5v-4L12 4zm-1 10.5H9.5v-5H11v5zm3 0h-1.5v-5H14v5z" fill="white"/></svg>`,
+  partner:              `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#5865F2"/><path d="M7 12l3 3 7-7" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
+  hypesquad:            `<svg viewBox="0 0 24 24"><rect width="24" height="24" rx="12" fill="#f0b132"/><text x="12" y="17" font-size="13" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial">H</text></svg>`,
+  hypesquad_bravery:    `<svg viewBox="0 0 24 24"><defs><linearGradient id="hbrav" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#9c59d1"/><stop offset="100%" stop-color="#6f3fad"/></linearGradient></defs><polygon points="12,3 22,21 2,21" fill="url(#hbrav)"/><text x="12" y="18" font-size="9" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial">B</text></svg>`,
+  hypesquad_brilliance: `<svg viewBox="0 0 24 24"><defs><linearGradient id="hbril" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f47b67"/><stop offset="100%" stop-color="#e0543c"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#hbril)"/><text x="12" y="16" font-size="9" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial">Br</text></svg>`,
+  hypesquad_balance:    `<svg viewBox="0 0 24 24"><defs><linearGradient id="hbal" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#45ddc0"/><stop offset="100%" stop-color="#2eb89d"/></linearGradient></defs><rect width="24" height="24" rx="12" fill="url(#hbal)"/><text x="12" y="16" font-size="9" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial">Ba</text></svg>`,
+  bug_hunter:           `<svg viewBox="0 0 24 24"><circle cx="12" cy="11" r="5" fill="#3ba55d"/><path d="M8.5 7C9.5 5 12 4.5 12 4.5S14.5 5 15.5 7" stroke="#3ba55d" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M7 9l-3-2M17 9l3-2M7 12l-3 1M17 12l3 1M8 16l-2 2M16 16l2 2" stroke="#3ba55d" stroke-width="1.5" stroke-linecap="round"/><ellipse cx="12" cy="11" rx="2" ry="3" fill="#57f287"/></svg>`,
+  bug_hunter_level_2:   `<svg viewBox="0 0 24 24"><circle cx="12" cy="11" r="5" fill="#c27c0e"/><path d="M8.5 7C9.5 5 12 4.5 12 4.5S14.5 5 15.5 7" stroke="#c27c0e" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M7 9l-3-2M17 9l3-2M7 12l-3 1M17 12l3 1M8 16l-2 2M16 16l2 2" stroke="#c27c0e" stroke-width="1.5" stroke-linecap="round"/><ellipse cx="12" cy="11" rx="2" ry="3" fill="#f0b132"/></svg>`,
+  early_supporter:      `<svg viewBox="0 0 24 24"><defs><linearGradient id="es" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ff73fa"/><stop offset="100%" stop-color="#9c59c5"/></linearGradient></defs><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="url(#es)"/></svg>`,
+  verified_developer:   `<svg viewBox="0 0 24 24"><path d="M12 2L3 6v6c0 5.25 3.9 10.15 9 11.35C17.1 22.15 21 17.25 21 12V6L12 2z" fill="#5865F2"/><path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
+  active_developer:     `<svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-2 8 11-12h-7l2-8z" fill="#23a55a"/></svg>`,
+  certified_moderator:  `<svg viewBox="0 0 24 24"><path d="M12 2L4 5v5c0 4.5 3.4 8.7 8 9.93C16.6 18.7 20 14.5 20 10V5L12 2z" fill="#5865F2"/><path d="M8.5 12l2.5 2.5 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
+  legacy_username:      `<svg viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#5865F2"/><text x="12" y="16" font-size="11" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial">#</text></svg>`,
+  nitro:                `<svg viewBox="0 0 24 24"><defs><linearGradient id="nitro" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f47fff"/><stop offset="100%" stop-color="#7289da"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#nitro)"/><text x="12" y="16.5" font-size="8.5" font-weight="900" text-anchor="middle" fill="white" font-family="Arial">NITRO</text></svg>`,
+  nitro_basic:          `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#7289da"/><text x="12" y="16.5" font-size="7" font-weight="900" text-anchor="middle" fill="white" font-family="Arial">BASIC</text></svg>`,
+  booster:              `<svg viewBox="0 0 24 24"><defs><linearGradient id="boost" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ff73fa"/><stop offset="100%" stop-color="#f47fff"/></linearGradient></defs><path d="M12 2l2.5 7h7l-5.5 4 2 7L12 16l-6 4 2-7L2.5 9h7L12 2z" fill="url(#boost)"/></svg>`,
+  server:               `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#23a55a"/><path d="M7 12l3 3 7-7" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
+};
 
 function renderBadgesTab() {
   let userRoles = [];
@@ -2217,6 +2286,39 @@ function renderBadgesTab() {
     }).join('');
   }
 
+  // --- Section badges Discord ---
+  const dashBadges = document.getElementById('dashBadges');
+  const noBadges = document.getElementById('noBadges');
+  let discordBadges = [];
+  try { discordBadges = JSON.parse(userData.discord_badges || '[]'); } catch {}
+  let hiddenDiscord = [];
+  try { hiddenDiscord = JSON.parse(userData.hidden_badges || '[]'); } catch {}
+  if (!userData.discord_id || discordBadges.length === 0) {
+    dashBadges.innerHTML = '';
+    noBadges.style.display = 'block';
+  } else {
+    noBadges.style.display = 'none';
+    dashBadges.innerHTML = discordBadges.map((b, i) => {
+      const isHidden = hiddenDiscord.includes(i);
+      const svg = BADGE_SVGS[b.type] || '';
+      const label = b.label || b.type;
+      const opacity = isHidden ? '0.4' : '1';
+      const eyeLabel = isHidden ? '🚫 Masqué' : '👁 Visible';
+      const tooltip = isHidden ? 'Masqué — cliquer pour afficher' : 'Visible — cliquer pour masquer';
+      return `<div onclick="toggleBadge(${i})" title="${tooltip}" style="
+          display:inline-flex;flex-direction:column;align-items:center;gap:4px;
+          cursor:pointer;opacity:${opacity};user-select:none;
+          padding:10px 12px;border-radius:10px;border:1.5px solid #5865F230;
+          background:#5865F208;transition:opacity .2s,transform .15s;
+        " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+        ${svg ? `<div style="width:36px;height:36px;">${svg.replace('<svg ', '<svg style="width:36px;height:36px;" ')}</div>` : `<span style="font-size:24px;">${b.emoji||'🏅'}</span>`}
+        <span style="font-size:10px;color:var(--gray-600);max-width:60px;text-align:center;line-height:1.2;">${label}</span>
+        <span style="font-size:9px;color:var(--gray-400);">${eyeLabel}</span>
+      </div>`;
+    }).join('');
+  }
+
+  // --- Catalogue complet des badges du site ---
   const grid = document.getElementById('allBadgesGrid');
   grid.innerHTML = ALL_BADGES_DEF.map(def => {
     const owned = userRoles.includes(def.id);
@@ -2245,12 +2347,14 @@ function renderBadgesTab() {
         display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;
         border:1.5px solid ${owned ? def.color + '50' : 'var(--gray-200)'};
         background:${owned ? def.color + '0d' : 'var(--gray-50)'};
-        opacity:${owned ? 1 : 0.72};transition:transform .15s;
-      " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+        opacity:${owned ? 1 : 0.72};transition:transform .15s,box-shadow .2s;
+        ${owned ? `box-shadow:0 0 14px 3px ${def.color}45;` : ''}
+      " onmouseover="this.style.transform='translateY(-2px)';${owned ? `this.style.boxShadow='0 0 24px 6px ${def.color}65'` : ''}" onmouseout="this.style.transform='';${owned ? `this.style.boxShadow='0 0 14px 3px ${def.color}45'` : ''}">
       <span style="font-size:28px;min-width:36px;text-align:center;">${def.emoji}</span>
       <div style="flex:1;min-width:0;">
         <div style="font-size:13px;font-weight:700;color:${owned ? def.color : 'var(--gray-700)'};">${def.label}${owned ? ' <span style="font-size:10px;font-weight:500;color:'+def.color+';">✓ Obtenu</span>' : ''}</div>
         <div style="font-size:11px;color:var(--gray-500);margin-top:2px;line-height:1.4;">${def.desc}</div>
+        ${(!owned && def.priceEur != null) ? `<div style="font-size:11px;font-weight:700;color:${def.color};margin-top:4px;">${def.priceEur.toFixed(2).replace('.',',')} €</div>` : ''}
         ${(!owned && def.howNote) ? `<div style="font-size:10px;color:#5865F2;margin-top:4px;line-height:1.4;">💬 ${def.howNote}${def.howNoteUrl ? ` — <a href="${def.howNoteUrl}" target="_blank" style="color:#5865F2;text-decoration:underline;">rejoindre le Discord</a>` : ''}</div>` : ''}
       </div>
       ${actionBtn ? `<div style="flex-shrink:0;">${actionBtn}</div>` : ''}
@@ -4182,6 +4286,327 @@ switchTab = function(name) {
   if (name === 'templates' && _tplDashData.length === 0) tplDashLoad();
 };
 
+</script>
+
+<script>
+
+function loadSettingsTab() {
+  const u = window._currentUser;
+  if (!u) return;
+  const av = document.getElementById('settingsAvatar');
+  const un = document.getElementById('settingsUsername');
+  const em = document.getElementById('settingsEmail');
+  const uid = document.getElementById('settingsUID');
+  if (av) {
+    if (u.avatar_url) {
+      av.innerHTML = `<img src="${u.avatar_url}" style="width:52px;height:52px;border-radius:50%;object-fit:cover;">`;
+      av.style.background = 'none';
+    } else {
+      av.textContent = (u.display_name || u.username || '?')[0].toUpperCase();
+      av.style.background = u.avatar_color || 'var(--accent)';
+    }
+  }
+  if (un) un.textContent = u.display_name || u.username || '—';
+  if (em) em.textContent = u.email ? u.email.replace(/(.{2}).*(@.*)/, '$1***$2') : '—';
+  if (uid) uid.textContent = '#' + (u.uid || '?');
+
+  renderKeyHistory(u);
+  loadSessionsTab();
+}
+
+// --- Historique des clés activées (sans afficher la note admin de la clé) ---
+function renderKeyHistory(u) {
+  const box = document.getElementById('keyHistoryList');
+  if (!box) return;
+  let history = [];
+  try { history = JSON.parse(u.badges_history || '[]'); } catch {}
+  if (!history.length) {
+    box.innerHTML = '<div style="padding:10px 0;">Aucune clé activée pour le moment.</div>';
+    return;
+  }
+  box.innerHTML = [...history].reverse().map(entry => {
+    const date = entry.granted_at ? new Date(entry.granted_at * 1000).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }) : '—';
+    const expiry = entry.expires_at === 'lifetime' ? 'À vie' :
+      (typeof entry.expires_at === 'number' ? new Date(entry.expires_at * 1000).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }) : '—');
+    return `
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--gray-200);">
+        <div style="font-size:20px;">${entry.emoji || '🏅'}</div>
+        <div style="flex:1;">
+          <div style="font-weight:600;color:var(--black);">${entry.label || entry.id}</div>
+          <div style="font-size:11px;color:var(--gray-400);">Activée le ${date} — Durée : ${entry.duration || '—'} — Expire : ${expiry}</div>
+        </div>
+        ${entry.amount_eur ? `<div style="font-size:12px;font-weight:700;color:var(--accent);white-space:nowrap;">${entry.amount_eur.toFixed(2).replace('.',',')} €</div>` : ''}
+      </div>`;
+  }).join('');
+}
+
+// --- Sessions actives (appareils connectés) ---
+function parseUserAgent(ua) {
+  if (!ua) return 'Appareil inconnu';
+  let os = 'OS inconnu';
+  if (/Windows/i.test(ua)) os = 'Windows';
+  else if (/iPhone|iPad/i.test(ua)) os = 'iOS';
+  else if (/Mac OS/i.test(ua)) os = 'macOS';
+  else if (/Android/i.test(ua)) os = 'Android';
+  else if (/Linux/i.test(ua)) os = 'Linux';
+  let browser = 'Navigateur inconnu';
+  if (/Edg\//i.test(ua)) browser = 'Edge';
+  else if (/Chrome\//i.test(ua)) browser = 'Chrome';
+  else if (/Firefox\//i.test(ua)) browser = 'Firefox';
+  else if (/Safari\//i.test(ua)) browser = 'Safari';
+  return `${browser} sur ${os}`;
+}
+
+function relativeTime(ts) {
+  if (!ts) return '—';
+  const diff = Date.now() - ts;
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "à l'instant";
+  if (mins < 60) return `il y a ${mins} min`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `il y a ${hours} h`;
+  const days = Math.floor(hours / 24);
+  return `il y a ${days} j`;
+}
+
+async function loadSessionsTab() {
+  const box = document.getElementById('sessionsList');
+  if (!box) return;
+  try {
+    const currentToken = getRefreshToken() || '';
+    const r = await apiFetch(API + '/api/auth/sessions?currentToken=' + encodeURIComponent(currentToken), {
+      headers: { Authorization: 'Bearer ' + getToken() },
+    });
+    if (!r.ok) { box.innerHTML = '<div>Impossible de charger les sessions.</div>'; return; }
+    const sessions = await r.json();
+    if (!sessions.length) { box.innerHTML = '<div>Aucune session active.</div>'; return; }
+    box.innerHTML = sessions.map(s => `
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--gray-200);">
+        <div style="font-size:20px;">${s.current ? '🟢' : '💻'}</div>
+        <div style="flex:1;">
+          <div style="font-weight:600;color:var(--black);">
+            ${parseUserAgent(s.user_agent)} ${s.current ? '<span style="font-size:10px;color:#16a34a;font-weight:700;">· Cet appareil</span>' : ''}
+          </div>
+          <div style="font-size:11px;color:var(--gray-400);">IP ${s.ip || 'inconnue'} — Dernière activité ${relativeTime(s.last_used)}</div>
+        </div>
+        ${s.current ? '' : `<button onclick="revokeSession('${s.hash}')" style="padding:6px 12px;background:none;border:1px solid #fca5a5;color:#ef4444;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;">Révoquer</button>`}
+      </div>`).join('');
+  } catch {
+    box.innerHTML = '<div>Impossible de charger les sessions.</div>';
+  }
+}
+
+async function revokeSession(hash) {
+  try {
+    const r = await apiFetch(API + '/api/auth/sessions/' + encodeURIComponent(hash), {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer ' + getToken() },
+    });
+    if (r.ok) loadSessionsTab();
+  } catch {}
+}
+
+async function revokeOtherSessions() {
+  try {
+    const currentToken = getRefreshToken() || '';
+    const r = await apiFetch(API + '/api/auth/sessions/revoke-others', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + getToken(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ currentToken }),
+    });
+    if (r.ok) loadSessionsTab();
+  } catch {}
+}
+
+// Patch switchTab pour charger les données au clic
+const _stOrig = switchTab;
+switchTab = function(name) {
+  _stOrig(name);
+  if (name === 'settings') loadSettingsTab();
+};
+
+// Expose _currentUser globalement depuis loadUser (qui existe déjà dans le dash)
+const _origSetUser = window.setCurrentUser;
+// On intercepte la réponse de /api/user/me dans le boot
+(function patchUserLoad() {
+  const orig = window.fetch;
+  window.fetch = async function(...args) {
+    const res = await orig.apply(this, args);
+    try {
+      const url = typeof args[0] === 'string' ? args[0] : '';
+      if (url.includes('/api/user/me')) {
+        const clone = res.clone();
+        clone.json().then(d => { if (d && d.username) window._currentUser = d; }).catch(() => {});
+      }
+    } catch {}
+    return res;
+  };
+})();
+
+function openChangePassword() {
+  const overlay = document.createElement('div');
+  overlay.id = 'pwModal';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:2000;display:flex;align-items:center;justify-content:center;';
+  overlay.innerHTML = `
+    <div style="background:var(--white);border-radius:16px;padding:28px;width:min(440px,94vw);border:1px solid var(--gray-200);">
+      <div style="font-size:16px;font-weight:700;margin-bottom:20px;">🔑 Changer le mot de passe</div>
+      <div class="form-group"><label>Mot de passe actuel</label>
+        <input type="password" id="pwOld" placeholder="••••••••"></div>
+      <div class="form-group"><label>Nouveau mot de passe</label>
+        <input type="password" id="pwNew" placeholder="••••••••"></div>
+      <div class="form-group"><label>Confirmer</label>
+        <input type="password" id="pwConfirm" placeholder="••••••••"></div>
+      <div id="pwMsg" style="font-size:13px;margin-bottom:12px;display:none;"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button onclick="document.getElementById('pwModal').remove()" style="padding:9px 18px;border:1px solid var(--gray-200);border-radius:8px;background:none;cursor:pointer;font-size:13px;color:var(--gray-700);">Annuler</button>
+        <button onclick="doChangePassword()" class="save-bar-btn" style="padding:9px 18px;border-radius:8px;font-size:13px;">Enregistrer</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+}
+async function doChangePassword() {
+  const old = document.getElementById('pwOld').value;
+  const nw = document.getElementById('pwNew').value;
+  const cf = document.getElementById('pwConfirm').value;
+  const msg = document.getElementById('pwMsg');
+  if (!old || !nw || !cf) return showPwMsg('Remplis tous les champs.', 'red');
+  if (nw !== cf) return showPwMsg('Les mots de passe ne correspondent pas.', 'red');
+  if (nw.length < 6) return showPwMsg('Minimum 6 caractères.', 'red');
+  try {
+    const token = localStorage.getItem('accessToken') || getCookie('accessToken');
+    const r = await fetch(API + '/api/user/change-password', {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) },
+      body: JSON.stringify({ current_password: old, new_password: nw }),
+    });
+    const d = await r.json();
+    if (!r.ok) return showPwMsg(d.error || 'Erreur', 'red');
+    showPwMsg('Mot de passe modifié !', 'green');
+    setTimeout(() => document.getElementById('pwModal')?.remove(), 1500);
+  } catch { showPwMsg('Erreur réseau', 'red'); }
+}
+function showPwMsg(txt, color) {
+  const el = document.getElementById('pwMsg');
+  if (!el) return;
+  el.style.display = 'block';
+  el.style.color = color === 'red' ? '#ef4444' : '#22c55e';
+  el.textContent = txt;
+}
+
+function openChangeEmail() {
+  const overlay = document.createElement('div');
+  overlay.id = 'emModal';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:2000;display:flex;align-items:center;justify-content:center;';
+  overlay.innerHTML = `
+    <div style="background:var(--white);border-radius:16px;padding:28px;width:min(440px,94vw);border:1px solid var(--gray-200);">
+      <div style="font-size:16px;font-weight:700;margin-bottom:20px;">✉️ Changer l'adresse e-mail</div>
+      <div class="form-group"><label>Nouvelle adresse e-mail</label>
+        <input type="email" id="emNew" placeholder="nouvelle@email.com"></div>
+      <div class="form-group"><label>Mot de passe actuel (confirmation)</label>
+        <input type="password" id="emPw" placeholder="••••••••"></div>
+      <div id="emMsg" style="font-size:13px;margin-bottom:12px;display:none;"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button onclick="document.getElementById('emModal').remove()" style="padding:9px 18px;border:1px solid var(--gray-200);border-radius:8px;background:none;cursor:pointer;font-size:13px;color:var(--gray-700);">Annuler</button>
+        <button onclick="doChangeEmail()" class="save-bar-btn" style="padding:9px 18px;border-radius:8px;font-size:13px;background:linear-gradient(135deg,#3b82f6,#2563eb);">Enregistrer</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+}
+async function doChangeEmail() {
+  const em = document.getElementById('emNew').value.trim();
+  const pw = document.getElementById('emPw').value;
+  const msg = document.getElementById('emMsg');
+  if (!em || !pw) return showEmMsg('Remplis tous les champs.', 'red');
+  try {
+    const token = localStorage.getItem('accessToken') || getCookie('accessToken');
+    const r = await fetch(API + '/api/user/change-email', {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) },
+      body: JSON.stringify({ new_email: em, password: pw }),
+    });
+    const d = await r.json();
+    if (!r.ok) return showEmMsg(d.error || 'Erreur', 'red');
+    showEmMsg('Email modifié ! Un code de vérification a été envoyé.', 'green');
+    setTimeout(() => document.getElementById('emModal')?.remove(), 2000);
+  } catch { showEmMsg('Erreur réseau', 'red'); }
+}
+function showEmMsg(txt, color) {
+  const el = document.getElementById('emMsg');
+  if (!el) return;
+  el.style.display = 'block';
+  el.style.color = color === 'red' ? '#ef4444' : '#22c55e';
+  el.textContent = txt;
+}
+
+async function claimKey() {
+  const input = document.getElementById('redeemKeyInput');
+  const btn = document.getElementById('redeemBtn');
+  const msg = document.getElementById('redeemMsg');
+  const key = input?.value?.trim();
+  if (!key) return;
+
+  btn.disabled = true;
+  btn.textContent = '...';
+  msg.style.display = 'none';
+
+  try {
+    const token = localStorage.getItem('accessToken') || getCookie('accessToken');
+    const r = await fetch(API + '/api/redeem/claim', {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) },
+      body: JSON.stringify({ key }),
+    });
+    const d = await r.json();
+    if (!r.ok) {
+      msg.style.display = 'block';
+      msg.style.background = '#fef2f2';
+      msg.style.color = '#dc2626';
+      msg.style.border = '1px solid #fecaca';
+      msg.textContent = d.error || 'Erreur';
+    } else {
+      msg.style.display = 'block';
+      msg.style.background = '#f0fdf4';
+      msg.style.color = '#16a34a';
+      msg.style.border = '1px solid #bbf7d0';
+      const stackedTxt = d.stacked ? ' (ajouté à ton solde)' : '';
+      const expiryTxt = d.expires_label && d.expires_label !== 'À vie' ? ` — expire le ${d.expires_label}` : d.expires_label === 'À vie' ? ' — À vie' : '';
+      msg.textContent = `${d.roleEmoji} Rôle "${d.roleLabel}" activé${stackedTxt}${expiryTxt} !`;
+      input.value = '';
+      // Rafraîchir les badges
+      if (typeof loadBadges === 'function') loadBadges();
+      showToast(`${d.roleEmoji} ${d.roleLabel} activé !`);
+    }
+  } catch {
+    msg.style.display = 'block';
+    msg.style.background = '#fef2f2';
+    msg.style.color = '#dc2626';
+    msg.style.border = '1px solid #fecaca';
+    msg.textContent = 'Erreur réseau';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Activer';
+  }
+}
+
+function confirmDeleteAccount() {
+  if (!confirm('Es-tu sûr(e) de vouloir supprimer définitivement ton compte ? Cette action est irréversible.')) return;
+  const code = prompt('Tape "SUPPRIMER" pour confirmer :');
+  if (code !== 'SUPPRIMER') return;
+  const token = localStorage.getItem('accessToken') || getCookie('accessToken');
+  fetch(API + '/api/user/me', {
+    method: 'DELETE', credentials: 'include',
+    headers: { ...(token ? { Authorization: 'Bearer ' + token } : {}) },
+  }).then(r => {
+    if (r.ok) { localStorage.clear(); window.location.href = '/'; }
+    else r.json().then(d => alert(d.error || 'Erreur suppression'));
+  }).catch(() => alert('Erreur réseau'));
+}
+
+function getCookie(name) {
+  return document.cookie.split('; ').find(r => r.startsWith(name + '='))?.split('=')[1] || null;
+}
 </script>
 </body>
 </html>
