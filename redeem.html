@@ -309,6 +309,14 @@ async function doClaim() {
         <div class="info-row"><span class="info-label">Durée</span><span class="info-value">${d.duration}</span></div>
         <div class="info-row"><span class="info-label">Expiration</span><span class="info-value">${expiry}</span></div>
       `;
+      // Stocker les infos pour l'animation sur la page d'accueil
+      localStorage.setItem('redeemCelebration', JSON.stringify({
+        emoji: d.roleEmoji || '🎉',
+        label: d.roleLabel || 'Rôle',
+        duration: d.duration || '',
+        expiry: expiry,
+        ts: Date.now(),
+      }));
       show('stateSuccess');
     } else {
       msg.className = 'msg error';
