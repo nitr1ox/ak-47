@@ -13,14 +13,14 @@
 
     :root {
       --black:   #0c0c0c;
-      --white:   #fff;
-      --gray-50:  #fafafa;
-      --gray-100: #f4f4f5;
-      --gray-200: #e4e4e7;
-      --gray-400: #a1a1aa;
-      --gray-500: #71717a;
-      --gray-700: #3f3f46;
-      --gray-900: #18181b;
+      --white:   #fff5ee;
+      --gray-50:  #ffeedd;
+      --gray-100: #fde8d0;
+      --gray-200: #f5d0b0;
+      --gray-400: #c4956a;
+      --gray-500: #a07050;
+      --gray-700: #6b4530;
+      --gray-900: #2a1a0e;
       --accent:        #c85f28;
       --accent-light:  #eb8a2c;
       --accent-dark:   #a54423;
@@ -40,7 +40,7 @@
 
     nav {
       position: sticky; top: 0; z-index: 50;
-      background: rgba(255,255,255,0.9);
+      background: rgba(255,245,238,0.92);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--gray-200);
       display: flex; align-items: center; justify-content: space-between;
@@ -779,14 +779,9 @@ body.has-announcement { padding-top: 44px; }
   <h2 class="section-title">Gratuit ou Premium.</h2>
   <p class="section-sub">L'essentiel est gratuit pour toujours. Le Premium débloque les fonctionnalités avancées.</p>
 
-  <!-- Sélecteur de durée -->
+  <!-- Sélecteur de durée — rempli dynamiquement via /api/sellauth/prices -->
   <div class="duration-selector" id="durationSelector">
-    <button class="dur-btn active" data-dur="1d" data-price-mult="0.20" onclick="selectDuration(this)">1 Jour</button>
-    <button class="dur-btn" data-dur="1w" data-price-mult="0.75" onclick="selectDuration(this)">1 Semaine</button>
-    <button class="dur-btn" data-dur="1m" data-price-mult="1" onclick="selectDuration(this)">1 Mois <span class="dur-badge">POPULAIRE</span></button>
-    <button class="dur-btn" data-dur="3m" data-price-mult="2.70" onclick="selectDuration(this)">3 Mois <span class="dur-badge">-10%</span></button>
-    <button class="dur-btn" data-dur="6m" data-price-mult="5.10" onclick="selectDuration(this)">6 Mois <span class="dur-badge">-15%</span></button>
-    <button class="dur-btn" data-dur="1y" data-price-mult="9.60" onclick="selectDuration(this)">1 An <span class="dur-badge">-20%</span></button>
+    <span style="font-size:12px;color:var(--gray-400);padding:7px 8px;">Chargement…</span>
   </div>
 
   <div class="pricing-grid">
@@ -816,7 +811,7 @@ body.has-announcement { padding-top: 44px; }
     <!-- Plan Premium -->
     <div class="plan-card premium">
       <div class="plan-badge prem">⭐ Premium</div>
-      <div class="plan-price" id="premiumPriceDisplay"><span id="premiumPriceVal">1,00</span> <span>€</span></div>
+      <div class="plan-price" id="premiumPriceDisplay"><span id="premiumPriceVal">0,05</span> <span>€</span></div>
       <div class="plan-period" id="premiumPricePeriod">pour 1 jour · rôle attribué automatiquement</div>
       <div class="plan-divider"></div>
       <ul class="plan-features">
@@ -832,6 +827,11 @@ body.has-announcement { padding-top: 44px; }
       <a id="premiumBuyBtn" href="https://ak-47shop.mysellauth.com/product/ak-47fr-prenium" target="_blank" class="plan-btn prem-btn">
         🛒 Acheter le Premium
       </a>
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;flex-wrap:wrap;">
+        <span style="font-size:11px;color:var(--gray-400);font-weight:500;">Paiement accepté :</span>
+        <span style="font-size:11px;font-weight:600;color:var(--gray-500);background:var(--gray-100);padding:3px 8px;border-radius:5px;">PayPal F&F</span>
+        <span style="font-size:11px;font-weight:600;color:var(--gray-500);background:var(--gray-100);padding:3px 8px;border-radius:5px;">Ł LTC</span>
+      </div>
     </div>
 
   </div>
@@ -944,53 +944,75 @@ body.has-announcement { padding-top: 44px; }
 </script>
 
 <script>
-// ── Prix Premium dynamique avec durée ─────────────────────────────────────────
-const DURATION_CONFIG = {
-  '1d':  { label: '1 jour',    mult: 0.20,  period: 'pour 1 jour' },
-  '1w':  { label: '1 semaine', mult: 0.75,  period: 'pour 1 semaine' },
-  '1m':  { label: '1 mois',    mult: 1,     period: 'par mois' },
-  '3m':  { label: '3 mois',    mult: 2.70,  period: 'pour 3 mois (-10%)' },
-  '6m':  { label: '6 mois',    mult: 5.10,  period: 'pour 6 mois (-15%)' },
-  '1y':  { label: '1 an',      mult: 9.60,  period: "pour 1 an (-20%)" },
+// ── Prix Premium dynamique — fetch depuis /api/sellauth/prices ─────────────────
+const DURATION_POPULAR = '1m';
+const DURATION_PERIOD = {
+  '1d':       'pour 1 jour',
+  '1w':       'pour 1 semaine',
+  '1m':       'par mois',
+  '1y':       'pour 1 an',
+  'lifetime': 'à vie',
 };
-
-let basePrice = 5.00;
-let baseUrl   = 'https://ak-47shop.mysellauth.com/product/ak-47fr-prenium';
-let currentDur = '1d';
-
-function updatePriceDisplay() {
-  const cfg = DURATION_CONFIG[currentDur];
-  const price = (basePrice * cfg.mult).toFixed(2).replace('.', ',');
-  const valEl = document.getElementById('premiumPriceVal');
-  const perEl = document.getElementById('premiumPricePeriod');
-  if (valEl) valEl.textContent = price;
-  if (perEl) perEl.textContent = cfg.period + ' · rôle attribué automatiquement';
-}
+const DURATION_LABELS = {
+  '1d': '1 Jour', '1w': '1 Semaine', '1m': '1 Mois', '1y': '1 An', 'lifetime': 'Lifetime',
+};
 
 function selectDuration(btn) {
   document.querySelectorAll('.dur-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  currentDur = btn.dataset.dur;
-  updatePriceDisplay();
+  const price  = parseFloat(btn.dataset.price).toFixed(2).replace('.', ',');
+  const period = btn.dataset.period;
+  const valEl  = document.getElementById('premiumPriceVal');
+  const perEl  = document.getElementById('premiumPricePeriod');
+  if (valEl) valEl.textContent = price;
+  if (perEl) perEl.textContent = period + ' · rôle attribué automatiquement';
 }
 
 document.addEventListener('DOMContentLoaded', async function() {
+  const selector = document.getElementById('durationSelector');
+  const valEl    = document.getElementById('premiumPriceVal');
+  const perEl    = document.getElementById('premiumPricePeriod');
+
+  // Fallback si l'API plante
+  const FALLBACK = [
+    { duration: '1d',       duration_label: '1 jour',     price_eur: 0.05 },
+    { duration: '1w',       duration_label: '1 semaine',  price_eur: 0.20 },
+    { duration: '1m',       duration_label: '1 mois',     price_eur: 0.50 },
+    { duration: '1y',       duration_label: '1 an',       price_eur: 5.00 },
+    { duration: 'lifetime', duration_label: 'À vie',      price_eur: 17.00 },
+  ];
+
+  let variants = FALLBACK;
   try {
     const res = await fetch('https://ak47-backend.onrender.com/api/sellauth/prices');
     if (res.ok) {
-      const prices = await res.json();
-      const premium = prices.find(p => p.role === 'premium' || p.slug === 'ak-47fr-prenium');
-      if (premium) {
-        basePrice = premium.price_eur;
-        if (premium.url) {
-          baseUrl = premium.url;
-          const btn = document.getElementById('premiumBuyBtn');
-          if (btn) btn.href = premium.url;
-        }
-      }
+      const data = await res.json();
+      if (Array.isArray(data) && data.length) variants = data;
     }
   } catch {}
-  updatePriceDisplay();
+
+  // Construire les boutons
+  selector.innerHTML = '';
+  variants.forEach((v, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'dur-btn' + (i === 0 ? ' active' : '');
+    btn.dataset.dur    = v.duration;
+    btn.dataset.price  = v.price_eur;
+    btn.dataset.period = DURATION_PERIOD[v.duration] || ('pour ' + v.duration_label);
+
+    const label = DURATION_LABELS[v.duration] || v.duration_label;
+    let extra = '';
+    if (v.duration === DURATION_POPULAR) extra = '<span class="dur-badge">POPULAIRE</span>';
+    if (v.duration === 'lifetime')       extra = '<span class="dur-badge">⭐</span>';
+    btn.innerHTML = label + ' ' + extra;
+    btn.onclick = () => selectDuration(btn);
+    selector.appendChild(btn);
+  });
+
+  // Afficher le prix du premier
+  const first = variants[0];
+  if (valEl) valEl.textContent = first.price_eur.toFixed(2).replace('.', ',');
+  if (perEl) perEl.textContent = (DURATION_PERIOD[first.duration] || first.duration_label) + ' · rôle attribué automatiquement';
 });
 </script>
 
