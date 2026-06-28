@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Activer ma clé — AK-47.FR</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0a0a0a;
+      color: #f0f0f2;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 20px;
+      padding: 40px 36px;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+    }
+    .logo {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 32px;
+      color: #fff;
+    }
+    .emoji { font-size: 56px; margin-bottom: 16px; display: block; }
+    h1 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    .subtitle { color: #888; font-size: 14px; margin-bottom: 24px; line-height: 1.5; }
+
+    .info-box {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 13px;
+    }
+    .info-row:not(:last-child) { border-bottom: 1px solid #2a2a2a; }
+    .info-label { color: #555; }
+    .info-value { color: #fff; font-weight: 600; }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity .15s;
+      text-decoration: none;
+    }
+    .btn:hover { opacity: .85; }
+    .btn-primary { background: #c85f28; color: #fff; margin-bottom: 10px; }
+    .btn-secondary { background: #1a1a1a; color: #aaa; border: 1px solid #2a2a2a; font-size: 13px; }
+
+    .msg {
+      display: none;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+    .msg.success { background: #0d2218; border: 1px solid #16a34a; color: #4ade80; }
+    .msg.error   { background: #1e0a0a; border: 1px solid #dc2626; color: #f87171; }
+
+    .spinner {
+      display: none;
+      width: 36px; height: 36px;
+      border: 3px solid #222;
+      border-top-color: #c85f28;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .login-note {
+      color: #555;
+      font-size: 12px;
+      margin-top: 20px;
+      line-height: 1.5;
+    }
+    .login-note a { color: #c85f28; text-decoration: none; }
+    .login-note a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">AK-47.FR</div>
+
+  <!-- État : chargement -->
+  <div id="stateLoading">
+    <div class="spinner" id="spinner" style="display:block;"></div>
+    <p style="color:#555;font-size:14px;">Vérification du lien…</p>
+  </div>
+
+  <!-- État : aperçu de la clé (avant claim) -->
+  <div id="statePreview" style="display:none;">
+    <span class="emoji" id="previewEmoji">🏅</span>
+    <h1>Votre rôle vous attend !</h1>
+    <p class="subtitle">Connectez-vous pour activer ce rôle sur votre compte ak-47.fr.</p>
+    <div class="info-box">
+      <div class="info-row">
+        <span class="info-label">Rôle</span>
+        <span class="info-value" id="previewRole">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Durée</span>
+        <span class="info-value" id="previewDuration">—</span>
+      </div>
+    </div>
+    <div id="msgBox" class="msg"></div>
+    <button class="btn btn-primary" id="claimBtn" onclick="doClaim()">🔑 Activer mon rôle</button>
+    <a class="btn btn-secondary" href="/dashboard">← Retour au dashboard</a>
+    <p class="login-note" id="loginNote" style="display:none;">
+      Vous devez être connecté pour activer ce rôle.<br>
+      <a href="/login">Se connecter</a> · <a href="/register">Créer un compte</a>
+    </p>
+  </div>
+
+  <!-- État : succès -->
+  <div id="stateSuccess" style="display:none;">
+    <span class="emoji" id="successEmoji">🎉</span>
+    <h1 id="successTitle">Rôle activé !</h1>
+    <p class="subtitle" id="successSubtitle">Votre rôle a été ajouté à votre compte.</p>
+    <div class="info-box" id="successInfo"></div>
+    <a class="btn btn-primary" href="/dashboard" style="margin-top:16px;">Voir mon profil</a>
+  </div>
+
+  <!-- État : erreur -->
+  <div id="stateError" style="display:none;">
+    <span class="emoji">❌</span>
+    <h1 id="errorTitle">Lien invalide</h1>
+    <p class="subtitle" id="errorMsg">Ce lien est invalide ou a déjà été utilisé.</p>
+    <a class="btn btn-secondary" href="/dashboard">← Retour au dashboard</a>
+  </div>
+</div>
+
+<script>
+const API = 'https://ak47-backend.onrender.com';
+const TIMEOUT_MS = 35000; // 35s pour laisser le temps au cold start Render
+
+function getToken() {
+  return localStorage.getItem('accessToken') || getCookie('accessToken');
+}
+function getCookie(name) {
+  return document.cookie.split('; ').reduce((r, c) => {
+    const [k, v] = c.split('=');
+    return k === name ? decodeURIComponent(v) : r;
+  }, '');
+}
+function show(id) {
+  ['stateLoading','statePreview','stateSuccess','stateError'].forEach(s => {
+    const el = document.getElementById(s);
+    if (el) el.style.display = s === id ? 'block' : 'none';
+  });
+}
+function setLoadingText(text) {
+  const el = document.querySelector('#stateLoading p');
+  if (el) el.textContent = text;
+}
+
+// Fetch avec timeout intégré
+async function fetchWithTimeout(url, options = {}, timeoutMs = TIMEOUT_MS) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const r = await fetch(url, { ...options, signal: controller.signal });
+    clearTimeout(timer);
+    return r;
+  } catch (err) {
+    clearTimeout(timer);
+    throw err;
+  }
+}
+
+const params = new URLSearchParams(window.location.search);
+const token = params.get('token');
+
+// Message cold-start après 5s
+let coldStartTimer = null;
+function startColdStartHint() {
+  coldStartTimer = setTimeout(() => {
+    setLoadingText('Le serveur démarre, encore quelques secondes…');
+  }, 5000);
+}
+function stopColdStartHint() {
+  if (coldStartTimer) clearTimeout(coldStartTimer);
+}
+
+async function verifyToken() {
+  startColdStartHint();
+  try {
+    const r = await fetchWithTimeout(`${API}/api/redeem/token/${encodeURIComponent(token)}`);
+    stopColdStartHint();
+    let d;
+    try { d = await r.json(); } catch { d = {}; }
+
+    if (d.valid) {
+      document.getElementById('previewEmoji').textContent = d.roleEmoji || '🏅';
+      document.getElementById('previewRole').textContent = `${d.roleEmoji || '🏅'} ${d.roleLabel || d.role}`;
+      document.getElementById('previewDuration').textContent = d.duration || '—';
+
+      if (!getToken()) {
+        document.getElementById('loginNote').style.display = 'block';
+        document.getElementById('claimBtn').textContent = '🔑 Se connecter pour activer';
+        document.getElementById('claimBtn').onclick = () => {
+          localStorage.setItem('redeemToken', token);
+          window.location.href = '/login?redirect=/redeem?token=' + encodeURIComponent(token);
+        };
+      }
+      show('statePreview');
+    } else {
+      show('stateError');
+      const errEl = document.getElementById('errorMsg');
+      if (errEl) errEl.textContent = d.error || 'Lien invalide ou déjà utilisé.';
+    }
+  } catch (err) {
+    stopColdStartHint();
+    show('stateError');
+    const titleEl = document.getElementById('errorTitle');
+    const errEl   = document.getElementById('errorMsg');
+    if (err.name === 'AbortError') {
+      if (titleEl) titleEl.textContent = 'Serveur indisponible';
+      if (errEl)   errEl.textContent   = 'Le serveur met trop de temps à répondre. Réessaie dans quelques secondes.';
+      // Bouton "Réessayer" dynamique
+      const retryBtn = document.createElement('button');
+      retryBtn.className = 'btn btn-primary';
+      retryBtn.style.marginTop = '16px';
+      retryBtn.textContent = '🔄 Réessayer';
+      retryBtn.onclick = () => {
+        show('stateLoading');
+        setLoadingText('Nouvelle tentative…');
+        verifyToken();
+      };
+      const errDiv = document.getElementById('stateError');
+      if (errDiv) errDiv.appendChild(retryBtn);
+    } else {
+      if (titleEl) titleEl.textContent = 'Erreur réseau';
+      if (errEl)   errEl.textContent   = 'Impossible de contacter le serveur. Vérifie ta connexion.';
+    }
+  }
+}
+
+if (!token) {
+  show('stateError');
+  const titleEl = document.getElementById('errorTitle');
+  const errEl   = document.getElementById('errorMsg');
+  if (titleEl) titleEl.textContent = 'Lien manquant';
+  if (errEl)   errEl.textContent   = 'Aucun token trouvé dans le lien. Vérifiez le lien reçu.';
+} else {
+  verifyToken();
+}
+
+async function doClaim() {
+  const authToken = getToken();
+  if (!authToken) {
+    localStorage.setItem('redeemToken', token);
+    window.location.href = '/login?redirect=/redeem?token=' + encodeURIComponent(token);
+    return;
+  }
+
+  const btn = document.getElementById('claimBtn');
+  const msg = document.getElementById('msgBox');
+  btn.disabled = true;
+  btn.textContent = '…';
+  msg.style.display = 'none';
+
+  try {
+    const r = await fetchWithTimeout(`${API}/api/redeem/claim-by-token`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + authToken },
+      body: JSON.stringify({ token }),
+    });
+    let d;
+    try { d = await r.json(); } catch { d = {}; }
+
+    if (r.ok) {
+      document.getElementById('successEmoji').textContent = d.roleEmoji || '🎉';
+      document.getElementById('successTitle').textContent = `${d.roleLabel} activé !`;
+      document.getElementById('successSubtitle').textContent = d.stacked
+        ? 'Durée ajoutée à ton abonnement existant.'
+        : 'Le rôle a été ajouté à ton compte.';
+      const expiry = d.expires_label && d.expires_label !== 'À vie'
+        ? `Expire le ${d.expires_label}`
+        : 'À vie';
+      document.getElementById('successInfo').innerHTML = `
+        <div class="info-row"><span class="info-label">Rôle</span><span class="info-value">${d.roleEmoji} ${d.roleLabel}</span></div>
+        <div class="info-row"><span class="info-label">Durée</span><span class="info-value">${d.duration}</span></div>
+        <div class="info-row"><span class="info-label">Expiration</span><span class="info-value">${expiry}</span></div>
+      `;
+      show('stateSuccess');
+    } else {
+      msg.className = 'msg error';
+      msg.textContent = d.error || 'Erreur lors de l\'activation.';
+      msg.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = '🔑 Activer mon rôle';
+    }
+  } catch (err) {
+    msg.className = 'msg error';
+    msg.textContent = err.name === 'AbortError'
+      ? 'Timeout : le serveur n\'a pas répondu. Réessaie.'
+      : 'Erreur réseau.';
+    msg.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = '🔑 Activer mon rôle';
+  }
+}
+
+// Auto-claim si token stocké avant login
+window.addEventListener('load', () => {
+  const stored = localStorage.getItem('redeemToken');
+  if (stored && stored === token && getToken()) {
+    localStorage.removeItem('redeemToken');
+    doClaim();
+  }
+});
+</script>
+</body>
+</html>
