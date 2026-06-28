@@ -471,15 +471,15 @@ window.onunhandledrejection = function(e) {
 <script>
 (function() {
   const CURRENT_PAGE = typeof MAINTENANCE_EXEMPT !== 'undefined' ? MAINTENANCE_EXEMPT : false;
-  if (CURRENT_PAGE) return; 
+  if (CURRENT_PAGE) return;
   const API_BASE = typeof API !== 'undefined' ? API : 'https://ak47-backend.onrender.com';
-  
+
   const token = localStorage.getItem('auth_token') || localStorage.getItem('token');
   fetch(API_BASE + '/api/stats/maintenance')
     .then(r => r.json())
     .then(d => {
       if (!d.maintenance || !d.maintenance.enabled) return;
-      
+
       if (token) {
         fetch(API_BASE + '/api/admin/maintenance', { headers: { Authorization: 'Bearer ' + token } })
           .then(r => { if (r.ok) return; else redirect(); })
@@ -541,6 +541,24 @@ window.onunhandledrejection = function(e) {
   margin-left: 10px;
 }
 body.has-announcement { padding-top: 44px; }
+
+/* Toggle switch */
+.toggle-switch { position:relative; display:inline-block; width:42px; height:24px; }
+.toggle-switch input { opacity:0; width:0; height:0; }
+.toggle-slider {
+  position:absolute; cursor:pointer; inset:0;
+  background:var(--gray-200); border-radius:24px;
+  transition:background .2s;
+}
+.toggle-slider::before {
+  content:''; position:absolute;
+  width:18px; height:18px; left:3px; top:3px;
+  background:#fff; border-radius:50%;
+  transition:transform .2s;
+  box-shadow:0 1px 4px rgba(0,0,0,.18);
+}
+.toggle-switch input:checked + .toggle-slider { background:var(--accent); }
+.toggle-switch input:checked + .toggle-slider::before { transform:translateX(18px); }
 </style>
 <div id="global-announcement">
   <span id="ann-message"></span>
@@ -560,7 +578,7 @@ body.has-announcement { padding-top: 44px; }
       const d = await r.json();
       if (!d.announcement) return;
       const ann = d.announcement;
-      
+
       if (ann.target === 'dashboard' && PAGE_TYPE !== 'dashboard') return;
       if (ann.target === 'public' && PAGE_TYPE !== 'public') return;
       showAnnouncement(ann);
@@ -601,7 +619,7 @@ body.has-announcement { padding-top: 44px; }
   }
 
   window.dismissAnnouncement = function() {
-    
+
     fetch(API_BASE + '/api/stats/announcement').then(r => r.json()).then(d => {
       if (d.announcement) sessionStorage.setItem('ann_dismissed', String(d.announcement.created_at));
     }).catch(() => {});
@@ -1672,7 +1690,7 @@ body.has-announcement { padding-top: 44px; }
       <div class="dash-title">Paramètres</div>
       <div class="dash-subtitle">Gérez votre compte et vos accès.</div>
 
-      <!-- Compte -->
+      <!-- Apparence -->\n      <div class=\"section-card\" style=\"margin-bottom:16px;\">\n        <div class=\"section-card-title\">\n          <span>✨ Apparence</span>\n        </div>\n        <div style=\"display:flex;align-items:center;justify-content:space-between;padding:10px 0;\">\n          <div>\n            <div style=\"font-size:13.5px;font-weight:600;color:var(--black);\">Effet de surbrillance Premium</div>\n            <div style=\"font-size:12px;color:var(--gray-500);margin-top:2px;\">La carte Premium sur la page d'accueil réagit au mouvement de la souris.</div>\n          </div>\n          <label class=\"toggle-switch\" style=\"flex-shrink:0;margin-left:16px;\">\n            <input type=\"checkbox\" id=\"glowEffectToggle\" onchange=\"saveGlowPref(this.checked)\">\n            <span class=\"toggle-slider\"></span>\n          </label>\n        </div>\n      </div>\n\n      <!-- Compte -->
       <div class="section-card" style="margin-bottom:16px;">
         <div class="section-card-title">
           <span>👤 Informations du compte</span>
@@ -1775,6 +1793,18 @@ function startHeartbeat() {
 function getToken()        { return localStorage.getItem('token'); }
 function getRefreshToken() { return localStorage.getItem('refreshToken'); }
 function getUserId()       { return localStorage.getItem('userId'); }
+
+
+function saveGlowPref(enabled) {
+  localStorage.setItem('premiumGlowEffect', enabled ? '1' : '0');
+}
+function loadGlowPref() {
+  const toggle = document.getElementById('glowEffectToggle');
+  if (!toggle) return;
+
+  const val = localStorage.getItem('premiumGlowEffect');
+  toggle.checked = (val === null || val === '1');
+}
 
 async function refreshAccessToken() {
   const refreshToken = getRefreshToken();
@@ -1952,16 +1982,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('overviewDate').textContent = new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   startHeartbeat();
 
-  // ── Chargement des prix dynamiques SellAuth ──
+
   try {
     const pricesRes = await fetch(API + '/api/sellauth/prices');
     if (pricesRes.ok) {
       const prices = await pricesRes.json();
       prices.forEach(p => {
-        // Mettre à jour ALL_BADGES_DEF
+
         const badge = ALL_BADGES_DEF.find(b => b._sellauth_slug === p.slug || b.id === p.role);
         if (badge) badge.priceEur = p.price_eur;
-        // Mettre à jour ROLES_DEF aussi
+
         const role = ROLES_DEF.find(r => r.id === p.role);
         if (role) role.priceEur = p.price_eur;
       });
@@ -2095,7 +2125,7 @@ function renderTopLinks() {
   </tbody></table>`;
 }
 
-// renderBadges est maintenant un alias vers renderBadgesTab (tout est dans l'onglet Badges)
+
 function renderBadges() { renderBadgesTab(); }
 
 async function toggleBadge(index) {
@@ -2144,7 +2174,7 @@ const ALL_BADGES_DEF = [
   {
     id: 'owner', label: 'Owner', emoji: '👑', color: '#f59e0b',
     desc: 'Propriétaire du site.',
-    how: null, 
+    how: null,
     category: 'équipe',
   },
   {
@@ -2182,7 +2212,7 @@ const ALL_BADGES_DEF = [
     how: 'Acheter',
     howUrl: 'https://ak-47shop.mysellauth.com/product/ak-47fr-prenium',
     howNote: 'Ton rôle est attribué automatiquement à l\'email utilisé lors de l\'achat',
-    priceEur: 5.00,   // valeur initiale — mise à jour dynamiquement via /api/sellauth/prices
+    priceEur: 5.00,
     _sellauth_slug: 'ak-47fr-prenium',
     category: 'achat',
   },
@@ -2286,7 +2316,7 @@ function renderBadgesTab() {
     }).join('');
   }
 
-  // --- Section badges Discord ---
+
   const dashBadges = document.getElementById('dashBadges');
   const noBadges = document.getElementById('noBadges');
   let discordBadges = [];
@@ -2318,7 +2348,7 @@ function renderBadgesTab() {
     }).join('');
   }
 
-  // --- Catalogue complet des badges du site ---
+
   const grid = document.getElementById('allBadgesGrid');
   grid.innerHTML = ALL_BADGES_DEF.map(def => {
     const owned = userRoles.includes(def.id);
@@ -3700,7 +3730,7 @@ function applyLinkPreset(preset) {
 async function handlePersoMedia(type, input) {
   const file = input.files[0];
   if (!file) return;
-  const hardMax = 200 * 1024 * 1024; 
+  const hardMax = 200 * 1024 * 1024;
   if (file.size > hardMax) { showToast('Fichier trop lourd (max 200MB)'); return; }
 
   let data;
@@ -3817,6 +3847,7 @@ async function savePerso() {
 
 document.addEventListener('DOMContentLoaded', () => {
   initPersoTab();
+  loadGlowPref();
 });
 
 function openPublishTemplateModal() {
@@ -4001,7 +4032,7 @@ function tplRender() {
       </div>
     </div>`;
   }).join('');
-  
+
   if (!grid.dataset.boundClick) {
     grid.dataset.boundClick = '1';
     grid.addEventListener('click', (e) => {
@@ -4314,7 +4345,7 @@ function loadSettingsTab() {
   loadSessionsTab();
 }
 
-// --- Historique des clés activées (sans afficher la note admin de la clé) ---
+
 function renderKeyHistory(u) {
   const box = document.getElementById('keyHistoryList');
   if (!box) return;
@@ -4340,7 +4371,7 @@ function renderKeyHistory(u) {
   }).join('');
 }
 
-// --- Sessions actives (appareils connectés) ---
+
 function parseUserAgent(ua) {
   if (!ua) return 'Appareil inconnu';
   let os = 'OS inconnu';
@@ -4350,10 +4381,10 @@ function parseUserAgent(ua) {
   else if (/Android/i.test(ua)) os = 'Android';
   else if (/Linux/i.test(ua)) os = 'Linux';
   let browser = 'Navigateur inconnu';
-  if (/Edg\//i.test(ua)) browser = 'Edge';
-  else if (/Chrome\//i.test(ua)) browser = 'Chrome';
-  else if (/Firefox\//i.test(ua)) browser = 'Firefox';
-  else if (/Safari\//i.test(ua)) browser = 'Safari';
+  if (/Edg\
+  else if (/Chrome\
+  else if (/Firefox\
+  else if (/Safari\
   return `${browser} sur ${os}`;
 }
 
@@ -4418,16 +4449,16 @@ async function revokeOtherSessions() {
   } catch {}
 }
 
-// Patch switchTab pour charger les données au clic
+
 const _stOrig = switchTab;
 switchTab = function(name) {
   _stOrig(name);
   if (name === 'settings') loadSettingsTab();
 };
 
-// Expose _currentUser globalement depuis loadUser (qui existe déjà dans le dash)
+
 const _origSetUser = window.setCurrentUser;
-// On intercepte la réponse de /api/user/me dans le boot
+
 (function patchUserLoad() {
   const orig = window.fetch;
   window.fetch = async function(...args) {
@@ -4574,7 +4605,7 @@ async function claimKey() {
       const expiryTxt = d.expires_label && d.expires_label !== 'À vie' ? ` — expire le ${d.expires_label}` : d.expires_label === 'À vie' ? ' — À vie' : '';
       msg.textContent = `${d.roleEmoji} Rôle "${d.roleLabel}" activé${stackedTxt}${expiryTxt} !`;
       input.value = '';
-      // Rafraîchir les badges
+
       if (typeof loadBadges === 'function') loadBadges();
       showToast(`${d.roleEmoji} ${d.roleLabel} activé !`);
     }

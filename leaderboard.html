@@ -190,15 +190,15 @@ window.onunhandledrejection = function(e) {
 <script>
 (function() {
   const CURRENT_PAGE = typeof MAINTENANCE_EXEMPT !== 'undefined' ? MAINTENANCE_EXEMPT : false;
-  if (CURRENT_PAGE) return; 
+  if (CURRENT_PAGE) return;
   const API_BASE = typeof API !== 'undefined' ? API : 'https://ak47-backend.onrender.com';
-  
+
   const token = localStorage.getItem('auth_token') || localStorage.getItem('token');
   fetch(API_BASE + '/api/stats/maintenance')
     .then(r => r.json())
     .then(d => {
       if (!d.maintenance || !d.maintenance.enabled) return;
-      
+
       if (token) {
         fetch(API_BASE + '/api/admin/maintenance', { headers: { Authorization: 'Bearer ' + token } })
           .then(r => { if (r.ok) return; else redirect(); })
@@ -279,7 +279,7 @@ body.has-announcement { padding-top: 44px; }
       const d = await r.json();
       if (!d.announcement) return;
       const ann = d.announcement;
-      
+
       if (ann.target === 'dashboard' && PAGE_TYPE !== 'dashboard') return;
       if (ann.target === 'public' && PAGE_TYPE !== 'public') return;
       showAnnouncement(ann);
@@ -292,7 +292,7 @@ body.has-announcement { padding-top: 44px; }
     const timerEl = document.getElementById('ann-timer');
     if (!el || !msgEl) return;
 
-    
+
     const dismissed = sessionStorage.getItem('ann_dismissed');
     if (dismissed === String(ann.created_at)) return;
 
@@ -301,7 +301,7 @@ body.has-announcement { padding-top: 44px; }
     msgEl.textContent = ann.message;
     document.body.classList.add('has-announcement');
 
-    
+
     if (ann.expires_at) {
       let remaining = Math.max(0, Math.floor((ann.expires_at - Date.now()) / 1000));
       function updateTimer() {
@@ -322,7 +322,7 @@ body.has-announcement { padding-top: 44px; }
   }
 
   window.dismissAnnouncement = function() {
-    
+
     fetch(API_BASE + '/api/stats/announcement').then(r => r.json()).then(d => {
       if (d.announcement) sessionStorage.setItem('ann_dismissed', String(d.announcement.created_at));
     }).catch(() => {});
@@ -432,7 +432,7 @@ body.has-announcement { padding-top: 44px; }
     const container = document.getElementById('roleFilters');
     container.innerHTML = '';
 
-    // Bouton "Tous"
+
     const allBtn = document.createElement('button');
     allBtn.className = 'role-btn active';
     allBtn.innerHTML = '🌐 Tous';

@@ -290,10 +290,26 @@
     .plan-card:hover { transform: translateY(-3px); box-shadow: 0 14px 36px rgba(0,0,0,.07); }
     .plan-card.premium {
       border-color: rgba(200,95,40,.4);
-      background: linear-gradient(135deg, #fff8f5 0%, #fff 60%);
+      background: linear-gradient(135deg, rgba(234,138,44,.14) 0%, var(--white) 60%);
       box-shadow: 0 0 0 1px rgba(200,95,40,.15), 0 8px 32px rgba(200,95,40,.08);
+      position: relative;
+      overflow: hidden;
     }
     .plan-card.premium:hover { box-shadow: 0 0 0 1px rgba(200,95,40,.3), 0 14px 40px rgba(200,95,40,.14); }
+    .plan-card.premium .card-glow {
+      pointer-events: none;
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(234,138,44,.22) 0%, rgba(200,95,40,.08) 50%, transparent 70%);
+      transform: translate(-50%, -50%);
+      transition: opacity .25s;
+      opacity: 0;
+      z-index: 0;
+    }
+    .plan-card.premium:hover .card-glow { opacity: 1; }
+    .plan-card.premium > *:not(.card-glow) { position: relative; z-index: 1; }
     .plan-badge {
       display: inline-flex; align-items: center; gap: 6px;
       font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
@@ -559,15 +575,15 @@ window.onunhandledrejection = function(e) {
 <script>
 (function() {
   const CURRENT_PAGE = typeof MAINTENANCE_EXEMPT !== 'undefined' ? MAINTENANCE_EXEMPT : false;
-  if (CURRENT_PAGE) return; 
+  if (CURRENT_PAGE) return;
   const API_BASE = typeof API !== 'undefined' ? API : 'https://ak47-backend.onrender.com';
-  
+
   const token = localStorage.getItem('auth_token') || localStorage.getItem('token');
   fetch(API_BASE + '/api/stats/maintenance')
     .then(r => r.json())
     .then(d => {
       if (!d.maintenance || !d.maintenance.enabled) return;
-      
+
       if (token) {
         fetch(API_BASE + '/api/admin/maintenance', { headers: { Authorization: 'Bearer ' + token } })
           .then(r => { if (r.ok) return; else redirect(); })
@@ -648,7 +664,7 @@ body.has-announcement { padding-top: 44px; }
       const d = await r.json();
       if (!d.announcement) return;
       const ann = d.announcement;
-      
+
       if (ann.target === 'dashboard' && PAGE_TYPE !== 'dashboard') return;
       if (ann.target === 'public' && PAGE_TYPE !== 'public') return;
       showAnnouncement(ann);
@@ -661,7 +677,7 @@ body.has-announcement { padding-top: 44px; }
     const timerEl = document.getElementById('ann-timer');
     if (!el || !msgEl) return;
 
-    
+
     const dismissed = sessionStorage.getItem('ann_dismissed');
     if (dismissed === String(ann.created_at)) return;
 
@@ -670,7 +686,7 @@ body.has-announcement { padding-top: 44px; }
     msgEl.textContent = ann.message;
     document.body.classList.add('has-announcement');
 
-    
+
     if (ann.expires_at) {
       let remaining = Math.max(0, Math.floor((ann.expires_at - Date.now()) / 1000));
       function updateTimer() {
@@ -691,7 +707,7 @@ body.has-announcement { padding-top: 44px; }
   }
 
   window.dismissAnnouncement = function() {
-    
+
     fetch(API_BASE + '/api/stats/announcement').then(r => r.json()).then(d => {
       if (d.announcement) sessionStorage.setItem('ann_dismissed', String(d.announcement.created_at));
     }).catch(() => {});
@@ -809,7 +825,8 @@ body.has-announcement { padding-top: 44px; }
     </div>
 
     <!-- Plan Premium -->
-    <div class="plan-card premium">
+    <div class="plan-card premium" id="premiumCard">
+      <div class="card-glow" id="premiumGlow"></div>
       <div class="plan-badge prem">⭐ Premium</div>
       <div class="plan-price" id="premiumPriceDisplay"><span id="premiumPriceVal">0,05</span> <span>€</span></div>
       <div class="plan-period" id="premiumPricePeriod">pour 1 jour · rôle attribué automatiquement</div>
@@ -823,6 +840,7 @@ body.has-announcement { padding-top: 44px; }
         <li><span class="chk star">⭐</span> <strong>Analytics avancées</strong></li>
         <li><span class="chk star">⭐</span> <strong>Priorité support</strong> Discord</li>
         <li><span class="chk star">⭐</span> Accès aux futures fonctionnalités en avant-première</li>
+        <li><span class="chk star">⭐</span> <strong>Effet de surbrillance</strong> sur cette carte ✨</li>
       </ul>
       <a id="premiumBuyBtn" href="https://ak-47shop.mysellauth.com/product/ak-47fr-prenium" target="_blank" class="plan-btn prem-btn">
         🛒 Acheter le Premium
@@ -944,7 +962,7 @@ body.has-announcement { padding-top: 44px; }
 </script>
 
 <script>
-// ── Prix Premium dynamique — fetch depuis /api/sellauth/prices ─────────────────
+
 const DURATION_POPULAR = '1m';
 const DURATION_PERIOD = {
   '1d':       'pour 1 jour',
@@ -973,7 +991,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   const valEl    = document.getElementById('premiumPriceVal');
   const perEl    = document.getElementById('premiumPricePeriod');
 
-  // Fallback si l'API plante
+
   const FALLBACK = [
     { duration: '1d',       duration_label: '1 jour',     price_eur: 0.05 },
     { duration: '1w',       duration_label: '1 semaine',  price_eur: 0.20 },
@@ -991,7 +1009,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
   } catch {}
 
-  // Construire les boutons
+
   selector.innerHTML = '';
   variants.forEach((v, i) => {
     const btn = document.createElement('button');
@@ -1009,11 +1027,28 @@ document.addEventListener('DOMContentLoaded', async function() {
     selector.appendChild(btn);
   });
 
-  // Afficher le prix du premier
+
   const first = variants[0];
   if (valEl) valEl.textContent = first.price_eur.toFixed(2).replace('.', ',');
   if (perEl) perEl.textContent = (DURATION_PERIOD[first.duration] || first.duration_label) + ' · rôle attribué automatiquement';
 });
+
+
+(function() {
+  const card = document.getElementById('premiumCard');
+  const glow = document.getElementById('premiumGlow');
+  if (!card || !glow) return;
+
+  const pref = localStorage.getItem('premiumGlowEffect');
+  if (pref === '0') return;
+  card.addEventListener('mousemove', function(e) {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    glow.style.left = x + 'px';
+    glow.style.top  = y + 'px';
+  });
+})();
 </script>
 
 <a href="https://discord.gg/g7MysUNQXs" target="_blank" rel="noopener"

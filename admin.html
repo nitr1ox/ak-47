@@ -1429,7 +1429,7 @@ function selectAnnColor(btn, color) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  
+
   const firstBtn = document.querySelector('.ann-color-btn');
   if (firstBtn) selectAnnColor(firstBtn, '#5865F2');
 
@@ -1638,7 +1638,7 @@ async function deleteKey(keyId) {
   } catch { adminToast('Erreur réseau', 'red'); }
 }
 
-// Charger les keys quand on ouvre l'onglet
+
 const _adminSwitchOrig = switchTab;
 switchTab = function(tab) {
   _adminSwitchOrig(tab);
