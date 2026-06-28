@@ -524,6 +524,9 @@ button:active:not(:disabled) { transform: scale(.97); }
     <button class="nav-item" onclick="openBroadcastModal()" id="nav-broadcast">
       <span class="nav-icon">📧</span> Mail groupé
     </button>
+    <button class="nav-item" onclick="switchTab('templates')" id="nav-templates">
+      <span class="nav-icon">🖼️</span> Modèles
+    </button>
     <button class="nav-item" onclick="switchTab('announcement')" id="nav-announcement">
       <span class="nav-icon">📢</span> Annonce
     </button>
@@ -866,6 +869,14 @@ button:active:not(:disabled) { transform: scale(.97); }
       </div>
     </div>
 
+<div class="tab-panel" id="tab-templates">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+    <h2 style="font-size:18px;font-weight:700;">🖼️ Modèles publiés</h2>
+    <button class="btn btn-ghost btn-sm" onclick="loadTemplatesTab()">🔄 Actualiser</button>
+  </div>
+  <div id="adminTemplatesList" style="font-size:13px;color:var(--text-muted);">Chargement…</div>
+</div>
+
 <div class="tab-panel" id="tab-maintenance">
       <div class="card">
         <div class="card-header">
@@ -1032,6 +1043,7 @@ function switchTab(tab) {
   document.getElementById('pageHeading').textContent = TAB_TITLES[tab] || tab;
   if (tab === 'roles') renderRolesTab();
   if (tab === 'announcement') loadAnnouncementTab();
+  if (tab === 'templates') loadTemplatesTab();
   if (tab === 'maintenance') loadMaintenanceTab();
   closeSidebar();
 }
@@ -1716,6 +1728,67 @@ function adminToast(msg, type) {
   el.textContent = msg;
   t.appendChild(el);
   setTimeout(() => el.remove(), 3000);
+}
+
+async function loadTemplatesTab() {
+  const box = document.getElementById('adminTemplatesList');
+  if (!box) return;
+  box.innerHTML = 'Chargement…';
+  try {
+    const r = await adminFetch(`${API}/api/templates`);
+    const templates = await r.json();
+    if (!Array.isArray(templates) || templates.length === 0) {
+      box.innerHTML = '<div style="padding:20px 0;color:var(--text-muted);">Aucun modèle publié.</div>';
+      return;
+    }
+    box.innerHTML = templates.map(t => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);">
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:600;color:var(--text);font-size:13px;">${escHtml(t.name)}</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">
+            Par <strong>@${escHtml(t.username || '?')}</strong>
+            · ${t.uses || 0} utilisation${t.uses !== 1 ? 's' : ''}
+            · Publié le ${t.created_at ? new Date(t.created_at * 1000).toLocaleDateString('fr-FR') : '—'}
+          </div>
+          ${t.description ? `<div style="font-size:11px;color:var(--text-muted);margin-top:2px;font-style:italic;">${escHtml(t.description)}</div>` : ''}
+        </div>
+        <button onclick="adminDeleteTemplate('${t.id}', this)"
+          style="margin-left:16px;padding:5px 12px;background:none;border:1px solid #fca5a5;color:#ef4444;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;">
+          🗑 Supprimer
+        </button>
+      </div>`).join('');
+  } catch(e) {
+    box.innerHTML = `<div style="color:#ef4444;">Erreur : ${e.message}</div>`;
+  }
+}
+
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function adminDeleteTemplate(id, btn) {
+  if (!confirm('Supprimer ce modèle définitivement ?')) return;
+  btn.disabled = true;
+  btn.textContent = '…';
+  try {
+    const r = await fetch(`${API}/api/templates/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    const d = await r.json();
+    if (d.ok) {
+      toast('Modèle supprimé ✓');
+      loadTemplatesTab();
+    } else {
+      toast('Erreur : ' + (d.error || 'inconnue'));
+      btn.disabled = false;
+      btn.textContent = '🗑 Supprimer';
+    }
+  } catch {
+    toast('Erreur réseau');
+    btn.disabled = false;
+    btn.textContent = '🗑 Supprimer';
+  }
 }
 </script>
 </body>
