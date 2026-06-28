@@ -1731,25 +1731,7 @@ body.has-announcement { padding-top: 44px; }
         </div>
       </div>
 
-      <!-- Redeem Key -->
-      <div class="section-card" style="margin-bottom:16px;">
-        <div class="section-card-title">
-          <span>🎁 Activer une clé</span>
-          <span style="font-size:11px;color:var(--gray-400);font-weight:400;">Clé obtenue sur notre Sellauth</span>
-        </div>
-        <p style="font-size:13px;color:var(--gray-500);margin-bottom:14px;">
-          Entre ta clé d'activation pour débloquer un rôle <strong>Premium</strong> ou <strong>Donor</strong> sur le site.
-        </p>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <input type="text" id="redeemKeyInput" placeholder="AK47-XXXXXX-XXXXXX-XXXXXX"
-            style="flex:1;padding:10px 14px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;font-family:'JetBrains Mono','Courier New',monospace;background:var(--white);color:var(--black);outline:none;letter-spacing:.5px;"
-            oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')claimKey()">
-          <button onclick="claimKey()" id="redeemBtn" class="save-bar-btn" style="padding:10px 20px;white-space:nowrap;border-radius:8px;font-size:13px;">
-            Activer
-          </button>
-        </div>
-        <div id="redeemMsg" style="margin-top:10px;font-size:13px;display:none;padding:10px 14px;border-radius:7px;"></div>
-      </div>
+
 
       <!-- Historique des clés activées -->
       <div class="section-card" style="margin-bottom:16px;">
@@ -4534,7 +4516,7 @@ async function doChangePassword() {
   if (nw !== cf) return showPwMsg('Les mots de passe ne correspondent pas.', 'red');
   if (nw.length < 6) return showPwMsg('Minimum 6 caractères.', 'red');
   try {
-    const token = localStorage.getItem('accessToken') || getCookie('accessToken');
+    const token = localStorage.getItem('token') || getCookie('accessToken');
     const r = await fetch(API + '/api/user/change-password', {
       method: 'POST', credentials: 'include',
       headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) },
@@ -4580,7 +4562,7 @@ async function doChangeEmail() {
   const msg = document.getElementById('emMsg');
   if (!em || !pw) return showEmMsg('Remplis tous les champs.', 'red');
   try {
-    const token = localStorage.getItem('accessToken') || getCookie('accessToken');
+    const token = localStorage.getItem('token') || getCookie('accessToken');
     const r = await fetch(API + '/api/user/change-email', {
       method: 'POST', credentials: 'include',
       headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) },
@@ -4600,61 +4582,13 @@ function showEmMsg(txt, color) {
   el.textContent = txt;
 }
 
-async function claimKey() {
-  const input = document.getElementById('redeemKeyInput');
-  const btn = document.getElementById('redeemBtn');
-  const msg = document.getElementById('redeemMsg');
-  const key = input?.value?.trim();
-  if (!key) return;
 
-  btn.disabled = true;
-  btn.textContent = '...';
-  msg.style.display = 'none';
-
-  try {
-    const token = localStorage.getItem('accessToken') || getCookie('accessToken');
-    const r = await fetch(API + '/api/redeem/claim', {
-      method: 'POST', credentials: 'include',
-      headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) },
-      body: JSON.stringify({ key }),
-    });
-    const d = await r.json();
-    if (!r.ok) {
-      msg.style.display = 'block';
-      msg.style.background = '#fef2f2';
-      msg.style.color = '#dc2626';
-      msg.style.border = '1px solid #fecaca';
-      msg.textContent = d.error || 'Erreur';
-    } else {
-      msg.style.display = 'block';
-      msg.style.background = '#f0fdf4';
-      msg.style.color = '#16a34a';
-      msg.style.border = '1px solid #bbf7d0';
-      const stackedTxt = d.stacked ? ' (ajouté à ton solde)' : '';
-      const expiryTxt = d.expires_label && d.expires_label !== 'À vie' ? ` — expire le ${d.expires_label}` : d.expires_label === 'À vie' ? ' — À vie' : '';
-      msg.textContent = `${d.roleEmoji} Rôle "${d.roleLabel}" activé${stackedTxt}${expiryTxt} !`;
-      input.value = '';
-
-      if (typeof loadBadges === 'function') loadBadges();
-      showToast(`${d.roleEmoji} ${d.roleLabel} activé !`);
-    }
-  } catch {
-    msg.style.display = 'block';
-    msg.style.background = '#fef2f2';
-    msg.style.color = '#dc2626';
-    msg.style.border = '1px solid #fecaca';
-    msg.textContent = 'Erreur réseau';
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Activer';
-  }
-}
 
 function confirmDeleteAccount() {
   if (!confirm('Es-tu sûr(e) de vouloir supprimer définitivement ton compte ? Cette action est irréversible.')) return;
   const code = prompt('Tape "SUPPRIMER" pour confirmer :');
   if (code !== 'SUPPRIMER') return;
-  const token = localStorage.getItem('accessToken') || getCookie('accessToken');
+  const token = localStorage.getItem('token') || getCookie('accessToken');
   fetch(API + '/api/user/me', {
     method: 'DELETE', credentials: 'include',
     headers: { ...(token ? { Authorization: 'Bearer ' + token } : {}) },
