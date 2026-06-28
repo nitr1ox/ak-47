@@ -1827,18 +1827,30 @@ async function refreshAccessToken() {
   const refreshToken = getRefreshToken();
   const userId = getUserId();
   if (!refreshToken || !userId) { logout(); return null; }
-  try {
-    const r = await fetch(API + '/api/auth/refresh', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refreshToken, userId }),
-    });
-    if (!r.ok) { logout(); return null; }
-    const data = await r.json();
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('refreshToken', data.refreshToken);
-    return data.token;
-  } catch { logout(); return null; }
+  for (let attempt = 0; attempt < 2; attempt++) {
+    if (attempt > 0) await new Promise(r => setTimeout(r, 4000));
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 25000);
+      const r = await fetch(API + '/api/auth/refresh', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken, userId }),
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
+      if (r.ok) {
+        const data = await r.json();
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('refreshToken', data.refreshToken);
+        return data.token;
+      }
+      if (r.status === 401) { logout(); return null; }
+    } catch (err) {
+      if (err.name !== 'AbortError') break;
+    }
+  }
+  return null;
 }
 
 async function apiFetch(url, options = {}) {
@@ -1873,7 +1885,7 @@ function logout() {
 }
 
 const username = localStorage.getItem('username');
-if (!getToken()) window.location.href = '/login';
+if (!getToken() && !getRefreshToken()) window.location.href = '/login';
 
 let userData = null;
 let analyticsData = null;

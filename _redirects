@@ -13,4 +13,5 @@
 /oauth-callback /oauth-callback.html 200
 /admin        /admin.html         200
 /shop         /#pricing           302
+/redeem       /redeem.html        200
 /:username    /profile.html       200

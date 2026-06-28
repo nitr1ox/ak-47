@@ -356,7 +356,8 @@ body.has-announcement { padding-top: 44px; }
   </div>
 </div>
 <script>
-  if (localStorage.getItem('token')) window.location.href = '/dashboard';
+  const _redirectAfterLogin = new URLSearchParams(window.location.search).get('redirect') || '/dashboard';
+  if (localStorage.getItem('token')) window.location.href = _redirectAfterLogin;
 
   const urlError = new URLSearchParams(window.location.search).get('error');
   if (urlError) document.getElementById('alert').innerHTML = `<div class="alert alert-error">${decodeURIComponent(urlError)}</div>`;
@@ -398,7 +399,7 @@ body.has-announcement { padding-top: 44px; }
       localStorage.setItem('refreshToken', data.refreshToken);
       localStorage.setItem('username', data.username);
       if (data.userId) localStorage.setItem('userId', data.userId);
-      window.location.href = '/dashboard';
+      window.location.href = _redirectAfterLogin;
     } catch { showAlert('Erreur réseau'); }
     finally { btn.disabled = false; btn.innerHTML = 'Se connecter'; }
   }
@@ -419,7 +420,7 @@ body.has-announcement { padding-top: 44px; }
       localStorage.setItem('refreshToken', data.refreshToken);
       localStorage.setItem('username', data.username);
       if (data.userId) localStorage.setItem('userId', data.userId);
-      window.location.href = '/dashboard';
+      window.location.href = _redirectAfterLogin;
     } catch { showVerifyAlert('Erreur réseau'); }
     finally { btn.disabled = false; btn.textContent = 'Confirmer'; }
   }
