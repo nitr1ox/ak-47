@@ -1839,12 +1839,25 @@ async function apiFetch(url, options = {}) {
   let token = getToken();
   options.headers = options.headers || {};
   options.headers['Authorization'] = 'Bearer ' + token;
-  let r = await fetch(url, options);
+  let r;
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 30000);
+    r = await fetch(url, { ...options, signal: controller.signal });
+    clearTimeout(timer);
+  } catch (err) {
+    // Erreur réseau ou timeout : on retourne une réponse fake 503 sans logout
+    return new Response(JSON.stringify({ error: 'network' }), { status: 503 });
+  }
   if (r.status === 401) {
     token = await refreshAccessToken();
-    if (!token) return r;
+    if (!token) return r; // refreshAccessToken gère le logout si vrai 401
     options.headers['Authorization'] = 'Bearer ' + token;
-    r = await fetch(url, options);
+    try {
+      r = await fetch(url, options);
+    } catch {
+      return new Response(JSON.stringify({ error: 'network' }), { status: 503 });
+    }
   }
   return r;
 }
@@ -2037,7 +2050,9 @@ document.addEventListener('keydown', e => {
 async function loadUser() {
   try {
     const r = await apiFetch(API + '/api/user/me', { headers: { Authorization: 'Bearer ' + getToken() } });
+    if (r.status === 503) { showToast('Serveur en démarrage, réessaie dans quelques secondes…'); return; }
     if (r.status === 401) { logout(); return; }
+    if (!r.ok) { showToast('Erreur de chargement'); return; }
     userData = await r.json();
 
     if (userData.username && userData.username !== localStorage.getItem('username')) {
