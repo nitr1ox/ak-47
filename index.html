@@ -255,8 +255,32 @@
     .feature-desc { font-size: 13px; color: var(--gray-500); line-height: 1.6; }
 
     /* ── Pricing ── */
-    .pricing { max-width: 860px; margin: 0 auto; padding: 80px 24px; }
+    .pricing { max-width: 920px; margin: 0 auto; padding: 80px 24px; }
     .pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+    /* Duration selector */
+    .duration-selector {
+      display: flex; gap: 6px; margin-bottom: 32px;
+      background: var(--gray-100); border: 1px solid var(--gray-200);
+      border-radius: 12px; padding: 5px; width: fit-content;
+    }
+    .dur-btn {
+      padding: 7px 16px; border-radius: 8px; border: none;
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      background: transparent; color: var(--gray-500);
+      transition: all .15s; white-space: nowrap;
+    }
+    .dur-btn.active {
+      background: var(--accent); color: #fff;
+      box-shadow: 0 2px 8px rgba(200,95,40,.35);
+    }
+    .dur-badge {
+      display: inline-block; font-size: 9px; font-weight: 700;
+      background: var(--accent-light); color: #fff;
+      padding: 1px 5px; border-radius: 4px; margin-left: 4px;
+      vertical-align: middle;
+    }
+
     .plan-card {
       border: 1px solid var(--gray-200); border-radius: 14px;
       padding: 32px 28px; background: var(--white);
@@ -265,19 +289,19 @@
     }
     .plan-card:hover { transform: translateY(-3px); box-shadow: 0 14px 36px rgba(0,0,0,.07); }
     .plan-card.premium {
-      border-color: #f43f5e50;
-      background: linear-gradient(135deg, #fff5f7 0%, #fff 60%);
-      box-shadow: 0 0 0 1px #f43f5e20, 0 8px 32px rgba(244,63,94,.08);
+      border-color: rgba(200,95,40,.4);
+      background: linear-gradient(135deg, #fff8f5 0%, #fff 60%);
+      box-shadow: 0 0 0 1px rgba(200,95,40,.15), 0 8px 32px rgba(200,95,40,.08);
     }
-    .plan-card.premium:hover { box-shadow: 0 0 0 1px #f43f5e40, 0 14px 40px rgba(244,63,94,.14); }
+    .plan-card.premium:hover { box-shadow: 0 0 0 1px rgba(200,95,40,.3), 0 14px 40px rgba(200,95,40,.14); }
     .plan-badge {
       display: inline-flex; align-items: center; gap: 6px;
       font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
       padding: 4px 10px; border-radius: 20px; margin-bottom: 20px; width: fit-content;
     }
     .plan-badge.free { background: var(--gray-100); color: var(--gray-500); }
-    .plan-badge.prem { background: #f43f5e15; color: #f43f5e; }
-    .plan-price { font-size: 38px; font-weight: 800; letter-spacing: -2px; margin-bottom: 4px; line-height: 1; }
+    .plan-badge.prem { background: rgba(200,95,40,.12); color: var(--accent); }
+    .plan-price { font-size: 38px; font-weight: 800; letter-spacing: -2px; margin-bottom: 4px; line-height: 1; color: var(--black); }
     .plan-price span { font-size: 16px; font-weight: 500; color: var(--gray-400); letter-spacing: 0; }
     .plan-period { font-size: 12px; color: var(--gray-400); margin-bottom: 24px; }
     .plan-divider { height: 1px; background: var(--gray-200); margin-bottom: 24px; }
@@ -286,7 +310,7 @@
     .plan-features li .chk { flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
     .plan-features li .chk.yes { background: #10b98120; color: #10b981; font-size: 11px; font-weight: 900; }
     .plan-features li .chk.no  { background: var(--gray-100); color: var(--gray-400); font-size: 11px; }
-    .plan-features li .chk.star { background: #f43f5e15; color: #f43f5e; font-size: 11px; }
+    .plan-features li .chk.star { background: rgba(200,95,40,.12); color: var(--accent); font-size: 11px; }
     .plan-btn {
       margin-top: auto; padding: 13px 20px; border-radius: 9px; border: none;
       font-size: 14px; font-weight: 700; cursor: pointer; text-decoration: none;
@@ -295,9 +319,14 @@
     }
     .plan-btn:hover { opacity: .88; transform: translateY(-1px); }
     .plan-btn.free-btn { background: var(--gray-100); color: var(--gray-700); border: 1px solid var(--gray-200); }
-    .plan-btn.prem-btn { background: #f43f5e; color: #fff; }
+    .plan-btn.prem-btn { background: var(--accent); color: #fff; box-shadow: 0 4px 16px rgba(200,95,40,.3); }
     .plan-price-loading { opacity: .4; font-size: 28px; }
-    @media (max-width: 600px) { .pricing-grid { grid-template-columns: 1fr; } .pricing { padding: 56px 16px; } }
+    @media (max-width: 640px) {
+      .pricing-grid { grid-template-columns: 1fr; }
+      .pricing { padding: 56px 16px; }
+      .duration-selector { flex-wrap: wrap; width: 100%; }
+      .dur-btn { flex: 1; text-align: center; }
+    }
 
     .faq-section { max-width: 680px; margin: 0 auto; padding: 80px 24px; }
     .faq-list { border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; }
@@ -750,6 +779,16 @@ body.has-announcement { padding-top: 44px; }
   <h2 class="section-title">Gratuit ou Premium.</h2>
   <p class="section-sub">L'essentiel est gratuit pour toujours. Le Premium débloque les fonctionnalités avancées.</p>
 
+  <!-- Sélecteur de durée -->
+  <div class="duration-selector" id="durationSelector">
+    <button class="dur-btn active" data-dur="1d" data-price-mult="0.20" onclick="selectDuration(this)">1 Jour</button>
+    <button class="dur-btn" data-dur="1w" data-price-mult="0.75" onclick="selectDuration(this)">1 Semaine</button>
+    <button class="dur-btn" data-dur="1m" data-price-mult="1" onclick="selectDuration(this)">1 Mois <span class="dur-badge">POPULAIRE</span></button>
+    <button class="dur-btn" data-dur="3m" data-price-mult="2.70" onclick="selectDuration(this)">3 Mois <span class="dur-badge">-10%</span></button>
+    <button class="dur-btn" data-dur="6m" data-price-mult="5.10" onclick="selectDuration(this)">6 Mois <span class="dur-badge">-15%</span></button>
+    <button class="dur-btn" data-dur="1y" data-price-mult="9.60" onclick="selectDuration(this)">1 An <span class="dur-badge">-20%</span></button>
+  </div>
+
   <div class="pricing-grid">
 
     <!-- Plan Gratuit -->
@@ -777,8 +816,8 @@ body.has-announcement { padding-top: 44px; }
     <!-- Plan Premium -->
     <div class="plan-card premium">
       <div class="plan-badge prem">⭐ Premium</div>
-      <div class="plan-price" id="premiumPriceDisplay"><span class="plan-price-loading">…</span></div>
-      <div class="plan-period">par mois · rôle attribué automatiquement</div>
+      <div class="plan-price" id="premiumPriceDisplay"><span id="premiumPriceVal">1,00</span> <span>€</span></div>
+      <div class="plan-period" id="premiumPricePeriod">pour 1 jour · rôle attribué automatiquement</div>
       <div class="plan-divider"></div>
       <ul class="plan-features">
         <li><span class="chk yes">✓</span> Tout ce qui est inclus dans Gratuit</li>
@@ -905,26 +944,54 @@ body.has-announcement { padding-top: 44px; }
 </script>
 
 <script>
-// ── Prix Premium dynamique ────────────────────────────────────────────────────
-(async function loadPremiumPrice() {
-  const el = document.getElementById('premiumPriceDisplay');
-  const btn = document.getElementById('premiumBuyBtn');
+// ── Prix Premium dynamique avec durée ─────────────────────────────────────────
+const DURATION_CONFIG = {
+  '1d':  { label: '1 jour',    mult: 0.20,  period: 'pour 1 jour' },
+  '1w':  { label: '1 semaine', mult: 0.75,  period: 'pour 1 semaine' },
+  '1m':  { label: '1 mois',    mult: 1,     period: 'par mois' },
+  '3m':  { label: '3 mois',    mult: 2.70,  period: 'pour 3 mois (-10%)' },
+  '6m':  { label: '6 mois',    mult: 5.10,  period: 'pour 6 mois (-15%)' },
+  '1y':  { label: '1 an',      mult: 9.60,  period: "pour 1 an (-20%)" },
+};
+
+let basePrice = 5.00;
+let baseUrl   = 'https://ak-47shop.mysellauth.com/product/ak-47fr-prenium';
+let currentDur = '1d';
+
+function updatePriceDisplay() {
+  const cfg = DURATION_CONFIG[currentDur];
+  const price = (basePrice * cfg.mult).toFixed(2).replace('.', ',');
+  const valEl = document.getElementById('premiumPriceVal');
+  const perEl = document.getElementById('premiumPricePeriod');
+  if (valEl) valEl.textContent = price;
+  if (perEl) perEl.textContent = cfg.period + ' · rôle attribué automatiquement';
+}
+
+function selectDuration(btn) {
+  document.querySelectorAll('.dur-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentDur = btn.dataset.dur;
+  updatePriceDisplay();
+}
+
+document.addEventListener('DOMContentLoaded', async function() {
   try {
     const res = await fetch('https://ak47-backend.onrender.com/api/sellauth/prices');
-    if (!res.ok) throw new Error();
-    const prices = await res.json();
-    const premium = prices.find(p => p.role === 'premium' || p.slug === 'ak-47fr-prenium');
-    if (premium) {
-      const formatted = premium.price_eur.toFixed(2).replace('.', ',');
-      el.innerHTML = `${formatted} <span>€</span>`;
-      if (premium.url) btn.href = premium.url;
-    } else {
-      el.innerHTML = `5,00 <span>€</span>`;
+    if (res.ok) {
+      const prices = await res.json();
+      const premium = prices.find(p => p.role === 'premium' || p.slug === 'ak-47fr-prenium');
+      if (premium) {
+        basePrice = premium.price_eur;
+        if (premium.url) {
+          baseUrl = premium.url;
+          const btn = document.getElementById('premiumBuyBtn');
+          if (btn) btn.href = premium.url;
+        }
+      }
     }
-  } catch {
-    el.innerHTML = `5,00 <span>€</span>`;
-  }
-})();
+  } catch {}
+  updatePriceDisplay();
+});
 </script>
 
 <a href="https://discord.gg/g7MysUNQXs" target="_blank" rel="noopener"

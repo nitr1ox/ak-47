@@ -12,4 +12,5 @@
 /privacy      /privacy.html       200
 /oauth-callback /oauth-callback.html 200
 /admin        /admin.html         200
+/shop         /#pricing           302
 /:username    /profile.html       200
