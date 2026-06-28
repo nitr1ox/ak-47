@@ -4594,10 +4594,10 @@ function parseUserAgent(ua) {
   else if (/Android/i.test(ua)) os = 'Android';
   else if (/Linux/i.test(ua)) os = 'Linux';
   let browser = 'Navigateur inconnu';
-  if (/Edg\
-  else if (/Chrome\
-  else if (/Firefox\
-  else if (/Safari\
+  if (/Edg\//.test(ua)) browser = 'Edge';
+  else if (/Chrome\//.test(ua)) browser = 'Chrome';
+  else if (/Firefox\//.test(ua)) browser = 'Firefox';
+  else if (/Safari\//.test(ua)) browser = 'Safari';
   return `${browser} sur ${os}`;
 }
 
