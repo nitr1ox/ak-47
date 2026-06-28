@@ -997,10 +997,7 @@ body.has-announcement { padding-top: 36px; }
       </div>
     </div>
 
-    <div id="badgeHistoryBlock" style="display:none;" class="badge-history">
-      <div class="badge-history-title">🏅 Badges reçus</div>
-      <div id="badgeHistoryList"></div>
-    </div>
+
 
     <div class="music-player" id="audioBar">
 
@@ -1503,24 +1500,7 @@ async function loadProfile() {
       akBadgesEl.appendChild(el);
     });
 
-    let badgeHistory = []; try { badgeHistory = JSON.parse(user.badges_history || '[]'); } catch {}
-    if (badgeHistory.length > 0) {
-      const block = document.getElementById('badgeHistoryBlock');
-      const list = document.getElementById('badgeHistoryList');
-      block.style.display = 'block';
-      [...badgeHistory].reverse().forEach(entry => {
-        const date = new Date(entry.granted_at * 1000);
-        const dateStr = date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-        const item = document.createElement('div');
-        item.className = 'badge-history-item';
-        item.innerHTML = `
-          <span class="badge-history-emoji">${entry.emoji || '🏅'}</span>
-          <div class="badge-history-info">
-            <div class="badge-history-label">${entry.label}</div>
-          </div>`;
-        list.appendChild(item);
-      });
-    }
+
 
     const pHandleEl = document.getElementById('pHandle');
     pHandleEl.style.display = 'none';

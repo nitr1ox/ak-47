@@ -2054,6 +2054,7 @@ async function loadUser() {
     if (r.status === 401) { logout(); return; }
     if (!r.ok) { showToast('Erreur de chargement'); return; }
     userData = await r.json();
+    window._currentUser = userData;
 
     if (userData.username && userData.username !== localStorage.getItem('username')) {
       localStorage.setItem('username', userData.username);
@@ -4485,20 +4486,6 @@ switchTab = function(name) {
 
 const _origSetUser = window.setCurrentUser;
 
-(function patchUserLoad() {
-  const orig = window.fetch;
-  window.fetch = async function(...args) {
-    const res = await orig.apply(this, args);
-    try {
-      const url = typeof args[0] === 'string' ? args[0] : '';
-      if (url.includes('/api/user/me')) {
-        const clone = res.clone();
-        clone.json().then(d => { if (d && d.username) window._currentUser = d; }).catch(() => {});
-      }
-    } catch {}
-    return res;
-  };
-})();
 
 function openChangePassword() {
   const overlay = document.createElement('div');
