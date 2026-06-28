@@ -160,7 +160,7 @@ const API = 'https://ak47-backend.onrender.com';
 const TIMEOUT_MS = 35000; // 35s pour laisser le temps au cold start Render
 
 function getToken() {
-  return localStorage.getItem('accessToken') || getCookie('accessToken');
+  return localStorage.getItem('token') || localStorage.getItem('accessToken') || getCookie('accessToken');
 }
 function getCookie(name) {
   return document.cookie.split('; ').reduce((r, c) => {
