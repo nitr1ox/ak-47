@@ -107,13 +107,11 @@
 <div class="card">
   <div class="logo">AK-47.FR</div>
 
-  <!-- État : chargement -->
   <div id="stateLoading">
     <div class="spinner" id="spinner" style="display:block;"></div>
     <p style="color:#555;font-size:14px;">Vérification du lien…</p>
   </div>
 
-  <!-- État : aperçu de la clé (avant claim) -->
   <div id="statePreview" style="display:none;">
     <span class="emoji" id="previewEmoji">🏅</span>
     <h1>Votre rôle vous attend !</h1>
@@ -137,7 +135,6 @@
     </p>
   </div>
 
-  <!-- État : succès -->
   <div id="stateSuccess" style="display:none;">
     <span class="emoji" id="successEmoji">🎉</span>
     <h1 id="successTitle">Rôle activé !</h1>
@@ -146,7 +143,6 @@
     <a class="btn btn-primary" href="/dashboard" style="margin-top:16px;">Voir mon profil</a>
   </div>
 
-  <!-- État : erreur -->
   <div id="stateError" style="display:none;">
     <span class="emoji">❌</span>
     <h1 id="errorTitle">Lien invalide</h1>
@@ -157,7 +153,7 @@
 
 <script>
 const API = 'https://ak47-backend.onrender.com';
-const TIMEOUT_MS = 35000; // 35s pour laisser le temps au cold start Render
+const TIMEOUT_MS = 35000; 
 
 function getToken() {
   return localStorage.getItem('token') || localStorage.getItem('accessToken') || getCookie('accessToken');
@@ -179,7 +175,6 @@ function setLoadingText(text) {
   if (el) el.textContent = text;
 }
 
-// Fetch avec timeout intégré
 async function fetchWithTimeout(url, options = {}, timeoutMs = TIMEOUT_MS) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -196,7 +191,6 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = TIMEOUT_MS) {
 const params = new URLSearchParams(window.location.search);
 const token = params.get('token');
 
-// Message cold-start après 5s
 let coldStartTimer = null;
 function startColdStartHint() {
   coldStartTimer = setTimeout(() => {
@@ -242,7 +236,7 @@ async function verifyToken() {
     if (err.name === 'AbortError') {
       if (titleEl) titleEl.textContent = 'Serveur indisponible';
       if (errEl)   errEl.textContent   = 'Le serveur met trop de temps à répondre. Réessaie dans quelques secondes.';
-      // Bouton "Réessayer" dynamique
+      
       const retryBtn = document.createElement('button');
       retryBtn.className = 'btn btn-primary';
       retryBtn.style.marginTop = '16px';
@@ -309,7 +303,7 @@ async function doClaim() {
         <div class="info-row"><span class="info-label">Durée</span><span class="info-value">${d.duration}</span></div>
         <div class="info-row"><span class="info-label">Expiration</span><span class="info-value">${expiry}</span></div>
       `;
-      // Stocker les infos pour l'animation sur la page d'accueil
+      
       localStorage.setItem('redeemCelebration', JSON.stringify({
         emoji: d.roleEmoji || '🎉',
         label: d.roleLabel || 'Rôle',
@@ -336,7 +330,6 @@ async function doClaim() {
   }
 }
 
-// Auto-claim si token stocké avant login
 window.addEventListener('load', () => {
   const stored = localStorage.getItem('redeemToken');
   if (stored && stored === token && getToken()) {

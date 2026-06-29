@@ -75,7 +75,6 @@
         }
       }).catch(() => {});
 
-    
     const token = localStorage.getItem('auth_token') || localStorage.getItem('token');
     if (token) {
       fetch(API + '/api/admin/maintenance', { headers: { Authorization: 'Bearer ' + token } })

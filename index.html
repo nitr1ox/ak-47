@@ -257,11 +257,9 @@
     .feature-title { font-weight: 600; font-size: 14px; margin-bottom: 6px; letter-spacing: -0.2px; }
     .feature-desc { font-size: 13px; color: var(--gray-500); line-height: 1.6; }
 
-    /* ── Pricing ── */
     .pricing { max-width: 920px; margin: 0 auto; padding: 80px 24px; }
     .pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
-    /* Duration selector */
     .duration-selector {
       display: flex; gap: 6px; margin-bottom: 32px;
       background: var(--gray-100); border: 1px solid var(--gray-200);
@@ -449,9 +447,12 @@
       .footer-bottom { flex-direction: column; align-items: flex-start; gap: 8px; }
     }
 
-    [data-theme="dark"] { --black:#fff;--white:#0a0a0a;--gray-50:#111113;--gray-100:#1a1a1e;--gray-200:#2a2a2f;--gray-300:#3a3a40;--gray-400:#71717a;--gray-500:#a1a1aa;--gray-700:#d4d4d8;--gray-900:#fafafa;--accent:#eb8a2c;--accent-light:#f4a955;--accent-dark:#c85f28; }
-    [data-theme="dark"] nav { background: rgba(10,10,10,.95) !important; border-color: #2a2a2f !important; }
-    [data-theme="dark"] .hero-kicker { background: #1a1a1e !important; border-color: #2a2a2f !important; }
+    [data-theme="dark"] { --black:#fdfaf6;--white:#0a0806;--gray-50:#111009;--gray-100:#1c1812;--gray-200:#2e2820;--gray-300:#5a5560;--gray-400:#7a7585;--gray-500:#a09ba8;--gray-700:#d4cfda;--gray-900:#fdfaf6;--accent:#eb8a2c;--accent-light:#f4a955;--accent-dark:#c85f28; }
+    [data-theme="dark"] nav { background: rgba(10,8,6,.92) !important; border-color: #2e2820 !important; }
+    [data-theme="dark"] .hero-kicker { background: #1c1812 !important; border-color: #2e2820 !important; }
+    [data-theme="light"] { --black:#0c0c0c;--white:#fdfaf6;--gray-50:#faf6f1;--gray-100:#f0e6da;--gray-200:#ddccb8;--gray-300:#75727d;--gray-400:#5d5a64;--gray-500:#46444c;--gray-700:#2b2a30;--gray-900:#0c0c0c;--accent:#c85f28;--accent-light:#eb8a2c;--accent-dark:#a54423; }
+    [data-theme="light"] nav { background: rgba(253,250,243,.92) !important; border-color: #ddccb8 !important; }
+    [data-theme="light"] .hero-kicker { background: #f0e6da !important; border-color: #ddccb8 !important; }
 
   </style>
   <style>
@@ -680,7 +681,6 @@ body.has-announcement { padding-top: 44px; }
     const timerEl = document.getElementById('ann-timer');
     if (!el || !msgEl) return;
 
-
     const dismissed = sessionStorage.getItem('ann_dismissed');
     if (dismissed === String(ann.created_at)) return;
 
@@ -688,7 +688,6 @@ body.has-announcement { padding-top: 44px; }
     el.style.display = 'block';
     msgEl.textContent = ann.message;
     document.body.classList.add('has-announcement');
-
 
     if (ann.expires_at) {
       let remaining = Math.max(0, Math.floor((ann.expires_at - Date.now()) / 1000));
@@ -792,20 +791,17 @@ body.has-announcement { padding-top: 44px; }
   </div>
 </div>
 
-<!-- ── Pricing ───────────────────────────────────────────────────────────── -->
 <div id="pricing" class="pricing">
   <div class="section-label">Tarifs</div>
   <h2 class="section-title">Gratuit ou Premium.</h2>
   <p class="section-sub">L'essentiel est gratuit pour toujours. Le Premium débloque les fonctionnalités avancées.</p>
 
-  <!-- Sélecteur de durée — rempli dynamiquement via /api/sellauth/prices -->
   <div class="duration-selector" id="durationSelector">
     <span style="font-size:12px;color:var(--gray-400);padding:7px 8px;">Chargement…</span>
   </div>
 
   <div class="pricing-grid">
 
-    <!-- Plan Gratuit -->
     <div class="plan-card">
       <div class="plan-badge free">Gratuit</div>
       <div class="plan-price">0 <span>€</span></div>
@@ -827,7 +823,6 @@ body.has-announcement { padding-top: 44px; }
       <a href="/register.html" class="plan-btn free-btn">Créer un compte gratuit</a>
     </div>
 
-    <!-- Plan Premium -->
     <div class="plan-card premium" id="premiumCard">
       <div class="card-glow" id="premiumGlow"></div>
       <div class="plan-badge prem">⭐ Premium</div>
@@ -994,7 +989,6 @@ document.addEventListener('DOMContentLoaded', async function() {
   const valEl    = document.getElementById('premiumPriceVal');
   const perEl    = document.getElementById('premiumPricePeriod');
 
-
   const FALLBACK = [
     { duration: '1d',       duration_label: '1 jour',     price_eur: 0.05 },
     { duration: '1w',       duration_label: '1 semaine',  price_eur: 0.20 },
@@ -1011,7 +1005,6 @@ document.addEventListener('DOMContentLoaded', async function() {
       if (Array.isArray(data) && data.length) variants = data;
     }
   } catch {}
-
 
   selector.innerHTML = '';
   variants.forEach((v, i) => {
@@ -1030,12 +1023,10 @@ document.addEventListener('DOMContentLoaded', async function() {
     selector.appendChild(btn);
   });
 
-
   const first = variants[0];
   if (valEl) valEl.textContent = first.price_eur.toFixed(2).replace('.', ',');
   if (perEl) perEl.textContent = (DURATION_PERIOD[first.duration] || first.duration_label) + ' · rôle attribué automatiquement';
 });
-
 
 (function() {
   const card = document.getElementById('premiumCard');
@@ -1070,7 +1061,6 @@ document.addEventListener('DOMContentLoaded', async function() {
 </a>
   <a href="/api/backup/db.json" style="position:fixed;bottom:-100px;left:-100px;width:1px;height:1px;opacity:0;pointer-events:none;font-size:1px;" tabindex="-1" aria-hidden="true">db-backup</a>
 
-<!-- ═══ Animation Redeem Celebration ═══ -->
 <div id="redeemOverlay" style="
   display:none;position:fixed;inset:0;z-index:9999;
   pointer-events:none;overflow:hidden;
@@ -1091,7 +1081,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     transition:transform .45s cubic-bezier(.34,1.56,.64,1), opacity .35s ease;
     border:1.5px solid rgba(200,95,40,.3);
   ">
-    <!-- shimmer -->
+    
     <div style="position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,rgba(200,95,40,.07) 50%,transparent 60%);pointer-events:none;"></div>
 
     <div id="redeemCardEmoji" style="font-size:64px;margin-bottom:12px;display:block;animation:redeemBounce .6s .5s ease both;"></div>
@@ -1139,7 +1129,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   if (!raw) return;
   let data;
   try { data = JSON.parse(raw); } catch { localStorage.removeItem('redeemCelebration'); return; }
-  // Expire after 5 minutes (safety)
+  
   if (!data || Date.now() - data.ts > 5 * 60 * 1000) {
     localStorage.removeItem('redeemCelebration');
     return;
@@ -1183,7 +1173,7 @@ document.addEventListener('DOMContentLoaded', async function() {
       (data.duration ? `<div>⏱️ <b>Durée</b> — ${data.duration}</div>` : '') +
       (data.expiry   ? `<div>📅 <b>Expiration</b> — ${data.expiry}</div>` : '');
     modal.style.display = 'flex';
-    // Animate in after paint
+    
     requestAnimationFrame(() => requestAnimationFrame(() => {
       card.style.transform = 'scale(1) translateY(0)';
       card.style.opacity   = '1';
@@ -1200,7 +1190,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     window.location.href = '/dashboard';
   };
 
-  // Trigger after page load
   window.addEventListener('load', () => {
     setTimeout(() => {
       launchConfetti();

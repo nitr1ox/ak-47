@@ -270,7 +270,6 @@ body.has-announcement { padding-top: 44px; }
     const timerEl = document.getElementById('ann-timer');
     if (!el || !msgEl) return;
 
-    
     const dismissed = sessionStorage.getItem('ann_dismissed');
     if (dismissed === String(ann.created_at)) return;
 
@@ -279,7 +278,6 @@ body.has-announcement { padding-top: 44px; }
     msgEl.textContent = ann.message;
     document.body.classList.add('has-announcement');
 
-    
     if (ann.expires_at) {
       let remaining = Math.max(0, Math.floor((ann.expires_at - Date.now()) / 1000));
       function updateTimer() {

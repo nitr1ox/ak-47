@@ -195,7 +195,7 @@
       position: relative;
       display: flex; align-items: center; justify-content: center;
       width: 48px; height: 48px;
-      background: var(--link-bg); border: 1px solid var(--link-border);
+      background: var(--link-bg); border: none;
       border-radius: 12px;
       text-decoration: none; color: var(--link-color);
       transition: all .15s;
@@ -997,8 +997,6 @@ body.has-announcement { padding-top: 36px; }
       </div>
     </div>
 
-
-
     <div class="music-player" id="audioBar">
 
       <div class="mp-top">
@@ -1500,8 +1498,6 @@ async function loadProfile() {
       akBadgesEl.appendChild(el);
     });
 
-
-
     const pHandleEl = document.getElementById('pHandle');
     pHandleEl.style.display = 'none';
 
@@ -1845,7 +1841,7 @@ async function loadProfile() {
       glowStyle.textContent = css;
       document.head.appendChild(glowStyle);
     }
-    // Badge glow per-badge-color
+    
     const badgeGlowIntensity = user.badge_glow_intensity || 0;
     if (badgeGlowIntensity > 0) {
       const spread = Math.round(badgeGlowIntensity * 0.15);
@@ -1853,14 +1849,14 @@ async function loadProfile() {
       const blur2  = Math.round(badgeGlowIntensity * 0.25);
       const alpha1 = Math.min(0.99, badgeGlowIntensity / 100 * 1.2).toFixed(2);
       const alpha2 = Math.min(0.60, badgeGlowIntensity / 100 * 0.7).toFixed(2);
-      // Apply to .badge elements (role badges with def.color)
+      
       const badgeEls = document.querySelectorAll('.badge');
       badgeEls.forEach(b => {
         const bg = window.getComputedStyle(b).backgroundColor;
         const hex = bgToHex(bg);
         if (hex) b.style.boxShadow = `0 0 ${blur1}px ${spread}px ${hex}${Math.round(parseFloat(alpha1)*255).toString(16).padStart(2,'0')}, 0 0 ${blur2}px ${spread*2}px ${hex}${Math.round(parseFloat(alpha2)*255).toString(16).padStart(2,'0')}`;
       });
-      // Apply to ak-badge images (icon badges)
+      
       document.querySelectorAll('.ak-badge img, .dc-badge img').forEach(img => {
         img.style.filter = `drop-shadow(0 0 ${blur1}px rgba(255,255,255,${alpha1})) drop-shadow(0 0 ${blur2}px rgba(255,255,255,${alpha2}))`;
       });
@@ -2381,8 +2377,8 @@ function startMusicNow() {
 }
 
 function initAudioBarAutoHide(bar) {
-  const HIDE_DELAY = 3000;      // temps d'inactivité avant de cacher la barre
-  const PROXIMITY_PX = 140;     // distance depuis le bas de l'écran qui réaffiche la barre
+  const HIDE_DELAY = 3000;      
+  const PROXIMITY_PX = 140;     
   let hideTimer = null;
 
   function scheduleHide() {
