@@ -551,39 +551,59 @@ input:focus, select:focus, textarea:focus {
   <div class="content">
 
     <div class="tab-panel active" id="tab-overview">
-      <div class="stats-grid" id="statsGrid">
+
+      <!-- Page title + date (like dashboard) -->
+      <div style="margin-bottom:24px;">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--accent);letter-spacing:-0.5px;">Tableau de bord</div>
+        <div style="font-size:13px;color:var(--text-2);margin-top:2px;" id="overviewDate"></div>
+      </div>
+
+      <!-- Stat cards — dashboard style (accent numbers, 2-row grid) -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px;" id="statsGrid">
         <div class="stat-card">
-          <div class="stat-label">Total users</div>
-          <div class="stat-value" id="s-total">—</div>
-          <div class="stat-delta">membres enregistrés</div>
-        </div>
-        <div class="stat-card green">
-          <div class="stat-label">Aujourd'hui</div>
-          <div class="stat-value green" id="s-today">—</div>
-          <div class="stat-delta">nouvelles inscriptions</div>
-        </div>
-        <div class="stat-card blue">
-          <div class="stat-label">7 derniers jours</div>
-          <div class="stat-value blue" id="s-7d">—</div>
-          <div class="stat-delta">nouveaux membres</div>
+          <div class="stat-value" style="color:var(--accent);font-size:32px;font-weight:800;letter-spacing:-1.5px;" id="s-total">—</div>
+          <div class="stat-label" style="margin-top:6px;margin-bottom:0;">Total utilisateurs</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Connexions /24h</div>
-          <div class="stat-value" id="s-logins">—</div>
-          <div class="stat-delta">sessions ouvertes</div>
+          <div class="stat-value" style="color:var(--accent);font-size:32px;font-weight:800;letter-spacing:-1.5px;" id="s-today">—</div>
+          <div class="stat-label" style="margin-top:6px;margin-bottom:0;">Inscriptions aujourd'hui</div>
         </div>
-        <div class="stat-card green">
-          <div class="stat-label">Inscriptions /24h</div>
-          <div class="stat-value green" id="s-reg">—</div>
-          <div class="stat-delta">comptes créés</div>
+        <div class="stat-card">
+          <div class="stat-value" style="color:var(--accent);font-size:32px;font-weight:800;letter-spacing:-1.5px;" id="s-7d">—</div>
+          <div class="stat-label" style="margin-top:6px;margin-bottom:0;">Inscriptions 7 jours</div>
         </div>
-        <div class="stat-card red">
-          <div class="stat-label">Erreurs /24h</div>
-          <div class="stat-value red" id="s-err">—</div>
-          <div class="stat-delta">erreurs système</div>
+        <div class="stat-card">
+          <div class="stat-value" style="color:var(--accent);font-size:32px;font-weight:800;letter-spacing:-1.5px;" id="s-logins">—</div>
+          <div class="stat-label" style="margin-top:6px;margin-bottom:0;">Connexions /24h</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:24px;">
+        <div class="stat-card">
+          <div class="stat-value" style="color:var(--accent);font-size:32px;font-weight:800;letter-spacing:-1.5px;" id="s-reg">—</div>
+          <div class="stat-label" style="margin-top:6px;margin-bottom:0;">Inscriptions /24h</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color:var(--red);font-size:32px;font-weight:800;letter-spacing:-1.5px;" id="s-err">—</div>
+          <div class="stat-label" style="margin-top:6px;margin-bottom:0;">Erreurs /24h</div>
         </div>
       </div>
 
+      <!-- Inscriptions chart — 30 derniers jours -->
+      <div class="card" style="margin-bottom:18px;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Inscriptions — 30 derniers jours</div>
+          </div>
+        </div>
+        <div style="padding:20px 20px 12px;">
+          <div style="position:relative;height:120px;" id="registrationsChart">
+            <canvas id="regChartCanvas" style="width:100%;height:100%;"></canvas>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:var(--text-3);" id="chartLabels"></div>
+        </div>
+      </div>
+
+      <!-- Recent activity table -->
       <div class="card">
         <div class="card-header">
           <div>
@@ -1322,11 +1342,69 @@ async function deleteUserAdmin(id, uname) {
   else { const d = await r.json(); toast(d.error || 'Erreur', 'err'); }
 }
 
+// Init date display
+(function() {
+  const el = document.getElementById('overviewDate');
+  if (el) {
+    const now = new Date();
+    el.textContent = now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  }
+})();
+
+function drawRegistrationsChart(logs) {
+  const canvas = document.getElementById('regChartCanvas');
+  const labelsEl = document.getElementById('chartLabels');
+  if (!canvas || !labelsEl) return;
+
+  // Build 30-day buckets from logs (type === 'register')
+  const now = new Date();
+  const days = [];
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    days.push({ date: d, count: 0, label: d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) });
+  }
+
+  logs.filter(l => l.type === 'register').forEach(l => {
+    const ts = l.created_at * 1000;
+    const d = new Date(ts);
+    const dayStr = d.toDateString();
+    const bucket = days.find(b => b.date.toDateString() === dayStr);
+    if (bucket) bucket.count++;
+  });
+
+  const max = Math.max(...days.map(d => d.count), 1);
+  const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#eb8a2c';
+  const accentDim = 'rgba(235,138,44,0.25)';
+
+  // Draw SVG bar chart
+  const W = canvas.parentElement.clientWidth || 800;
+  const H = 120;
+  const barW = Math.floor((W - 30) / 30) - 2;
+  const gap = Math.floor((W - 30) / 30);
+
+  let svgBars = '';
+  days.forEach((day, i) => {
+    const barH = Math.round((day.count / max) * (H - 20));
+    const x = 15 + i * gap;
+    const y = H - barH;
+    const isLast2 = i >= 28;
+    svgBars += `<rect x="${x}" y="${y}" width="${Math.max(barW,2)}" height="${barH}" rx="2" fill="${isLast2 ? accent : accentDim}" opacity="${day.count === 0 ? 0.3 : 1}"/>`;
+    // Baseline dot
+    if (day.count === 0) svgBars += `<rect x="${x}" y="${H - 2}" width="${Math.max(barW,2)}" height="2" rx="1" fill="${accentDim}"/>`;
+  });
+
+  canvas.innerHTML = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">${svgBars}</svg>`;
+
+  // Date labels: first and last
+  labelsEl.innerHTML = `<span>${days[0].label}</span><span>${days[29].label}</span>`;
+}
+
 async function loadAll() {
   try {
     const [statsR, logsR, usersR] = await Promise.all([
       fetch(`${API}/api/admin/stats`, { headers: { Authorization: 'Bearer ' + token } }),
-      fetch(`${API}/api/admin/logs?limit=200`, { headers: { Authorization: 'Bearer ' + token } }),
+      fetch(`${API}/api/admin/logs?limit=500`, { headers: { Authorization: 'Bearer ' + token } }),
       fetch(`${API}/api/admin/users`, { headers: { Authorization: 'Bearer ' + token } }),
     ]);
     if (statsR.status === 403) { alert('Accès refusé — tu n\'es pas admin.'); window.location.href = '/dashboard'; return; }
@@ -1349,6 +1427,7 @@ async function loadAll() {
     filterLogs();
     renderUsers(allUsers);
     renderLogsTable(allLogs.slice(0, 10), 'overviewLogs');
+    drawRegistrationsChart(allLogs);
   } catch (e) {
     console.error(e);
     toast('Erreur de chargement', 'err');
