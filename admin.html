@@ -272,7 +272,10 @@ input:focus, select:focus, textarea:focus {
 <nav class="dash-nav">
   <a href="/" class="dash-nav-brand"><img src="/logo.png" alt="ak-47.fr" style="height:20px;width:20px;object-fit:contain;margin-right:6px;vertical-align:middle;">ak-47<span>.fr</span></a>
   <div class="dash-nav-right">
-    <span class="dash-nav-user">Admin — <strong id="sidebarName">—</strong></span>
+    <span class="dash-nav-user">
+      <span id="sidebarAvatar" style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;margin-right:6px;vertical-align:middle;">—</span>
+      Admin — <strong id="sidebarName">—</strong>
+    </span>
     <a href="/dashboard" class="dash-btn-sm">← Dashboard</a>
     <button class="dash-btn-sm" onclick="loadAll()">↻ Actualiser</button>
     <button id="themeToggle" class="theme-pill-toggle" onclick="toggleTheme()" title="Changer de thème">
@@ -825,8 +828,10 @@ const username = localStorage.getItem('username');
 
 if (!token && !localStorage.getItem('refreshToken')) window.location.href = '/login';
 
-document.getElementById('sidebarName').textContent = username || '—';
-document.getElementById('sidebarAvatar').textContent = (username || '?').charAt(0).toUpperCase();
+const sidebarNameEl = document.getElementById('sidebarName');
+if (sidebarNameEl) sidebarNameEl.textContent = username || '—';
+const sidebarAvatarEl = document.getElementById('sidebarAvatar');
+if (sidebarAvatarEl) sidebarAvatarEl.textContent = (username || '?').charAt(0).toUpperCase();
 
 (function(){
   const t = document.documentElement.getAttribute('data-theme') || 'dark';
