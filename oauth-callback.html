@@ -57,14 +57,11 @@ window.onunhandledrejection = function(e) {
   <script>
     const API = 'https://ak47-backend.onrender.com';
     const params = new URLSearchParams(window.location.search);
-    const token        = params.get('token');
-    const refreshToken = params.get('refreshToken');
-    const userId       = params.get('userId');
-    const error        = params.get('error');
-    
-    if (token || refreshToken) {
-      window.history.replaceState(null, '', window.location.pathname);
-    }
+    const oauthCode = params.get('code');
+    const error     = params.get('error');
+
+    // SECURITY: On nettoie l'URL immédiatement — le code ne doit pas rester dans l'historique
+    window.history.replaceState(null, '', window.location.pathname);
 
     function showError(msg) {
       document.getElementById('spinner').style.display = 'none';
@@ -75,24 +72,25 @@ window.onunhandledrejection = function(e) {
 
     if (error) {
       showError(decodeURIComponent(error));
-    } else if (token) {
-
+    } else if (oauthCode) {
       (async () => {
         try {
-          const r = await fetch(API + '/api/user/me', {
-            headers: { Authorization: 'Bearer ' + token }
+          // Échange le code one-time contre les vrais tokens (jamais exposés dans l'URL)
+          const r = await fetch(API + '/api/auth/oauth-session', {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code: oauthCode }),
           });
-
-          if (r.status === 401) { showError('Session expirée, reconnecte-toi.'); return; }
-          if (!r.ok) { showError('Erreur de connexion, réessaie.'); return; }
+          if (!r.ok) { showError('Session expirée, reconnecte-toi.'); return; }
           const data = await r.json();
 
-          localStorage.setItem('token', token);
-          if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
-          if (userId) localStorage.setItem('userId', userId);
-          localStorage.setItem('username', data.username);
+          localStorage.setItem('token', data.token);
+          if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
+          if (data.userId) localStorage.setItem('userId', data.userId);
+          if (data.username) localStorage.setItem('username', data.username);
 
-          const needsSetup = data.needs_setup === true || params.get('new') === '1';
+          const needsSetup = data.new === true;
           document.getElementById('msg').textContent = 'Connecté ! Redirection...';
           setTimeout(() => window.location.href = needsSetup ? '/setup' : '/dashboard', 800);
         } catch {
