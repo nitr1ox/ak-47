@@ -1698,10 +1698,16 @@ body.has-announcement { padding-top: 44px; }
             <input type="text" id="tplDashName" placeholder="Dark Neon, Minimaliste blanc…" maxlength="50"
               style="width:100%;padding:10px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;font-family:'JetBrains Mono',monospace;background:var(--gray-50);color:var(--black);outline:none;box-sizing:border-box;"/>
           </div>
-          <div style="margin-bottom:20px;">
+          <div style="margin-bottom:14px;">
             <label style="font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray-500);display:block;margin-bottom:6px;">Description</label>
             <textarea id="tplDashDesc" placeholder="Décris ton modèle…" maxlength="200"
               style="width:100%;padding:10px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;font-family:'JetBrains Mono',monospace;background:var(--gray-50);color:var(--black);outline:none;resize:vertical;min-height:72px;box-sizing:border-box;"></textarea>
+          </div>
+          <div style="margin-bottom:20px;">
+            <label style="font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray-500);display:block;margin-bottom:6px;">Lien de prévisualisation <span style="font-weight:400;color:var(--gray-400);text-transform:none;letter-spacing:0;">(optionnel — ex: ton profil actuel)</span></label>
+            <input type="url" id="tplDashPreviewUrl" placeholder="https://ak-47.fr/tonpseudo"
+              style="width:100%;padding:10px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;font-family:'JetBrains Mono',monospace;background:var(--gray-50);color:var(--black);outline:none;box-sizing:border-box;"/>
+            <div style="font-size:10px;color:var(--gray-400);margin-top:5px;">Ce lien sera utilisé pour le bouton 👁 sur la carte du modèle. Si vide, aucune prévisualisation externe.</div>
           </div>
           <div style="display:flex;gap:8px;justify-content:flex-end;">
             <button onclick="tplDashClosePublish()" style="padding:9px 16px;background:var(--gray-100);color:var(--gray-700);border:1px solid var(--gray-200);border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">Annuler</button>
@@ -4471,8 +4477,8 @@ function tplDashRender() {
             >
             Utiliser le modèle
           </button>
-          <button onclick="navigator.clipboard.writeText(window.location.origin+'/${tplDashEsc(t.username)}')" style="width:36px;height:36px;border:1px solid var(--gray-200);border-radius:6px;background:var(--gray-50);cursor:pointer;font-size:14px;" title="Copier le lien">🔗</button>
-          <a href="/${tplDashEsc(t.username)}" target="_blank" style="width:36px;height:36px;border:1px solid var(--gray-200);border-radius:6px;background:var(--gray-50);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;text-decoration:none;" title="Voir le profil">👁</a>
+          ${t.preview_url ? `<button onclick="navigator.clipboard.writeText('${tplDashEsc(t.preview_url)}')" style="width:36px;height:36px;border:1px solid var(--gray-200);border-radius:6px;background:var(--gray-50);cursor:pointer;font-size:14px;" title="Copier le lien de preview">🔗</button>` : ''}
+          ${t.preview_url ? `<a href="${tplDashEsc(t.preview_url)}" target="_blank" style="width:36px;height:36px;border:1px solid var(--gray-200);border-radius:6px;background:var(--gray-50);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;text-decoration:none;" title="Voir la preview">👁</a>` : ''}
           ${isOwner ? `<button onclick="tplDashDelete('${t.id}')" style="width:36px;height:36px;border:1px solid var(--gray-200);border-radius:6px;background:var(--gray-50);cursor:pointer;font-size:14px;" title="Supprimer">🗑</button>` : ''}
         </div>
       </div>
@@ -4527,6 +4533,9 @@ function tplDashOpenPublish() {
 function tplDashClosePublish() {
   const m = document.getElementById('tplDashModal');
   if (m) m.style.display = 'none';
+  const n = document.getElementById('tplDashName'); if(n) n.value='';
+  const d = document.getElementById('tplDashDesc'); if(d) d.value='';
+  const p = document.getElementById('tplDashPreviewUrl'); if(p) p.value='';
 }
 
 async function tplDashPublish() {
@@ -4538,7 +4547,7 @@ async function tplDashPublish() {
     const r = await apiFetch(API + '/api/templates', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + getToken() },
-      body: JSON.stringify({ name, description: document.getElementById('tplDashDesc').value.trim() })
+      body: JSON.stringify({ name, description: document.getElementById('tplDashDesc').value.trim(), preview_url: document.getElementById('tplDashPreviewUrl')?.value.trim() || '' })
     });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error);
