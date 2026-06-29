@@ -6,269 +6,41 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>ak-47.fr — Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/style.css"/>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-/* ── Variables (alignées dashboard) ── */
+/* Admin-specific extras */
 :root {
-  --accent:       #c85f28;
-  --accent-light: #eb8a2c;
-  --accent-dark:  #a54423;
-  --accent-glow:  rgba(200,95,40,.18);
-  --accent-dim:   rgba(200,95,40,.10);
-
-  --bg:        #f6f6f7;
-  --white:     #ffffff;
-  --surface:   #ffffff;
-  --surface-2: #f4f4f6;
-  --surface-3: #eaeaed;
-  --border:    rgba(0,0,0,.08);
-  --border-strong: rgba(0,0,0,.14);
-
-  --black:   #111113;
-  --text:    #111113;
-  --text-2:  #6b6b7e;
-  --text-3:  #a0a0b0;
-
   --red:#ef4444;  --red-dim:rgba(239,68,68,.10);
   --green:#22c55e;--green-dim:rgba(34,197,94,.10);
   --blue:#3b82f6; --blue-dim:rgba(59,130,246,.10);
   --purple:#a855f7;--purple-dim:rgba(168,85,247,.10);
   --yellow:#f59e0b;--yellow-dim:rgba(245,158,11,.10);
-
-  --sidebar-w: 230px;
-  --radius: 10px;
   --radius-sm: 7px;
   --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
 }
 
-[data-theme="dark"] {
-  --accent:       #eb8a2c;
-  --accent-light: #f4a955;
-  --accent-dark:  #c85f28;
-  --accent-glow:  rgba(235,138,44,.18);
-  --accent-dim:   rgba(235,138,44,.10);
-
-  --bg:        #0f0f11;
-  --white:     #18181c;
-  --surface:   #18181c;
-  --surface-2: #202026;
-  --surface-3: #2a2a32;
-  --border:    rgba(255,255,255,.07);
-  --border-strong: rgba(255,255,255,.13);
-
-  --black:   #f0f0f2;
-  --text:    #f0f0f2;
-  --text-2:  #8f8fa0;
-  --text-3:  #5e5e72;
-  --shadow: 0 1px 3px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.3);
-}
-
-html { scroll-behavior: smooth; }
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  display: flex;
-  overflow-x: hidden;
-}
-
-/* ── Sidebar ── */
-.sidebar {
-  width: var(--sidebar-w);
-  background: var(--surface);
-  border-right: 1px solid var(--border);
-  display: flex; flex-direction: column;
-  position: fixed; top: 0; left: 0; bottom: 0;
-  z-index: 100; transition: transform .25s ease;
-}
-.sidebar-logo {
-  padding: 18px 18px 14px;
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-}
-.sidebar-logo-text {
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 22px; font-weight: 700; letter-spacing: -0.5px; color: var(--black);
-}
-.sidebar-logo-text span { color: var(--accent); }
-.admin-badge {
-  font-size: 9px; font-weight: 700; letter-spacing: 1px;
-  background: var(--accent-dim); color: var(--accent);
-  padding: 3px 8px; border-radius: 20px; text-transform: uppercase;
-  border: 1px solid var(--accent-glow);
-}
-.sidebar-user {
-  padding: 12px 16px;
-  display: flex; align-items: center; gap: 10px;
-  border-bottom: 1px solid var(--border);
-}
-.user-avatar {
-  width: 34px; height: 34px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 14px; color: #fff; flex-shrink: 0;
-}
-.user-name { font-size: 13px; font-weight: 600; color: var(--black); }
-.user-role { font-size: 11px; color: var(--text-2); margin-top: 1px; }
-
-.nav-section { padding: 10px 8px 4px; }
-.nav-section-label {
-  font-size: 10px; font-weight: 700; color: var(--text-3);
-  text-transform: uppercase; letter-spacing: 1px;
-  padding: 0 10px 6px;
-}
-.nav-item {
-  display: flex; align-items: center; gap: 9px;
-  padding: 8px 12px; border-radius: var(--radius-sm);
-  font-size: 13px; font-weight: 500; color: var(--text-2);
-  cursor: pointer; border: none; background: none; width: 100%;
-  text-align: left; transition: all .14s;
-}
-.nav-item:hover { background: var(--surface-2); color: var(--black); }
-.nav-item.active {
-  background: var(--accent-dim);
-  color: var(--accent); font-weight: 600;
-}
-.nav-item .nav-icon { font-size: 14px; width: 18px; text-align: center; flex-shrink: 0; }
-.nav-badge {
-  margin-left: auto; background: var(--red); color: #fff;
-  font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 20px;
-  display: none;
-}
-.nav-badge.show { display: block; }
-
-.sidebar-footer {
-  margin-top: auto; padding: 10px 8px;
-  border-top: 1px solid var(--border);
-  display: flex; gap: 6px;
-}
-.sidebar-footer-btn {
-  flex: 1; padding: 8px 6px; border-radius: var(--radius-sm);
-  background: var(--surface-2); border: 1px solid var(--border);
-  color: var(--text-2); font-size: 12px; font-weight: 500;
-  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;
-  transition: all .14s; text-decoration: none; font-family: inherit;
-}
-.sidebar-footer-btn:hover { background: var(--surface-3); color: var(--black); }
-
-/* ── Main ── */
-.main { margin-left: var(--sidebar-w); flex: 1; min-width: 0; display: flex; flex-direction: column; }
-
-.topbar {
-  padding: 0 28px; height: 54px;
-  display: flex; align-items: center; justify-content: space-between;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
-  position: sticky; top: 0; z-index: 50;
-}
-.page-heading {
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 17px; font-weight: 700; letter-spacing: .3px; color: var(--black);
-}
-.topbar-right { display: flex; align-items: center; gap: 8px; }
-.topbar-link {
-  font-size: 12px; color: var(--text-2); text-decoration: none;
-  padding: 6px 12px; border-radius: var(--radius-sm);
-  background: var(--surface-2); border: 1px solid var(--border);
-  font-weight: 500; transition: all .14s;
-}
-.topbar-link:hover { color: var(--black); border-color: var(--border-strong); }
-.topbar-refresh {
-  padding: 6px 14px; background: var(--surface-2); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; color: var(--text-2);
-  cursor: pointer; transition: all .14s; font-family: inherit;
-}
-.topbar-refresh:hover { background: var(--surface-3); color: var(--black); }
-
-.content { padding: 28px; flex: 1; max-width: 1200px; }
-.tab-panel { display: none; }
-.tab-panel.active { display: block; }
-
-/* ── Section cards (dashboard style) ── */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  margin-bottom: 18px;
-  box-shadow: var(--shadow);
-}
-.card-header {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-}
-.card-title {
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 15px; font-weight: 700; letter-spacing: .3px; color: var(--black);
-}
-.card-desc { font-size: 12px; color: var(--text-2); margin-top: 2px; }
-.card-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
-.card-body { padding: 20px; }
-
-/* ── Stats grid ── */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 12px; margin-bottom: 24px;
-}
-.stat-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px 18px;
-  transition: transform .2s, box-shadow .2s;
-  position: relative; overflow: hidden;
-  box-shadow: var(--shadow);
-}
-.stat-card::after {
-  content: ''; position: absolute;
-  top: 0; left: 0; right: 0; height: 2px;
-  background: var(--accent); opacity: 0; transition: opacity .2s;
-}
-.stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,.10); }
-.stat-card:hover::after { opacity: 1; }
-.stat-card.green::after { background: var(--green); }
-.stat-card.blue::after { background: var(--blue); }
-.stat-card.red::after { background: var(--red); }
-.stat-label {
-  font-size: 10px; font-weight: 700; color: var(--text-3);
-  text-transform: uppercase; letter-spacing: .7px; margin-bottom: 8px;
-}
-.stat-value {
-  font-size: 26px; font-weight: 800; letter-spacing: -1px;
-  font-variant-numeric: tabular-nums; color: var(--black);
-}
-.stat-value.green { color: var(--green); }
-.stat-value.blue  { color: var(--blue); }
-.stat-value.red   { color: var(--red); }
-.stat-delta { font-size: 11px; color: var(--text-3); margin-top: 4px; font-weight: 500; }
-
-/* ── Table ── */
+/* Table styles */
 .table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
-thead { position: sticky; top: 54px; z-index: 10; }
 th {
   padding: 10px 16px; text-align: left;
-  font-size: 10px; font-weight: 700; color: var(--text-3);
+  font-size: 10px; font-weight: 700; color: var(--gray-400);
   text-transform: uppercase; letter-spacing: .7px;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface-2); white-space: nowrap;
+  border-bottom: 1px solid var(--gray-200);
+  background: var(--gray-100); white-space: nowrap;
 }
 td {
-  padding: 10px 16px; border-bottom: 1px solid var(--border);
-  color: var(--text); vertical-align: middle;
+  padding: 10px 16px; border-bottom: 1px solid var(--gray-200);
+  color: var(--black); vertical-align: middle;
 }
 tr:last-child td { border-bottom: none; }
-tbody tr { transition: background .1s; }
-tbody tr:hover td { background: var(--surface-2); }
-.empty-state { text-align: center; padding: 60px 20px; color: var(--text-3); font-size: 13px; }
+tbody tr:hover td { background: var(--gray-100); }
+.empty-state { text-align: center; padding: 60px 20px; color: var(--gray-400); font-size: 13px; }
 .empty-state .empty-icon { font-size: 32px; margin-bottom: 8px; }
-.loading-state { text-align: center; padding: 40px; color: var(--text-3); font-size: 13px; }
+.loading-state { text-align: center; padding: 40px; color: var(--gray-400); font-size: 13px; }
 
-/* ── Badges ── */
+/* Badges */
 .badge {
   display: inline-flex; align-items: center;
   padding: 2px 8px; border-radius: 20px;
@@ -279,7 +51,7 @@ tbody tr:hover td { background: var(--surface-2); }
 .badge-error    { background: var(--red-dim);    color: var(--red); }
 .badge-action   { background: var(--yellow-dim); color: var(--yellow); }
 
-/* ── Buttons ── */
+/* Buttons */
 .btn {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 7px 14px; border-radius: var(--radius-sm);
@@ -288,25 +60,22 @@ tbody tr:hover td { background: var(--surface-2); }
   text-decoration: none; font-family: inherit;
 }
 .btn:disabled { opacity: .4; cursor: not-allowed; }
-.btn:active:not(:disabled) { transform: scale(.97); }
 .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: #fff; border: none; }
 .btn-primary:hover:not(:disabled) { opacity: .88; }
-.btn-ghost  { background: var(--surface-2); color: var(--text-2); border-color: var(--border); }
-.btn-ghost:hover  { background: var(--surface-3); color: var(--black); }
+.btn-ghost  { background: var(--gray-100); color: var(--gray-500); border-color: var(--gray-200); }
+.btn-ghost:hover  { background: var(--gray-200); color: var(--black); }
 .btn-danger { background: var(--red-dim); color: var(--red); }
 .btn-danger:hover { background: var(--red); color: #fff; }
-.btn-red    { background: var(--red-dim); color: var(--red); border: 1px solid var(--red); }
-.btn-red:hover { background: var(--red); color: #fff; }
 .btn-success{ background: var(--green-dim); color: var(--green); }
 .btn-success:hover{ background: var(--green); color: #fff; }
 .btn-purple { background: var(--purple-dim); color: var(--purple); }
 .btn-purple:hover{ background: var(--purple); color: #fff; }
 .btn-sm { padding: 4px 10px; font-size: 11px; }
 
-/* ── Inputs ── */
+/* Inputs */
 input, select, textarea {
-  background: var(--surface-2); border: 1px solid var(--border);
-  color: var(--text); border-radius: var(--radius-sm);
+  background: var(--gray-100); border: 1px solid var(--gray-200);
+  color: var(--black); border-radius: var(--radius-sm);
   font-size: 13px; font-family: inherit;
   outline: none; transition: border-color .15s, box-shadow .15s;
 }
@@ -317,14 +86,58 @@ input:focus, select:focus, textarea:focus {
 .search-input { padding: 7px 12px; width: 220px; }
 .filter-select { padding: 7px 10px; }
 .form-label {
-  font-size: 11px; font-weight: 700; color: var(--text-2);
+  font-size: 11px; font-weight: 700; color: var(--gray-500);
   text-transform: uppercase; letter-spacing: .7px;
   display: block; margin-bottom: 6px;
 }
 .form-input { padding: 9px 12px; width: 100%; }
 .form-group { margin-bottom: 14px; }
 
-/* ── User cells ── */
+/* Stats grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px; margin-bottom: 24px;
+}
+@media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* Card (section-card alias) */
+.card {
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: 9px;
+  margin-bottom: 18px;
+}
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--gray-200);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.card-title {
+  font-size: 14px; font-weight: 600; color: var(--black);
+}
+.card-desc { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+.card-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+.card-body { padding: 20px; }
+
+/* Stat card */
+.stat-card {
+  background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-200) 100%);
+  border: 1px solid var(--gray-200); border-radius: 9px; padding: 18px 16px;
+  border-left: 3px solid var(--accent);
+}
+.stat-label {
+  font-size: 12px; color: var(--gray-400); margin-top: 4px;
+}
+.stat-value {
+  font-size: 28px; font-weight: 700; letter-spacing: -1px; color: var(--accent-light);
+}
+.stat-value.green { color: var(--green); }
+.stat-value.blue  { color: var(--blue); }
+.stat-value.red   { color: var(--red); }
+
+/* User cells */
 .user-cell { display: flex; align-items: center; gap: 10px; }
 .avatar {
   width: 30px; height: 30px; border-radius: 50%;
@@ -332,41 +145,41 @@ input:focus, select:focus, textarea:focus {
   font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0;
 }
 .username { font-weight: 600; font-size: 13px; }
-.displayname { font-size: 11px; color: var(--text-2); }
+.displayname { font-size: 11px; color: var(--gray-400); }
 .discord-tag { font-size: 11px; color: #5865F2; font-weight: 600; }
 .mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
 
-/* ── Role cards ── */
+/* Role cards */
 .roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
 .role-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 16px; transition: border-color .2s, box-shadow .2s;
-  box-shadow: var(--shadow);
+  background: var(--gray-100); border: 1px solid var(--gray-200);
+  border-radius: 9px; padding: 16px;
 }
-.role-card:hover { border-color: var(--border-strong); box-shadow: 0 4px 16px rgba(0,0,0,.08); }
 .role-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
 .role-emoji { font-size: 22px; }
-.role-label { font-weight: 700; font-size: 14px; font-family: 'Rajdhani', sans-serif; letter-spacing: .3px; }
+.role-label { font-weight: 700; font-size: 14px; letter-spacing: .3px; }
 .role-count { margin-left: auto; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
-.role-user-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+.role-user-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--gray-200); }
 .role-user-row:last-child { border-bottom: none; }
 
-/* ── Misc ── */
+/* Ban form */
+.ban-form { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 700px; }
+.ban-form-actions { display: flex; gap: 8px; }
+.ban-info {
+  padding: 10px 14px; border-radius: var(--radius-sm);
+  border: 1px solid var(--gray-200); font-size: 13px;
+  background: var(--gray-100); display: none;
+}
+@media (max-width: 700px) { .ban-form { grid-template-columns: 1fr; } }
+
+/* Guild select */
 .guild-select-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 14px; }
 .guild-select { padding: 9px 12px; min-width: 260px; }
 .result-box { margin-top: 12px; padding: 12px 16px; border-radius: var(--radius-sm); font-size: 13px; display: none; }
 .result-ok  { background: var(--green-dim); color: var(--green); }
 .result-err { background: var(--red-dim); color: var(--red); }
 
-.ban-form { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 700px; }
-.ban-form-actions { display: flex; gap: 8px; }
-.ban-info {
-  padding: 10px 14px; border-radius: var(--radius-sm);
-  border: 1px solid var(--border); font-size: 13px;
-  background: var(--surface-2); display: none;
-}
-
-/* ── Modal ── */
+/* Modal */
 .modal-overlay {
   display: none; position: fixed; inset: 0;
   background: rgba(0,0,0,.5); z-index: 1000;
@@ -375,62 +188,35 @@ input:focus, select:focus, textarea:focus {
 }
 .modal-overlay.open { display: flex; }
 .modal {
-  background: var(--surface); border: 1px solid var(--border-strong);
+  background: var(--gray-100); border: 1px solid var(--gray-200);
   border-radius: 14px; padding: 28px;
   width: 420px; max-width: 95vw; max-height: 90vh;
   display: flex; flex-direction: column;
-  box-shadow: 0 20px 60px rgba(0,0,0,.2);
+  box-shadow: 0 20px 60px rgba(0,0,0,.4);
   animation: modalIn .2s cubic-bezier(.34,1.56,.64,1);
 }
 .modal-lg { width: 520px; }
 @keyframes modalIn { from { opacity: 0; transform: scale(.95) translateY(10px); } }
 .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-.modal-title { font-family: 'Rajdhani', sans-serif; font-size: 17px; font-weight: 700; color: var(--black); }
-.modal-close { background: none; border: none; font-size: 18px; cursor: pointer; color: var(--text-3); transition: color .14s; }
+.modal-title { font-size: 17px; font-weight: 700; color: var(--black); }
+.modal-close { background: none; border: none; cursor: pointer; color: var(--gray-400); font-size: 20px; line-height: 1; }
 .modal-close:hover { color: var(--black); }
-.modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+.modal-body { flex: 1; overflow-y: auto; }
+.modal-footer { margin-top: 20px; display: flex; gap: 8px; justify-content: flex-end; }
 
-.role-checkbox-list { display: flex; flex-direction: column; gap: 8px; }
+/* Role checkboxes */
 .role-checkbox-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 14px; border-radius: var(--radius-sm);
-  border: 1px solid var(--border); cursor: pointer;
-  transition: background .1s, border-color .1s;
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 8px;
+  border: 1px solid var(--gray-200); margin-bottom: 6px;
+  cursor: pointer; transition: all .15s;
 }
-.role-checkbox-item:hover { border-color: var(--border-strong); background: var(--surface-2); }
-.role-checkbox-item.checked { border-color: currentColor; }
-.role-checkbox-item input[type=checkbox] { width: 16px; height: 16px; cursor: pointer; }
-.role-emoji-sm { font-size: 18px; }
-.role-item-label { font-weight: 600; font-size: 13px; }
-.role-item-desc { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+.role-checkbox-item input { width: 16px; height: 16px; flex-shrink: 0; }
+.role-emoji-sm { font-size: 16px; }
+.role-item-label { font-size: 13px; font-weight: 600; }
+.role-item-desc { font-size: 11px; color: var(--gray-400); }
 
-/* ── Sidebar mobile ── */
-.sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 99; }
-.sidebar-toggle { display: none; background: none; border: none; color: var(--text); font-size: 20px; cursor: pointer; padding: 4px; }
-
-@media (max-width: 900px) {
-  :root { --sidebar-w: 0px; }
-  .sidebar { transform: translateX(-230px); --sidebar-w: 230px; }
-  .sidebar.open { transform: translateX(0); }
-  .sidebar-overlay.open { display: block; }
-  .main { margin-left: 0; }
-  .sidebar-toggle { display: flex; }
-  .stats-grid { grid-template-columns: repeat(3, 1fr); }
-  .ban-form { grid-template-columns: 1fr; }
-}
-@media (max-width: 600px) {
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .content { padding: 16px; }
-  .topbar { padding: 0 16px; }
-  th:nth-child(n+5), td:nth-child(n+5) { display: none; }
-}
-
-/* ── Scrollbar ── */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
-
-/* ── Toast ── */
+/* Toast */
 .toast-container {
   position: fixed; bottom: 24px; right: 24px; z-index: 2000;
   display: flex; flex-direction: column; gap: 8px; pointer-events: none;
@@ -438,7 +224,7 @@ input:focus, select:focus, textarea:focus {
 .toast {
   padding: 10px 16px; border-radius: var(--radius-sm);
   font-size: 13px; font-weight: 500;
-  border: 1px solid var(--border); background: var(--surface);
+  border: 1px solid var(--gray-200); background: var(--gray-100);
   box-shadow: var(--shadow); pointer-events: auto;
   animation: toastIn .25s ease; max-width: 300px;
   display: flex; align-items: center; gap: 8px;
@@ -447,12 +233,12 @@ input:focus, select:focus, textarea:focus {
 .toast.err { border-color: var(--red);   color: var(--red);   background: var(--red-dim); }
 @keyframes toastIn { from { opacity: 0; transform: translateX(20px); } }
 
-/* ── Toggle switch (dashboard style) ── */
+/* Toggle switch */
 .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
 .toggle-switch input { opacity: 0; width: 0; height: 0; }
 .toggle-slider {
   position: absolute; inset: 0; border-radius: 24px;
-  background: var(--border-strong); cursor: pointer; transition: background .2s;
+  background: var(--gray-300); cursor: pointer; transition: background .2s;
 }
 .toggle-switch input:checked + .toggle-slider { background: var(--accent); }
 .toggle-slider::before {
@@ -463,147 +249,137 @@ input:focus, select:focus, textarea:focus {
   transition: transform .2s;
 }
 .toggle-switch input:checked + .toggle-slider::before { transform: translateX(20px); }
+
+/* Keys / redeem */
+.keys-result { margin-top: 12px; padding: 14px; border-radius: 8px; background: var(--gray-100); border: 1px solid var(--gray-200); display: none; }
+
+/* Admin badge */
+.admin-badge {
+  font-size: 9px; font-weight: 700; letter-spacing: 1px;
+  background: var(--red-dim); color: var(--red);
+  padding: 2px 8px; border-radius: 20px; text-transform: uppercase;
+  border: 1px solid rgba(239,68,68,.2); display: inline-block;
+}
+
+/* Announcement / maintenance panels */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
 </style>
 <script>const MAINTENANCE_EXEMPT = true;</script>
 </head>
 <body>
 
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-logo">
-    <div>
-      <div class="sidebar-logo-text">ak<span>-47</span></div>
-      <div class="admin-badge">Admin</div>
-    </div>
+<nav class="dash-nav">
+  <a href="/" class="dash-nav-brand"><img src="/logo.png" alt="ak-47.fr" style="height:20px;width:20px;object-fit:contain;margin-right:6px;vertical-align:middle;">ak-47<span>.fr</span></a>
+  <div class="dash-nav-right">
+    <span class="dash-nav-user">Admin — <strong id="sidebarName">—</strong></span>
+    <a href="/dashboard" class="dash-btn-sm">← Dashboard</a>
+    <button class="dash-btn-sm" onclick="loadAll()">↻ Actualiser</button>
+    <button id="themeToggle" class="theme-pill-toggle" onclick="toggleTheme()" title="Changer de thème">
+      <span class="tpt-icon tpt-sun">☀️</span>
+      <span class="tpt-track"><span class="tpt-thumb"></span></span>
+      <span class="tpt-icon tpt-moon">🌙</span>
+    </button>
+    <button class="dash-btn-sm logout" onclick="window.location.href='/login'">Déconnexion</button>
   </div>
-  <div class="sidebar-user">
-    <div class="user-avatar" id="sidebarAvatar">?</div>
-    <div>
-      <div class="user-name" id="sidebarName">—</div>
-      <div class="user-role">Administrateur</div>
+</nav>
+
+<div class="dash-layout">
+
+  <aside class="dash-sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Vue d'ensemble</div>
+      <a class="sidebar-item active" onclick="switchTab('overview')" href="#" id="nav-overview">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Tableau de bord
+      </a>
+      <a class="sidebar-item" onclick="switchTab('logs')" href="#" id="nav-logs">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Logs <span id="errBadge" style="display:none;margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;">0</span>
+      </a>
+      <a class="sidebar-item" onclick="switchTab('keys')" href="#" id="nav-keys">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        Redeem Keys
+      </a>
     </div>
-  </div>
 
-  <nav class="nav-section">
-    <div class="nav-section-label">Vue d'ensemble</div>
-    <button class="nav-item active" onclick="switchTab('overview')" id="nav-overview">
-      <span class="nav-icon">📊</span> Tableau de bord
-    </button>
-    <button class="nav-item" onclick="switchTab('logs')" id="nav-logs">
-      <span class="nav-icon">📋</span> Logs
-      <span class="nav-badge" id="errBadge">0</span>
-    </button>
-    <button class="nav-item" onclick="switchTab('keys')" id="nav-keys">
-      <span class="nav-icon">🔑</span> Redeem Keys
-    </button>
-  </nav>
-
-  <nav class="nav-section">
-    <div class="nav-section-label">Utilisateurs</div>
-    <button class="nav-item" onclick="switchTab('users')" id="nav-users">
-      <span class="nav-icon">👥</span> Utilisateurs
-    </button>
-    <button class="nav-item" onclick="switchTab('roles')" id="nav-roles">
-      <span class="nav-icon">🏷️</span> Rôles
-    </button>
-    <button class="nav-item" onclick="switchTab('bans')" id="nav-bans">
-      <span class="nav-icon">🔨</span> Bans
-    </button>
-  </nav>
-
-  <nav class="nav-section">
-    <div class="nav-section-label">Outils</div>
-    <button class="nav-item" onclick="switchTab('discord')" id="nav-discord">
-      <span class="nav-icon">🎮</span> Discord
-    </button>
-    <button class="nav-item" onclick="openBroadcastModal()" id="nav-broadcast">
-      <span class="nav-icon">📧</span> Mail groupé
-    </button>
-    <button class="nav-item" onclick="switchTab('templates')" id="nav-templates">
-      <span class="nav-icon">🖼️</span> Modèles
-    </button>
-    <button class="nav-item" onclick="switchTab('announcement')" id="nav-announcement">
-      <span class="nav-icon">📢</span> Annonce
-    </button>
-    <button class="nav-item" onclick="switchTab('maintenance')" id="nav-maintenance">
-      <span class="nav-icon">🔧</span> Maintenance
-    </button>
-  </nav>
-
-  <div class="sidebar-footer">
-    <a href="/dashboard" class="sidebar-footer-btn">← Dashboard</a>
-    <button class="sidebar-footer-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
-  </div>
-</aside>
-
-<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
-
-<main class="main">
-  <header class="topbar">
-    <div style="display:flex;align-items:center;gap:12px;">
-      <button class="sidebar-toggle" onclick="openSidebar()">☰</button>
-      <div class="page-heading" id="pageHeading">Tableau de bord</div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Utilisateurs</div>
+      <a class="sidebar-item" onclick="switchTab('users')" href="#" id="nav-users">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        Utilisateurs
+      </a>
+      <a class="sidebar-item" onclick="switchTab('roles')" href="#" id="nav-roles">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        Rôles
+      </a>
+      <a class="sidebar-item" onclick="switchTab('bans')" href="#" id="nav-bans">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+        Bans
+      </a>
     </div>
-    <div class="topbar-right">
-      <button class="topbar-refresh" onclick="loadAll()">↻ Actualiser</button>
-    </div>
-  </header>
 
-  <div class="content">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Outils</div>
+      <a class="sidebar-item" onclick="switchTab('discord')" href="#" id="nav-discord">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        Discord
+      </a>
+      <a class="sidebar-item" onclick="openBroadcastModal()" href="#" id="nav-broadcast">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Mail groupé
+      </a>
+      <a class="sidebar-item" onclick="switchTab('templates')" href="#" id="nav-templates">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>
+        Modèles
+      </a>
+      <a class="sidebar-item" onclick="switchTab('announcement')" href="#" id="nav-announcement">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17H2a3 3 0 000 6h20a3 3 0 000-6zM6 17V7a2 2 0 012-2h8a2 2 0 012 2v10"/></svg>
+        Annonce
+      </a>
+      <a class="sidebar-item" onclick="switchTab('maintenance')" href="#" id="nav-maintenance">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+        Maintenance
+      </a>
+    </div>
+  </aside>
+
+  <main class="dash-main">
 
     <div class="tab-panel active" id="tab-overview">
-
-      <!-- Page title + date (like dashboard) -->
-      <div style="margin-bottom:24px;">
-        <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--accent);letter-spacing:-0.5px;">Tableau de bord</div>
-        <div style="font-size:13px;color:var(--text-2);margin-top:2px;" id="overviewDate"></div>
-      </div>
-
-      <!-- Stat cards — dashboard style (accent numbers, 2-row grid) -->
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px;" id="statsGrid">
+      <div class="stats-grid" id="statsGrid">
         <div class="stat-card">
-          <div class="stat-value" style="color:var(--accent);font-size:32px;font-weight:800;letter-spacing:-1.5px;" id="s-total">—</div>
-          <div class="stat-label" style="margin-top:6px;margin-bottom:0;">Total utilisateurs</div>
+          <div class="stat-label">Total users</div>
+          <div class="stat-value" id="s-total">—</div>
+          <div class="stat-delta">membres enregistrés</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-label">Aujourd'hui</div>
+          <div class="stat-value green" id="s-today">—</div>
+          <div class="stat-delta">nouvelles inscriptions</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-label">7 derniers jours</div>
+          <div class="stat-value blue" id="s-7d">—</div>
+          <div class="stat-delta">nouveaux membres</div>
         </div>
         <div class="stat-card">
-          <div class="stat-value" style="color:var(--accent);font-size:32px;font-weight:800;letter-spacing:-1.5px;" id="s-today">—</div>
-          <div class="stat-label" style="margin-top:6px;margin-bottom:0;">Inscriptions aujourd'hui</div>
+          <div class="stat-label">Connexions /24h</div>
+          <div class="stat-value" id="s-logins">—</div>
+          <div class="stat-delta">sessions ouvertes</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-value" style="color:var(--accent);font-size:32px;font-weight:800;letter-spacing:-1.5px;" id="s-7d">—</div>
-          <div class="stat-label" style="margin-top:6px;margin-bottom:0;">Inscriptions 7 jours</div>
+        <div class="stat-card green">
+          <div class="stat-label">Inscriptions /24h</div>
+          <div class="stat-value green" id="s-reg">—</div>
+          <div class="stat-delta">comptes créés</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-value" style="color:var(--accent);font-size:32px;font-weight:800;letter-spacing:-1.5px;" id="s-logins">—</div>
-          <div class="stat-label" style="margin-top:6px;margin-bottom:0;">Connexions /24h</div>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:24px;">
-        <div class="stat-card">
-          <div class="stat-value" style="color:var(--accent);font-size:32px;font-weight:800;letter-spacing:-1.5px;" id="s-reg">—</div>
-          <div class="stat-label" style="margin-top:6px;margin-bottom:0;">Inscriptions /24h</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" style="color:var(--red);font-size:32px;font-weight:800;letter-spacing:-1.5px;" id="s-err">—</div>
-          <div class="stat-label" style="margin-top:6px;margin-bottom:0;">Erreurs /24h</div>
+        <div class="stat-card red">
+          <div class="stat-label">Erreurs /24h</div>
+          <div class="stat-value red" id="s-err">—</div>
+          <div class="stat-delta">erreurs système</div>
         </div>
       </div>
 
-      <!-- Inscriptions chart — 30 derniers jours -->
-      <div class="card" style="margin-bottom:18px;">
-        <div class="card-header">
-          <div>
-            <div class="card-title">Inscriptions — 30 derniers jours</div>
-          </div>
-        </div>
-        <div style="padding:20px 20px 12px;">
-          <div style="position:relative;height:120px;" id="registrationsChart">
-            <canvas id="regChartCanvas" style="width:100%;height:100%;"></canvas>
-          </div>
-          <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:var(--text-3);" id="chartLabels"></div>
-        </div>
-      </div>
-
-      <!-- Recent activity table -->
       <div class="card">
         <div class="card-header">
           <div>
@@ -945,7 +721,8 @@ input:focus, select:focus, textarea:focus {
     </div>
 
 </div>
-</main>
+  </main>
+</div>
 
 <div class="toast-container" id="toastContainer"></div>
 
@@ -1053,7 +830,8 @@ document.getElementById('sidebarAvatar').textContent = (username || '?').charAt(
 
 (function(){
   const t = document.documentElement.getAttribute('data-theme') || 'dark';
-  document.getElementById('themeBtn').textContent = t === 'dark' ? '☀️' : '🌙';
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.setAttribute('data-active', t);
 })();
 
 let allLogs = [], allUsers = [], currentTab = 'overview';
@@ -1065,26 +843,18 @@ const TAB_TITLES = {
 function switchTab(tab) {
   currentTab = tab;
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
   const navEl = document.getElementById('nav-' + tab);
   if (navEl) navEl.classList.add('active');
-  document.getElementById('pageHeading').textContent = TAB_TITLES[tab] || tab;
   if (tab === 'roles') renderRolesTab();
   if (tab === 'announcement') loadAnnouncementTab();
   if (tab === 'templates') loadTemplatesTab();
   if (tab === 'maintenance') loadMaintenanceTab();
-  closeSidebar();
 }
 
-function openSidebar() {
-  document.getElementById('sidebar').classList.add('open');
-  document.getElementById('sidebarOverlay').classList.add('open');
-}
-function closeSidebar() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebarOverlay').classList.remove('open');
-}
+function openSidebar() {}
+function closeSidebar() {}
 
 function toast(msg, type = 'ok') {
   const c = document.getElementById('toastContainer');
@@ -1100,7 +870,13 @@ function toggleTheme() {
   const next = cur === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
   localStorage.setItem('theme', next);
-  document.getElementById('themeBtn').textContent = next === 'dark' ? '☀️' : '🌙';
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.setAttribute('data-active', next);
+}
+function initThemePill() {
+  const t = document.documentElement.getAttribute('data-theme') || 'dark';
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.setAttribute('data-active', t);
 }
 
 function fmt(ts) {
@@ -1342,69 +1118,11 @@ async function deleteUserAdmin(id, uname) {
   else { const d = await r.json(); toast(d.error || 'Erreur', 'err'); }
 }
 
-// Init date display
-(function() {
-  const el = document.getElementById('overviewDate');
-  if (el) {
-    const now = new Date();
-    el.textContent = now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  }
-})();
-
-function drawRegistrationsChart(logs) {
-  const canvas = document.getElementById('regChartCanvas');
-  const labelsEl = document.getElementById('chartLabels');
-  if (!canvas || !labelsEl) return;
-
-  // Build 30-day buckets from logs (type === 'register')
-  const now = new Date();
-  const days = [];
-  for (let i = 29; i >= 0; i--) {
-    const d = new Date(now);
-    d.setDate(d.getDate() - i);
-    days.push({ date: d, count: 0, label: d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) });
-  }
-
-  logs.filter(l => l.type === 'register').forEach(l => {
-    const ts = l.created_at * 1000;
-    const d = new Date(ts);
-    const dayStr = d.toDateString();
-    const bucket = days.find(b => b.date.toDateString() === dayStr);
-    if (bucket) bucket.count++;
-  });
-
-  const max = Math.max(...days.map(d => d.count), 1);
-  const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#eb8a2c';
-  const accentDim = 'rgba(235,138,44,0.25)';
-
-  // Draw SVG bar chart
-  const W = canvas.parentElement.clientWidth || 800;
-  const H = 120;
-  const barW = Math.floor((W - 30) / 30) - 2;
-  const gap = Math.floor((W - 30) / 30);
-
-  let svgBars = '';
-  days.forEach((day, i) => {
-    const barH = Math.round((day.count / max) * (H - 20));
-    const x = 15 + i * gap;
-    const y = H - barH;
-    const isLast2 = i >= 28;
-    svgBars += `<rect x="${x}" y="${y}" width="${Math.max(barW,2)}" height="${barH}" rx="2" fill="${isLast2 ? accent : accentDim}" opacity="${day.count === 0 ? 0.3 : 1}"/>`;
-    // Baseline dot
-    if (day.count === 0) svgBars += `<rect x="${x}" y="${H - 2}" width="${Math.max(barW,2)}" height="2" rx="1" fill="${accentDim}"/>`;
-  });
-
-  canvas.innerHTML = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">${svgBars}</svg>`;
-
-  // Date labels: first and last
-  labelsEl.innerHTML = `<span>${days[0].label}</span><span>${days[29].label}</span>`;
-}
-
 async function loadAll() {
   try {
     const [statsR, logsR, usersR] = await Promise.all([
       fetch(`${API}/api/admin/stats`, { headers: { Authorization: 'Bearer ' + token } }),
-      fetch(`${API}/api/admin/logs?limit=500`, { headers: { Authorization: 'Bearer ' + token } }),
+      fetch(`${API}/api/admin/logs?limit=200`, { headers: { Authorization: 'Bearer ' + token } }),
       fetch(`${API}/api/admin/users`, { headers: { Authorization: 'Bearer ' + token } }),
     ]);
     if (statsR.status === 403) { alert('Accès refusé — tu n\'es pas admin.'); window.location.href = '/dashboard'; return; }
@@ -1427,7 +1145,6 @@ async function loadAll() {
     filterLogs();
     renderUsers(allUsers);
     renderLogsTable(allLogs.slice(0, 10), 'overviewLogs');
-    drawRegistrationsChart(allLogs);
   } catch (e) {
     console.error(e);
     toast('Erreur de chargement', 'err');
