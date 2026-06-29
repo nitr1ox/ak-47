@@ -1005,9 +1005,9 @@ function closeRoleModal() { document.getElementById('roleModal').classList.remov
 async function saveRoles() {
   if (!roleModalUser) return;
   const checked = [...document.querySelectorAll('#roleCheckboxes input:checked')].map(i => i.value);
-  const r = await fetch(`${API}/api/admin/users/${roleModalUser.id}/roles`, {
+  const r = await adminFetch(`${API}/api/admin/users/${roleModalUser.id}/roles`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ roles: checked }),
   });
   if (r.ok) { closeRoleModal(); loadAll(); toast('Rôles sauvegardés'); }
@@ -1025,9 +1025,9 @@ async function sendBroadcast() {
   const btn = document.getElementById('broadcastSendBtn');
   btn.disabled = true; btn.textContent = 'Envoi...';
   try {
-    const r = await fetch(`${API}/api/admin/broadcast-email`, {
+    const r = await adminFetch(`${API}/api/admin/broadcast-email`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ subject, message, target }),
     });
     const d = await r.json();
@@ -1045,7 +1045,7 @@ async function renderRolesTab() {
   const container = document.getElementById('rolesContainer');
   container.innerHTML = '<div class="loading-state">Chargement...</div>';
   const results = await Promise.all(AVAILABLE_ROLES.map(async role => {
-    const r = await fetch(`${API}/api/admin/roles/${role.id}/users`, { headers: { Authorization: 'Bearer ' + token } });
+    const r = await adminFetch(`${API}/api/admin/roles/${role.id}/users`);
     const users = r.ok ? await r.json() : [];
     return { role, users };
   }));
@@ -1072,8 +1072,7 @@ async function renderRolesTab() {
 async function lookupBan() {
   const uname = document.getElementById('banUsername').value.trim();
   if (!uname) return;
-  const t = localStorage.getItem('ak47_access_token') || token;
-  const r = await fetch(`${API}/api/admin/user/${uname}`, { headers: { Authorization: 'Bearer ' + t } });
+  const r = await adminFetch(`${API}/api/admin/user/${uname}`);
   const info = document.getElementById('banUserInfo');
   if (!r.ok) { info.style.display='block'; info.innerHTML='<span style="color:var(--red)">Utilisateur introuvable</span>'; return; }
   const data = await r.json();
@@ -1087,9 +1086,8 @@ async function banUser() {
   const reason = document.getElementById('banReason').value.trim();
   const msg = document.getElementById('banMsg');
   if (!uname || !reason) { msg.style.display='block'; msg.style.color='var(--red)'; msg.textContent='Username et raison requis.'; return; }
-  const t = localStorage.getItem('ak47_access_token') || token;
-  const r = await fetch(`${API}/api/admin/ban/${uname}`, {
-    method: 'POST', headers: { Authorization: 'Bearer ' + t, 'Content-Type': 'application/json' },
+  const r = await adminFetch(`${API}/api/admin/ban/${uname}`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ reason })
   });
   const data = await r.json();
@@ -1102,8 +1100,7 @@ async function unbanUser() {
   const uname = document.getElementById('banUsername').value.trim();
   const msg = document.getElementById('banMsg');
   if (!uname) { msg.style.display='block'; msg.style.color='var(--red)'; msg.textContent='Username requis.'; return; }
-  const t = localStorage.getItem('ak47_access_token') || token;
-  const r = await fetch(`${API}/api/admin/unban/${uname}`, { method: 'POST', headers: { Authorization: 'Bearer ' + t } });
+  const r = await adminFetch(`${API}/api/admin/unban/${uname}`, { method: 'POST' });
   const data = await r.json();
   msg.style.display = 'block';
   msg.style.color = r.ok ? 'var(--green)' : 'var(--red)';
@@ -1113,7 +1110,7 @@ async function unbanUser() {
 
 async function deleteUserAdmin(id, uname) {
   if (!confirm(`Supprimer définitivement @${uname} ? Cette action est irréversible.`)) return;
-  const r = await fetch(`${API}/api/admin/users/${id}`, { method: 'DELETE', headers: { Authorization: 'Bearer ' + token } });
+  const r = await adminFetch(`${API}/api/admin/users/${id}`, { method: 'DELETE' });
   if (r.ok) { loadAll(); toast('@' + uname + ' supprimé'); }
   else { const d = await r.json(); toast(d.error || 'Erreur', 'err'); }
 }
@@ -1121,9 +1118,9 @@ async function deleteUserAdmin(id, uname) {
 async function loadAll() {
   try {
     const [statsR, logsR, usersR] = await Promise.all([
-      fetch(`${API}/api/admin/stats`, { headers: { Authorization: 'Bearer ' + token } }),
-      fetch(`${API}/api/admin/logs?limit=200`, { headers: { Authorization: 'Bearer ' + token } }),
-      fetch(`${API}/api/admin/users`, { headers: { Authorization: 'Bearer ' + token } }),
+      adminFetch(`${API}/api/admin/stats`),
+      adminFetch(`${API}/api/admin/logs?limit=200`),
+      adminFetch(`${API}/api/admin/users`),
     ]);
     if (statsR.status === 403) { alert('Accès refusé — tu n\'es pas admin.'); window.location.href = '/dashboard'; return; }
     const stats = await statsR.json();
@@ -1153,7 +1150,7 @@ async function loadAll() {
 
 async function loadGuilds() {
   try {
-    const r = await fetch(`${API}/api/admin/bot-guilds`, { headers: { Authorization: 'Bearer ' + token } });
+    const r = await adminFetch(`${API}/api/admin/bot-guilds`);
     const guilds = await r.json();
     const sel = document.getElementById('guildSelect');
     sel.innerHTML = '<option value="">— Choisir un serveur —</option>';
@@ -1175,9 +1172,9 @@ async function forceJoin() {
   btn.disabled = true; btn.textContent = 'En cours...';
   box.style.display = 'none';
   try {
-    const r = await fetch(`${API}/api/admin/force-join`, {
+    const r = await adminFetch(`${API}/api/admin/force-join`, {
       method: 'POST',
-      headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ guild_id }),
     });
     const d = await r.json();
@@ -1398,9 +1395,9 @@ async function generateKeys() {
   btn.disabled = true; btn.textContent = '...';
 
   try {
-    const r = await fetch(API + '/api/redeem/admin/generate', {
+    const r = await adminFetch(API + '/api/redeem/admin/generate', {
       method: 'POST', credentials: 'include',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ role, duration, count, note, amount }),
     });
     const d = await r.json();
@@ -1441,9 +1438,8 @@ async function loadKeysList() {
   if (!el) return;
   el.innerHTML = '<div class="loading-state">Chargement...</div>';
   try {
-    const r = await fetch(API + '/api/redeem/admin/list', {
+    const r = await adminFetch(API + '/api/redeem/admin/list', {
       credentials: 'include',
-      headers: { Authorization: 'Bearer ' + token },
     });
     _allKeys = await r.json();
     renderKeysList(_allKeys);
@@ -1515,9 +1511,8 @@ function renderKeysList(keys) {
 async function deleteKey(keyId) {
   if (!confirm('Supprimer cette clé ?')) return;
   try {
-    const r = await fetch(API + '/api/redeem/admin/' + keyId, {
+    const r = await adminFetch(API + '/api/redeem/admin/' + keyId, {
       method: 'DELETE', credentials: 'include',
-      headers: { Authorization: 'Bearer ' + token },
     });
     if (r.ok) { adminToast('Clé supprimée', 'green'); loadKeysList(); }
     else adminToast('Erreur suppression', 'red');
@@ -1582,9 +1577,8 @@ async function adminDeleteTemplate(id, btn) {
   btn.disabled = true;
   btn.textContent = '…';
   try {
-    const r = await fetch(`${API}/api/templates/${id}`, {
+    const r = await adminFetch(`${API}/api/templates/${id}`, {
       method: 'DELETE',
-      headers: { Authorization: 'Bearer ' + token }
     });
     const d = await r.json();
     if (d.ok) {
