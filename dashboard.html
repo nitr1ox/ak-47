@@ -1372,30 +1372,43 @@ body.has-announcement { padding-top: 44px; }
 
       <div class="section-card">
         <div class="section-card-title">Présence Discord</div>
-        <div style="font-size:12px;color:var(--gray-500);margin-bottom:12px;">Affiche votre statut Discord en temps réel sur votre profil public (nécessite un compte Discord lié).</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:14px;">Affiche votre statut Discord en temps réel sur votre profil public (nécessite un compte Discord lié).</div>
         <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
           <input type="checkbox" id="discordPresenceToggle" style="width:16px;height:16px;accent-color:#5865F2;cursor:pointer;"
-            onchange="pendingPerso.discord_presence=this.checked"/>
+            onchange="pendingPerso.discord_presence=this.checked;updateDiscordCardControlsState();"/>
           <span style="font-size:13px;font-weight:500;">Activer la présence Discord</span>
         </label>
-        <div class="form-group" style="margin-top:14px;">
-          <label>Opacité de la card Discord</label>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <input type="range" id="discordCardOpacityRange" min="0" max="100" value="100"
-              style="flex:1;accent-color:#5865F2;"
-              oninput="el('discordCardOpacityVal').textContent=this.value+'%';pendingPerso.discord_card_opacity=this.value/100;"/>
-            <span id="discordCardOpacityVal" style="font-size:12px;color:var(--gray-500);min-width:36px;">100%</span>
+
+        <div id="discordCardAppearance" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--gray-200);">
+          <div style="font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:12px;">Apparence de la card</div>
+
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;margin-bottom:14px;">
+            <input type="checkbox" id="discordCardTransparentToggle" style="width:16px;height:16px;accent-color:#5865F2;cursor:pointer;"
+              onchange="pendingPerso.discord_card_transparent=this.checked;updateDiscordCardControlsState();"/>
+            <span style="font-size:13px;font-weight:500;">Fond transparent</span>
+            <span style="font-size:11px;color:var(--gray-400);">(retire le fond, la bordure et l'ombre)</span>
+          </label>
+
+          <div class="form-group" id="discordOpacityGroup">
+            <label>Opacité du fond</label>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <input type="range" id="discordCardOpacityRange" min="0" max="100" value="100"
+                style="flex:1;accent-color:#5865F2;"
+                oninput="el('discordCardOpacityVal').textContent=this.value+'%';pendingPerso.discord_card_opacity=this.value/100;"/>
+              <span id="discordCardOpacityVal" style="font-size:12px;color:var(--gray-500);min-width:36px;">100%</span>
+            </div>
           </div>
-        </div>
-        <div class="form-group" style="margin-top:14px;">
-          <label>Couleur de la card Discord</label>
-          <div style="font-size:12px;color:var(--gray-500);margin-bottom:8px;">Par défaut, la card est en gris neutre. Vous pouvez la personnaliser ici.</div>
-          <div style="display:flex;align-items:center;gap:10px;">
-            <input type="color" id="discordCardColorPicker" value="#1a1a1e"
-              style="width:44px;height:38px;padding:2px;border:1px solid var(--gray-200);border-radius:6px;cursor:pointer;"
-              oninput="pendingPerso.discord_card_color=this.value;el('discordCardColorHex').textContent=this.value;"/>
-            <span id="discordCardColorHex" style="font-size:13px;color:var(--gray-500);">#1a1a1e</span>
-            <button onclick="resetDiscordCardColor()" style="padding:7px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:12px;background:transparent;cursor:pointer;color:var(--gray-500);">Réinitialiser</button>
+
+          <div class="form-group" id="discordColorGroup" style="margin-top:14px;">
+            <label>Couleur d'accent</label>
+            <div style="font-size:12px;color:var(--gray-500);margin-bottom:8px;">Teinte du fond, du contour de l'avatar et du badge Nitro.</div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <input type="color" id="discordCardColorPicker" value="#1a1a1e"
+                style="width:44px;height:38px;padding:2px;border:1px solid var(--gray-200);border-radius:6px;cursor:pointer;"
+                oninput="pendingPerso.discord_card_color=this.value;el('discordCardColorHex').textContent=this.value;"/>
+              <span id="discordCardColorHex" style="font-size:13px;color:var(--gray-500);">#1a1a1e</span>
+              <button onclick="resetDiscordCardColor()" style="padding:7px 12px;border:1px solid var(--gray-200);border-radius:6px;font-size:12px;background:transparent;cursor:pointer;color:var(--gray-500);">Réinitialiser</button>
+            </div>
           </div>
         </div>
       </div>
@@ -2022,6 +2035,14 @@ let activeSocial = null;
 function getLinkIcon(url) {
   if (!url) return null;
   const u = url.toLowerCase();
+
+  // Extrait proprement le hostname (ex: "roblox.com" et non toute l'URL)
+  // pour éviter les faux positifs de type "roblox.com".includes("x.com") === true
+  let host = '';
+  try { host = new URL(u.startsWith('http') ? u : 'https://' + u).hostname; } catch { host = ''; }
+  // enlève un éventuel "www." pour matcher les clés du tableau
+  const cleanHost = host.replace(/^www\./, '');
+
   const map = [
     ['discord.gg', 'https://cdn.simpleicons.org/discord/5865F2'],
     ['discord.com', 'https://cdn.simpleicons.org/discord/5865F2'],
@@ -2075,8 +2096,17 @@ function getLinkIcon(url) {
     ['ethereum', 'https://cdn.simpleicons.org/ethereum/627EEA'],
     ['mailto:', 'https://cdn.simpleicons.org/gmail/ffffff'],
   ];
+  // Clés qui ne sont pas des noms de domaine classiques (mots-clés génériques,
+  // schémas d'URL, etc.) : on continue de les chercher dans l'URL entière.
+  const nonHostKeys = new Set(['steam', 'bluesky', 'bitcoin', 'ethereum', 'mailto:']);
+
   for (const [key, icon] of map) {
-    if (u.includes(key)) return icon;
+    if (nonHostKeys.has(key)) {
+      if (u.includes(key)) return icon;
+      continue;
+    }
+    // Match exact sur le hostname, ou sous-domaine (ex: "music.apple.com")
+    if (cleanHost === key || cleanHost.endsWith('.' + key)) return icon;
   }
   return null;
 }
@@ -2120,12 +2150,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     showToast('✅ Compte Google lié avec succès !');
     switchTab('profile');
     history.replaceState({}, '', window.location.pathname);
-  }
-});
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter') {
-    if (document.activeElement.id === 'newLinkUrl') addLink();
   }
 });
 
@@ -2653,31 +2677,6 @@ function toggleRoleVisibility(roleId, visible) {
   renderRolesVisibility();
 }
 
-async function confirmDeleteAccount() {
-  const confirmed = prompt('Pour confirmer la suppression, tapez votre nom d\'utilisateur :');
-  if (!confirmed) return;
-  if (confirmed !== userData.username) {
-    showToast('Nom d\'utilisateur incorrect, suppression annulée.');
-    return;
-  }
-  if (!confirm('Dernière confirmation : supprimer définitivement votre compte ?')) return;
-  try {
-    const r = await apiFetch(API + '/api/user/me', {
-      method: 'DELETE',
-      headers: { Authorization: 'Bearer ' + getToken() }
-    });
-    if (r.ok) {
-      localStorage.clear();
-      window.location.href = '/';
-    } else {
-      const d = await r.json();
-      showToast('Erreur : ' + (d.error || 'inconnue'));
-    }
-  } catch {
-    showToast('Erreur réseau');
-  }
-}
-
 function clearSpotify() {
   el('spotifyUrlInput').value = '';
   pendingPerso.spotify_url = null;
@@ -2689,6 +2688,26 @@ function resetDiscordCardColor() {
   el('discordCardColorPicker').value = def;
   el('discordCardColorHex').textContent = def;
   pendingPerso.discord_card_color = null;
+}
+
+function updateDiscordCardControlsState() {
+  const presenceOn = el('discordPresenceToggle').checked;
+  const transparentOn = el('discordCardTransparentToggle').checked;
+
+  const appearanceBox = el('discordCardAppearance');
+  if (appearanceBox) appearanceBox.style.opacity = presenceOn ? '1' : '0.4';
+
+  el('discordCardTransparentToggle').disabled = !presenceOn;
+
+  // Opacité et couleur n'ont plus de sens si le fond est transparent
+  const opacityGroup = el('discordOpacityGroup');
+  const colorGroup = el('discordColorGroup');
+  const disableAppearance = !presenceOn || transparentOn;
+  [el('discordCardOpacityRange'), el('discordCardColorPicker')].forEach(input => {
+    if (input) input.disabled = disableAppearance;
+  });
+  if (opacityGroup) opacityGroup.style.opacity = (!presenceOn || transparentOn) ? '0.4' : '1';
+  if (colorGroup) colorGroup.style.opacity = (!presenceOn || transparentOn) ? '0.4' : '1';
 }
 
 function renderConnectedAccounts() {
@@ -3053,21 +3072,6 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeIconPicker();
 });
 
-function addLink() {
-  const title = el('newLinkTitle').value.trim();
-  const url = el('newLinkUrl').value.trim();
-  if (!title) return showAlert('linksAlert', 'Le titre est requis');
-  if (!url) return showAlert('linksAlert', "L'URL est requise");
-  let _roles3 = []; try { _roles3 = JSON.parse(userData.roles||'[]'); } catch {}
-  const _max3 = _roles3.some(r=>['premium','owner','staff'].includes(r)) ? 20 : 5;
-  if (pendingLinks.length >= _max3) return showAlert('linksAlert', `Maximum ${_max3} liens${_max3===5?' (Premium requis pour plus)':''}`);
-  let finalUrl = url;
-  if (!url.toLowerCase().startsWith('http://') && !url.toLowerCase().startsWith('https://')) finalUrl = 'https://' + url;
-  pendingLinks.push({ title, url: finalUrl });
-  el('newLinkTitle').value = ''; el('newLinkUrl').value = '';
-  el('linksAlert').innerHTML = '';
-  renderLinks(); updatePreview();
-}
 
 function removeLink(i) {
   pendingLinks.splice(i, 1);
@@ -3847,6 +3851,7 @@ let pendingPerso = {
   spotify_url: null,
   location: null,
   discord_presence: null,
+  discord_card_transparent: null,
   discord_card_opacity: null,
   discord_card_color: null,
   bg_effect: null,
@@ -3957,6 +3962,8 @@ function loadPersoUI() {
   el('discordCardColorHex').textContent = discordCardColor;
   el('discordCardOpacityRange').value = Math.round(discordCardOpacity * 100);
   el('discordCardOpacityVal').textContent = Math.round(discordCardOpacity * 100) + '%';
+  el('discordCardTransparentToggle').checked = !!userData.discord_card_transparent;
+  updateDiscordCardControlsState();
   el('showMemberSinceToggle').checked = !!userData.show_member_since;
   el('showAvatarShineToggle').checked = !!userData.avatar_shine;
   el('profileEntranceToggle').checked = !!userData.profile_entrance;
@@ -4172,7 +4179,7 @@ async function savePerso() {
       profile_font: null, bio_font: null, bg_type: null, bg_value: null,
       bg_opacity: null, text_color: null, card_bg: null, card_opacity: null,
       banner_url: null, bg_url: null, social_links: null, spotify_url: null,
-      location: null, discord_presence: null, discord_card_opacity: null, discord_card_color: null, bg_effect: null, bg_effect_color: null,
+      location: null, discord_presence: null, discord_card_opacity: null, discord_card_color: null, discord_card_transparent: null, bg_effect: null, bg_effect_color: null,
       profile_blur: null, username_effect: null, glow_targets: null, accent_color: null,
       icon_color: null, monochrome_icons: null, animated_title: null,
       invert_blocks: null, use_discord_avatar: null, avatar_decoration: null, avatar_border_color: null,
@@ -4305,162 +4312,6 @@ function setMobActive(btn) {
   document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
 }
-
-let tplAll = [];
-let tplFilter = 'recent';
-
-function tplSetFilter(f, btn) {
-  tplFilter = f;
-  document.querySelectorAll('.tpl-filter').forEach(b => {
-    b.style.background = 'var(--gray-100)';
-    b.style.color = 'var(--gray-600)';
-  });
-  btn.style.background = 'var(--black)';
-  btn.style.color = 'var(--white)';
-  tplRender();
-}
-
-function tplGetFiltered() {
-  if (tplFilter === 'popular') return [...tplAll].sort((a,b) => (b.uses||0)-(a.uses||0));
-  const u = localStorage.getItem('username');
-  if (tplFilter === 'mine') return tplAll.filter(t => t.username === u);
-  return tplAll;
-}
-
-function tplBuildPreview(config) {
-  const bg = config.bg_type === 'color' ? (config.bg_value || '#1a1a2e')
-           : config.bg_type === 'gradient' ? (config.bg_value || '#1a1a2e')
-           : '#1a1a2e';
-  const text = config.text_color || '#ffffff';
-  const accent = config.accent_color || '#6366f1';
-  return `<div style="position:absolute;inset:0;background:${bg};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:16px;">
-    <div style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.15);border:2px solid ${accent};display:flex;align-items:center;justify-content:center;font-size:18px;">👤</div>
-    <div style="font-size:12px;font-weight:700;color:${text}">username</div>
-    <div style="font-size:10px;color:${text}88;text-align:center;max-width:140px;">bio du profil</div>
-    <div style="display:flex;gap:5px;margin-top:4px;">
-      <div style="height:5px;width:50px;border-radius:3px;background:${accent}99;"></div>
-      <div style="height:5px;width:35px;border-radius:3px;background:${accent}66;"></div>
-    </div>
-  </div>`;
-}
-
-function tplRender() {
-  const list = tplGetFiltered();
-  const grid = el('tplGrid');
-  const myUsername = localStorage.getItem('username');
-  const token = localStorage.getItem('token');
-  if (!list.length) {
-    grid.innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray-400);grid-column:1/-1;">Aucun modèle ici.</div>';
-    return;
-  }
-  grid.innerHTML = list.map(t => {
-    let config = {};
-    try { config = JSON.parse(t.config || '{}'); } catch {}
-    const isOwner = t.username === myUsername;
-    return `<div style="border:1px solid var(--gray-200);border-radius:14px;overflow:hidden;background:var(--white);transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(0,0,0,.1)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-      <div style="height:160px;position:relative;overflow:hidden;">${tplBuildPreview(config)}</div>
-      <div style="padding:14px;">
-        <div style="font-size:14px;font-weight:700;color:var(--black);margin-bottom:3px;">${esc(t.name)}</div>
-        <div style="font-size:12px;color:var(--gray-500);margin-bottom:10px;min-height:28px;line-height:1.5;">${esc(t.description||'')}</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-          <a href="/${esc(t.username)}" target="_blank" style="font-size:11px;color:var(--gray-400);text-decoration:none;">@${esc(t.username)}</a>
-          <span style="font-size:11px;color:var(--gray-400);">🔥 ${t.uses||0}</span>
-        </div>
-        <div style="display:flex;gap:8px;">
-          <button class="tpl-apply-btn" data-id="${esc(t.id)}" style="flex:1;background:linear-gradient(135deg,var(--accent) 0%,var(--accent-dark) 100%);color:#fff;border:none;border-radius:8px;padding:8px;font-size:12px;font-weight:600;cursor:pointer;">${getToken() ? 'Appliquer' : 'Se connecter'}</button>
-          ${isOwner ? `<button class="tpl-delete-btn" data-id="${esc(t.id)}" style="background:var(--gray-100);color:var(--gray-600);border:none;border-radius:8px;padding:8px 12px;font-size:12px;cursor:pointer;">🗑</button>` : ''}
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-
-  if (!grid.dataset.boundClick) {
-    grid.dataset.boundClick = '1';
-    grid.addEventListener('click', (e) => {
-      const applyBtn = e.target.closest('.tpl-apply-btn');
-      if (applyBtn) return tplApply(applyBtn.dataset.id);
-      const delBtn = e.target.closest('.tpl-delete-btn');
-      if (delBtn) return tplDelete(delBtn.dataset.id);
-    });
-  }
-}
-
-async function tplLoad() {
-  try {
-    const r = await apiFetch(API + '/api/templates');
-    tplAll = await r.json();
-    tplRender();
-  } catch {
-    el('tplGrid').innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray-400);grid-column:1/-1;">Erreur de chargement.</div>';
-  }
-}
-
-async function tplApply(id) {
-  const token = localStorage.getItem('token');
-  if (!getToken()) { window.location.href = '/login'; return; }
-  const t = tplAll.find(t => t.id === id);
-  const name = t ? t.name : '';
-  if (!confirm('Appliquer le modèle "' + name + '" ? Ton style actuel sera remplacé.')) return;
-  try {
-    const r = await apiFetch(API + '/api/templates/' + id + '/use', {
-      method: 'POST', headers: { Authorization: 'Bearer ' + getToken() }
-    });
-    if (!r.ok) throw new Error();
-    if (t) t.uses = (t.uses || 0) + 1;
-    tplRender();
-    showToast('✓ Modèle "' + name + '" appliqué ! Recharge ton profil.');
-  } catch { showToast('Erreur lors de l\'application.'); }
-}
-
-async function tplDelete(id) {
-  const token = localStorage.getItem('token');
-  if (!confirm('Supprimer ce modèle ?')) return;
-  try {
-    const r = await apiFetch(API + '/api/templates/' + id, {
-      method: 'DELETE', headers: { Authorization: 'Bearer ' + getToken() }
-    });
-    if (!r.ok) throw new Error();
-    tplAll = tplAll.filter(t => t.id !== id);
-    tplRender();
-    showToast('Modèle supprimé.');
-  } catch { showToast('Erreur.'); }
-}
-
-function tplOpenPublish() {
-  const token = localStorage.getItem('token');
-  if (!getToken()) { window.location.href = '/login'; return; }
-  el('tplModalName').value = '';
-  el('tplModalDesc').value = '';
-  el('tplModal').style.display = 'flex';
-}
-
-function tplClosePublish() {
-  el('tplModal').style.display = 'none';
-}
-
-async function tplPublish() {
-  const token = localStorage.getItem('token');
-  const name = el('tplModalName').value.trim();
-  if (!name) { el('tplModalName').focus(); return; }
-  const btn = el('tplModalBtn');
-  btn.disabled = true; btn.textContent = '…';
-  try {
-    const r = await apiFetch(API + '/api/templates', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + getToken() },
-      body: JSON.stringify({ name, description: el('tplModalDesc').value.trim() })
-    });
-    const data = await r.json();
-    if (!r.ok) throw new Error(data.error);
-    tplAll.unshift(data);
-    tplRender();
-    tplClosePublish();
-    showToast('✓ Modèle "' + name + '" publié !');
-  } catch(e) { showToast(e.message || 'Erreur.'); }
-  finally { btn.disabled = false; btn.textContent = 'Publier'; }
-}
-
-el('tplModal')?.addEventListener('click', e => { if (e.target === el('tplModal')) tplClosePublish(); });
 
 let _tplDashData = [];
 let _tplDashTab = 'all';
