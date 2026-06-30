@@ -1028,6 +1028,12 @@ body.has-announcement { padding-top: 44px; }
             </div>
           </div>
 
+          <div id="audioStyleZone" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--gray-100);">
+            <label style="font-size:12px;font-weight:600;color:var(--gray-700);display:block;margin-bottom:10px;">Style du lecteur</label>
+            <div id="audioStyleGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+            </div>
+          </div>
+
           <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--gray-100);">
             <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
               <input type="checkbox" id="showAudioPlayerToggle" checked style="width:16px;height:16px;accent-color:var(--black);cursor:pointer;"
@@ -1962,7 +1968,7 @@ if (!getToken() && !getRefreshToken()) window.location.href = '/login';
 let userData = null;
 let analyticsData = null;
 let pendingLinks = null;
-let pendingMedias = { avatar_url: null, bg_url: null, bg_type: null, audio_url: null, audio_name: null, audio_cover_url: null, cursor_url: null, show_audio_player: null };
+let pendingMedias = { avatar_url: null, bg_url: null, bg_type: null, audio_url: null, audio_name: null, audio_cover_url: null, audio_player_style: null, cursor_url: null, show_audio_player: null };
 
 const SOCIALS = [
   { id:'snapchat',   label:'Snapchat',   color:'#FFFC00', icon:'https://cdn.simpleicons.org/snapchat/FFFC00',    base:'https://snapchat.com/add/',       placeholder:'Ton pseudo Snapchat' },
@@ -3483,6 +3489,42 @@ function handleAudioCover(input) {
   reader.readAsDataURL(file);
 }
 
+const AUDIO_PLAYER_STYLES = [
+  { id: 'card',   label: 'Carte' },
+  { id: 'mini',   label: 'Mini-widget' },
+  { id: 'thin',   label: 'Barre fine' },
+  { id: 'vinyl',  label: 'Vinyle' },
+  { id: 'pill',   label: 'Pilule' },
+  { id: 'side',   label: 'Barre latérale' },
+  { id: 'wave',   label: 'Ondes' },
+  { id: 'ticket', label: 'Ticket' },
+  { id: 'tab',    label: 'Onglet' },
+];
+
+function renderAudioStyleGrid(selected) {
+  const grid = el('audioStyleGrid');
+  if (!grid) return;
+  grid.innerHTML = AUDIO_PLAYER_STYLES.map(s => `
+    <button type="button" data-style="${s.id}"
+      onclick="selectAudioStyle('${s.id}')"
+      style="
+        padding:10px 6px; border-radius:8px; cursor:pointer;
+        border:1.5px solid ${s.id === selected ? 'var(--black)' : 'var(--gray-200)'};
+        background:${s.id === selected ? 'var(--gray-50)' : '#fff'};
+        font-size:11px; font-weight:500; text-align:center;
+        font-family:inherit; color:var(--gray-700);
+      ">
+      ${s.label}
+    </button>
+  `).join('');
+  pendingMedias.audio_player_style = selected;
+}
+
+function selectAudioStyle(styleId) {
+  pendingMedias.audio_player_style = styleId;
+  renderAudioStyleGrid(styleId);
+}
+
 function removeAudioCover(e) {
   if (e) e.stopPropagation();
   pendingMedias.audio_cover_url = '';
@@ -3492,6 +3534,7 @@ function removeAudioCover(e) {
   if (icon) icon.style.display = 'block';
   const rem = el('audioCoverRemove');
   if (rem) rem.style.display = 'none';
+
 }
 
 function loadMediasUI() {
@@ -3560,6 +3603,8 @@ function loadMediasUI() {
 
   const sapToggle = el('showAudioPlayerToggle');
   if (sapToggle) sapToggle.checked = userData.show_audio_player !== false;
+
+  renderAudioStyleGrid(userData.audio_player_style || 'card');
 
   if (userData.audio_cover_url) {
     const img = el('audioCoverPreview');
@@ -3703,7 +3748,7 @@ async function saveMedias() {
     const data = await r.json();
     if (!r.ok) { showAlert('mediasAlert', data.error || 'Erreur'); showToast('❌ ' + (data.error || 'Erreur lors de la sauvegarde')); return; }
     userData = data;
-    pendingMedias = { avatar_url: null, bg_url: null, bg_type: null, audio_url: null, audio_name: null, audio_cover_url: null, cursor_url: null, show_audio_player: null };
+    pendingMedias = { avatar_url: null, bg_url: null, bg_type: null, audio_url: null, audio_name: null, audio_cover_url: null, audio_player_style: null, cursor_url: null, show_audio_player: null };
     el('mediasAlert').innerHTML = '';
     if (data.audio_name !== undefined) {
       const ni = el('audioNameInput');

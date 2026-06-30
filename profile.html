@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <script src="/error-logger.js"></script><script>(function(){var t=localStorage.getItem("theme")||"dark";document.documentElement.setAttribute("data-theme",t);})();</script>
-  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta charset="UTF-8"/><meta name="theme-color" content="#000000"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>ak-47.fr</title>
   <link id="profileFont" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
@@ -15,7 +15,7 @@
       --profile-text-color: var(--gray-900);
       --card-bg: transparent;
     }
-    body { background: var(--gray-50); font-family: 'Inter', sans-serif; min-height: 100vh; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
+    body { background: #000; font-family: 'Inter', sans-serif; min-height: 100vh; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
 
     #loading { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; min-height: 100vh; }
     .spinner { width: 28px; height: 28px; border: 2px solid var(--gray-200); border-top-color: var(--black); border-radius: 50%; animation: spin .6s linear infinite; }
@@ -295,7 +295,26 @@
 
     .music-player {
       display: none;
-      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px);
+      position: fixed; z-index: 9999;
+      user-select: none;
+      transition: transform .4s cubic-bezier(.34,1.56,.64,1), opacity .3s ease;
+      opacity: 0;
+    }
+    .music-player.visible { display: block; }
+    .music-player.shown { opacity: 1; }
+    .mpv { display: none; }
+    .music-player[data-style="card"] .mpv-card { display: block; }
+    .music-player[data-style="mini"] .mpv-mini { display: block; }
+    .music-player[data-style="thin"] .mpv-thin { display: flex; }
+    .music-player[data-style="vinyl"] .mpv-vinyl { display: block; }
+    .music-player[data-style="pill"] .mpv-pill { display: flex; }
+    .music-player[data-style="side"] .mpv-side { display: flex; }
+    .music-player[data-style="wave"] .mpv-wave { display: block; }
+    .music-player[data-style="ticket"] .mpv-ticket { display: flex; }
+    .music-player[data-style="tab"] .mpv-tab { display: flex; }
+
+    .music-player[data-style="card"] {
+      bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px);
       width: calc(100% - 32px); max-width: 420px;
       background: rgba(15,15,15,.82);
       backdrop-filter: blur(24px) saturate(180%);
@@ -303,19 +322,156 @@
       border: 1px solid rgba(255,255,255,.1);
       border-radius: 20px;
       padding: 12px 14px 10px;
-      color: #fff; user-select: none;
-      z-index: 9999;
+      color: #fff;
       box-shadow: 0 8px 40px rgba(0,0,0,.45), 0 2px 8px rgba(0,0,0,.3);
-      transition: transform .4s cubic-bezier(.34,1.56,.64,1), opacity .3s ease;
-      opacity: 0;
     }
-    .music-player.visible {
-      display: block;
+    .music-player[data-style="card"].shown { transform: translateX(-50%) translateY(0); }
+
+    .music-player[data-style="mini"] {
+      bottom: 20px; right: 20px; transform: scale(.6);
+      color: #fff;
     }
-    .music-player.shown {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
+    .music-player[data-style="mini"].shown { transform: scale(1); }
+    .mpv-mini-btn {
+      position: relative; width: 56px; height: 56px; border-radius: 50%;
+      background: rgba(15,15,15,.82); backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,.12); cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0,0,0,.4);
+      display: flex; align-items: center; justify-content: center;
     }
+    .mpv-mini-ring { position: absolute; inset: 0; width: 56px; height: 56px; transform: rotate(-90deg); }
+    .mpv-mini-icon { width: 22px; height: 22px; fill: #fff; }
+
+    .music-player[data-style="thin"] {
+      bottom: 20px; left: 50%; transform: translateX(-50%) translateY(60px);
+      width: calc(100% - 32px); max-width: 360px; color: #fff;
+    }
+    .music-player[data-style="thin"].shown { transform: translateX(-50%) translateY(0); }
+    .mpv-thin {
+      align-items: center; gap: 10px;
+      background: rgba(15,15,15,.82); backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,.1); border-radius: 30px;
+      padding: 8px 14px 8px 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,.35);
+    }
+    .mpv-thin-thumb {
+      width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,.12);
+      display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+    }
+    .mpv-thin-thumb svg { width: 16px; height: 16px; fill: #fff; }
+    .mpv-thin-title { font-size: 12px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mpv-thin-progress { width: 60px; height: 3px; background: rgba(255,255,255,.2); border-radius: 2px; flex-shrink: 0; }
+    .mpv-thin-fill { width: 0%; height: 100%; background: #fff; border-radius: 2px; }
+
+    .music-player[data-style="vinyl"] {
+      bottom: 20px; right: 20px; transform: scale(.6);
+    }
+    .music-player[data-style="vinyl"].shown { transform: scale(1); }
+    .mpv-vinyl-disc {
+      width: 72px; height: 72px; border-radius: 50%; cursor: pointer;
+      background: repeating-radial-gradient(circle, #1a1a1a 0px, #1a1a1a 2px, #222 2px, #222 4px);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,.4);
+      animation: mpv-spin 6s linear infinite paused;
+    }
+    .music-player[data-style="vinyl"] .mpv-vinyl-disc.playing { animation-play-state: running; }
+    @keyframes mpv-spin { to { transform: rotate(360deg); } }
+    .mpv-vinyl-center { width: 26px; height: 26px; border-radius: 50%; background: #444; display: flex; align-items: center; justify-content: center; }
+    .mpv-vinyl-hole { width: 8px; height: 8px; border-radius: 50%; background: #111; }
+
+    .music-player[data-style="pill"] {
+      top: 20px; left: 50%; transform: translateX(-50%) translateY(-60px); color: #fff;
+    }
+    .music-player[data-style="pill"].shown { transform: translateX(-50%) translateY(0); }
+    .mpv-pill {
+      align-items: center; gap: 8px;
+      background: rgba(15,15,15,.82); backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,.1); border-radius: 50px;
+      padding: 6px 14px 6px 6px;
+      box-shadow: 0 4px 16px rgba(0,0,0,.35);
+    }
+    .mpv-pill-thumb { width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,.12); flex-shrink: 0; }
+    .mpv-pill-title { font-size: 11px; max-width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mpv-pill-btn { width: 18px; height: 18px; border-radius: 50%; background: none; border: none; cursor: pointer; flex-shrink: 0; padding: 0; }
+    .mpv-pill-btn svg { width: 18px; height: 18px; fill: #fff; }
+
+    .music-player[data-style="side"] {
+      top: 50%; right: 20px; transform: translateY(-50%) translateX(60px); color: #fff;
+    }
+    .music-player[data-style="side"].shown { transform: translateY(-50%) translateX(0); }
+    .mpv-side {
+      flex-direction: column; align-items: center; gap: 8px; width: 48px;
+      background: rgba(15,15,15,.82); backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,.1); border-radius: 14px;
+      padding: 10px 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,.35);
+    }
+    .mpv-side-thumb { width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,.12); }
+    .mpv-side-btn { width: 22px; height: 22px; border-radius: 50%; background: none; border: none; cursor: pointer; padding: 0; }
+    .mpv-side-btn svg { width: 22px; height: 22px; fill: #fff; }
+    .mpv-side-bar { width: 3px; height: 40px; background: rgba(255,255,255,.2); border-radius: 2px; position: relative; cursor: pointer; }
+    .mpv-side-fill { position: absolute; bottom: 0; width: 100%; height: 0%; background: #fff; border-radius: 2px; }
+
+    .music-player[data-style="wave"] {
+      bottom: 20px; left: 50%; transform: translateX(-50%) translateY(60px); color: #fff;
+      width: calc(100% - 32px); max-width: 220px;
+    }
+    .music-player[data-style="wave"].shown { transform: translateX(-50%) translateY(0); }
+    .mpv-wave {
+      background: rgba(15,15,15,.82); backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,.1); border-radius: 14px;
+      padding: 10px 14px;
+      box-shadow: 0 4px 16px rgba(0,0,0,.35);
+    }
+    .mpv-wave-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .mpv-wave-thumb { width: 26px; height: 26px; border-radius: 6px; background: rgba(255,255,255,.12); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+    .mpv-wave-thumb svg { width: 14px; height: 14px; fill: #fff; }
+    .mpv-wave-title { font-size: 10px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mpv-wave-bars { display: flex; align-items: flex-end; gap: 2px; height: 18px; }
+    .mpv-wave-bars span { width: 3px; background: #fff; border-radius: 1px; opacity: .5; height: 30%; transition: height .2s ease; }
+    .mpv-wave-bars.playing span { animation: mpv-wave-bounce 1s ease-in-out infinite; }
+    .mpv-wave-bars span:nth-child(1) { animation-delay: 0s; }
+    .mpv-wave-bars span:nth-child(2) { animation-delay: .1s; }
+    .mpv-wave-bars span:nth-child(3) { animation-delay: .2s; }
+    .mpv-wave-bars span:nth-child(4) { animation-delay: .3s; }
+    .mpv-wave-bars span:nth-child(5) { animation-delay: .15s; }
+    .mpv-wave-bars span:nth-child(6) { animation-delay: .25s; }
+    .mpv-wave-bars span:nth-child(7) { animation-delay: .05s; }
+    @keyframes mpv-wave-bounce { 0%,100% { height: 30%; opacity:.5; } 50% { height: 100%; opacity: 1; } }
+
+    .music-player[data-style="ticket"] {
+      bottom: 20px; left: 50%; transform: translateX(-50%) translateY(60px); color: #fff;
+      width: calc(100% - 32px); max-width: 230px;
+    }
+    .music-player[data-style="ticket"].shown { transform: translateX(-50%) translateY(0); }
+    .mpv-ticket {
+      align-items: center; gap: 10px;
+      background: rgba(15,15,15,.82); backdrop-filter: blur(16px);
+      border: 1px dashed rgba(255,255,255,.25); border-radius: 10px;
+      padding: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,.3);
+    }
+    .mpv-ticket-thumb { width: 30px; height: 30px; border-radius: 6px; background: rgba(255,255,255,.12); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+    .mpv-ticket-thumb svg { width: 15px; height: 15px; fill: #fff; }
+    .mpv-ticket-info { flex: 1; min-width: 0; }
+    .mpv-ticket-title { font-size: 11px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mpv-ticket-time { font-size: 9px; opacity: .6; }
+
+    .music-player[data-style="tab"] {
+      bottom: 80px; right: 0; transform: translateX(60px); color: #fff;
+    }
+    .music-player[data-style="tab"].shown { transform: translateX(0); }
+    .mpv-tab {
+      align-items: center; gap: 8px;
+      background: rgba(15,15,15,.82); backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,.1); border-right: none;
+      border-radius: 10px 0 0 10px;
+      padding: 8px 10px;
+      box-shadow: 0 4px 16px rgba(0,0,0,.3);
+    }
+    .mpv-tab-btn { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,.12); border: none; cursor: pointer; flex-shrink: 0; padding: 0; display: flex; align-items: center; justify-content: center; }
+    .mpv-tab-btn svg { width: 12px; height: 12px; fill: #fff; }
+    .mpv-tab-title { font-size: 10px; white-space: nowrap; max-width: 100px; overflow: hidden; text-overflow: ellipsis; }
 
     .mp-top {
       display: flex; align-items: center; gap: 12px;
@@ -920,18 +1076,18 @@ body.has-announcement { padding-top: 36px; }
   <input type="range" id="bgVideoVolSlider" min="0" max="1" step="0.02" value="0.8"
     oninput="setBgVideoVolume(this.value)"
     style="
-      flex:1; min-width:90px; height:3px; cursor:pointer;
+      width:90px; flex:0 0 90px; height:3px; cursor:pointer;
       accent-color:#fff; background:rgba(255,255,255,.25);
       border-radius:3px; outline:none; border:none;
       margin-right:14px;
       opacity:0;
-      transition:opacity .2s ease;
+      transition:opacity .2s ease .1s;
     "
     title="Volume"/>
 </div>
 <style>
   #bgVideoSoundBar:hover {
-    width: 150px;
+    width: 160px;
   }
   #bgVideoSoundBar:hover #bgVideoVolSlider {
     opacity: 1;
@@ -997,45 +1153,111 @@ body.has-announcement { padding-top: 36px; }
       </div>
     </div>
 
-    <div class="music-player" id="audioBar">
+    <div class="music-player" id="audioBar" data-style="card">
 
-      <div class="mp-top">
-        <div class="mp-thumb" id="mpThumb">
-          <span class="mp-thumb-placeholder">♪</span>
+      <div class="mpv mpv-card">
+        <div class="mp-top">
+          <div class="mp-thumb" id="mpThumb"><span class="mp-thumb-placeholder">♪</span></div>
+          <div class="mp-info">
+            <div class="mp-label">En écoute</div>
+            <div class="mp-title" id="mpTitle">Musique</div>
+          </div>
+          <button class="mp-play-btn" id="mpPlay" onclick="toggleAudio()" title="Lecture / Pause">
+            <svg viewBox="0 0 24 24" id="mpPlayIcon"><path d="M8 5v14l11-7z"/></svg>
+          </button>
         </div>
-        <div class="mp-info">
-          <div class="mp-label">En écoute</div>
-          <div class="mp-title" id="mpTitle">Musique</div>
+        <div class="mp-progress-row">
+          <span class="mp-time" id="mpCur">0:00</span>
+          <div class="mp-progress" id="mpProgress"><div class="mp-progress-fill" id="mpFill"></div></div>
+          <span class="mp-time right" id="mpTotal">0:00</span>
         </div>
-        <button class="mp-play-btn" id="mpPlay" onclick="toggleAudio()" title="Lecture / Pause">
-          <svg viewBox="0 0 24 24" id="mpPlayIcon"><path d="M8 5v14l11-7z"/></svg>
+        <div class="mp-bottom">
+          <div class="mp-seek-group">
+            <button class="mp-btn" title="-10s" onclick="seekBack()">
+              <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/><text x="8.5" y="14.5" font-size="5" fill="currentColor" font-family="sans-serif">10</text></svg>
+            </button>
+            <button class="mp-btn" title="+10s" onclick="seekForward()">
+              <svg viewBox="0 0 24 24"><path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z"/><text x="8.5" y="14.5" font-size="5" fill="currentColor" font-family="sans-serif">10</text></svg>
+            </button>
+          </div>
+          <div class="mp-vol-group">
+            <span class="mp-vol-icon" id="mpVolIcon" onclick="toggleMute()" title="Muet">
+              <svg viewBox="0 0 24 24" id="mpVolSvg"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+            </span>
+            <input type="range" class="mp-vol-slider" id="mpVolSlider" min="0" max="1" step="0.02" value="0" oninput="setVolume(this.value)" title="Volume"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="mpv mpv-mini">
+        <button class="mpv-mini-btn" id="mpMiniBtn" onclick="toggleAudio()" title="Lecture / Pause">
+          <svg viewBox="0 0 36 36" class="mpv-mini-ring">
+            <circle cx="18" cy="18" r="15.5" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="2"/>
+            <circle cx="18" cy="18" r="15.5" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="97.4" id="mpMiniRingFill" stroke-dashoffset="97.4"/>
+          </svg>
+          <svg viewBox="0 0 24 24" class="mpv-mini-icon" id="mpMiniIcon"><path d="M8 5v14l11-7z"/></svg>
         </button>
       </div>
 
-      <div class="mp-progress-row">
-        <span class="mp-time" id="mpCur">0:00</span>
-        <div class="mp-progress" id="mpProgress">
-          <div class="mp-progress-fill" id="mpFill"></div>
+      <div class="mpv mpv-thin">
+        <div class="mpv-thin-thumb" id="mpThinThumb" onclick="toggleAudio()" title="Lecture / Pause">
+          <svg viewBox="0 0 24 24" id="mpThinIcon"><path d="M8 5v14l11-7z"/></svg>
         </div>
-        <span class="mp-time right" id="mpTotal">0:00</span>
+        <div class="mpv-thin-title" id="mpThinTitle">Musique</div>
+        <div class="mpv-thin-progress" id="mpThinProgress"><div class="mpv-thin-fill" id="mpThinFill"></div></div>
       </div>
 
-      <div class="mp-bottom">
-        <div class="mp-seek-group">
-          <button class="mp-btn" title="-10s" onclick="seekBack()">
-            <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/><text x="8.5" y="14.5" font-size="5" fill="currentColor" font-family="sans-serif">10</text></svg>
-          </button>
-          <button class="mp-btn" title="+10s" onclick="seekForward()">
-            <svg viewBox="0 0 24 24"><path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z"/><text x="8.5" y="14.5" font-size="5" fill="currentColor" font-family="sans-serif">10</text></svg>
-          </button>
-        </div>
-        <div class="mp-vol-group">
-          <span class="mp-vol-icon" id="mpVolIcon" onclick="toggleMute()" title="Muet">
-            <svg viewBox="0 0 24 24" id="mpVolSvg"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-          </span>
-          <input type="range" class="mp-vol-slider" id="mpVolSlider" min="0" max="1" step="0.02" value="0" oninput="setVolume(this.value)" title="Volume"/>
+      <div class="mpv mpv-vinyl">
+        <div class="mpv-vinyl-disc" id="mpVinylDisc" onclick="toggleAudio()" title="Lecture / Pause">
+          <div class="mpv-vinyl-center"><div class="mpv-vinyl-hole"></div></div>
         </div>
       </div>
+
+      <div class="mpv mpv-pill">
+        <div class="mpv-pill-thumb" id="mpPillThumb"></div>
+        <span class="mpv-pill-title" id="mpPillTitle">Musique</span>
+        <button class="mpv-pill-btn" id="mpPillBtn" onclick="toggleAudio()" title="Lecture / Pause">
+          <svg viewBox="0 0 24 24" id="mpPillIcon"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+      </div>
+
+      <div class="mpv mpv-side">
+        <div class="mpv-side-thumb" id="mpSideThumb"></div>
+        <button class="mpv-side-btn" id="mpSideBtn" onclick="toggleAudio()" title="Lecture / Pause">
+          <svg viewBox="0 0 24 24" id="mpSideIcon"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <div class="mpv-side-bar" id="mpSideBar"><div class="mpv-side-fill" id="mpSideFill"></div></div>
+      </div>
+
+      <div class="mpv mpv-wave">
+        <div class="mpv-wave-top">
+          <div class="mpv-wave-thumb" id="mpWaveThumb" onclick="toggleAudio()" title="Lecture / Pause">
+            <svg viewBox="0 0 24 24" id="mpWaveIcon"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+          <span class="mpv-wave-title" id="mpWaveTitle">Musique</span>
+        </div>
+        <div class="mpv-wave-bars" id="mpWaveBars">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <div class="mpv mpv-ticket">
+        <div class="mpv-ticket-thumb" id="mpTicketThumb" onclick="toggleAudio()" title="Lecture / Pause">
+          <svg viewBox="0 0 24 24" id="mpTicketIcon"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <div class="mpv-ticket-info">
+          <div class="mpv-ticket-title" id="mpTicketTitle">Musique</div>
+          <div class="mpv-ticket-time"><span id="mpTicketCur">0:00</span> / <span id="mpTicketTotal">0:00</span></div>
+        </div>
+      </div>
+
+      <div class="mpv mpv-tab">
+        <button class="mpv-tab-btn" id="mpTabBtn" onclick="toggleAudio()" title="Lecture / Pause">
+          <svg viewBox="0 0 24 24" id="mpTabIcon"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <span class="mpv-tab-title" id="mpTabTitle">Musique</span>
+      </div>
+
     </div>
     <div class="profile-links" id="pLinks"></div>
     <div id="ak47Toast" style="
@@ -1368,30 +1590,71 @@ async function loadProfile() {
       player.volume = 0.8;
       player.muted = false;
       const bar = document.getElementById('audioBar');
+      bar.dataset.style = user.audio_player_style || 'card';
       if (_showAudioPlayer) bar.classList.add('visible');
 
-      try {
-        const customName = user.audio_name && user.audio_name.trim();
-        document.getElementById('mpTitle').textContent = customName || 'Musique';
-      } catch {}
-
+      const customName = (user.audio_name && user.audio_name.trim()) || 'Musique';
       const coverUrl = user.audio_cover_url || user.avatar_url;
+
+      ['mpTitle','mpThinTitle','mpPillTitle','mpWaveTitle','mpTicketTitle','mpTabTitle'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = customName;
+      });
+
       if (coverUrl) {
-        document.getElementById('mpThumb').innerHTML = `<img src="${escAttr(coverUrl)}" alt="cover"/>`;
+        ['mpThumb','mpPillThumb','mpSideThumb'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.innerHTML = `<img src="${escAttr(coverUrl)}" alt="cover" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"/>`;
+        });
       }
+
+      function syncPlayIcons(playing) {
+        const playPath = '<path d="M8 5v14l11-7z"/>';
+        const pausePath = '<path d="M6 5h4v14H6zm8 0h4v14h-4z"/>';
+        ['mpPlayIcon','mpMiniIcon','mpThinIcon','mpPillIcon','mpSideIcon','mpWaveIcon','mpTicketIcon','mpTabIcon'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.innerHTML = playing ? pausePath : playPath;
+        });
+        const disc = document.getElementById('mpVinylDisc');
+        if (disc) disc.classList.toggle('playing', playing);
+        const waveBars = document.getElementById('mpWaveBars');
+        if (waveBars) waveBars.classList.toggle('playing', playing);
+      }
+      player.addEventListener('play',  () => syncPlayIcons(true));
+      player.addEventListener('pause', () => syncPlayIcons(false));
 
       player.addEventListener('timeupdate', () => {
         if (!player.duration) return;
         const pct = (player.currentTime / player.duration) * 100;
         document.getElementById('mpFill').style.width = pct + '%';
         document.getElementById('mpCur').textContent = fmtTime(player.currentTime);
+        const thinFill = document.getElementById('mpThinFill');
+        if (thinFill) thinFill.style.width = pct + '%';
+        const sideFill = document.getElementById('mpSideFill');
+        if (sideFill) sideFill.style.height = pct + '%';
+        const miniRing = document.getElementById('mpMiniRingFill');
+        if (miniRing) miniRing.style.strokeDashoffset = String(97.4 - (97.4 * pct / 100));
+        const ticketCur = document.getElementById('mpTicketCur');
+        if (ticketCur) ticketCur.textContent = fmtTime(player.currentTime);
       });
       player.addEventListener('loadedmetadata', () => {
         document.getElementById('mpTotal').textContent = fmtTime(player.duration);
+        const ticketTotal = document.getElementById('mpTicketTotal');
+        if (ticketTotal) ticketTotal.textContent = fmtTime(player.duration);
       });
       document.getElementById('mpProgress').addEventListener('click', (e) => {
         const rect = e.currentTarget.getBoundingClientRect();
         player.currentTime = ((e.clientX - rect.left) / rect.width) * player.duration;
+      });
+      const thinProgress = document.getElementById('mpThinProgress');
+      if (thinProgress) thinProgress.addEventListener('click', (e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        player.currentTime = ((e.clientX - rect.left) / rect.width) * player.duration;
+      });
+      const sideBar = document.getElementById('mpSideBar');
+      if (sideBar) sideBar.addEventListener('click', (e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        player.currentTime = (1 - (e.clientY - rect.top) / rect.height) * player.duration;
       });
 
       _profileReady = true;
@@ -1588,6 +1851,8 @@ async function loadProfile() {
         letterEl.style.display = 'none';
       } else {
         letterEl.textContent = discordDisplayName.charAt(0).toUpperCase();
+        letterEl.style.display = 'flex';
+        imgEl.style.display = 'none';
       }
 
       const dcBadgesEl = document.getElementById('dcBadges');
