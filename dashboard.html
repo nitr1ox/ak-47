@@ -3501,6 +3501,73 @@ const AUDIO_PLAYER_STYLES = [
   { id: 'tab',    label: 'Onglet' },
 ];
 
+const AUDIO_STYLE_PREVIEWS = {
+  card: `
+    <div style="background:rgba(15,15,15,.92);border-radius:8px;padding:6px 7px 5px;display:flex;align-items:center;gap:6px;">
+      <div style="width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,.15);flex-shrink:0;"></div>
+      <div style="flex:1;min-width:0;">
+        <div style="height:5px;width:70%;background:rgba(255,255,255,.55);border-radius:2px;margin-bottom:3px;"></div>
+        <div style="height:3px;width:100%;background:rgba(255,255,255,.18);border-radius:2px;"><div style="height:100%;width:40%;background:#fff;border-radius:2px;"></div></div>
+      </div>
+    </div>`,
+  mini: `
+    <div style="display:flex;align-items:center;justify-content:center;">
+      <div style="width:30px;height:30px;border-radius:50%;background:rgba(15,15,15,.92);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;">
+        <div style="width:0;height:0;border-style:solid;border-width:4px 0 4px 6px;border-color:transparent transparent transparent #fff;"></div>
+      </div>
+    </div>`,
+  thin: `
+    <div style="background:rgba(15,15,15,.92);border-radius:14px;padding:4px 8px 4px 4px;display:flex;align-items:center;gap:5px;">
+      <div style="width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.15);flex-shrink:0;"></div>
+      <div style="height:4px;flex:1;background:rgba(255,255,255,.4);border-radius:2px;"></div>
+      <div style="width:22px;height:2px;background:rgba(255,255,255,.2);border-radius:2px;flex-shrink:0;"></div>
+    </div>`,
+  vinyl: `
+    <div style="display:flex;align-items:center;justify-content:center;">
+      <div style="width:30px;height:30px;border-radius:50%;background:repeating-radial-gradient(circle,#1a1a1a 0px,#1a1a1a 1px,#333 1px,#333 2px);display:flex;align-items:center;justify-content:center;">
+        <div style="width:10px;height:10px;border-radius:50%;background:#555;"></div>
+      </div>
+    </div>`,
+  pill: `
+    <div style="background:rgba(15,15,15,.92);border-radius:30px;padding:3px 8px 3px 3px;display:flex;align-items:center;gap:5px;width:fit-content;margin:0 auto;">
+      <div style="width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.15);flex-shrink:0;"></div>
+      <div style="height:4px;width:30px;background:rgba(255,255,255,.45);border-radius:2px;"></div>
+      <div style="width:0;height:0;border-style:solid;border-width:3px 0 3px 5px;border-color:transparent transparent transparent #fff;flex-shrink:0;"></div>
+    </div>`,
+  side: `
+    <div style="display:flex;align-items:center;justify-content:center;">
+      <div style="background:rgba(15,15,15,.92);border-radius:7px;padding:5px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;width:20px;">
+        <div style="width:13px;height:13px;border-radius:3px;background:rgba(255,255,255,.15);"></div>
+        <div style="width:2px;height:14px;background:rgba(255,255,255,.2);border-radius:1px;position:relative;"><div style="position:absolute;bottom:0;width:100%;height:50%;background:#fff;border-radius:1px;"></div></div>
+      </div>
+    </div>`,
+  wave: `
+    <div style="background:rgba(15,15,15,.92);border-radius:8px;padding:6px 8px;">
+      <div style="display:flex;align-items:center;gap:5px;margin-bottom:5px;">
+        <div style="width:12px;height:12px;border-radius:3px;background:rgba(255,255,255,.15);flex-shrink:0;"></div>
+        <div style="height:4px;flex:1;background:rgba(255,255,255,.4);border-radius:2px;"></div>
+      </div>
+      <div style="display:flex;align-items:flex-end;gap:2px;height:10px;justify-content:center;">
+        ${[6,9,5,10,7].map(h => `<span style="width:2px;height:${h}px;background:#fff;opacity:.7;border-radius:1px;"></span>`).join('')}
+      </div>
+    </div>`,
+  ticket: `
+    <div style="background:rgba(15,15,15,.92);border:1px dashed rgba(255,255,255,.3);border-radius:7px;padding:5px;display:flex;align-items:center;gap:6px;">
+      <div style="width:16px;height:16px;border-radius:4px;background:rgba(255,255,255,.15);flex-shrink:0;"></div>
+      <div style="flex:1;min-width:0;">
+        <div style="height:4px;width:80%;background:rgba(255,255,255,.5);border-radius:2px;margin-bottom:3px;"></div>
+        <div style="height:3px;width:35%;background:rgba(255,255,255,.25);border-radius:2px;"></div>
+      </div>
+    </div>`,
+  tab: `
+    <div style="display:flex;align-items:center;justify-content:flex-end;">
+      <div style="background:rgba(15,15,15,.92);border-radius:7px 0 0 7px;padding:5px 7px;display:flex;align-items:center;gap:5px;">
+        <div style="width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.15);flex-shrink:0;"></div>
+        <div style="height:4px;width:24px;background:rgba(255,255,255,.4);border-radius:2px;"></div>
+      </div>
+    </div>`,
+};
+
 function renderAudioStyleGrid(selected) {
   const grid = el('audioStyleGrid');
   if (!grid) return;
@@ -3508,13 +3575,16 @@ function renderAudioStyleGrid(selected) {
     <button type="button" data-style="${s.id}"
       onclick="selectAudioStyle('${s.id}')"
       style="
-        padding:10px 6px; border-radius:8px; cursor:pointer;
+        padding:8px 6px 7px; border-radius:8px; cursor:pointer;
         border:1.5px solid ${s.id === selected ? 'var(--black)' : 'var(--gray-200)'};
         background:${s.id === selected ? 'var(--gray-50)' : '#fff'};
-        font-size:11px; font-weight:500; text-align:center;
         font-family:inherit; color:var(--gray-700);
+        display:flex; flex-direction:column; align-items:stretch; gap:6px;
       ">
-      ${s.label}
+      <div style="border-radius:6px;overflow:hidden;background:linear-gradient(135deg,#3a3a3a,#1c1c1c);padding:8px 6px;">
+        ${AUDIO_STYLE_PREVIEWS[s.id] || ''}
+      </div>
+      <span style="font-size:11px;font-weight:500;text-align:center;">${s.label}</span>
     </button>
   `).join('');
   pendingMedias.audio_player_style = selected;

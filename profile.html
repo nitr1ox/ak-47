@@ -314,7 +314,8 @@
     .music-player[data-style="tab"] .mpv-tab { display: flex; }
 
     .music-player[data-style="card"] {
-      bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px);
+      bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+      left: 50%; transform: translateX(-50%) translateY(80px);
       width: calc(100% - 32px); max-width: 420px;
       background: rgba(15,15,15,.82);
       backdrop-filter: blur(24px) saturate(180%);
@@ -1153,6 +1154,25 @@ body.has-announcement { padding-top: 36px; }
       </div>
     </div>
 
+    <div class="profile-links" id="pLinks"></div>
+    <div id="ak47Toast" style="
+      position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(30px);
+      background:rgba(0,0,0,0.72); backdrop-filter:blur(10px);
+      color:#fff; font-size:12px; font-weight:500;
+      padding:9px 18px; border-radius:999px;
+      opacity:0; transition:opacity .4s, transform .4s;
+      pointer-events:auto; white-space:nowrap; z-index:9999;
+    "><a href="https://ak-47.fr/register" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;">✦ Crée ton profil sur <strong>ak-47.fr</strong></a></div>
+    <script>
+      setTimeout(() => {
+        const t = document.getElementById('ak47Toast');
+        t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)';
+        setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(30px)'; }, 3500);
+      }, 4000);
+    </script>
+  </div>
+</div>
+
     <div class="music-player" id="audioBar" data-style="card">
 
       <div class="mpv mpv-card">
@@ -1259,24 +1279,6 @@ body.has-announcement { padding-top: 36px; }
       </div>
 
     </div>
-    <div class="profile-links" id="pLinks"></div>
-    <div id="ak47Toast" style="
-      position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(30px);
-      background:rgba(0,0,0,0.72); backdrop-filter:blur(10px);
-      color:#fff; font-size:12px; font-weight:500;
-      padding:9px 18px; border-radius:999px;
-      opacity:0; transition:opacity .4s, transform .4s;
-      pointer-events:auto; white-space:nowrap; z-index:9999;
-    "><a href="https://ak-47.fr/register" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;">✦ Crée ton profil sur <strong>ak-47.fr</strong></a></div>
-    <script>
-      setTimeout(() => {
-        const t = document.getElementById('ak47Toast');
-        t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)';
-        setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(30px)'; }, 3500);
-      }, 4000);
-    </script>
-  </div>
-</div>
 
 <script>
 const API = 'https://ak47-backend.onrender.com';
@@ -1303,11 +1305,18 @@ const SOCIAL_META = {
   pinterest:  { emoji: '📌', label: 'Pinterest',     base: 'https://pinterest.com/' },
   reddit:     { emoji: '🤖', label: 'Reddit',        base: 'https://reddit.com/u/' },
   steam:      { emoji: '🎲', label: 'Steam',         base: 'https://steamcommunity.com/id/' },
-  bitcoin:    { emoji: '₿',  label: 'Bitcoin',       base: '', crypto: true },
-  ethereum:   { emoji: 'Ξ',  label: 'Ethereum',      base: '', crypto: true },
-  litecoin:   { emoji: 'Ł',  label: 'Litecoin',      base: '', crypto: true },
-  ripple:     { emoji: '✕',  label: 'XRP',           base: '', crypto: true },
-  monero:     { emoji: 'ɱ',  label: 'Monero',        base: '', crypto: true },
+  bitcoin:    { emoji: '₿',  label: 'Bitcoin',       base: '', crypto: true, logo: 'https://cdn.simpleicons.org/bitcoin/F7931A' },
+  ethereum:   { emoji: 'Ξ',  label: 'Ethereum',      base: '', crypto: true, logo: 'https://cdn.simpleicons.org/ethereum/ffffff' },
+  litecoin:   { emoji: 'Ł',  label: 'Litecoin',      base: '', crypto: true, logo: 'https://cdn.simpleicons.org/litecoin/A6A9AA' },
+  ripple:     { emoji: '✕',  label: 'XRP',           base: '', crypto: true, logo: 'https://cdn.simpleicons.org/xrp/25A768' },
+  monero:     { emoji: 'ɱ',  label: 'Monero',        base: '', crypto: true, logo: 'https://cdn.simpleicons.org/monero/FF6600' },
+  tether:     { emoji: '₮',  label: 'Tether (USDT)', base: '', crypto: true, logo: 'https://cdn.simpleicons.org/tether/26A17B' },
+  bnb:        { emoji: 'B',  label: 'BNB',           base: '', crypto: true, logo: 'https://cdn.simpleicons.org/binance/F0B90B' },
+  solana:     { emoji: 'S',  label: 'Solana',        base: '', crypto: true, logo: 'https://cdn.simpleicons.org/solana/9945FF' },
+  cardano:    { emoji: 'A',  label: 'Cardano',       base: '', crypto: true, logo: 'https://cdn.simpleicons.org/cardano/0133AD' },
+  dogecoin:   { emoji: 'D',  label: 'Dogecoin',      base: '', crypto: true, logo: 'https://cdn.simpleicons.org/dogecoin/C2A633' },
+  tron:       { emoji: 'T',  label: 'TRON',          base: '', crypto: true, logo: 'https://cdn.simpleicons.org/tron/FF060A' },
+  polkadot:   { emoji: 'P',  label: 'Polkadot',      base: '', crypto: true, logo: 'https://cdn.simpleicons.org/polkadot/E6007A' },
 };
 
 function getLinkIcon(url) {
@@ -1944,16 +1953,31 @@ async function loadProfile() {
       if (!value) return;
       const meta = SOCIAL_META[key];
       if (!meta) return;
+      const setIconContent = (el) => {
+        if (meta.logo) {
+          el.innerHTML = '';
+          const img = document.createElement('img');
+          img.src = meta.logo;
+          img.alt = meta.label;
+          img.style.cssText = 'width:18px;height:18px;display:block;object-fit:contain;';
+          img.onerror = () => { el.innerHTML = ''; el.textContent = meta.emoji; };
+          el.appendChild(img);
+        } else {
+          el.textContent = meta.emoji;
+        }
+      };
       if (meta.crypto) {
         const btn = document.createElement('button');
         btn.className = 'social-icon-link';
         btn.title = 'Copier l\'adresse ' + meta.label;
-        btn.textContent = meta.emoji;
-        btn.style.cssText = 'cursor:pointer;background:none;border:none;padding:0;font:inherit;';
+        setIconContent(btn);
+        btn.style.cssText = 'cursor:pointer;background:none;border:none;padding:0;font:inherit;display:inline-flex;align-items:center;justify-content:center;';
         btn.onclick = () => {
           navigator.clipboard.writeText(value).then(() => {
+            const prev = btn.innerHTML;
+            btn.innerHTML = '';
             btn.textContent = '✓';
-            setTimeout(() => btn.textContent = meta.emoji, 1500);
+            setTimeout(() => setIconContent(btn), 1500);
           });
         };
         socialsRow.appendChild(btn);
@@ -1964,7 +1988,7 @@ async function loadProfile() {
       a.href = url; a.target = '_blank'; a.rel = 'noopener';
       a.className = 'social-icon-link';
       a.title = meta.label;
-      a.textContent = meta.emoji;
+      setIconContent(a);
       socialsRow.appendChild(a);
     });
 

@@ -424,6 +424,24 @@ input:focus, select:focus, textarea:focus {
       <div class="card" style="margin-bottom:20px;">
         <div class="card-header">
           <div>
+            <div class="card-title">Attribuer un rôle</div>
+            <div class="card-desc">Recherche un membre par pseudo ou ID pour gérer ses rôles</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
+            <div style="flex:1;min-width:220px;">
+              <label class="form-label">Pseudo ou ID</label>
+              <input type="text" class="form-input" id="roleSearchInput" placeholder="ex: johndoe ou 12345" onkeydown="if(event.key==='Enter')searchUserForRole()">
+            </div>
+            <button class="btn btn-purple" onclick="searchUserForRole()">Rechercher</button>
+          </div>
+          <div id="roleSearchResult" style="margin-top:16px;"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-header">
+          <div>
             <div class="card-title">Gestion des rôles</div>
             <div class="card-desc">Membres par rôle sur ak-47.fr</div>
           </div>
@@ -435,6 +453,7 @@ input:focus, select:focus, textarea:focus {
         </div>
       </div>
     </div>
+
 
     <div class="tab-panel" id="tab-bans">
       <div class="card">
@@ -1047,6 +1066,59 @@ async function renderRolesTab() {
           </div>
         </div>`).join('') : '<div style="color:var(--text-3);font-size:13px;padding:8px 0;">Aucun membre</div>'}
     </div>`).join('');
+}
+
+let roleSearchUser = null;
+async function searchUserForRole() {
+  const q = document.getElementById('roleSearchInput').value.trim();
+  const resultEl = document.getElementById('roleSearchResult');
+  if (!q) return;
+  resultEl.innerHTML = '<div class="loading-state">Recherche...</div>';
+  const r = await adminFetch(`${API}/api/admin/user/${encodeURIComponent(q)}`);
+  if (!r.ok) {
+    resultEl.innerHTML = '<span style="color:var(--red);">Utilisateur introuvable</span>';
+    roleSearchUser = null;
+    return;
+  }
+  const u = await r.json();
+  let current = [];
+  try { current = JSON.parse(u.roles || '[]'); } catch {}
+  roleSearchUser = { id: u.id, username: u.username };
+  resultEl.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+      <div class="avatar" style="background:${u.avatar_color||'#888'};width:32px;height:32px;font-size:13px;">
+        ${(u.display_name||u.username||'?').charAt(0).toUpperCase()}
+      </div>
+      <div>
+        <div class="username">@${esc(u.username)}</div>
+        ${u.display_name ? `<div class="displayname">${esc(u.display_name)}</div>` : ''}
+      </div>
+      <div style="margin-left:auto;font-size:12px;color:var(--text-3);">ID: ${esc(String(u.id))}</div>
+    </div>
+    <div class="role-checkbox-list" id="roleSearchCheckboxes">
+      ${AVAILABLE_ROLES.map(role => `
+        <label class="role-checkbox-item ${current.includes(role.id)?'checked':''}" style="${current.includes(role.id)?`color:${role.color};border-color:${role.color}30;background:${role.color}10;`:''}">
+          <input type="checkbox" value="${role.id}" ${current.includes(role.id)?'checked':''} onchange="this.closest('label').classList.toggle('checked',this.checked)">
+          <span class="role-emoji-sm">${role.emoji}</span>
+          <div>
+            <div class="role-item-label" style="color:${role.color};">${role.label}</div>
+            <div class="role-item-desc">${role.desc||''}</div>
+          </div>
+        </label>`).join('')}
+    </div>
+    <button class="btn btn-purple" style="margin-top:14px;" onclick="saveRoleSearchUser()">Sauvegarder</button>
+  `;
+}
+async function saveRoleSearchUser() {
+  if (!roleSearchUser) return;
+  const checked = [...document.querySelectorAll('#roleSearchCheckboxes input:checked')].map(i => i.value);
+  const r = await adminFetch(`${API}/api/admin/users/${roleSearchUser.id}/roles`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ roles: checked }),
+  });
+  if (r.ok) { toast('Rôles sauvegardés'); renderRolesTab(); loadAll(); }
+  else toast('Erreur lors de la sauvegarde');
 }
 
 async function lookupBan() {
