@@ -1309,7 +1309,7 @@ const SOCIAL_META = {
   youtube:    { emoji: '▶️', label: 'YouTube',       base: 'https://youtube.com/@' },
   twitch:     { emoji: '🎮', label: 'Twitch',        base: 'https://twitch.tv/' },
   github:     { emoji: '💻', label: 'GitHub',        base: 'https://github.com/' },
-  discord:    { emoji: '💬', label: 'Discord',       base: '' },
+  discord:    { emoji: '💬', label: 'Discord',       base: 'https://discord.gg/' },
   snapchat:   { emoji: '👻', label: 'Snapchat',      base: 'https://snapchat.com/add/' },
   linkedin:   { emoji: '💼', label: 'LinkedIn',      base: 'https://linkedin.com/in/' },
   facebook:   { emoji: '👥', label: 'Facebook',      base: 'https://facebook.com/' },
@@ -1688,7 +1688,7 @@ async function loadProfile() {
 
     const firstLink = (user.links && user.links.length) ? user.links[0] : null;
     if (firstLink) {
-      pNameEl.innerHTML = `<a class="profile-name-wrap has-link" href="${escAttr(firstLink.url)}" target="_blank" rel="noopener" onclick="trackClick(${JSON.stringify(user.username)}, ${JSON.stringify(firstLink.url)}, ${JSON.stringify(firstLink.title || '')})">${escHtml(user.display_name || user.username)}<svg class="profile-name-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>`;
+      pNameEl.innerHTML = `<a class="profile-name-wrap has-link" href="${escAttr(firstLink.url)}" target="_blank" rel="noopener" onclick="trackClick(${escAttr(JSON.stringify(user.username))}, ${escAttr(JSON.stringify(firstLink.url))}, ${escAttr(JSON.stringify(firstLink.title || ''))})">${escHtml(user.display_name || user.username)}<svg class="profile-name-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>`;
       pNameEl.style.cursor = 'default';
     } else {
       pNameEl.innerHTML = escHtml(user.display_name || user.username);
@@ -2000,6 +2000,10 @@ async function loadProfile() {
         return;
       }
       const url = value.startsWith('http') ? value : meta.base + value;
+      // SECURITY: n'assigner href que si le résultat est une vraie URL http(s).
+      // Empêche l'injection javascript:/data:/vbscript: via un champ dont meta.base
+      // est vide (ex: discord) et qui deviendrait sinon le href tel quel.
+      if (!/^https?:\/\//i.test(url)) return;
       const a = document.createElement('a');
       a.href = url; a.target = '_blank'; a.rel = 'noopener';
       a.className = 'social-icon-link';
@@ -2028,7 +2032,7 @@ async function loadProfile() {
           : `<span class="profile-link-fallback">${escHtml(l.title.charAt(0))}</span>`;
         return `
         <a class="profile-link" href="${escAttr(l.url)}" target="_blank" rel="noopener"
-          onclick="trackClick(${JSON.stringify(user.username)}, ${JSON.stringify(l.url)}, ${JSON.stringify(l.title)})">
+          onclick="trackClick(${escAttr(JSON.stringify(user.username))}, ${escAttr(JSON.stringify(l.url))}, ${escAttr(JSON.stringify(l.title))})">
           <span class="profile-link-left">${iconHtml}</span>
         </a>`;
       }).join('');
